@@ -1,14 +1,18 @@
 import styled from 'styled-components';
+import { appBarHeight } from '../../App/globalStyle';
 
 // eslint-disable-next-line import/prefer-default-export
 export const AppBarContainer = styled.div`
-    height: 50px;
-    margin-bottom: 20px;
+    height: ${appBarHeight}px;
     position: fixed;
     right: 0;
     left: 0;
     background-color: #fff;
     z-index: 1030;
+`;
+
+export const AppBarSpacer = styled.div`
+    height: 50px;
 `;
 
 export const NavBar = styled.div`

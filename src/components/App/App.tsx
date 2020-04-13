@@ -1,13 +1,16 @@
-import React from 'react';
-import { Route, Switch, RouteProps, BrowserRouter } from 'react-router-dom';
+import React, { ReactElement } from 'react';
+import { Route, Switch, BrowserRouter } from 'react-router-dom';
 import './App.css';
 import '@progress/kendo-theme-default/dist/all.css';
+import { ThemeProvider } from 'styled-components';
 import LandingPage from '../landing/LandingPage';
 import PageNotFound from '../PageNotFound';
+import { theme, GlobalStyle } from './globalStyle';
 
-const App: React.FunctionComponent<RouteProps> = () => {
+const App = (): ReactElement => {
     return (
-        <div>
+        <ThemeProvider theme={theme}>
+            <GlobalStyle />
             <BrowserRouter>
                 <Switch>
                     <Route exact path="/" component={LandingPage} />
@@ -15,7 +18,7 @@ const App: React.FunctionComponent<RouteProps> = () => {
                     <Route component={PageNotFound} />
                 </Switch>
             </BrowserRouter>
-        </div>
+        </ThemeProvider>
     );
 };
 
