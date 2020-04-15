@@ -7,6 +7,9 @@ import Citing from './Citing/Citing';
 import References from './References/References';
 import scrollToTargetAdjusted from '../../utils/documentHelpers';
 import { appBarHeight } from '../App/globalStyle';
+import AppBarAntDesign from './AppBarAntDesign/AppBarAndDesign';
+import AppBarMD from './AppBarMD/AppBarMD';
+import AppBarBlueprint from './AppBarBlueprint/AppBarBlueprint';
 
 const LandingPage = (): ReactElement => {
     const location = useLocation();
@@ -18,6 +21,9 @@ const LandingPage = (): ReactElement => {
     return (
         <>
             <AppBar />
+            <AppBarAntDesign />
+            <AppBarMD />
+            <AppBarBlueprint />
             <Home />
             <Features />
             <Citing />
