@@ -19,3 +19,8 @@ export type SamplesInfo = {
     species: string;
     type: 'gene';
 };
+
+export type GeneSet = {
+    dateTime: Date;
+    genesNames: string[];
+};

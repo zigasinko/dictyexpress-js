@@ -6,6 +6,7 @@ import { selectTimeSeries, fetchTimeSeries } from '../../../../redux/thunks/time
 import { getTimeSeries, getIsFetching } from '../../../../redux/stores/timeSeries';
 import GeneSelector from './geneSelector/geneSelector/geneSelector';
 import DictyGrid from '../../common/dictyGrid/dictyGrid';
+import { TimeSeriesGridWrapper } from './timeSeriesAndGeneSelector.styles';
 
 const mapStateToProps = (state: RootState): { timeSeries: Relation[]; isFetching: boolean } => {
     return {
@@ -27,8 +28,8 @@ const TimeSeriesAndGeneSelector = ({
     isFetching,
     connectedSelectTimeSeries,
 }: PropsFromRedux): ReactElement => {
-    const timeSeriesSelectedHandler = (id: number | string): void => {
-        connectedSelectTimeSeries(id as number);
+    const timeSeriesSelectedHandler = (selectedTimeSeries: Relation): void => {
+        connectedSelectTimeSeries(selectedTimeSeries.id);
     };
 
     const onGridReady = (): void => {
@@ -36,20 +37,21 @@ const TimeSeriesAndGeneSelector = ({
     };
 
     return (
-        <>
+        <TimeSeriesGridWrapper>
             <DictyGrid
                 onReady={onGridReady}
                 isFetching={isFetching}
                 data={timeSeries}
+                selectionMode="single"
                 filterLabel="Filter time series"
-                columnDefinitions={[
+                columnDefs={[
                     { field: 'id', headerName: 'Id', width: 20 },
                     { field: 'collection.name', headerName: 'Name', width: 50 },
                 ]}
                 onRowSelected={timeSeriesSelectedHandler}
             />
             <GeneSelector />
-        </>
+        </TimeSeriesGridWrapper>
     );
 };
 

@@ -1,26 +1,43 @@
 import { AgGridReact } from 'ag-grid-react';
 import React, { ReactElement, useEffect, useState, useRef } from 'react';
-import { GridApi, RowSelectedEvent, GridReadyEvent, ColumnApi, ColDef } from 'ag-grid-community';
-import { GridWrapper, FilterTextField } from './dictyGrid.styles';
+import {
+    GridApi,
+    RowSelectedEvent,
+    GridReadyEvent,
+    ColumnApi,
+    ColDef,
+    SelectionChangedEvent,
+    RowClickedEvent,
+} from 'ag-grid-community';
 
-type Props<T extends { id: number | string }> = {
-    showFilter?: boolean;
+import { FilterTextField, GridWrapper } from './dictyGrid.styles';
+
+type Props<T> = {
+    hideFilter?: boolean;
     filterLabel?: string;
     data: T[];
-    isFetching: boolean;
-    columnDefinitions: ColDef[];
-    onReady: () => void;
-    onRowSelected: (id: number | string) => void;
+    isFetching?: boolean;
+    columnDefs: ColDef[];
+    selectionMode?: 'single' | 'multiple';
+    suppressRowClickSelection?: boolean;
+    onReady?: () => void;
+    onRowClicked?: (itemData: T) => void;
+    onRowSelected?: (itemData: T) => void;
+    onSelectionChanged?: (selectedItemsDatas: T[]) => void;
 };
 
-const DictyGrid = <T extends { id: number | string }>({
+const DictyGrid = <T extends {}>({
     data,
     isFetching,
-    showFilter = true,
+    hideFilter = false,
     filterLabel,
-    columnDefinitions,
+    columnDefs,
+    selectionMode,
+    suppressRowClickSelection = false,
     onReady,
+    onRowClicked,
     onRowSelected,
+    onSelectionChanged,
 }: Props<T>): ReactElement => {
     const [filter, setFilter] = useState<string>('');
     const gridApi = useRef<GridApi | null>(null);
@@ -45,7 +62,7 @@ const DictyGrid = <T extends { id: number | string }>({
     const handleRowSelected = (event: RowSelectedEvent): void => {
         // TODO: maybe it's better to return the whole object, not just id!
         if (event.node.isSelected()) {
-            onRowSelected(event.node.data.id);
+            onRowSelected?.(event.node.data);
         }
     };
 
@@ -54,12 +71,29 @@ const DictyGrid = <T extends { id: number | string }>({
         columnApi.current = params.columnApi;
         gridApi.current?.hideOverlay();
         gridApi.current?.sizeColumnsToFit();
-        onReady();
+        onReady?.();
+    };
+
+    const defaultColDef = {
+        flex: 1,
+        resizable: true,
+        sortable: true,
+    };
+
+    const onColumnResized = (): void => {
+        gridApi.current?.resetRowHeights();
+    };
+
+    const handleSelectionChanged = (event: SelectionChangedEvent): void => {
+        onSelectionChanged?.(event.api.getSelectedNodes().map((selectedNode) => selectedNode.data));
+    };
+    const handleRowClicked = (event: RowClickedEvent): void => {
+        onRowClicked?.(event.node.data);
     };
 
     return (
         <>
-            {showFilter && (
+            {!hideFilter && (
                 <FilterTextField
                     variant="outlined"
                     label={filterLabel}
@@ -73,11 +107,22 @@ const DictyGrid = <T extends { id: number | string }>({
                 <AgGridReact
                     ref={gridElement}
                     onGridReady={handleOnGridReady}
-                    columnDefs={columnDefinitions}
-                    rowSelection="single"
+                    defaultColDef={defaultColDef}
+                    columnDefs={columnDefs}
+                    disableStaticMarkup={false}
+                    rowSelection={selectionMode}
+                    rowStyle={
+                        selectionMode != null || handleRowClicked != null
+                            ? { cursor: 'pointer' }
+                            : {}
+                    }
+                    suppressRowClickSelection={suppressRowClickSelection}
+                    onRowClicked={handleRowClicked}
                     onRowSelected={handleRowSelected}
+                    onSelectionChanged={handleSelectionChanged}
                     rowData={data}
                     quickFilterText={filter}
+                    onColumnResized={onColumnResized}
                 />
             </GridWrapper>
         </>

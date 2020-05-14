@@ -19,6 +19,7 @@ import { getSelectedSamplesInfo } from '../../../../../../redux/stores/timeSerie
 import { RootState } from '../../../../../../redux/rootReducer';
 import { splitAndCleanGenesString } from '../../../../../../utils/stringUtils';
 import { pasteGeneNames } from '../../../../../../redux/thunks/geneThunks';
+import GeneSetSelector from '../geneSets/geneSetSelector';
 
 const itemRender = (option: Gene): ReactElement => {
     return (
@@ -191,6 +192,11 @@ const GeneSelector = ({
         <>
             <TitleSection>
                 <h3>Genes</h3>
+                <GeneSetSelector
+                    onSelect={handleImportedGenesNames}
+                    selectedGenes={selectedGenes}
+                    disabled={isDisabled}
+                />
             </TitleSection>
             <Tooltip title={isDisabled ? 'First select a time series.' : ''}>
                 <Autocomplete

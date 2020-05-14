@@ -1,25 +1,27 @@
 import React, { ReactNode, ReactElement } from 'react';
-import { Tooltip, IconButton } from '@material-ui/core';
+import { Tooltip } from '@material-ui/core';
+import { StyledIconButton, StyledIconButtonProps } from './iconButtonWithTooltip.styles';
 
-type IconButtonProps = {
+type IconButtonWithTooltipProps = {
     title: string;
     disabled?: boolean;
     children: ReactNode;
     onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-};
+} & Pick<StyledIconButtonProps, 'noPadding'>;
 
 const IconButtonWithTooltip = ({
     title,
     disabled,
     children,
+    noPadding,
     onClick,
-}: IconButtonProps): ReactElement => {
+}: IconButtonWithTooltipProps): ReactElement => {
     return (
         <Tooltip title={title}>
             <span>
-                <IconButton onClick={onClick} disabled={disabled}>
+                <StyledIconButton onClick={onClick} disabled={disabled} noPadding={noPadding}>
                     {children}
-                </IconButton>
+                </StyledIconButton>
             </span>
         </Tooltip>
     );
