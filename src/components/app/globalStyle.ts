@@ -1,44 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
-import fsJoeyWebRegularWoff from '../../fonts/FSJoeyRegular.woff';
-import fsJoeyWebRegularEot from '../../fonts/FSJoeyRegular.eot';
-import fsJoeyWebRegularTtf from '../../fonts/FSJoeyRegular.ttf';
-
-import fsJoeyWebBoldWoff from '../../fonts/FSJoeyBold.woff';
-import fsJoeyWebBoldEot from '../../fonts/FSJoeyBold.eot';
-import fsJoeyWebBoldTtf from '../../fonts/FSJoeyBold.ttf';
-
-import fsJoeyWebHeavyWoff from '../../fonts/FSJoeyHeavy.woff';
-import fsJoeyWebHeavyEot from '../../fonts/FSJoeyHeavy.eot';
-import fsJoeyWebHeavyTtf from '../../fonts/FSJoeyHeavy.ttf';
 
 export const GlobalStyle = createGlobalStyle`
-  @font-face {
-    font-family: 'FS Joey Web Bold';
-    src: url(${fsJoeyWebBoldEot}) format('embedded-opentype'),
-    url(${fsJoeyWebBoldWoff}) format('woff'),
-    url(${fsJoeyWebBoldTtf}) format('opentype');
-    font-weight: bold;
-    font-style: normal;
-  }
-
-  @font-face {
-    font-family: 'FS Joey Web Regular';
-    src: url(${fsJoeyWebRegularEot}) format('embedded-opentype'),
-    url(${fsJoeyWebRegularWoff}) format('woff'),
-    url(${fsJoeyWebRegularTtf}) format('opentype');
-    font-weight: normal;
-    font-style: normal;
-  }
-
-  @font-face {
-    font-family: 'FS Joey Web Heavy';
-    src: url(${fsJoeyWebHeavyEot}) format('embedded-opentype'),
-    url(${fsJoeyWebHeavyWoff}) format('woff'),
-    url(${fsJoeyWebHeavyTtf}) format('opentype');
-    font-weight: 800;
-    font-style: normal;
-  }
-
   body {
     margin: 0;
     min-width: 360px;

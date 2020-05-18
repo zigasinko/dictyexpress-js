@@ -12,3 +12,30 @@ $primary: #49688d;
 
     font-family: ('FS Joey Web Regular', 'Helvetica', 'Arial', 'Verdana', 'sans-serif');
 }
+
+@font-face {
+    font-family: 'FS Joey Web Bold';
+    src: url('../../fonts/FSJoeyBold.eot') format('embedded-opentype'),
+        url('../../fonts/FSJoeyBold.woff') format('woff'),
+        url('../../fonts/FSJoeyBold.ttf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'FS Joey Web Regular';
+    src: url('../../fonts/FSJoeyRegular.eot') format('embedded-opentype'),
+        url('../../fonts/FSJoeyRegular.woff') format('woff'),
+        url('../../fonts/FSJoeyRegular.ttf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'FS Joey Web Heavy';
+    src: url('../../fonts/FSJoeyHeavy.eot') format('embedded-opentype'),
+        url('../../fonts/FSJoeyHeavy.woff') format('woff'),
+        url('../../fonts/FSJoeyHeavy.ttf') format('opentype');
+    font-weight: 800;
+    font-style: normal;
+}
