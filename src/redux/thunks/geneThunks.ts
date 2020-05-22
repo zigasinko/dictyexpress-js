@@ -4,6 +4,8 @@ import { RootState } from '../rootReducer';
 import { getSelectedSamplesInfo } from '../stores/timeSeries';
 import { pastedGenesFetchStarted, genesSelected, pastedGenesFetchEnded } from '../stores/genes';
 import * as featureApi from '../../api/featureApi';
+import { Gene } from '../models/internal';
+import { fetchTimeSeriesSamplesExpressions } from './timeSeriesThunks';
 
 /**
  * Fetch gene data for given genes names and mark them as selected. All that weren't found are
@@ -37,5 +39,12 @@ export const pasteGeneNames = (
         dispatch(pastedGenesFetchEnded());
 
         return [];
+    };
+};
+
+export const selectGenes = (genes: Gene[]): ThunkAction<void, RootState, Gene[], AnyAction> => {
+    return (dispatch): void => {
+        dispatch(genesSelected(genes));
+        dispatch(fetchTimeSeriesSamplesExpressions());
     };
 };

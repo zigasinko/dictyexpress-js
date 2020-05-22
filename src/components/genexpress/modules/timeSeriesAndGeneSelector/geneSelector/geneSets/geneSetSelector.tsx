@@ -18,8 +18,7 @@ const GeneSetSelector = ({
     disabled,
     onSelect,
 }: SelectGeneSetProps): ReactElement => {
-    // const [geneSets, setGeneSets] = useState<GeneSets>([]);
-    const [manageGeneSetsModalOpened, setManageGeneSetsModalOpened] = useState(false);
+    const [manageModalOpened, setManageModalOpened] = useState(false);
     const [geneSets, setGeneSets] = useLocalStorage<GeneSet[]>(LocalStorageKey.GENE_LISTS, []);
 
     const addGeneSet = (): void => {
@@ -35,7 +34,7 @@ const GeneSetSelector = ({
     };
 
     const handleOnClick = (geneSet: GeneSet): void => {
-        setManageGeneSetsModalOpened(false);
+        setManageModalOpened(false);
         onSelect(geneSet.genesNames);
     };
 
@@ -56,7 +55,7 @@ const GeneSetSelector = ({
                 </IconButtonWithTooltip>
                 <Button
                     size="small"
-                    onClick={(): void => setManageGeneSetsModalOpened(!manageGeneSetsModalOpened)}
+                    onClick={(): void => setManageModalOpened(!manageModalOpened)}
                     disabled={disabled}
                 >
                     History
@@ -64,11 +63,11 @@ const GeneSetSelector = ({
             </div>
 
             <ManageGeneSets
-                open={manageGeneSetsModalOpened}
+                open={manageModalOpened}
                 geneSets={geneSets}
                 onClick={handleOnClick}
                 onDelete={handleOnDelete}
-                onClose={(): void => setManageGeneSetsModalOpened(false)}
+                onClose={(): void => setManageModalOpened(false)}
             />
         </>
     );

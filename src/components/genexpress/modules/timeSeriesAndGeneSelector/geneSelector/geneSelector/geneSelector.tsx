@@ -11,14 +11,13 @@ import { getGenes } from '../../../../../../api/featureApi';
 import SelectedGenes from '../selectedGenes/selectedGenes';
 import {
     getSelectedGenes,
-    genesSelected,
     getHighlightedGenesNames,
     getIsFetchingPastedGenes,
 } from '../../../../../../redux/stores/genes';
 import { getSelectedSamplesInfo } from '../../../../../../redux/stores/timeSeries';
 import { RootState } from '../../../../../../redux/rootReducer';
 import { splitAndCleanGenesString } from '../../../../../../utils/stringUtils';
-import { pasteGeneNames } from '../../../../../../redux/thunks/geneThunks';
+import { pasteGeneNames, selectGenes } from '../../../../../../redux/thunks/geneThunks';
 import GeneSetSelector from '../geneSets/geneSetSelector';
 
 const itemRender = (option: Gene): ReactElement => {
@@ -49,7 +48,7 @@ const mapStateToProps = (
 };
 
 const connector = connect(mapStateToProps, {
-    connectedGenesSelected: genesSelected,
+    connectedSelectGenes: selectGenes,
     connectedPasteGeneNames: pasteGeneNames,
 });
 
@@ -58,7 +57,7 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 const GeneSelector = ({
     selectedSamplesInfo,
     selectedGenes,
-    connectedGenesSelected,
+    connectedSelectGenes: connectedGenesSelected,
     highlightedGenesNames,
     isFetchingPastedGenes,
     connectedPasteGeneNames,

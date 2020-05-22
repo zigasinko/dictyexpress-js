@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import TimeSeriesAndGeneSelector from './modules/timeSeriesAndGeneSelector/timeSeriesAndGeneSelector';
+import GeneExpressions from './modules/geneExpressions/geneExpressions';
 import DictyModule from './common/dictyModule/dictyModule';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -84,7 +85,7 @@ const GeneExpressGrid = (): ReactElement => {
                 </div>
                 <div key="secondModule">
                     <DictyModule title="Expression Time Courses">
-                        <span>Expression Time Courses</span>
+                        <GeneExpressions />
                     </DictyModule>
                 </div>
             </ResponsiveGridLayout>

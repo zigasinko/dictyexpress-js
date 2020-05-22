@@ -71,7 +71,7 @@ export const {
 
 export const {
     highlighted: geneHighlighted,
-    highlightedMultiple: geneHighlightedMultiple,
+    highlightedMultiple: genesHighlighted,
     unhighlighted: geneUnhighlighted,
 } = highlightedGenesSlice.actions;
 

@@ -3,7 +3,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { Relation } from '@genialis/resolwe/dist/api/types/rest';
 import { RootState } from '../../../../redux/rootReducer';
 import { selectTimeSeries, fetchTimeSeries } from '../../../../redux/thunks/timeSeriesThunks';
-import { getTimeSeries, getIsFetching } from '../../../../redux/stores/timeSeries';
+import { getTimeSeries, getTimeSeriesIsFetching } from '../../../../redux/stores/timeSeries';
 import GeneSelector from './geneSelector/geneSelector/geneSelector';
 import DictyGrid from '../../common/dictyGrid/dictyGrid';
 import { TimeSeriesGridWrapper } from './timeSeriesAndGeneSelector.styles';
@@ -11,7 +11,7 @@ import { TimeSeriesGridWrapper } from './timeSeriesAndGeneSelector.styles';
 const mapStateToProps = (state: RootState): { timeSeries: Relation[]; isFetching: boolean } => {
     return {
         timeSeries: getTimeSeries(state.timeSeries),
-        isFetching: getIsFetching(state.timeSeries),
+        isFetching: getTimeSeriesIsFetching(state.timeSeries),
     };
 };
 
@@ -28,7 +28,7 @@ const TimeSeriesAndGeneSelector = ({
     isFetching,
     connectedSelectTimeSeries,
 }: PropsFromRedux): ReactElement => {
-    const timeSeriesSelectedHandler = (selectedTimeSeries: Relation): void => {
+    const onRowSelectedHandler = (selectedTimeSeries: Relation): void => {
         connectedSelectTimeSeries(selectedTimeSeries.id);
     };
 
@@ -48,7 +48,7 @@ const TimeSeriesAndGeneSelector = ({
                     { field: 'id', headerName: 'Id', width: 20 },
                     { field: 'collection.name', headerName: 'Name', width: 50 },
                 ]}
-                onRowSelected={timeSeriesSelectedHandler}
+                onRowSelected={onRowSelectedHandler}
             />
             <GeneSelector />
         </TimeSeriesGridWrapper>

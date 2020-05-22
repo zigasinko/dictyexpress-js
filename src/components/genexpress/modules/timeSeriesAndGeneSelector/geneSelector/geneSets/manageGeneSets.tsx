@@ -74,7 +74,7 @@ const ManageGeneSets = ({
                                 },
                                 {
                                     field: 'genesNames',
-                                    headerName: 'Genes',
+                                    headerName: 'Gene[]',
                                     autoHeight: true,
                                     cellStyle: { 'white-space': 'normal' },
                                     valueFormatter: (params: ValueFormatterParams): string => {

@@ -14,7 +14,6 @@ import LandingPage from '../landing/landingPage';
 import PageNotFound from '../pageNotFound';
 import { GlobalStyle } from './globalStyle';
 import theme from './theme';
-import GeneExpressPage from '../genexpress/geneExpressPage';
 import store from '../../redux/rootStore';
 import GeneExpressGrid from '../genexpress/geneExpressGrid';
 
@@ -32,7 +31,6 @@ const App = (): ReactElement => {
                                 <Route exact path="/" component={LandingPage} />
                                 <Route path="/landing" component={LandingPage} />
                                 <Route path="/bcm" component={GeneExpressGrid} />
-                                <Route path="/bcmold" component={GeneExpressPage} />
                                 <Route component={PageNotFound} />
                             </Switch>
                         </BrowserRouter>

@@ -52,7 +52,7 @@ const timeSeriesReducer = combineReducers({
     selectedId: selectedIdSlice.reducer,
     isFetching: isFetchingSlice.reducer,
     isAddingToBasket: isAddingToBasket.reducer,
-    selectedSamplesData: samplesInfoSlice.reducer,
+    selectedSamplesInfo: samplesInfoSlice.reducer,
 });
 
 // Export actions.
@@ -72,7 +72,7 @@ export default timeSeriesReducer;
 const getTimeSeriesById = (state: TimeSeriesState): RelationsById => state.byId;
 const getSelectedTimeSeriesId = (state: TimeSeriesState): number => state.selectedId;
 
-export const getIsFetching = (state: TimeSeriesState): boolean => state.isFetching;
+export const getTimeSeriesIsFetching = (state: TimeSeriesState): boolean => state.isFetching;
 
 // createSelector function uses memoization so that only if byId slice changes it will get recomputed again.
 export const getTimeSeries = createSelector(getTimeSeriesById, (timeSeriesById) => {
@@ -91,7 +91,7 @@ export const getSelectedTimeSeries = createSelector(
 );
 
 export const getSelectedSamplesInfo = (state: TimeSeriesState): SamplesInfo =>
-    state.selectedSamplesData;
+    state.selectedSamplesInfo;
 
 export const getSelectedTimeSeriesLabels = createSelector(
     getSelectedTimeSeries,

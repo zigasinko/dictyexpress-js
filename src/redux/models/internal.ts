@@ -24,3 +24,11 @@ export type GeneSet = {
     dateTime: Date;
     genesNames: string[];
 };
+
+export type GeneExpression = {
+    [geneId: string]: number;
+};
+
+export type SamplesExpressionsById = {
+    [sampleId: number]: GeneExpression;
+};
