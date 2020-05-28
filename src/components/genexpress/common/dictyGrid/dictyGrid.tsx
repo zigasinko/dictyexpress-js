@@ -9,31 +9,35 @@ import {
     SelectionChangedEvent,
     RowClickedEvent,
 } from 'ag-grid-community';
-
+import _ from 'lodash';
 import { FilterTextField, GridWrapper } from './dictyGrid.styles';
 
 type Props<T> = {
     hideFilter?: boolean;
     filterLabel?: string;
     data: T[];
+    selectedData?: T[];
     isFetching?: boolean;
     columnDefs: ColDef[];
     selectionMode?: 'single' | 'multiple';
     suppressRowClickSelection?: boolean;
+    getRowId: (data: T) => string;
     onReady?: () => void;
     onRowClicked?: (itemData: T) => void;
     onRowSelected?: (itemData: T) => void;
-    onSelectionChanged?: (selectedItemsDatas: T[]) => void;
+    onSelectionChanged?: (selectedItemsData: T[]) => void;
 };
 
 const DictyGrid = <T extends {}>({
     data,
+    selectedData,
     isFetching,
     hideFilter = false,
     filterLabel,
     columnDefs,
     selectionMode,
     suppressRowClickSelection = false,
+    getRowId,
     onReady,
     onRowClicked,
     onRowSelected,
@@ -65,11 +69,28 @@ const DictyGrid = <T extends {}>({
         }
     };
 
+    // If any value is already selected, it needs to be manually set as selected or else grid won't show it.
+    const setSelectedData = (dataToSelect: T[] | undefined): void => {
+        if (_.isEmpty(dataToSelect) || dataToSelect == null) {
+            return;
+        }
+
+        const selectedDataIds = dataToSelect.map(getRowId);
+        gridApi.current?.forEachNode((node) => {
+            if (selectedDataIds?.includes(getRowId(node.data))) {
+                node.setSelected(true);
+            }
+        });
+    };
+
     const handleOnGridReady = (params: GridReadyEvent): void => {
         gridApi.current = params.api;
         columnApi.current = params.columnApi;
         gridApi.current?.hideOverlay();
         gridApi.current?.sizeColumnsToFit();
+
+        setSelectedData(selectedData);
+
         onReady?.();
     };
 
@@ -86,6 +107,7 @@ const DictyGrid = <T extends {}>({
     const handleSelectionChanged = (event: SelectionChangedEvent): void => {
         onSelectionChanged?.(event.api.getSelectedNodes().map((selectedNode) => selectedNode.data));
     };
+
     const handleRowClicked = (event: RowClickedEvent): void => {
         onRowClicked?.(event.node.data);
     };
@@ -118,6 +140,8 @@ const DictyGrid = <T extends {}>({
                     suppressRowClickSelection={suppressRowClickSelection}
                     onRowClicked={handleRowClicked}
                     onRowSelected={handleRowSelected}
+                    getRowNodeId={getRowId}
+                    immutableData
                     onSelectionChanged={handleSelectionChanged}
                     rowData={data}
                     quickFilterText={filter}

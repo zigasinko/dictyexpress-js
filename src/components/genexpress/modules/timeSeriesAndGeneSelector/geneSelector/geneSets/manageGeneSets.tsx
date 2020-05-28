@@ -56,6 +56,7 @@ const ManageGeneSets = ({
                     <ManageGeneSetsGridWrapper>
                         <DictyGrid
                             data={geneSets}
+                            getRowId={(data): string => data.dateTime.toString()}
                             filterLabel="Filter time series"
                             columnDefs={[
                                 {

@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { initializeSentry } from 'utils/sentryUtils';
@@ -8,10 +9,19 @@ if (process.env.NODE_ENV === 'production') {
         initializeSentry(process.env.REACT_APP_SENTRY_URL);
     }
 }
+const rootElement = document.getElementById('root');
 
 ReactDOM.render(
     <React.StrictMode>
         <App />
     </React.StrictMode>,
-    document.getElementById('root'),
+    rootElement,
 );
+
+if (module.hot) {
+    module.hot.accept('./components/app/app', () => {
+        // eslint-disable-next-line import/no-unresolved
+        const NextApp = require('./components/app/app').default;
+        ReactDOM.render(<NextApp />, rootElement);
+    });
+}

@@ -10,6 +10,12 @@ const middleware = getDefaultMiddleware();
 
 const store = configureStore({ reducer: rootReducer, middleware });
 
+if (module.hot) {
+    module.hot.accept('./rootReducer', () => {
+        store.replaceReducer(rootReducer);
+    });
+}
+
 export type AppDispatch = typeof store.dispatch;
 export const useAppDispatch = (): AppDispatch => useDispatch<AppDispatch>();
 
