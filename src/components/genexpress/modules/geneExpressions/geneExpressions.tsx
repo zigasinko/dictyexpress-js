@@ -2,11 +2,12 @@ import React, { ReactElement, useEffect, useState, useCallback } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import _ from 'lodash';
 import { RootState } from 'redux/rootReducer';
-import { getSelectedGenes, getHighlightedGenesNames } from 'redux/stores/genes';
+import { getSelectedGenes, getHighlightedGenesNames, genesHighlighted } from 'redux/stores/genes';
 import { Relation, RelationPartition } from '@genialis/resolwe/dist/api/types/rest';
-import { Gene, SamplesExpressionsById } from 'redux/models/internal';
+import { SamplesExpressionsById, GeneVisualizationData, Gene } from 'redux/models/internal';
 import { getSelectedTimeSeries, getSelectedTimeSeriesLabels } from 'redux/stores/timeSeries';
 import { getSamplesExpressionsById } from 'redux/stores/samplesExpressions';
+import GeneExpressionsLineChart from './geneExpressionsLineChart';
 
 const mapStateToProps = (
     state: RootState,
@@ -31,22 +32,19 @@ const mapStateToProps = (
     };
 };
 
-const connector = connect(mapStateToProps, {});
+const connector = connect(mapStateToProps, {
+    connectedGenesHighlighted: genesHighlighted,
+});
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
-
-type GeneVisualizationData = {
-    geneName: string;
-    label: string;
-    color?: string;
-    data: unknown[][];
-};
 
 const GeneExpressions = ({
     timeSeries,
     timeSeriesLabels,
     genes,
     samplesExpressionsById,
+    connectedGenesHighlighted,
+    highlightedGenesNames,
 }: PropsFromRedux): ReactElement => {
     const [genesExpressionsData, setGenesExpressionsData] = useState<GeneVisualizationData[]>([]);
 
@@ -57,6 +55,13 @@ const GeneExpressions = ({
         [timeSeries],
     );
 
+    const handleOnHighlight = useCallback(
+        (genesNames: string[]): void => {
+            connectedGenesHighlighted(genesNames);
+        },
+        [connectedGenesHighlighted],
+    );
+
     // Each time timeSeries or genes changes, visualization data must be refreshed.
     useEffect(() => {
         if (timeSeries == null || Object.keys(samplesExpressionsById).length === 0) {
@@ -65,25 +70,20 @@ const GeneExpressions = ({
 
         const newGenesExpressionsData = [] as GeneVisualizationData[];
 
-        // Get data for each gene (average values from all partitions - time points).
-        genes.forEach((gene) => {
-            const geneVisualizationData = {
-                geneName: gene.name,
-                label: gene.name,
-                data: [],
-            } as GeneVisualizationData;
-            // Retrieve partitions samples for the gene and average samples expressions values.
-            const values: number[] = [];
-            timeSeriesLabels.forEach((label) => {
-                const timePointPartitions = findLabelPartitions(label);
+        timeSeriesLabels.forEach((label) => {
+            const timePointPartitions = findLabelPartitions(label);
+            genes.forEach((gene) => {
+                const values: number[] = [];
                 timePointPartitions.forEach((partition) => {
                     values.push(samplesExpressionsById[partition.entity][gene.feature_id]);
                 });
 
-                geneVisualizationData.data.push([label, _.mean(values)]);
+                newGenesExpressionsData.push({
+                    x: label,
+                    y: _.mean(values),
+                    geneName: gene.name,
+                });
             });
-
-            newGenesExpressionsData.push(geneVisualizationData);
         });
 
         setGenesExpressionsData(newGenesExpressionsData);
@@ -91,8 +91,13 @@ const GeneExpressions = ({
 
     return (
         <>
-            <span>This should be a geneExpressions visualization!</span>
-            <div>{JSON.stringify(genesExpressionsData)}</div>
+            {genesExpressionsData.length > 0 && (
+                <GeneExpressionsLineChart
+                    data={genesExpressionsData}
+                    highlighted={highlightedGenesNames}
+                    onHighlight={handleOnHighlight}
+                />
+            )}
         </>
     );
 };

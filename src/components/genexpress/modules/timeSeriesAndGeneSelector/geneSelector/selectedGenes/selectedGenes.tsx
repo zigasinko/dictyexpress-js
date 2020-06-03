@@ -5,8 +5,8 @@ import { ContentCopy as ContentCopyIcon } from 'mdi-material-ui';
 import { Gene } from 'redux/models/internal';
 import {
     geneDeselected,
-    geneHighlighted,
     geneUnhighlighted,
+    geneHighlighted,
     allGenesDeselected,
 } from 'redux/stores/genes';
 import IconButtonWithTooltip from 'components/genexpress/common/iconButtonWithTooltip/iconButtonWithTooltip';
@@ -41,11 +41,11 @@ const SelectedGenes = ({
     };
 
     const handleOnHighlight = (gene: Gene): void => {
-        connectedGeneHighlighted(gene);
+        connectedGeneHighlighted(gene.name);
     };
 
     const handleOnUnhighlight = (gene: Gene): void => {
-        connectedGeneUnhighlighted(gene);
+        connectedGeneUnhighlighted(gene.name);
     };
 
     const handleCopyClick = (): void => {

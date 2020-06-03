@@ -1,0 +1,198 @@
+import React, { ReactElement, useRef, useEffect, useCallback } from 'react';
+import * as vega from 'vega';
+import * as vegaTooltip from 'vega-tooltip';
+import { withSize, SizeMeProps } from 'react-sizeme';
+import { Spec } from 'vega';
+import { useDispatch } from 'react-redux';
+import { forwardToSentryAndNotifyUser } from 'utils/errorUtils';
+import { vegaTheme } from '../theming/vegaTheme';
+
+export type DataHandler = {
+    name: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    handler: (name: string, value: any) => void;
+};
+
+export type DataDefinition = {
+    name: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data: Array<any>;
+};
+
+type ChartProps = {
+    updatableDataDefinitions: Array<DataDefinition>;
+    dataHandlers?: Array<DataHandler>;
+    vegaSpecification: Spec;
+} & SizeMeProps;
+
+const chartPadding = { top: 40, left: 10, bottom: 10, right: 10 };
+
+/**
+ * Chart component is the basis for all charts that want to use Vega charting library.
+ *
+ * For performance reasons, chart will get reinitialized only if vegaSpecification changes.
+ * All other updates are handled with API calls (set data -> run. That's why we must pass
+ * updatableDataDefinitions for each data that can get updated.
+ *
+ * Add all data handlers (that execute after data object changes) via 'dataHandlers'
+ * variable. All handlers will be automatically removed after view is removed from DOM.
+ */
+const Chart = ({
+    updatableDataDefinitions,
+    dataHandlers,
+    size: { width, height },
+    vegaSpecification,
+}: ChartProps): ReactElement => {
+    const renderer = 'svg';
+    const dispatch = useDispatch();
+
+    const addedDataHandlers = useRef<Array<DataHandler>>([]);
+
+    // Element with the chart.
+    const chartElement = useRef<HTMLDivElement>(null);
+    const chartView = useRef<vega.View>();
+
+    /**
+     * Retrieve width of chart element (chart container div).
+     */
+    const getChartWidth = useCallback((): number => {
+        if (!chartElement.current) {
+            return 0;
+        }
+
+        return chartElement.current.clientWidth - chartPadding.left - chartPadding.right;
+    }, []);
+
+    /**
+     * Retrieve height of chart element (chart container div).
+     */
+    const getChartHeight = useCallback((): number => {
+        if (!chartElement.current) {
+            return 0;
+        }
+
+        return chartElement.current.clientHeight - chartPadding.top - chartPadding.bottom;
+    }, []);
+
+    /**
+     * Vega runAsync evaluates the underlying dataflow graph and returns a Promise that
+     * resolves upon completion of dataflow processing and scenegraph rendering.
+     */
+    const runChart = useCallback((): void => {
+        try {
+            chartView.current?.runAsync();
+        } catch (error) {
+            forwardToSentryAndNotifyUser('Error generating chart.', error, dispatch);
+        }
+    }, [dispatch]);
+
+    /**
+     * Set chart width and height via Vega API.
+     */
+    const resizeChart = useCallback((): void => {
+        chartView.current?.width(getChartWidth());
+        chartView.current?.height(getChartHeight());
+
+        runChart();
+    }, [getChartHeight, getChartWidth, runChart]);
+
+    /**
+     * Resize on parent element width / height change.
+     */
+    useEffect(() => {
+        resizeChart();
+    }, [width, height, resizeChart]);
+
+    /**
+     * Initialize the actual chart via Vega JS API.
+     */
+    useEffect((): undefined | (() => void) => {
+        const defaultSpecification: vega.Spec = {
+            width: getChartWidth(),
+            height: getChartHeight(),
+            padding: chartPadding,
+            autosize: {
+                type: 'fit',
+                contains: 'padding',
+            },
+            signals: [],
+            data: [],
+            legends: [],
+            marks: [],
+            scales: [],
+            axes: [],
+        };
+        const renderSpecification = { ...defaultSpecification, ...vegaSpecification };
+
+        const generateChart = (): void => {
+            chartView.current = new vega.View(vega.parse(renderSpecification, vegaTheme), {
+                renderer,
+                container: '#view',
+                hover: true,
+                logLevel: vega.Debug,
+            });
+
+            const tooltipHandler = new vegaTooltip.Handler({});
+            chartView.current.tooltip(tooltipHandler.call);
+
+            runChart();
+        };
+
+        generateChart();
+
+        // Vega Cleanup.
+        return (): void => {
+            // Unregister any timers and remove any event listeners the visualization has
+            // registered on external DOM elements.
+            chartView.current?.finalize();
+        };
+    }, [getChartHeight, getChartWidth, runChart, vegaSpecification]);
+
+    /**
+     * Manage data handlers.
+     */
+    useEffect(() => {
+        if (dataHandlers != null && chartView.current != null) {
+            // If any handlers are already attached, first remove them all.
+            for (let i = 0; i < addedDataHandlers.current.length; i += 1) {
+                const addedDataHandler = addedDataHandlers.current[i];
+                chartView.current.removeDataListener(
+                    addedDataHandler.name,
+                    addedDataHandler.handler,
+                );
+            }
+
+            // Add new handlers.
+            for (let i = 0; i < dataHandlers.length; i += 1) {
+                const newDataHandler = dataHandlers[i];
+                chartView.current.addDataListener(newDataHandler.name, newDataHandler.handler);
+            }
+
+            addedDataHandlers.current = dataHandlers;
+        }
+    }, [dataHandlers]);
+
+    /**
+     * Update chart data when updatableDataDefinitions (data) changes.
+     */
+    useEffect(() => {
+        updatableDataDefinitions.forEach((dataDefinition) => {
+            chartView.current?.data(dataDefinition.name, dataDefinition.data);
+        });
+
+        runChart();
+    }, [updatableDataDefinitions, runChart]);
+
+    return (
+        <div style={{ width: '100%', height: '100%' }}>
+            <div id="view" style={{ width: '100%', height: '100%' }} ref={chartElement} />
+        </div>
+    );
+};
+
+export default withSize({
+    monitorHeight: true,
+    monitorWidth: true,
+    refreshRate: 100,
+    refreshMode: 'debounce',
+})(Chart);

@@ -45,3 +45,11 @@ export type SnackbarNotificationContent = {
 export type SnackbarNotification = {
     key: SnackbarKey;
 } & Pick<SnackbarNotificationContent, 'message' | 'variant' | 'action'>;
+
+export type SnackbarNotifications = Array<SnackbarNotification>;
+
+export type GeneVisualizationData = {
+    x: string;
+    y: number;
+    geneName: string;
+};

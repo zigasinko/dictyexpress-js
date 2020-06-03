@@ -41,14 +41,14 @@ const highlightedGenesSlice = createSlice({
     name: 'genes',
     initialState: highlightedGenesInitialState,
     reducers: {
-        highlighted: (state, action: PayloadAction<Gene>): string[] => {
-            return [...state, action.payload.name];
+        highlighted: (state, action: PayloadAction<string>): string[] => {
+            return [...state, action.payload];
         },
-        highlightedMultiple: (state, action: PayloadAction<Gene[]>): string[] => {
-            return _.map(action.payload, 'name');
+        highlightedMultiple: (state, action: PayloadAction<string[]>): string[] => {
+            return [...action.payload];
         },
-        unhighlighted: (state, action: PayloadAction<Gene>): string[] => {
-            return state.filter((geneName) => action.payload.name !== geneName);
+        unhighlighted: (state, action: PayloadAction<string>): string[] => {
+            return state.filter((geneName) => action.payload !== geneName);
         },
     },
 });
