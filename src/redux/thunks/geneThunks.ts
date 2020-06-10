@@ -5,7 +5,7 @@ import { getSelectedSamplesInfo } from '../stores/timeSeries';
 import { pastedGenesFetchStarted, genesSelected, pastedGenesFetchEnded } from '../stores/genes';
 import * as featureApi from '../../api/featureApi';
 import { Gene } from '../models/internal';
-import { fetchTimeSeriesSamplesExpressions } from './timeSeriesThunks';
+import { forwardToSentryAndNotifyUser } from '../../utils/errorUtils';
 
 /**
  * Fetch gene data for given genes names and mark them as selected. All that weren't found are
@@ -20,20 +20,22 @@ export const pasteGeneNames = (
         dispatch(pastedGenesFetchStarted());
 
         const samplesInfo = getSelectedSamplesInfo(getState().timeSeries);
-        const genes = await featureApi.getGenesByNames(
-            samplesInfo.source,
-            samplesInfo.species,
-            samplesInfo.type,
-            genesNames,
-        );
+        try {
+            const genes = await featureApi.getGenesByNames(
+                samplesInfo.source,
+                samplesInfo.species,
+                samplesInfo.type,
+                genesNames,
+            );
 
-        if (genes != null) {
             dispatch(genesSelected(genes));
 
             dispatch(pastedGenesFetchEnded());
 
             // Return every gene name that wasn't found.
             return genesNames.filter((geneName) => _.find(genes, { name: geneName }) == null);
+        } catch (error) {
+            forwardToSentryAndNotifyUser('Error searching for pasted genes.', error, dispatch);
         }
 
         dispatch(pastedGenesFetchEnded());
@@ -45,6 +47,5 @@ export const pasteGeneNames = (
 export const selectGenes = (genes: Gene[]): ThunkAction<void, RootState, Gene[], AnyAction> => {
     return (dispatch): void => {
         dispatch(genesSelected(genes));
-        dispatch(fetchTimeSeriesSamplesExpressions());
     };
 };

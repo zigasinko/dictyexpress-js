@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { LinearProgress } from '@material-ui/core';
 
 export const ModuleContainer = styled.div`
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
@@ -18,6 +19,12 @@ export const ModuleHeader = styled.div`
     position: absolute;
     top: 0;
     left: 0;
+`;
+
+export const ModuleHeaderLoadingBar = styled(LinearProgress)`
+    position: absolute;
+    bottom: 0;
+    width: 100%;
 `;
 
 export const ModuleContent = styled.div`

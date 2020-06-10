@@ -1,8 +1,13 @@
 import React, { ReactElement } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
+import { connect, ConnectedProps } from 'react-redux';
 import TimeSeriesAndGeneSelector from './modules/timeSeriesAndGeneSelector/timeSeriesAndGeneSelector';
 import GeneExpressions from './modules/geneExpressions/geneExpressions';
 import DictyModule from './common/dictyModule/dictyModule';
+import SnackbarNotifier from './snackbarNotifier/snackbarNotifier';
+import { RootState } from '../../redux/rootReducer';
+import { getTimeSeriesIsFetching, getIsAddingToBasket } from '../../redux/stores/timeSeries';
+import { getSamplesExpressionsIsFetching } from '../../redux/stores/samplesExpressions';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const defaultLayout = {
@@ -67,9 +72,33 @@ const defaultLayout = {
         },
     ],
 };
-const GeneExpressGrid = (): ReactElement => {
+
+const mapStateToProps = (
+    state: RootState,
+): {
+    isFetchingTimeSeries: boolean;
+    isAddingToBasket: boolean;
+    isFetchingSamplesExpressions: boolean;
+} => {
+    return {
+        isFetchingTimeSeries: getTimeSeriesIsFetching(state.timeSeries),
+        isAddingToBasket: getIsAddingToBasket(state.timeSeries),
+        isFetchingSamplesExpressions: getSamplesExpressionsIsFetching(state.samplesExpressions),
+    };
+};
+
+const connector = connect(mapStateToProps, {});
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+const GeneExpressGrid = ({
+    isFetchingTimeSeries,
+    isAddingToBasket,
+    isFetchingSamplesExpressions,
+}: PropsFromRedux): ReactElement => {
     return (
         <>
+            <SnackbarNotifier />
             <ResponsiveGridLayout
                 className="layout"
                 draggableHandle=".dragHandle"
@@ -79,12 +108,18 @@ const GeneExpressGrid = (): ReactElement => {
                 cols={{ lg: 12, md: 10, sm: 6 }}
             >
                 <div key="timeSeriesAndGeneSelector">
-                    <DictyModule title="Time series and Gene Selection">
+                    <DictyModule
+                        title="Time series and Gene Selection"
+                        isLoading={isFetchingTimeSeries || isAddingToBasket}
+                    >
                         <TimeSeriesAndGeneSelector />
                     </DictyModule>
                 </div>
                 <div key="secondModule">
-                    <DictyModule title="Expression Time Courses">
+                    <DictyModule
+                        title="Expression Time Courses"
+                        isLoading={isFetchingSamplesExpressions}
+                    >
                         <GeneExpressions />
                     </DictyModule>
                 </div>
@@ -93,4 +128,4 @@ const GeneExpressGrid = (): ReactElement => {
     );
 };
 
-export default GeneExpressGrid;
+export default connector(GeneExpressGrid);

@@ -34,12 +34,9 @@ export const getGenesByNames = async (
     species: string,
     type: string,
     genesNames: string[],
-): Promise<Gene[] | null> => {
+): Promise<Gene[]> => {
     if (genesNames.length === 0) {
         throw new Error("Genes names can't be empty.");
-    }
-    if (source === '' || species === '') {
-        return null;
     }
 
     const payload = {

@@ -10,6 +10,7 @@ import {
     ThemeProvider as MuiThemeProvider,
     createMuiTheme,
 } from '@material-ui/core';
+import { SnackbarProvider } from 'notistack';
 import LandingPage from '../landing/landingPage';
 import PageNotFound from '../pageNotFound';
 import { GlobalStyle } from './globalStyle';
@@ -26,14 +27,16 @@ const App = (): ReactElement => {
                 <MuiThemeProvider theme={appTheme}>
                     <StyledComponentsThemeProvider theme={appTheme}>
                         <GlobalStyle />
-                        <BrowserRouter>
-                            <Switch>
-                                <Route exact path="/" component={LandingPage} />
-                                <Route path="/landing" component={LandingPage} />
-                                <Route path="/bcm" component={GeneExpressGrid} />
-                                <Route component={PageNotFound} />
-                            </Switch>
-                        </BrowserRouter>
+                        <SnackbarProvider maxSnack={3}>
+                            <BrowserRouter>
+                                <Switch>
+                                    <Route exact path="/" component={LandingPage} />
+                                    <Route path="/landing" component={LandingPage} />
+                                    <Route path="/bcm" component={GeneExpressGrid} />
+                                    <Route component={PageNotFound} />
+                                </Switch>
+                            </BrowserRouter>
+                        </SnackbarProvider>
                     </StyledComponentsThemeProvider>
                 </MuiThemeProvider>
             </ReduxProvider>

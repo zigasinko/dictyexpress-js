@@ -8,11 +8,39 @@ In the project directory, you can run:
 
 ### `npm start`
 
-Runs the app in the development mode.<br />
+Runs the app in the development mode and proxy for https://qa2.genialis.com (used as an API endpoint).<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+If timeSeries don't load (csrf error in Network tab), navigate to "https://localhost:8001/api/base/csrf" to get the csrf cookie.
 
 The page will reload if you make edits.<br />
 You will also see any lint errors in the console.
+
+https://qa2.genialis.com proxy is bound to https://localhost:8001.
+
+### `npm run prettier:check`
+
+Runs prettier check.
+
+### `npm run prettier:fix`
+
+Runs prettier check with automatic formatting.
+
+### `npm run eslint:check`
+
+Runs ESLint check.
+
+### `npm run eslint:fix`
+
+Runs ESLint check with automatic fix enabled.
+
+### 'npm run check'
+
+Prettier and ESLint checks combined.
+
+### 'npm run fix'
+
+Prettier and ESLint checks with enabled automatic fix combined.
 
 ### `npm test`
 

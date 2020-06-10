@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createSelector } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
 import { SamplesExpressionsById } from '../models/internal';
 import createIsFetchingSlice from './fetch';
@@ -18,7 +18,7 @@ const samplesExpressionsSlice = createSlice({
     },
 });
 
-const isFetchingSamplesExpressionsSlice = createIsFetchingSlice('genes');
+const isFetchingSamplesExpressionsSlice = createIsFetchingSlice('samplesExpressions');
 
 const samplesExpressionsReducer = combineReducers({
     byId: samplesExpressionsSlice.reducer,
@@ -38,5 +38,15 @@ export type SamplesExpressionsState = ReturnType<typeof samplesExpressionsReduce
 export default samplesExpressionsReducer;
 
 // Selectors (exposes the store to containers).
+export const getSamplesExpressionsIsFetching = (state: SamplesExpressionsState): boolean =>
+    state.isFetchingSamplesExpressions;
+
 export const getSamplesExpressionsById = (state: SamplesExpressionsState): SamplesExpressionsById =>
     state.byId;
+
+export const getSamplesExpressionsSamplesIds = createSelector(
+    getSamplesExpressionsById,
+    (samplesExpressionsById) => {
+        return Object.keys(samplesExpressionsById);
+    },
+);

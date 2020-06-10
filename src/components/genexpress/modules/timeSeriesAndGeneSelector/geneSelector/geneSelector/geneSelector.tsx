@@ -5,6 +5,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { connect, ConnectedProps } from 'react-redux';
 import TextField from '@material-ui/core/TextField';
 import { CircularProgress } from '@material-ui/core';
+import { useSnackbar } from 'notistack';
 import { Gene, SamplesInfo } from '../../../../../../redux/models/internal';
 import { AutoCompleteItemSpan, TitleSection } from './geneSelector.styles';
 import { getGenes } from '../../../../../../api/featureApi';
@@ -57,9 +58,9 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 const GeneSelector = ({
     selectedSamplesInfo,
     selectedGenes,
-    connectedSelectGenes: connectedGenesSelected,
     highlightedGenesNames,
     isFetchingPastedGenes,
+    connectedSelectGenes,
     connectedPasteGeneNames,
 }: PropsFromRedux): ReactElement => {
     const {
@@ -72,6 +73,7 @@ const GeneSelector = ({
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [genes, setGenes] = useState<Gene[]>([]);
+    const { enqueueSnackbar } = useSnackbar();
 
     const fetchGenes = useCallback(
         debounce(async (queryValue: string): Promise<void> => {
@@ -91,6 +93,8 @@ const GeneSelector = ({
                         null,
                 );
                 setGenes(filteredGenesResult);
+            } else {
+                enqueueSnackbar('Error fetching genes.', { variant: 'error' });
             }
 
             setAutocompleteOpen(true);
@@ -123,7 +127,7 @@ const GeneSelector = ({
 
     const handleOnChange = (_event: unknown, newValue: Gene[]): void => {
         setValue(newValue);
-        connectedGenesSelected(newValue);
+        connectedSelectGenes(newValue);
     };
 
     /**

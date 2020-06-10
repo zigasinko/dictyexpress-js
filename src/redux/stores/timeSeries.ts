@@ -73,6 +73,7 @@ const getTimeSeriesById = (state: TimeSeriesState): RelationsById => state.byId;
 const getSelectedTimeSeriesId = (state: TimeSeriesState): number => state.selectedId;
 
 export const getTimeSeriesIsFetching = (state: TimeSeriesState): boolean => state.isFetching;
+export const getIsAddingToBasket = (state: TimeSeriesState): boolean => state.isAddingToBasket;
 
 // createSelector function uses memoization so that only if byId slice changes it will get recomputed again.
 export const getTimeSeries = createSelector(getTimeSeriesById, (timeSeriesById) => {

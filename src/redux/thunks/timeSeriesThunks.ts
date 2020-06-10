@@ -22,36 +22,20 @@ import {
 } from '../stores/timeSeries';
 import { getStorageJson } from '../../api/storageApi';
 import { SamplesExpressionsById } from '../models/internal';
+import { forwardToSentryAndNotifyUser } from '../../utils/errorUtils';
 
 export const fetchTimeSeries = (): ThunkAction<void, RootState, unknown, AnyAction> => {
     return async (dispatch): Promise<void> => {
         dispatch(timeSeriesFetchStarted());
-        const timeSeriesRelations = await relationApi.getTimeSeriesRelations();
+        try {
+            const timeSeriesRelations = await relationApi.getTimeSeriesRelations();
 
-        if (timeSeriesRelations != null) {
             dispatch(timeSeriesFetchSucceeded(timeSeriesRelations));
+        } catch (error) {
+            forwardToSentryAndNotifyUser('Error retrieving time series.', error, dispatch);
         }
 
         dispatch(timeSeriesFetchEnded());
-    };
-};
-
-export const selectTimeSeries = (
-    id: number,
-): ThunkAction<void, RootState, number | string, AnyAction> => {
-    return async (dispatch, getState): Promise<void> => {
-        dispatch(addToBasketStarted());
-        // Add samples to (visualization) basket so that genes can be searched via autocomplete (/kb/feature/autocomplete api).
-        const samplesIds = getTimeSeriesSamplesIds(id, getState().timeSeries);
-        const basket = await basketApi.addToBasket(samplesIds);
-
-        if (basket != null) {
-            // Once samples are added to "visualization" basket, data for retrieving
-            dispatch(timeSeriesSelected(id));
-            dispatch(addSamplesToBasketSucceeded(basket));
-        }
-
-        dispatch(addToBasketEnded());
     };
 };
 
@@ -88,9 +72,9 @@ export const fetchTimeSeriesSamplesExpressions = (): ThunkAction<
         );
 
         // Fetch samples data (type: expression).
-        const samplesDataArray = await dataApi.getDataBySamplesIds(timeSeriesSamplesIds);
+        try {
+            const samplesDataArray = await dataApi.getDataBySamplesIds(timeSeriesSamplesIds);
 
-        if (samplesDataArray != null) {
             // Once samples data is retrieved use it's output.exp_json to retrieve genes expressions.
             const getSamplesStoragesPromises = samplesDataArray.map(getSampleStorage);
 
@@ -102,8 +86,34 @@ export const fetchTimeSeriesSamplesExpressions = (): ThunkAction<
             });
 
             dispatch(samplesExpressionsFetchSucceeded(timeSeriesSamplesExpressions));
+        } catch (error) {
+            forwardToSentryAndNotifyUser('Error retrieving samples storage data.', error, dispatch);
         }
 
         dispatch(samplesExpressionsFetchEnded());
+    };
+};
+export const selectTimeSeries = (id: number): ThunkAction<void, RootState, number, AnyAction> => {
+    return async (dispatch, getState): Promise<void> => {
+        dispatch(addToBasketStarted());
+        // Add samples to (visualization) basket so that genes can be searched via autocomplete (/kb/feature/autocomplete api).
+        const samplesIds = getTimeSeriesSamplesIds(id, getState().timeSeries);
+        try {
+            const basket = await basketApi.addToBasket(samplesIds);
+
+            // Once samples are added to "visualization" basket, data for retrieving
+            dispatch(timeSeriesSelected(id));
+            dispatch(addSamplesToBasketSucceeded(basket));
+
+            dispatch(fetchTimeSeriesSamplesExpressions());
+        } catch (error) {
+            forwardToSentryAndNotifyUser(
+                'Error adding time series samples to visualization basket.',
+                error,
+                dispatch,
+            );
+        }
+
+        dispatch(addToBasketEnded());
     };
 };
