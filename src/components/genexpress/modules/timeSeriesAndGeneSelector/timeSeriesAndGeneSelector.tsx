@@ -9,7 +9,7 @@ import {
 } from 'redux/stores/timeSeries';
 import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
 import { Relation } from '@genialis/resolwe/dist/api/types/rest';
-import GeneSelector from './geneSelector/geneSelector/geneSelector';
+import ConnectedGeneSelector from './geneSelector/geneSelector/geneSelector';
 import { TimeSeriesGridWrapper } from './timeSeriesAndGeneSelector.styles';
 
 const mapStateToProps = (
@@ -64,7 +64,7 @@ const TimeSeriesAndGeneSelector = ({
                 onRowSelected={onRowSelectedHandler}
                 selectedData={selectedTimeSeries != null ? [selectedTimeSeries] : undefined}
             />
-            <GeneSelector />
+            <ConnectedGeneSelector />
         </TimeSeriesGridWrapper>
     );
 };

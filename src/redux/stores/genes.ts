@@ -30,7 +30,7 @@ const selectedGenesSlice = createSlice({
             timeSeriesSelected,
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             (_state, _action): GenesById => {
-                return {};
+                return selectedGenesInitialState;
             },
         );
     },
@@ -91,7 +91,7 @@ export const getIsFetchingPastedGenes = (state: GenesState): boolean => state.is
 
 // createSelector function uses memoization so that only if byId slice changes it will get recomputed again.
 export const getSelectedGenes = createSelector(byIdSelector, (genesById) => {
-    return Object.keys(genesById).map((geneName) => genesById[geneName]);
+    return _.flatMap(genesById);
 });
 
 export const getHighlightedGenesNames = (state: GenesState): string[] =>

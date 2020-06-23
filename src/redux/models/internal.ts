@@ -34,6 +34,7 @@ export type SamplesExpressionsById = {
     [sampleId: number]: GeneExpression;
 };
 
+// If key is undefined, it will be generated in the reducer.
 export type SnackbarNotificationContent = {
     key?: SnackbarKey;
     message: string;

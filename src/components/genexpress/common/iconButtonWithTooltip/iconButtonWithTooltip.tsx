@@ -7,19 +7,24 @@ type IconButtonWithTooltipProps = {
     disabled?: boolean;
     children: ReactNode;
     onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-} & Pick<StyledIconButtonProps, 'noPadding'>;
+} & Pick<StyledIconButtonProps, 'nopadding'>;
 
 const IconButtonWithTooltip = ({
     title,
     disabled,
     children,
-    noPadding,
+    nopadding,
     onClick,
 }: IconButtonWithTooltipProps): ReactElement => {
     return (
         <Tooltip title={title}>
             <span>
-                <StyledIconButton onClick={onClick} disabled={disabled} noPadding={noPadding}>
+                <StyledIconButton
+                    aria-label={title}
+                    onClick={onClick}
+                    disabled={disabled}
+                    nopadding={nopadding}
+                >
                     {children}
                 </StyledIconButton>
             </span>

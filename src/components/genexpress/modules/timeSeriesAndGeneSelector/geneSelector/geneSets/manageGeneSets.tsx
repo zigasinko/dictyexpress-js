@@ -50,9 +50,9 @@ const ManageGeneSets = ({
             <ModalContainer>
                 <ModalHeader id="modalTitle">Gene List History</ModalHeader>
                 <ModalBody>
-                    <p id="modalDescription">
+                    <div id="modalDescription">
                         Choose a gene set from a list of locally saved gene sets
-                    </p>
+                    </div>
                     <ManageGeneSetsGridWrapper>
                         <DictyGrid
                             data={geneSets}
@@ -75,7 +75,7 @@ const ManageGeneSets = ({
                                 },
                                 {
                                     field: 'genesNames',
-                                    headerName: 'Gene[]',
+                                    headerName: 'Genes',
                                     autoHeight: true,
                                     cellStyle: { 'white-space': 'normal' },
                                     valueFormatter: (params: ValueFormatterParams): string => {

@@ -17,7 +17,7 @@ export interface GeneInformationProps {
     onHighlight?: () => void;
     onUnhighlight?: () => void;
 }
-const GeneInformation = ({
+export const GeneInformation = ({
     gene,
     onHighlight,
     onUnhighlight,

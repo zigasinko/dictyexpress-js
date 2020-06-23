@@ -11,7 +11,7 @@ import {
 } from 'redux/stores/genes';
 import IconButtonWithTooltip from 'components/genexpress/common/iconButtonWithTooltip/iconButtonWithTooltip';
 import { setClipboardText } from 'utils/documentHelpers';
-import GeneChip from './geneChip/geneChip';
+import { GeneChip } from './geneChip/geneChip';
 import { SelectedGenesContainer, ActionsContainer } from './selectedGenes.styles';
 
 const connector = connect(null, {

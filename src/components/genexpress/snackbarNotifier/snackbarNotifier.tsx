@@ -3,7 +3,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { useSnackbar, SnackbarKey } from 'notistack';
 import { RootState } from 'redux/rootReducer';
 import { SnackbarNotification } from 'redux/models/internal';
-import { getNotifications, addSnackbar, removeSnackbar } from 'redux/stores/notifications';
+import { getNotifications, removeSnackbar } from 'redux/stores/notifications';
 
 let displayedKeys: SnackbarKey[] = [];
 
@@ -18,14 +18,13 @@ const mapStateToProps = (
 };
 
 const connector = connect(mapStateToProps, {
-    connectedAddSnackbar: addSnackbar,
     connectedRemoveSnackbar: removeSnackbar,
 });
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-const SnackbarNotifier = ({ notifications }: PropsFromRedux): null => {
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+const SnackbarNotifier = ({ notifications, connectedRemoveSnackbar }: PropsFromRedux): null => {
+    const { enqueueSnackbar } = useSnackbar();
 
     const storeDisplayed = (key: SnackbarKey): void => {
         displayedKeys = [...displayedKeys, key];
@@ -47,7 +46,7 @@ const SnackbarNotifier = ({ notifications }: PropsFromRedux): null => {
                 action,
                 onExited: (event, myKey) => {
                     // Remove this snackbar from redux store.
-                    removeSnackbar(myKey);
+                    connectedRemoveSnackbar(myKey);
                     removeDisplayed(myKey);
                 },
             });
@@ -55,7 +54,7 @@ const SnackbarNotifier = ({ notifications }: PropsFromRedux): null => {
             // Keep track of displayed snackbars.
             storeDisplayed(key);
         });
-    }, [closeSnackbar, enqueueSnackbar, notifications]);
+    }, [connectedRemoveSnackbar, enqueueSnackbar, notifications]);
 
     return null;
 };

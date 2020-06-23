@@ -2,7 +2,7 @@ import React, { ReactElement, useRef, useState } from 'react';
 import Popper from '@material-ui/core/Popper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { Gene } from 'redux/models/internal';
-import GeneInformation from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/selectedGenes/geneInformation/geneInformation';
+import ConnectedGeneInformation from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/selectedGenes/geneInformation/geneInformation';
 import { GeneChipWrapper } from './geneChip.styles';
 
 export interface GeneChipProps {
@@ -12,7 +12,7 @@ export interface GeneChipProps {
     onUnhighlight: () => void;
     onRemove: () => void;
 }
-const GeneChip = ({
+export const GeneChip = ({
     gene,
     onRemove,
     highlighted,
@@ -43,7 +43,7 @@ const GeneChip = ({
                 />
 
                 <Popper anchorEl={chipWrapperElement.current} open={infoPopperOpen}>
-                    <GeneInformation
+                    <ConnectedGeneInformation
                         gene={gene}
                         highlighted={highlighted}
                         onHighlight={onHighlight}

@@ -129,7 +129,7 @@ const Chart = ({
                 renderer,
                 container: '#view',
                 hover: true,
-                logLevel: vega.Debug,
+                logLevel: vega.Error,
             });
 
             const tooltipHandler = new vegaTooltip.Handler({});

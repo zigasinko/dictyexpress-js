@@ -13,7 +13,7 @@ import { forwardToSentryAndNotifyUser } from '../../utils/errorUtils';
  * @param genesNames - Names of genes that the user pasted in the search box (autocomplete input).
  */
 // eslint-disable-next-line import/prefer-default-export
-export const pasteGeneNames = (
+export const pasteGenesNames = (
     genesNames: string[],
 ): ThunkAction<Promise<string[]>, RootState, number | string, AnyAction> => {
     return async (dispatch, getState): Promise<string[]> => {

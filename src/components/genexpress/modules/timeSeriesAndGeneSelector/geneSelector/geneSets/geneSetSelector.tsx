@@ -21,8 +21,10 @@ const GeneSetSelector = ({
     const [manageModalOpened, setManageModalOpened] = useState(false);
     const [geneSets, setGeneSets] = useLocalStorage<GeneSet[]>(LocalStorageKey.GENE_LISTS, []);
 
+    /**
+     * Saves gene set to local storage so user can later use it from history.
+     */
     const addGeneSet = (): void => {
-        // Save each change to local storage so user can pick a gene set from history.
         if (selectedGenes != null && selectedGenes.length > 0) {
             const newGeneSet = {
                 dateTime: new Date(),

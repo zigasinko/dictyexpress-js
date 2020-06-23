@@ -13,17 +13,18 @@ import {
 import { SnackbarProvider } from 'notistack';
 import LandingPage from 'components/landing/landingPage';
 import PageNotFound from 'components/pageNotFound';
-import store from 'redux/rootStore';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
 import { GlobalStyle } from './globalStyle';
 import theme from './theme';
+
+import appStore from '../../redux/appStore';
 
 const appTheme = createMuiTheme(theme);
 
 const App = (): ReactElement => {
     return (
         <StylesProvider injectFirst>
-            <ReduxProvider store={store}>
+            <ReduxProvider store={appStore}>
                 <MuiThemeProvider theme={appTheme}>
                     <StyledComponentsThemeProvider theme={appTheme}>
                         <GlobalStyle />

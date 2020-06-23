@@ -24,7 +24,7 @@ import { getStorageJson } from '../../api/storageApi';
 import { SamplesExpressionsById } from '../models/internal';
 import { forwardToSentryAndNotifyUser } from '../../utils/errorUtils';
 
-export const fetchTimeSeries = (): ThunkAction<void, RootState, unknown, AnyAction> => {
+export const fetchTimeSeries = (): ThunkAction<Promise<void>, RootState, unknown, AnyAction> => {
     return async (dispatch): Promise<void> => {
         dispatch(timeSeriesFetchStarted());
         try {
@@ -54,7 +54,7 @@ const getSampleStorage = async (
 };
 
 export const fetchTimeSeriesSamplesExpressions = (): ThunkAction<
-    void,
+    Promise<void>,
     RootState,
     unknown,
     AnyAction
@@ -93,7 +93,9 @@ export const fetchTimeSeriesSamplesExpressions = (): ThunkAction<
         dispatch(samplesExpressionsFetchEnded());
     };
 };
-export const selectTimeSeries = (id: number): ThunkAction<void, RootState, number, AnyAction> => {
+export const selectTimeSeries = (
+    id: number,
+): ThunkAction<Promise<void>, RootState, number, AnyAction> => {
     return async (dispatch, getState): Promise<void> => {
         dispatch(addToBasketStarted());
         // Add samples to (visualization) basket so that genes can be searched via autocomplete (/kb/feature/autocomplete api).

@@ -12,7 +12,7 @@ import {
 import _ from 'lodash';
 import { FilterTextField, GridWrapper } from './dictyGrid.styles';
 
-type Props<T> = {
+type DictyGridProps<T> = {
     hideFilter?: boolean;
     filterLabel?: string;
     data: T[];
@@ -42,7 +42,7 @@ const DictyGrid = <T extends {}>({
     onRowClicked,
     onRowSelected,
     onSelectionChanged,
-}: Props<T>): ReactElement => {
+}: DictyGridProps<T>): ReactElement => {
     const [filter, setFilter] = useState<string>('');
     const gridApi = useRef<GridApi | null>(null);
     const columnApi = useRef<ColumnApi | null>(null);
@@ -116,6 +116,7 @@ const DictyGrid = <T extends {}>({
         <>
             {!hideFilter && (
                 <FilterTextField
+                    id="filterField"
                     variant="outlined"
                     label={filterLabel}
                     color="secondary"
@@ -126,6 +127,7 @@ const DictyGrid = <T extends {}>({
             )}
             <GridWrapper className="ag-theme-balham">
                 <AgGridReact
+                    data-testid="agGrid"
                     ref={gridElement}
                     onGridReady={handleOnGridReady}
                     defaultColDef={defaultColDef}

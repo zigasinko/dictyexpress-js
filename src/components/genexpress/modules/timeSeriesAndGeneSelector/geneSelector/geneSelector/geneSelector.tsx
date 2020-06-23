@@ -17,7 +17,7 @@ import SelectedGenes from 'components/genexpress/modules/timeSeriesAndGeneSelect
 import { getSelectedSamplesInfo } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
 import { splitAndCleanGenesString } from 'utils/stringUtils';
-import { pasteGeneNames, selectGenes } from 'redux/thunks/geneThunks';
+import { pasteGenesNames, selectGenes } from 'redux/thunks/geneThunks';
 import GeneSetSelector from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/geneSets/geneSetSelector';
 import { AutoCompleteItemSpan, TitleSection } from './geneSelector.styles';
 
@@ -50,18 +50,18 @@ const mapStateToProps = (
 
 const connector = connect(mapStateToProps, {
     connectedSelectGenes: selectGenes,
-    connectedPasteGeneNames: pasteGeneNames,
+    connectedPasteGenesNames: pasteGenesNames,
 });
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-const GeneSelector = ({
+export const GeneSelector = ({
     selectedSamplesInfo,
     selectedGenes,
     highlightedGenesNames,
     isFetchingPastedGenes,
     connectedSelectGenes,
-    connectedPasteGeneNames,
+    connectedPasteGenesNames,
 }: PropsFromRedux): ReactElement => {
     const {
         source: autocompleteSource,
@@ -86,13 +86,7 @@ const GeneSelector = ({
             );
 
             if (genesResults != null) {
-                // Filter out genes that are already selected.
-                const filteredGenesResult = genesResults.filter(
-                    (gene) =>
-                        selectedGenes.find((selectedGene) => selectedGene.name === gene.name) ==
-                        null,
-                );
-                setGenes(filteredGenesResult);
+                setGenes(genesResults);
             } else {
                 enqueueSnackbar('Error fetching genes.', { variant: 'error' });
             }
@@ -111,6 +105,13 @@ const GeneSelector = ({
         } else {
             setAutocompleteOpen(false);
         }
+
+        /* When component is unmounted, fetchGenes async function has to be cancelled.
+         * Otherwise React state update on an unmounted component error is thrown.
+         */
+        return (): void => {
+            fetchGenes.cancel();
+        };
     }, [fetchGenes, inputValue]);
 
     useEffect(() => {
@@ -119,7 +120,6 @@ const GeneSelector = ({
     }, [selectedGenes]);
 
     const handleOnInputChange = (_event: unknown, newValue: string | null): void => {
-        // setGenes([]);
         setInputValue(newValue != null ? newValue : '');
     };
 
@@ -137,7 +137,7 @@ const GeneSelector = ({
      * @param genesNames - Array of genes names.
      */
     const handleImportedGenesNames = async (genesNames: string[]): Promise<void> => {
-        const notFoundGenesNames = await connectedPasteGeneNames(genesNames);
+        const notFoundGenesNames = await connectedPasteGenesNames(genesNames);
         setInputValue(notFoundGenesNames.join());
     };
 
@@ -223,13 +223,13 @@ const GeneSelector = ({
                     forcePopupIcon={false}
                     disableClearable
                     disabled={isDisabled}
-                    getOptionLabel={(option): string => option.name}
                     renderInput={(params): ReactElement => (
                         <TextField
                             // eslint-disable-next-line react/jsx-props-no-spreading
                             {...params}
                             variant="outlined"
                             color="secondary"
+                            placeholder="Search for a gene"
                             onPaste={handleOnPaste}
                             InputProps={{
                                 ...params.InputProps,
@@ -245,7 +245,10 @@ const GeneSelector = ({
                         />
                     )}
                     options={genes}
-                    placeholder="Search for a gene"
+                    getOptionLabel={(option): string => option.name}
+                    getOptionSelected={(option: Gene, itemValue: Gene): boolean => {
+                        return option.feature_id === itemValue.feature_id;
+                    }}
                     value={value}
                     onChange={handleOnChange}
                     inputValue={inputValue}

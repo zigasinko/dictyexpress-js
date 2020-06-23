@@ -1,7 +1,7 @@
 import { Severity } from '@sentry/browser';
-import { AppDispatch } from 'redux/rootStore';
 import { addErrorSnackbar } from 'redux/stores/notifications';
 import { sentryCapture } from './sentryUtils';
+import { AppDispatch } from '../redux/appStore';
 
 /**
  * Function send error to Sentry and displays alert to the user.

@@ -1,0 +1,83 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`geneInformation should render as default snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="sc-AxjAm jjanoZ"
+  >
+    <div
+      class="sc-AxirZ kkLcFj"
+    >
+      <h3
+        class="sc-AxiKw ikOQPD"
+      >
+        Gene information
+      </h3>
+      <button
+        class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-containedSizeSmall MuiButton-sizeSmall"
+        tabindex="0"
+        type="button"
+      >
+        <span
+          class="MuiButton-label"
+        >
+          Highlight
+        </span>
+        <span
+          class="MuiTouchRipple-root"
+        />
+      </button>
+    </div>
+    <p>
+      TestGene0
+    </p>
+    <div>
+      <div
+        class="sc-AxhCb lljfEd"
+      >
+        Alternatives:
+      </div>
+      <div
+        class="sc-AxhUy eFBSHn"
+      >
+        TestGene0_alias1, TestGene0_alias2
+      </div>
+    </div>
+    <div>
+      <div
+        class="sc-AxhCb lljfEd"
+      >
+        Database link:
+      </div>
+      <div
+        class="sc-AxhUy eFBSHn"
+      >
+        <a
+          href="http://dictybase.org/id/0"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          Open in dictyBase
+          <img
+            alt="Open in dictyBase."
+            class="sc-AxgMl dyAuoo"
+            src="dictybase_logo2.jpg"
+          />
+        </a>
+      </div>
+    </div>
+    <div>
+      <div
+        class="sc-AxhCb lljfEd"
+      >
+        Description:
+      </div>
+      <div
+        class="sc-AxhUy eFBSHn"
+      >
+        This is a test gene
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

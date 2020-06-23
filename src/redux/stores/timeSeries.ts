@@ -18,9 +18,10 @@ const timeSeriesByIdSlice = createSlice({
     },
 });
 
+const selectedIdInitialState = null;
 const selectedIdSlice = createSlice({
     name: 'timeSeries',
-    initialState: 0,
+    initialState: selectedIdInitialState as number | null,
     reducers: {
         selected: (_state, action: PayloadAction<number>): number => action.payload,
     },
@@ -70,7 +71,7 @@ export default timeSeriesReducer;
 
 // Selectors (expose the store to containers).
 const getTimeSeriesById = (state: TimeSeriesState): RelationsById => state.byId;
-const getSelectedTimeSeriesId = (state: TimeSeriesState): number => state.selectedId;
+const getSelectedTimeSeriesId = (state: TimeSeriesState): number => state.selectedId ?? 0;
 
 export const getTimeSeriesIsFetching = (state: TimeSeriesState): boolean => state.isFetching;
 export const getIsAddingToBasket = (state: TimeSeriesState): boolean => state.isAddingToBasket;

@@ -4,7 +4,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from 'redux/rootReducer';
 import { getTimeSeriesIsFetching, getIsAddingToBasket } from 'redux/stores/timeSeries';
 import { getSamplesExpressionsIsFetching } from 'redux/stores/samplesExpressions';
-import TimeSeriesAndGeneSelector from './modules/timeSeriesAndGeneSelector/timeSeriesAndGeneSelector';
+import ConnectedTimeSeriesAndGeneSelector from './modules/timeSeriesAndGeneSelector/timeSeriesAndGeneSelector';
 import GeneExpressions from './modules/geneExpressions/geneExpressions';
 import DictyModule from './common/dictyModule/dictyModule';
 import SnackbarNotifier from './snackbarNotifier/snackbarNotifier';
@@ -112,7 +112,7 @@ const GeneExpressGrid = ({
                         title="Time series and Gene Selection"
                         isLoading={isFetchingTimeSeries || isAddingToBasket}
                     >
-                        <TimeSeriesAndGeneSelector />
+                        <ConnectedTimeSeriesAndGeneSelector />
                     </DictyModule>
                 </div>
                 <div key="secondModule">
