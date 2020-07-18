@@ -1,31 +1,28 @@
 import React, { ReactElement } from 'react';
-import SectionNames from '../common/constants';
+import { ChevronLeft, ChevronRight } from '@material-ui/icons';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import experimentAndGeneSelection from 'images/modules/ExperimentAndGeneSelection.png';
+import expressionTC from 'images/modules/ExpressionTC.png';
+import hierarchicalClusteringImage from 'images/modules/HierarchicalClustering.png';
+import geneOntologyImage from 'images/modules/GeneOntology.png';
+import volcanoPlotImage from 'images/modules/VolcanoPlot.png';
+import volcanoPlotSelection from 'images/modules/VolcanoPlotSelection.png';
+import experimentComparison from 'images/modules/ExperimentComparison.png';
+import { Title } from 'components/landing/common/title.styles';
 import {
     SectionContentContainer,
     AlignCenter,
     DarkSectionContainer,
-} from '../common/layout.styles';
-import { Title } from '../common/title.styles';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-import experimentAndGeneSelection from '../../../images/modules/ExperimentAndGeneSelection.png';
-import expressionTC from '../../../images/modules/ExpressionTC.png';
-import hierarchicalClusteringImage from '../../../images/modules/HierarchicalClustering.png';
-import geneOntologyImage from '../../../images/modules/GeneOntology.png';
-import volcanoPlotImage from '../../../images/modules/VolcanoPlot.png';
-import volcanoPlotSelection from '../../../images/modules/VolcanoPlotSelection.png';
-import experimentComparison from '../../../images/modules/ExperimentComparison.png';
+} from 'components/landing/common/layout.styles';
+import SectionNames from 'components/landing/common/constants';
 // eslint-disable-next-line import/no-cycle
 import { Arrow, Screenshot, SliderContainer } from './screenshots.styles';
 
 const SliderArrow = ({ onClick, type }: SliderArrowProps): JSX.Element => (
-    <Arrow
-        onClick={onClick}
-        type={type}
-        className={`k-icon ${
-            type === 'next' ? 'k-i-arrow-chevron-right' : 'k-i-arrow-chevron-left'
-        }`}
-    />
+    <Arrow onClick={onClick} type={type}>
+        {type === 'next' ? <ChevronRight fontSize="large" /> : <ChevronLeft fontSize="large" />}
+    </Arrow>
 );
 
 export type SliderArrowProps = {

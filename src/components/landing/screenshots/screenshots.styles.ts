@@ -1,6 +1,6 @@
 import styled, { css, FlattenSimpleInterpolation } from 'styled-components';
 import Slider from 'react-slick';
-import { breakpoints } from '../../app/globalStyle';
+import { breakpoints } from 'components/app/globalStyle';
 // eslint-disable-next-line import/no-cycle
 import { SliderArrowProps } from './screenshots';
 

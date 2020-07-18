@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
-import timeSeries from './stores/timeSeries';
-import selectedGenes from './stores/genes';
-import samplesExpressions from './stores/samplesExpressions';
-import notifications from './stores/notifications';
+import timeSeries from 'redux/stores/timeSeries';
+import selectedGenes from 'redux/stores/genes';
+import samplesExpressions from 'redux/stores/samplesExpressions';
+import notifications from 'redux/stores/notifications';
 
 const rootReducer = combineReducers({
     timeSeries,

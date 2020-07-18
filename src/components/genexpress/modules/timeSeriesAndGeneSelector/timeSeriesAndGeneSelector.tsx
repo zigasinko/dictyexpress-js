@@ -1,11 +1,11 @@
 import React, { ReactElement } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
+import { RootState } from 'redux/rootReducer';
+import { selectTimeSeries, fetchTimeSeries } from 'redux/thunks/timeSeriesThunks';
+import { getTimeSeries, getTimeSeriesIsFetching } from 'redux/stores/timeSeries';
 import { Relation } from '@genialis/resolwe/dist/api/types/rest';
-import { RootState } from '../../../../redux/rootReducer';
-import { selectTimeSeries, fetchTimeSeries } from '../../../../redux/thunks/timeSeriesThunks';
-import { getTimeSeries, getTimeSeriesIsFetching } from '../../../../redux/stores/timeSeries';
+import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
 import GeneSelector from './geneSelector/geneSelector/geneSelector';
-import DictyGrid from '../../common/dictyGrid/dictyGrid';
 import { TimeSeriesGridWrapper } from './timeSeriesAndGeneSelector.styles';
 
 const mapStateToProps = (state: RootState): { timeSeries: Relation[]; isFetching: boolean } => {

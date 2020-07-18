@@ -1,15 +1,12 @@
 import React, { ReactElement, useEffect, useState, useCallback } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import _ from 'lodash';
+import { RootState } from 'redux/rootReducer';
+import { getSelectedGenes, getHighlightedGenesNames } from 'redux/stores/genes';
 import { Relation, RelationPartition } from '@genialis/resolwe/dist/api/types/rest';
-import { RootState } from '../../../../redux/rootReducer';
-import { getSelectedGenes, getHighlightedGenesNames } from '../../../../redux/stores/genes';
-import { Gene, SamplesExpressionsById } from '../../../../redux/models/internal';
-import {
-    getSelectedTimeSeries,
-    getSelectedTimeSeriesLabels,
-} from '../../../../redux/stores/timeSeries';
-import { getSamplesExpressionsById } from '../../../../redux/stores/samplesExpressions';
+import { Gene, SamplesExpressionsById } from 'redux/models/internal';
+import { getSelectedTimeSeries, getSelectedTimeSeriesLabels } from 'redux/stores/timeSeries';
+import { getSamplesExpressionsById } from 'redux/stores/samplesExpressions';
 
 const mapStateToProps = (
     state: RootState,

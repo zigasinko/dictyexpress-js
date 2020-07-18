@@ -7,9 +7,9 @@ import {
     ModalHeader,
     ModalContainer,
     CenteredModal,
-} from '../../../../common/dictyModal/dictyModal.styles';
-import DictyGrid from '../../../../common/dictyGrid/dictyGrid';
-import { GeneSet } from '../../../../../../redux/models/internal';
+} from 'components/genexpress/common/dictyModal/dictyModal.styles';
+import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
+import { GeneSet } from 'redux/models/internal';
 import { ManageGeneSetsGridWrapper } from './manageGeneSets.styles';
 
 interface GeneSetsProps {

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { breakpoints } from '../../app/globalStyle';
+import { breakpoints } from 'components/app/globalStyle';
 
 // eslint-disable-next-line import/prefer-default-export
 export const CreditsLogos = styled.div`

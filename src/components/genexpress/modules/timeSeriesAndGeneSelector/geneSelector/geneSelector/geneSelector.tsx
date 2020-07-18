@@ -6,20 +6,20 @@ import { connect, ConnectedProps } from 'react-redux';
 import TextField from '@material-ui/core/TextField';
 import { CircularProgress } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
-import { Gene, SamplesInfo } from '../../../../../../redux/models/internal';
-import { AutoCompleteItemSpan, TitleSection } from './geneSelector.styles';
-import { getGenes } from '../../../../../../api/featureApi';
-import SelectedGenes from '../selectedGenes/selectedGenes';
 import {
     getSelectedGenes,
     getHighlightedGenesNames,
     getIsFetchingPastedGenes,
-} from '../../../../../../redux/stores/genes';
-import { getSelectedSamplesInfo } from '../../../../../../redux/stores/timeSeries';
-import { RootState } from '../../../../../../redux/rootReducer';
-import { splitAndCleanGenesString } from '../../../../../../utils/stringUtils';
-import { pasteGeneNames, selectGenes } from '../../../../../../redux/thunks/geneThunks';
-import GeneSetSelector from '../geneSets/geneSetSelector';
+} from 'redux/stores/genes';
+import { Gene, SamplesInfo } from 'redux/models/internal';
+import { getGenes } from 'api/featureApi';
+import SelectedGenes from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/selectedGenes/selectedGenes';
+import { getSelectedSamplesInfo } from 'redux/stores/timeSeries';
+import { RootState } from 'redux/rootReducer';
+import { splitAndCleanGenesString } from 'utils/stringUtils';
+import { pasteGeneNames, selectGenes } from 'redux/thunks/geneThunks';
+import GeneSetSelector from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/geneSets/geneSetSelector';
+import { AutoCompleteItemSpan, TitleSection } from './geneSelector.styles';
 
 const itemRender = (option: Gene): ReactElement => {
     return (

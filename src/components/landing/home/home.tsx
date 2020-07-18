@@ -1,5 +1,7 @@
 import React, { ReactElement } from 'react';
-import { SectionContentContainer } from '../common/layout.styles';
+import dictyLogo from 'images/logo_dicty.1.png';
+import dictyDemo from 'images/Time-Courses.gif';
+import { SectionContentContainer } from 'components/landing/common/layout.styles';
 import {
     HomeContainer,
     HomeWrapper,
@@ -7,8 +9,6 @@ import {
     HomeDescription,
     HomeDemo,
 } from './home.styles';
-import dictyLogo from '../../../images/logo_dicty.1.png';
-import dictyDemo from '../../../images/Time-Courses.gif';
 
 const Home = (): ReactElement => (
     <HomeContainer id="home">

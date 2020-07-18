@@ -1,13 +1,13 @@
 import React, { ReactElement } from 'react';
-import Home from './home/home';
-import Features from './features/features';
-import Citing from './citing/citing';
-import References from './references/references';
-import Credits from './credits/credits';
-import { SectionHorizontalLine } from './common/layout.styles';
-import Footer from './footer/footer';
-import Screenshots from './screenshots/screenshots';
-import AppBar from './appBar/appBar';
+import { SectionHorizontalLine } from 'components/landing/common/layout.styles';
+import References from 'components/landing/references/references';
+import Credits from 'components/landing/credits/credits';
+import Footer from 'components/landing/footer/footer';
+import Screenshots from 'components/landing/screenshots/screenshots';
+import AppBar from 'components/landing/appBar/appBar';
+import Citing from 'components/landing/citing/citing';
+import Features from 'components/landing/features/features';
+import Home from 'components/landing/home/home';
 
 const LandingPage = (): ReactElement => {
     return (

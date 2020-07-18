@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
 import { SnackbarKey } from 'notistack';
-import { SnackbarNotification, SnackbarNotificationContent } from '../models/internal';
+import { SnackbarNotification, SnackbarNotificationContent } from 'redux/models/internal';
 
 // State slices.
 const notificationsInitialState = [] as SnackbarNotification[];

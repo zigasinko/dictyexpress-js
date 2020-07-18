@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Button } from '@material-ui/core';
-import dictyImage from '../../../images/dicty_image.png';
-import { breakpoints } from '../../app/globalStyle';
+import dictyImage from 'images/dicty_image.png';
+import { breakpoints } from 'components/app/globalStyle';
 
 export const HomeContainer = styled.div`
     background: url(${dictyImage}), linear-gradient(to right, #49688d, #7ca2cf);

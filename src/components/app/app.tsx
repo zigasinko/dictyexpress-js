@@ -11,12 +11,12 @@ import {
     createMuiTheme,
 } from '@material-ui/core';
 import { SnackbarProvider } from 'notistack';
-import LandingPage from '../landing/landingPage';
-import PageNotFound from '../pageNotFound';
+import LandingPage from 'components/landing/landingPage';
+import PageNotFound from 'components/pageNotFound';
+import store from 'redux/rootStore';
+import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
 import { GlobalStyle } from './globalStyle';
 import theme from './theme';
-import store from '../../redux/rootStore';
-import GeneExpressGrid from '../genexpress/geneExpressGrid';
 
 const appTheme = createMuiTheme(theme);
 

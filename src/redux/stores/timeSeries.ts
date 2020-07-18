@@ -2,7 +2,7 @@ import { createSlice, PayloadAction, createSelector } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
 import _ from 'lodash';
 import { Relation } from '@genialis/resolwe/dist/api/types/rest';
-import { BasketAddSamplesResponse } from '../models/rest';
+import { BasketAddSamplesResponse } from 'redux/models/rest';
 import createIsFetchingSlice from './fetch';
 import { RelationsById, SamplesInfo } from '../models/internal';
 

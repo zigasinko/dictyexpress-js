@@ -1,8 +1,8 @@
 import React, { ReactElement, useRef, useState } from 'react';
 import Popper from '@material-ui/core/Popper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import { Gene } from '../../../../../../../redux/models/internal';
-import GeneInformation from '../geneInformation/geneInformation';
+import { Gene } from 'redux/models/internal';
+import GeneInformation from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/selectedGenes/geneInformation/geneInformation';
 import { GeneChipWrapper } from './geneChip.styles';
 
 export interface GeneChipProps {

@@ -60,7 +60,6 @@ const DictyGrid = <T extends {}>({
 
     // Set selected so that grid knows which row to mark as "selected" and execute onRowSelected callback.
     const handleRowSelected = (event: RowSelectedEvent): void => {
-        // TODO: maybe it's better to return the whole object, not just id!
         if (event.node.isSelected()) {
             onRowSelected?.(event.node.data);
         }

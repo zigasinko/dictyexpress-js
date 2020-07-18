@@ -1,8 +1,8 @@
 import React, { ReactElement } from 'react';
-import { SectionContentContainer } from '../common/layout.styles';
-import { Title } from '../common/title.styles';
+import { SectionContentContainer } from 'components/landing/common/layout.styles';
+import { Title } from 'components/landing/common/title.styles';
+import SectionNames from 'components/landing/common/constants';
 import { ReferencesContainer } from './references.styles';
-import SectionNames from '../common/constants';
 import Reference from './reference';
 
 const References = (): ReactElement => (

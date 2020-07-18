@@ -1,13 +1,13 @@
 import React, { ReactElement } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import { connect, ConnectedProps } from 'react-redux';
+import { RootState } from 'redux/rootReducer';
+import { getTimeSeriesIsFetching, getIsAddingToBasket } from 'redux/stores/timeSeries';
+import { getSamplesExpressionsIsFetching } from 'redux/stores/samplesExpressions';
 import TimeSeriesAndGeneSelector from './modules/timeSeriesAndGeneSelector/timeSeriesAndGeneSelector';
 import GeneExpressions from './modules/geneExpressions/geneExpressions';
 import DictyModule from './common/dictyModule/dictyModule';
 import SnackbarNotifier from './snackbarNotifier/snackbarNotifier';
-import { RootState } from '../../redux/rootReducer';
-import { getTimeSeriesIsFetching, getIsAddingToBasket } from '../../redux/stores/timeSeries';
-import { getSamplesExpressionsIsFetching } from '../../redux/stores/samplesExpressions';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const defaultLayout = {

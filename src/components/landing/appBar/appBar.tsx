@@ -2,6 +2,10 @@ import React, { ReactElement, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Menu, MenuItem, IconButton } from '@material-ui/core';
 import { MoreVert as MoreIcon } from '@material-ui/icons';
+import SectionNames from 'components/landing/common/constants';
+import { scrollToTargetAdjusted } from 'utils/documentHelpers';
+import { appBarHeight } from 'components/app/globalStyle';
+import { ContentContainer } from 'components/landing/common/layout.styles';
 import {
     NavButton,
     AppBarWrapper,
@@ -10,10 +14,6 @@ import {
     DesktopSection,
     ToolbarWrapper,
 } from './appBar.styles';
-import SectionNames from '../common/constants';
-import { scrollToTargetAdjusted } from '../../../utils/documentHelpers';
-import { appBarHeight } from '../../app/globalStyle';
-import { ContentContainer } from '../common/layout.styles';
 
 const scrollButtonsData = [
     {
@@ -61,7 +61,9 @@ const AppBar = (): ReactElement => {
     };
 
     const getScrollButton = (name: string, sectionHash: string): ReactElement => (
-        <NavButton onClick={(): void => scrollToSection(sectionHash)}>{name}</NavButton>
+        <NavButton key={name} onClick={(): void => scrollToSection(sectionHash)}>
+            {name}
+        </NavButton>
     );
 
     const runDictyButton = <NavButton onClick={navigateToDictyExpress}>Run dictyExpress</NavButton>;
@@ -76,7 +78,9 @@ const AppBar = (): ReactElement => {
             onClose={closeMobileMenu}
         >
             {scrollButtonsData.map((buttonData) => (
-                <MenuItem>{getScrollButton(buttonData.name, buttonData.sectionHash)}</MenuItem>
+                <MenuItem key={buttonData.name}>
+                    {getScrollButton(buttonData.name, buttonData.sectionHash)}
+                </MenuItem>
             ))}
             <MenuItem>{runDictyButton}</MenuItem>
         </Menu>

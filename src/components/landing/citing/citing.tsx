@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
-import SectionNames from '../common/constants';
-import { SectionContentContainer } from '../common/layout.styles';
-import { Title } from '../common/title.styles';
+import { SectionContentContainer } from 'components/landing/common/layout.styles';
+import SectionNames from 'components/landing/common/constants';
+import { Title } from 'components/landing/common/title.styles';
 
 const Citing = (): ReactElement => (
     <SectionContentContainer id={SectionNames.CITING} centerText paddingBottom={35}>

@@ -1,11 +1,11 @@
 import React, { ReactElement, useState } from 'react';
 import { Button } from '@material-ui/core';
 import SaveIcon from '@material-ui/icons/Save';
-import { GeneSet, Gene } from '../../../../../../redux/models/internal';
+import { GeneSet, Gene } from 'redux/models/internal';
+import { LocalStorageKey } from 'components/genexpress/common/constants';
+import useLocalStorage from 'components/genexpress/common/useLocalStorage';
+import IconButtonWithTooltip from 'components/genexpress/common/iconButtonWithTooltip/iconButtonWithTooltip';
 import ManageGeneSets from './manageGeneSets';
-import useLocalStorage from '../../../../common/useLocalStorage';
-import IconButtonWithTooltip from '../../../../common/iconButtonWithTooltip/iconButtonWithTooltip';
-import { LocalStorageKey } from '../../../../common/constants';
 
 type SelectGeneSetProps = {
     selectedGenes: Gene[];

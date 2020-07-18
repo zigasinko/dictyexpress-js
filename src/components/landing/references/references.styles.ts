@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { breakpoints } from '../../app/globalStyle';
+import { breakpoints } from 'components/app/globalStyle';
 
 export const ReferencesContainer = styled.div`
     width: 100%;

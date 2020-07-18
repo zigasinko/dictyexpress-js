@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Button, AppBar, Toolbar } from '@material-ui/core';
-import { breakpoints, appBarHeight } from '../../app/globalStyle';
+import { breakpoints, appBarHeight } from 'components/app/globalStyle';
 
 export const AppBarWrapper = styled(AppBar)`
     background-color: #fff;

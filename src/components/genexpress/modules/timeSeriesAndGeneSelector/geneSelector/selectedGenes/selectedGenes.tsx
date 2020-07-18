@@ -2,17 +2,16 @@ import React, { ReactElement } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import ClearIcon from '@material-ui/icons/Clear';
 import { ContentCopy as ContentCopyIcon } from 'mdi-material-ui';
-import { Gene } from '../../../../../../redux/models/internal';
-import GeneChip from './geneChip/geneChip';
-
+import { Gene } from 'redux/models/internal';
 import {
     geneDeselected,
     geneHighlighted,
     geneUnhighlighted,
     allGenesDeselected,
-} from '../../../../../../redux/stores/genes';
-import IconButtonWithTooltip from '../../../../common/iconButtonWithTooltip/iconButtonWithTooltip';
-import { setClipboardText } from '../../../../../../utils/documentHelpers';
+} from 'redux/stores/genes';
+import IconButtonWithTooltip from 'components/genexpress/common/iconButtonWithTooltip/iconButtonWithTooltip';
+import { setClipboardText } from 'utils/documentHelpers';
+import GeneChip from './geneChip/geneChip';
 import { SelectedGenesContainer, ActionsContainer } from './selectedGenes.styles';
 
 const connector = connect(null, {

@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import { TextField } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 
-// eslint-disable-next-line import/prefer-default-export
 export const GridWrapper = styled.div`
     height: 100%;
     overflow: hidden;

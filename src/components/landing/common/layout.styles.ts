@@ -1,5 +1,5 @@
 import styled, { css, FlattenSimpleInterpolation } from 'styled-components';
-import { breakpoints } from '../../app/globalStyle';
+import { breakpoints } from 'components/app/globalStyle';
 
 type ContainerProps = {
     centerText?: boolean;
@@ -16,6 +16,7 @@ export const ContentContainer = styled.div<ContainerProps>`
     margin-right: auto;
     margin-left: auto;
     height: 100%;
+    width: 100%;
 
     @media (min-width: ${breakpoints.small}px) {
         width: 750px;

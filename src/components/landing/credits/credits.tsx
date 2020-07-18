@@ -1,10 +1,13 @@
 import React, { ReactElement } from 'react';
-import SectionNames from '../common/constants';
-import { SectionContentContainer, DarkSectionContainer } from '../common/layout.styles';
-import { Title } from '../common/title.styles';
-import baylorLogo from '../../../images/bcmLogo.png';
-import friLogo from '../../../images/ulfriLogo.png';
-import genialisLogo from '../../../images/genialisLogo.png';
+import SectionNames from 'components/landing/common/constants';
+import {
+    SectionContentContainer,
+    DarkSectionContainer,
+} from 'components/landing/common/layout.styles';
+import { Title } from 'components/landing/common/title.styles';
+import baylorLogo from 'images/bcmLogo.png';
+import friLogo from 'images/ulfriLogo.png';
+import genialisLogo from 'images/genialisLogo.png';
 import { CreditsLogos } from './credits.styles';
 
 const Credits = (): ReactElement => (
