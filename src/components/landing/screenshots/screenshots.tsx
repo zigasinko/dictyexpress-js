@@ -59,9 +59,9 @@ const Screenshots = (): ReactElement => {
                             </p>
                         </div>
                         <div>
-                            <Screenshot src={expressionTC} alt="Expression Time Courses module" />
+                            <Screenshot src={expressionTC} alt="Expression Time Series module" />
                             <p>
-                                The <b>Expression Time Courses module</b> displays the gene
+                                The <b>Expression Time Series module</b> displays the gene
                                 expression profiles (time-series) of selected genes.
                             </p>
                         </div>

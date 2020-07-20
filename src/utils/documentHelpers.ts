@@ -39,3 +39,7 @@ export const getCookie = (name: string): string => {
     }
     return cookieValue;
 };
+
+export const setClipboardText = (text: string): void => {
+    navigator.clipboard.writeText(text);
+};

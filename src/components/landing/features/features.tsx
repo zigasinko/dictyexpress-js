@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react';
 import { SectionContentContainer } from '../common/layout.styles';
 import { Title } from '../common/title.styles';
 import { FeaturesWrapper } from './features.styles';
-import timeCoursesImage from '../../../images/feature1.png';
+import timeSeriesImage from '../../../images/feature1.png';
 import dendrogramImage from '../../../images/feature2.png';
 import dnkImage from '../../../images/feature3.png';
 import mouseClickImage from '../../../images/feature4.png';
@@ -13,7 +13,7 @@ const Features = (): ReactElement => (
     <SectionContentContainer id={SectionNames.FEATURES}>
         <Title>Features</Title>
         <FeaturesWrapper>
-            <Feature imageSrc={timeCoursesImage} name="Time courses">
+            <Feature imageSrc={timeSeriesImage} name="Time series">
                 Plot and explore RNA-seq gene expressions of <i>D. discoideum</i> and{' '}
                 <i>D. purpureum</i>
             </Feature>

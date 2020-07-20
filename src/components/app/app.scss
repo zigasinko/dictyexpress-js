@@ -1,1 +1,14 @@
 $primary: #49688d;
+
+@import '~ag-grid-community/src/styles/ag-grid.scss';
+@import '~ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham-mixin';
+
+.ag-theme-balham {
+    @include ag-theme-balham(
+        (
+            balham-active-color: #49688d,
+        )
+    );
+
+    font-family: ('FS Joey Web Regular', 'Helvetica', 'Arial', 'Verdana', 'sans-serif');
+}

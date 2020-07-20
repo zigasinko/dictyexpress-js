@@ -29,7 +29,7 @@ const Home = (): ReactElement => (
                     </p>
                 </HomeDescription>
                 <HomeDemo>
-                    <img src={dictyDemo} alt="Expression Time Courses demo" />
+                    <img src={dictyDemo} alt="Expression Time Series demo" />
                 </HomeDemo>
             </HomeWrapper>
         </SectionContentContainer>

@@ -44,7 +44,7 @@ module.exports = {
     // .tsx files can include JSX.
     "react/jsx-filename-extension": ["error", { extensions: [".tsx"]}],
     // Ensure consistent use of file extension within import path.
-    "import/extensions": ["error", "never", { "svg": "always", "woff": "always", "css": "always", "png": "always"}],
+    "import/extensions": ["error", "never", { "svg": "always", "woff": "always", "css": "always", "png": "always", "jpg": "always"}],
     "import/no-extraneous-dependencies": ["error", {"devDependencies": true}],
     "prettier/prettier": "error"
   },

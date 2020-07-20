@@ -38,8 +38,6 @@ export const FooterWrapper = styled.div`
 export const SocialNetworkLink = styled(Link)`
     margin-right: 10px;
 
-    color: white;
-
     & svg {
         font-size: 48px;
     }

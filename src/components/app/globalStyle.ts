@@ -74,10 +74,6 @@ export const GlobalStyle = createGlobalStyle`
   }
 `;
 
-export const theme = {
-    primary: '#6e27c5',
-};
-
 export const breakpoints = {
     small: 768,
     mid: 992,
