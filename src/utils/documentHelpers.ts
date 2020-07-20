@@ -5,7 +5,7 @@ const scrollToTop = (): void => {
     });
 };
 
-const scrollToTargetAdjusted = (targetIdOrHash: string, offset: number): void => {
+export const scrollToTargetAdjusted = (targetIdOrHash: string, offset: number): void => {
     if (targetIdOrHash == null || targetIdOrHash === '') {
         scrollToTop();
     }
@@ -24,4 +24,18 @@ const scrollToTargetAdjusted = (targetIdOrHash: string, offset: number): void =>
     });
 };
 
-export default scrollToTargetAdjusted;
+export const getCookie = (name: string): string => {
+    let cookieValue = '';
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i += 1) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.startsWith(name)) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+};

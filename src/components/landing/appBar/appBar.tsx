@@ -11,7 +11,7 @@ import {
     ToolbarWrapper,
 } from './appBar.styles';
 import SectionNames from '../common/constants';
-import scrollToTargetAdjusted from '../../../utils/documentHelpers';
+import { scrollToTargetAdjusted } from '../../../utils/documentHelpers';
 import { appBarHeight } from '../../app/globalStyle';
 import { ContentContainer } from '../common/layout.styles';
 
