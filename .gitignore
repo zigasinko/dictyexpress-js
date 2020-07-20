@@ -1,6 +1,7 @@
 .test
 /coverage
 node_modules
+jspm_packages
 
 .vscode
 .idea
