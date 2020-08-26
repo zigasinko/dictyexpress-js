@@ -16,8 +16,9 @@ throttle(["dictyexpress_js"]) {
             }
 
             stage("Install") {
-                sh "echo 'Environment:' && scl enable rh-nodejs8 -- node --version && scl enable rh-nodejs8 -- npm --version"
-
+                nodejs(nodeJSInstallationName: 'NodeJS 12'){
+                    sh "echo 'Environment:' && node --version && npm --version"
+                }
                 // force a clean install when not testing a pull request against the "master" branch
                 if (!(env.CHANGE_TARGET && env.CHANGE_TARGET == "master")) {
                     sh "rm -rf jspm_packages/"
@@ -25,7 +26,9 @@ throttle(["dictyexpress_js"]) {
                 }
                 // do not re-check against the registry if package is in the registry cache for
                 // less than a day
-                sh "scl enable rh-nodejs8 -- npm --cache-min 86400 install"
+                nodejs(nodeJSInstallationName: 'NodeJS 12'){
+                    sh "npm --cache-min 86400 install"
+                }
             }
 
             parallel (
@@ -40,7 +43,9 @@ throttle(["dictyexpress_js"]) {
                 "Tests": {
                     stage("Tests") {
                         // Launches the test runner in the interactive watch mode.
-                        sh "scl enable rh-nodejs8 -- npm test -- --watchAll=false"
+                        nodejs(nodeJSInstallationName: 'NodeJS 12'){
+                            sh "npm test -- --watchAll=false"
+                        }
                     }
                  }
             )
