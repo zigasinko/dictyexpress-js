@@ -28,10 +28,22 @@ throttle(["dictyexpress_js"]) {
                 sh "scl enable rh-nodejs8 -- npm --cache-min 86400 install"
             }
 
-            stage("Test") {
-                // Launches the test runner in the interactive watch mode.
-                sh "scl enable rh-nodejs8 -- npm test -- --watchAll=false"
-            }
+            parallel (
+                "Linters": {
+                    stage("Linters") {
+                        // Launches ESLint check with up-to-date version of NodeJS
+                        nodejs(nodeJSInstallationName: 'NodeJS 12'){
+                            sh "npm run eslint:check"
+                        }
+                    }
+                },
+                "Tests": {
+                    stage("Tests") {
+                        // Launches the test runner in the interactive watch mode.
+                        sh "scl enable rh-nodejs8 -- npm test -- --watchAll=false"
+                    }
+                 }
+            )
 
         } catch (e) {
             currentBuild.result = "FAILED"

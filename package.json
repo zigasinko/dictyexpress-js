@@ -22,7 +22,7 @@
         "prettier": "prettier \"{,!(node_modules)/**/}*.{json,html,md,scss,css,yaml,yml}\"",
         "prettier:check": "npm run prettier -- --check",
         "prettier:fix": "npm run prettier -- --write",
-        "eslint:check": "tsc --noEmit && eslint ./**/*.{js,jsx,ts,tsx}",
+        "eslint:check": "tsc --noEmit && eslint './**/*.{js,jsx,ts,tsx}'",
         "eslint:fix": "npm run eslint:check -- --fix",
         "check": "npm run prettier:check && npm run eslint:check",
         "fix": "npm run eslint:fix && npm run prettier:fix"
