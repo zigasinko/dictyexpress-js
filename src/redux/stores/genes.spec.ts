@@ -11,8 +11,6 @@ import genesReducer, {
     geneHighlighted,
     genesHighlighted,
     geneUnhighlighted,
-    pastedGenesFetchStarted,
-    pastedGenesFetchEnded,
 } from './genes';
 import { timeSeriesSelected } from './timeSeries';
 
@@ -30,7 +28,6 @@ describe('genes store', () => {
             initialState = {
                 byId: {},
                 highlightedGenesNames: [],
-                isFetchingPastedGenes: false,
             };
 
             genes = _.flatMap(genesById);
@@ -80,13 +77,6 @@ describe('genes store', () => {
 
             expect(newState).toEqual(expectedState);
         });
-
-        it('should set isFetchingPastedGenes to true with pastedGenesFetchStarted action', () => {
-            const newState = genesReducer(initialState, pastedGenesFetchStarted());
-            const expectedState = { ...initialState, isFetchingPastedGenes: true };
-
-            expect(newState).toEqual(expectedState);
-        });
     });
 
     describe('not empty initial state', () => {
@@ -94,7 +84,6 @@ describe('genes store', () => {
             initialState = {
                 byId: genesById,
                 highlightedGenesNames: [],
-                isFetchingPastedGenes: true,
             };
 
             genes = getSelectedGenes(initialState);
@@ -177,13 +166,6 @@ describe('genes store', () => {
         it('should unhighlight gene', () => {
             const newState = genesReducer(initialState, geneUnhighlighted('asdf'));
             const expectedState = { ...initialState };
-
-            expect(newState).toEqual(expectedState);
-        });
-
-        it('should set isFetchingPastedGenes to false with pastedGenesFetchEnded action', () => {
-            const newState = genesReducer(initialState, pastedGenesFetchEnded());
-            const expectedState = { ...initialState, isFetchingPastedGenes: false };
 
             expect(newState).toEqual(expectedState);
         });

@@ -1,7 +1,5 @@
 import { generateRandomString } from 'utils/stringUtils';
 import configureMockStore, { MockStoreEnhanced } from 'redux-mock-store';
-import { ThunkDispatch, AnyAction } from '@reduxjs/toolkit';
-import thunk from 'redux-thunk';
 import {
     Relation,
     Contributor,
@@ -13,6 +11,8 @@ import {
 } from '@genialis/resolwe/dist/api/types/rest';
 import { BasketAddSamplesResponse } from 'redux/models/rest';
 import _ from 'lodash';
+import { createEpicMiddleware } from 'redux-observable';
+import { AppDispatch } from 'redux/appStore';
 import {
     RelationsById,
     GenesById,
@@ -195,7 +195,6 @@ export const testState = (): RootState => {
         selectedGenes: {
             byId: generateGenesById(2),
             highlightedGenesNames: [],
-            isFetchingPastedGenes: false,
         },
         samplesExpressions: {
             byId: {},
@@ -205,12 +204,13 @@ export const testState = (): RootState => {
     };
 };
 
-const middlewares = [thunk];
-export type DispatchExts = ThunkDispatch<RootState, never, AnyAction>;
 export const mockStore = (
     initialTestState: RootState,
-): MockStoreEnhanced<RootState, DispatchExts> => {
-    const createMockStore = configureMockStore<RootState, DispatchExts>(middlewares);
+): MockStoreEnhanced<RootState, AppDispatch> => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const epicMiddleware = createEpicMiddleware<any, any, RootState, any>();
+
+    const createMockStore = configureMockStore<RootState, AppDispatch>([epicMiddleware]);
     const store = createMockStore(initialTestState);
     store.clearActions();
 

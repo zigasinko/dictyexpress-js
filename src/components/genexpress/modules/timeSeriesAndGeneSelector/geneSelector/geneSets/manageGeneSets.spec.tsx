@@ -42,7 +42,7 @@ describe('manageGeneSets', () => {
 
     it('should call onDelete with selected gene sets', async () => {
         // Simulate select first row (gene set).
-        fireEvent.click(screen.getAllByLabelText('Toggle Row Selection')[0]);
+        fireEvent.click(screen.getAllByLabelText('Toggle Row Selection', { exact: false })[0]);
         fireEvent.click(await screen.findByText('Delete selected'));
 
         expect(mockedOnDelete.mock.calls.length).toBe(1);

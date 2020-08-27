@@ -1,11 +1,12 @@
 import React, { ReactElement } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from 'redux/rootReducer';
-import { selectTimeSeries, fetchTimeSeries } from 'redux/thunks/timeSeriesThunks';
 import {
     getTimeSeries,
     getTimeSeriesIsFetching,
     getSelectedTimeSeries,
+    timeSeriesSelected,
+    fetchTimeSeries,
 } from 'redux/stores/timeSeries';
 import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
 import { Relation } from '@genialis/resolwe/dist/api/types/rest';
@@ -24,7 +25,7 @@ const mapStateToProps = (
 
 const connector = connect(mapStateToProps, {
     connectedFetchTimeSeries: fetchTimeSeries,
-    connectedSelectTimeSeries: selectTimeSeries,
+    connectedTimeSeriesSelected: timeSeriesSelected,
 });
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -34,11 +35,11 @@ const TimeSeriesAndGeneSelector = ({
     timeSeries,
     selectedTimeSeries,
     isFetching,
-    connectedSelectTimeSeries,
+    connectedTimeSeriesSelected,
 }: PropsFromRedux): ReactElement => {
     const onRowSelectedHandler = (newSelectedTimeSeries: Relation): void => {
         if (selectedTimeSeries == null || newSelectedTimeSeries.id !== selectedTimeSeries.id) {
-            connectedSelectTimeSeries(newSelectedTimeSeries.id);
+            connectedTimeSeriesSelected(newSelectedTimeSeries.id);
         }
     };
 

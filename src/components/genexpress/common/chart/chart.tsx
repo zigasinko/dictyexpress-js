@@ -4,7 +4,7 @@ import * as vegaTooltip from 'vega-tooltip';
 import { withSize, SizeMeProps } from 'react-sizeme';
 import { Spec } from 'vega';
 import { useDispatch } from 'react-redux';
-import { forwardToSentryAndNotifyUser } from 'utils/errorUtils';
+import { handleError } from 'utils/errorUtils';
 import { vegaTheme } from '../theming/vegaTheme';
 
 export type DataHandler = {
@@ -82,7 +82,7 @@ const Chart = ({
         try {
             chartView.current?.runAsync();
         } catch (error) {
-            forwardToSentryAndNotifyUser('Error generating chart.', error, dispatch);
+            dispatch(handleError('Error generating chart.', error));
         }
     }, [dispatch]);
 
