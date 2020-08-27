@@ -2,6 +2,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
 import { SnackbarKey } from 'notistack';
 import { SnackbarNotification, SnackbarNotificationContent } from 'redux/models/internal';
+import { sentryCapture } from 'utils/sentryUtils';
+import { Severity } from '@sentry/browser';
 
 // State slices.
 const notificationsInitialState = [] as SnackbarNotification[];
@@ -37,6 +39,14 @@ export const { addSnackbar, removeSnackbar } = notificationsSlice.actions;
 export const addErrorSnackbar = (
     message: string,
 ): PayloadAction<SnackbarNotificationContent, string> => addSnackbar({ message, variant: 'error' });
+
+export const pushToSentryAndAddErrorSnackbar = (
+    message: string,
+    error: Error,
+): ReturnType<typeof addErrorSnackbar> => {
+    const sentryId = sentryCapture(message, error, Severity.Error);
+    return addErrorSnackbar(`${message} SentryID: ${sentryId}`);
+};
 
 export type NotificationsState = ReturnType<typeof notificationsReducer>;
 

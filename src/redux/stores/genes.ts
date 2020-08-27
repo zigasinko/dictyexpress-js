@@ -2,7 +2,6 @@ import { createSlice, PayloadAction, createSelector } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
 import _ from 'lodash';
 import { Gene, GenesById } from 'redux/models/internal';
-import createIsFetchingSlice from './fetch';
 import { timeSeriesSelected } from './timeSeries';
 
 // State slices.
@@ -53,12 +52,9 @@ const highlightedGenesSlice = createSlice({
     },
 });
 
-const isFetchingPastedGenesSlice = createIsFetchingSlice('genes');
-
 const genesReducer = combineReducers({
     byId: selectedGenesSlice.reducer,
     highlightedGenesNames: highlightedGenesSlice.reducer,
-    isFetchingPastedGenes: isFetchingPastedGenesSlice.reducer,
 });
 
 // Export actions.
@@ -75,19 +71,12 @@ export const {
     unhighlighted: geneUnhighlighted,
 } = highlightedGenesSlice.actions;
 
-export const {
-    started: pastedGenesFetchStarted,
-    ended: pastedGenesFetchEnded,
-} = isFetchingPastedGenesSlice.actions;
-
 export type GenesState = ReturnType<typeof genesReducer>;
 
 export default genesReducer;
 
 // Selectors (exposes the store to containers).
 const byIdSelector = (state: GenesState): GenesById => state.byId;
-
-export const getIsFetchingPastedGenes = (state: GenesState): boolean => state.isFetchingPastedGenes;
 
 // createSelector function uses memoization so that only if byId slice changes it will get recomputed again.
 export const getSelectedGenes = createSelector(byIdSelector, (genesById) => {

@@ -15,7 +15,7 @@ const csrfSafeMethod = (method: string): boolean => {
 /**
  * The fetch() API only rejects a promise when a “network error is encountered, although this usually means permissions issues or similar.”.
  * Basically fetch() will only reject a promise if the user is offline, or some unlikely networking error occurs, such a DNS lookup failure.
- * That's why if response isn't ok, an error is thrown and it should be handled in thunks / calling component.
+ * That's why if response isn't ok, an error is thrown and it should be handled in epics / calling component.
  * @param response - Received response.
  */
 const throwErrorIfResponseNotOk = (response: Response): Response => {

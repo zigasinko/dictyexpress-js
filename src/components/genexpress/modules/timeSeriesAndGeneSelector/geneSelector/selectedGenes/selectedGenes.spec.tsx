@@ -4,22 +4,23 @@ import { customRender } from 'tests/test-utils';
 import { generateGene, mockStore, testState } from 'tests/mock';
 import { allGenesDeselected } from 'redux/stores/genes';
 import { BasketInfoData } from 'components/genexpress/common/constants';
+import { MockStoreEnhanced } from 'redux-mock-store';
+import { RootState } from 'redux/rootReducer';
+import { AppDispatch } from 'redux/appStore';
 import SelectedGenes from './selectedGenes';
 
-const initialTestState = testState();
-const testGenes = [generateGene(0), generateGene(1)];
+const initialState = testState();
+const genes = [generateGene(0), generateGene(1)];
 
-initialTestState.timeSeries.selectedSamplesInfo = {
+initialState.timeSeries.selectedSamplesInfo = {
     source: BasketInfoData.SOURCE,
     species: BasketInfoData.SPECIES,
     type: 'gene',
 };
-initialTestState.selectedGenes.byId = {
-    [testGenes[0].name]: testGenes[0],
-    [testGenes[1].name]: testGenes[1],
+initialState.selectedGenes.byId = {
+    [genes[0].name]: genes[0],
+    [genes[1].name]: genes[1],
 };
-
-const mockedStore = mockStore(initialTestState);
 
 Object.assign(navigator, {
     clipboard: {
@@ -28,30 +29,36 @@ Object.assign(navigator, {
 });
 
 describe('selectedGenes', () => {
+    let mockedStore: MockStoreEnhanced<RootState, AppDispatch>;
+
+    beforeEach(() => {
+        mockedStore = mockStore(initialState);
+    });
+
     it('should show genes', () => {
-        customRender(<SelectedGenes selectedGenes={testGenes} highlightedGenesNames={[]} />, {
+        customRender(<SelectedGenes selectedGenes={genes} highlightedGenesNames={[]} />, {
             mockedStore,
         });
 
         // All genes should be visible.
-        testGenes.forEach((gene) => screen.getByText(gene.name));
+        genes.forEach((gene) => screen.getByText(gene.name));
     });
 
     it('should copy selected genes names', () => {
-        customRender(<SelectedGenes selectedGenes={testGenes} highlightedGenesNames={[]} />, {
+        customRender(<SelectedGenes selectedGenes={genes} highlightedGenesNames={[]} />, {
             mockedStore,
         });
 
         const clipboardSpy = jest.spyOn(navigator.clipboard, 'writeText');
 
-        fireEvent.click(screen.getByLabelText(`Copy ${testGenes.length} genes to clipboard`));
+        fireEvent.click(screen.getByLabelText(`Copy ${genes.length} genes to clipboard`));
 
         // All genes should be visible.
-        expect(clipboardSpy).toHaveBeenCalledWith(testGenes.map((gene) => gene.name).join(', '));
+        expect(clipboardSpy).toHaveBeenCalledWith(genes.map((gene) => gene.name).join(', '));
     });
 
     it('should clear all genes', () => {
-        customRender(<SelectedGenes selectedGenes={testGenes} highlightedGenesNames={[]} />, {
+        customRender(<SelectedGenes selectedGenes={genes} highlightedGenesNames={[]} />, {
             mockedStore,
         });
 

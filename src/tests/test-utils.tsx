@@ -6,17 +6,17 @@ import { createMuiTheme, StylesProvider, MuiThemeProvider } from '@material-ui/c
 import { SnackbarProvider } from 'notistack';
 
 import { MockStoreEnhanced } from 'redux-mock-store';
+import { AppDispatch } from 'redux/appStore';
 import { RootState } from '../redux/rootReducer';
 import theme from '../components/app/theme';
 import { GlobalStyle } from '../components/app/globalStyle';
 import getStore from '../redux/rootStore';
-import { DispatchExts } from './mock';
 
 const appTheme = createMuiTheme(theme);
 
 export type customRenderOptions = {
     initialState?: RootState;
-    mockedStore?: MockStoreEnhanced<RootState, DispatchExts>;
+    mockedStore?: MockStoreEnhanced<RootState, AppDispatch>;
 };
 
 export const customRender = (ui: ReactElement, options?: customRenderOptions): RenderResult => {

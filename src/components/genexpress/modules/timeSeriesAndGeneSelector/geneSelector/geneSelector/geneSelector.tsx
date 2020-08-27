@@ -2,23 +2,19 @@ import React, { ReactElement, useState, useEffect, useCallback, ReactNode } from
 import Tooltip from '@material-ui/core/Tooltip';
 import _, { debounce } from 'lodash';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { connect, ConnectedProps } from 'react-redux';
+import { connect, ConnectedProps, useDispatch } from 'react-redux';
 import TextField from '@material-ui/core/TextField';
 import { CircularProgress } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
-import {
-    getSelectedGenes,
-    getHighlightedGenesNames,
-    getIsFetchingPastedGenes,
-} from 'redux/stores/genes';
+import { getSelectedGenes, getHighlightedGenesNames, genesSelected } from 'redux/stores/genes';
 import { Gene, SamplesInfo } from 'redux/models/internal';
-import { getGenes } from 'api/featureApi';
+import { getGenes, getGenesByNames } from 'api/featureApi';
 import SelectedGenes from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/selectedGenes/selectedGenes';
 import { getSelectedSamplesInfo } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
 import { splitAndCleanGenesString } from 'utils/stringUtils';
-import { pasteGenesNames, selectGenes } from 'redux/thunks/geneThunks';
 import GeneSetSelector from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/geneSets/geneSetSelector';
+import { forwardToSentryAndNotifyUser } from 'utils/errorUtils';
 import { AutoCompleteItemSpan, TitleSection } from './geneSelector.styles';
 
 const itemRender = (option: Gene): ReactElement => {
@@ -38,30 +34,25 @@ const mapStateToProps = (
     selectedGenes: Gene[];
     selectedSamplesInfo: SamplesInfo;
     highlightedGenesNames: string[];
-    isFetchingPastedGenes: boolean;
 } => {
     return {
         selectedGenes: getSelectedGenes(state.selectedGenes),
         selectedSamplesInfo: getSelectedSamplesInfo(state.timeSeries),
         highlightedGenesNames: getHighlightedGenesNames(state.selectedGenes),
-        isFetchingPastedGenes: getIsFetchingPastedGenes(state.selectedGenes),
     };
 };
 
 const connector = connect(mapStateToProps, {
-    connectedSelectGenes: selectGenes,
-    connectedPasteGenesNames: pasteGenesNames,
+    connectedGenesSelected: genesSelected,
 });
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-export const GeneSelector = ({
+const GeneSelector = ({
     selectedSamplesInfo,
     selectedGenes,
     highlightedGenesNames,
-    isFetchingPastedGenes,
-    connectedSelectGenes,
-    connectedPasteGenesNames,
+    connectedGenesSelected,
 }: PropsFromRedux): ReactElement => {
     const {
         source: autocompleteSource,
@@ -72,8 +63,10 @@ export const GeneSelector = ({
     const [value, setValue] = useState<Gene[]>([]);
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isFetchingPastedGenes, setIsFetchingPastedGenes] = useState(false);
     const [genes, setGenes] = useState<Gene[]>([]);
     const { enqueueSnackbar } = useSnackbar();
+    const dispatch = useDispatch();
 
     const fetchGenes = useCallback(
         debounce(async (queryValue: string): Promise<void> => {
@@ -127,7 +120,7 @@ export const GeneSelector = ({
 
     const handleOnChange = (_event: unknown, newValue: Gene[]): void => {
         setValue(newValue);
-        connectedSelectGenes(newValue);
+        connectedGenesSelected(newValue);
     };
 
     /**
@@ -137,8 +130,30 @@ export const GeneSelector = ({
      * @param genesNames - Array of genes names.
      */
     const handleImportedGenesNames = async (genesNames: string[]): Promise<void> => {
-        const notFoundGenesNames = await connectedPasteGenesNames(genesNames);
-        setInputValue(notFoundGenesNames.join());
+        setIsFetchingPastedGenes(true);
+
+        try {
+            const pastedGenes = await getGenesByNames(
+                selectedSamplesInfo.source,
+                selectedSamplesInfo.species,
+                selectedSamplesInfo.type,
+                genesNames,
+            );
+
+            if (pastedGenes != null) {
+                connectedGenesSelected(pastedGenes);
+
+                // Get and display not found genes.
+                const notFoundGenesNames = genesNames.filter(
+                    (geneName) => _.find(pastedGenes, { name: geneName }) == null,
+                );
+                setInputValue(notFoundGenesNames.join());
+            }
+        } catch (error) {
+            forwardToSentryAndNotifyUser('Error searching for pasted genes.', error, dispatch);
+        }
+
+        setIsFetchingPastedGenes(false);
     };
 
     /**
@@ -147,10 +162,10 @@ export const GeneSelector = ({
      * User has to manually do something with them (fix them).
      * @param genesNamesString - Original input that the user pasted or imported with file drag.
      */
-    const handleImportedGenesNamesString = async (genesNamesString: string): Promise<void> => {
+    const handleImportedGenesNamesString = (genesNamesString: string): void => {
         const enteredGenesNames = splitAndCleanGenesString(genesNamesString);
 
-        return handleImportedGenesNames(enteredGenesNames);
+        handleImportedGenesNames(enteredGenesNames);
     };
 
     const handleOnPaste = (event: React.ClipboardEvent<HTMLDivElement>): void => {

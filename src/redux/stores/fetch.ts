@@ -14,8 +14,12 @@ const createIsFetchingSlice = (
         name: `fetch/${sliceName}`,
         initialState: false as boolean,
         reducers: {
-            started: (): boolean => true,
-            ended: (): boolean => false,
+            started: (): boolean => {
+                return true;
+            },
+            ended: (): boolean => {
+                return false;
+            },
         },
     });
 };
