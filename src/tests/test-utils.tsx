@@ -7,6 +7,7 @@ import { SnackbarProvider } from 'notistack';
 
 import { MockStoreEnhanced } from 'redux-mock-store';
 import { AppDispatch } from 'redux/appStore';
+import { RendererContext } from 'components/common/rendererContext';
 import { RootState } from '../redux/rootReducer';
 import theme from '../components/app/theme';
 import { GlobalStyle } from '../components/app/globalStyle';
@@ -25,16 +26,18 @@ export const customRender = (ui: ReactElement, options?: customRenderOptions): R
 
     const AllTheProviders = ({ children }: { children: ReactElement }): ReactElement => {
         return (
-            <StylesProvider injectFirst>
-                <ReduxProvider store={options?.mockedStore ?? store}>
-                    <MuiThemeProvider theme={appTheme}>
-                        <StyledComponentsThemeProvider theme={appTheme}>
-                            <GlobalStyle />
-                            <SnackbarProvider maxSnack={3}>{children}</SnackbarProvider>
-                        </StyledComponentsThemeProvider>
-                    </MuiThemeProvider>
-                </ReduxProvider>
-            </StylesProvider>
+            <RendererContext.Provider value="svg">
+                <StylesProvider injectFirst>
+                    <ReduxProvider store={options?.mockedStore ?? store}>
+                        <MuiThemeProvider theme={appTheme}>
+                            <StyledComponentsThemeProvider theme={appTheme}>
+                                <GlobalStyle />
+                                <SnackbarProvider maxSnack={3}>{children}</SnackbarProvider>
+                            </StyledComponentsThemeProvider>
+                        </MuiThemeProvider>
+                    </ReduxProvider>
+                </StylesProvider>
+            </RendererContext.Provider>
         );
     };
 

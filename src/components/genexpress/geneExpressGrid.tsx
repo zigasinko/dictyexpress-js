@@ -7,28 +7,43 @@ import { getIsFetchingSamplesExpressions } from 'redux/stores/samplesExpressions
 import { appStarted } from 'redux/epics/connectToServerEpic';
 import { getCSRFCookie } from 'api/csrfApi';
 import { getIsLoggingOut } from 'redux/stores/authentication';
+import {
+    getIsFetchingDifferentialExpressions,
+    getIsFetchingDifferentialExpressionsData,
+} from 'redux/stores/differentialExpressions';
+import { breakpoints } from 'components/app/globalStyle';
 import TimeSeriesAndGeneSelector from './modules/timeSeriesAndGeneSelector/timeSeriesAndGeneSelector';
 import GeneExpressions from './modules/geneExpressions/geneExpressions';
 import DictyModule from './common/dictyModule/dictyModule';
 import SnackbarNotifier from './snackbarNotifier/snackbarNotifier';
 import GenexpressAppBar from './genexpressAppBar/genexpressAppBar';
+import DifferentialExpressions from './modules/differentialExpressions/differentialExpressions';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const defaultLayout = {
     lg: [
         {
             i: 'timeSeriesAndGeneSelector',
-            x: 1,
-            y: 1,
+            x: 0,
+            y: 0,
             w: 4,
             h: 4,
             minW: 2,
             minH: 3,
         },
         {
-            i: 'secondModule',
-            x: 6,
-            y: 1,
+            i: 'expressionTimeCourses',
+            x: 4,
+            y: 0,
+            w: 4,
+            h: 4,
+            minW: 2,
+            minH: 3,
+        },
+        {
+            i: 'differentialExpressions',
+            x: 8,
+            y: 0,
             w: 4,
             h: 4,
             minW: 2,
@@ -38,17 +53,26 @@ const defaultLayout = {
     md: [
         {
             i: 'timeSeriesAndGeneSelector',
-            x: 1,
-            y: 1,
+            x: 0,
+            y: 0,
             w: 4,
             h: 4,
             minW: 2,
             minH: 3,
         },
         {
-            i: 'secondModule',
-            x: 5,
-            y: 1,
+            i: 'expressionTimeCourses',
+            x: 4,
+            y: 0,
+            w: 4,
+            h: 4,
+            minW: 2,
+            minH: 3,
+        },
+        {
+            i: 'differentialExpressions',
+            x: 8,
+            y: 0,
             w: 4,
             h: 4,
             minW: 2,
@@ -66,9 +90,18 @@ const defaultLayout = {
             minH: 3,
         },
         {
-            i: 'secondModule',
-            x: 5,
+            i: 'expressionTimeCourses',
+            x: 0,
             y: 1,
+            w: 6,
+            h: 4,
+            minW: 2,
+            minH: 3,
+        },
+        {
+            i: 'differentialExpressions',
+            x: 0,
+            y: 0,
             w: 6,
             h: 4,
             minW: 2,
@@ -83,12 +116,20 @@ const mapStateToProps = (
     isFetchingTimeSeries: boolean;
     isAddingToBasket: boolean;
     isFetchingSamplesExpressions: boolean;
+    isFetchingDifferentialExpressions: boolean;
+    isFetchingDifferentialExpressionsData: boolean;
     isLoggingOut: boolean;
 } => {
     return {
         isFetchingTimeSeries: getTimeSeriesIsFetching(state.timeSeries),
         isAddingToBasket: getIsAddingToBasket(state.timeSeries),
         isFetchingSamplesExpressions: getIsFetchingSamplesExpressions(state.samplesExpressions),
+        isFetchingDifferentialExpressions: getIsFetchingDifferentialExpressions(
+            state.differentialExpressions,
+        ),
+        isFetchingDifferentialExpressionsData: getIsFetchingDifferentialExpressionsData(
+            state.differentialExpressions,
+        ),
         isLoggingOut: getIsLoggingOut(state.authentication),
     };
 };
@@ -101,6 +142,8 @@ const GeneExpressGrid = ({
     isFetchingTimeSeries,
     isAddingToBasket,
     isFetchingSamplesExpressions,
+    isFetchingDifferentialExpressions,
+    isFetchingDifferentialExpressionsData,
     isLoggingOut,
 }: PropsFromRedux): ReactElement => {
     const dispatch = useDispatch();
@@ -123,7 +166,7 @@ const GeneExpressGrid = ({
                 draggableHandle=".dragHandle"
                 layouts={defaultLayout}
                 verticalCompact
-                breakpoints={{ lg: 1200, md: 996, sm: 768 }}
+                breakpoints={{ lg: breakpoints.big, md: breakpoints.mid, sm: breakpoints.small }}
                 cols={{ lg: 12, md: 10, sm: 6 }}
             >
                 <div key="timeSeriesAndGeneSelector">
@@ -134,12 +177,23 @@ const GeneExpressGrid = ({
                         <TimeSeriesAndGeneSelector />
                     </DictyModule>
                 </div>
-                <div key="secondModule">
+                <div key="expressionTimeCourses">
                     <DictyModule
                         title="Expression Time Courses"
                         isLoading={isFetchingSamplesExpressions}
                     >
                         <GeneExpressions />
+                    </DictyModule>
+                </div>
+                <div key="differentialExpressions">
+                    <DictyModule
+                        title="Differential expressions"
+                        isLoading={
+                            isFetchingDifferentialExpressions ||
+                            isFetchingDifferentialExpressionsData
+                        }
+                    >
+                        <DifferentialExpressions />
                     </DictyModule>
                 </div>
             </ResponsiveGridLayout>

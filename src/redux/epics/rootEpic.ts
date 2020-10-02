@@ -3,9 +3,12 @@ import {
     fetchTimeSeriesSamplesExpressionsEpic,
     timeSeriesSelectedEpic,
     fetchTimeSeriesEpic,
+    fetchDifferentialExpressionsDataEpic,
+    fetchDifferentialExpressionsEpic,
 } from './timeSeriesEpics';
 import { connectToWebSocketServiceEpic, connectToServerEpic } from './connectToServerEpic';
 import { loginEpic, getCurrentUserEpic, logoutEpic } from './authenticationEpics';
+import { fetchSelectedDifferentialExpressionGenesEpic } from './genesEpics';
 
 const rootEpic = combineEpics(
     connectToWebSocketServiceEpic,
@@ -14,6 +17,9 @@ const rootEpic = combineEpics(
     logoutEpic,
     getCurrentUserEpic,
     fetchTimeSeriesSamplesExpressionsEpic,
+    fetchDifferentialExpressionsEpic,
+    fetchDifferentialExpressionsDataEpic,
+    fetchSelectedDifferentialExpressionGenesEpic,
     timeSeriesSelectedEpic,
     fetchTimeSeriesEpic,
 );

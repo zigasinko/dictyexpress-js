@@ -1,6 +1,12 @@
-import { Relation } from '@genialis/resolwe/dist/api/types/rest';
+import {
+    DataDifferentialExpression,
+    DataStatus,
+    Relation,
+    Storage,
+} from '@genialis/resolwe/dist/api/types/rest';
 import { Feature } from '@genialis/resolwe/dist/api/types/modules';
 import { VariantType, SnackbarKey } from 'notistack';
+import { Renderers } from 'vega';
 
 export type Gene = Pick<
     Feature,
@@ -35,6 +41,41 @@ export type SamplesExpressionsById = {
     [sampleId: number]: GeneExpression;
 };
 
+export type VolcanoPoint = {
+    geneId: string; // Feature (gene) id
+    logFcValue: number;
+    logProbValue: number;
+    logProbFiniteValue: number;
+    probValue: number;
+};
+
+export type Thresholds = {
+    pValue: number;
+    pValueLog: number;
+    fc: number;
+    fcLog: number;
+};
+
+export type DifferentialExpression = {
+    id: number;
+    slug: string;
+    name: string;
+    status: DataStatus;
+    started: string;
+    finished: string;
+    process_progress: number;
+    logfc_threshold: number;
+    prob_field: string;
+    prob_threshold: number;
+    up_regulated: number;
+    down_regulated: number;
+    output: DataDifferentialExpression['output'];
+} & Partial<Pick<Storage, 'json'>>;
+
+export type DifferentialExpressionsById = {
+    [differentialExpressionId: number]: DifferentialExpression;
+};
+
 // If key is undefined, it will be generated in the reducer.
 export type SnackbarNotificationContent = {
     key?: SnackbarKey;
@@ -49,3 +90,5 @@ export type SnackbarNotification = {
 } & Pick<SnackbarNotificationContent, 'message' | 'variant' | 'action'>;
 
 export type SnackbarNotifications = SnackbarNotification[];
+
+export type DictyRenderers = Exclude<Renderers, 'none'>;

@@ -14,34 +14,36 @@ import { SnackbarProvider } from 'notistack';
 import LandingPage from 'components/landing/landingPage';
 import PageNotFound from 'components/pageNotFound';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
+import { RendererContext } from 'components/common/rendererContext';
 import { GlobalStyle } from './globalStyle';
 import theme from './theme';
-
 import appStore from '../../redux/appStore';
 
 const appTheme = createMuiTheme(theme);
 
 const App = (): ReactElement => {
     return (
-        <StylesProvider injectFirst>
-            <ReduxProvider store={appStore}>
-                <MuiThemeProvider theme={appTheme}>
-                    <StyledComponentsThemeProvider theme={appTheme}>
-                        <GlobalStyle />
-                        <SnackbarProvider maxSnack={3}>
-                            <BrowserRouter>
-                                <Switch>
-                                    <Route exact path="/" component={LandingPage} />
-                                    <Route path="/landing" component={LandingPage} />
-                                    <Route path="/bcm" component={GeneExpressGrid} />
-                                    <Route component={PageNotFound} />
-                                </Switch>
-                            </BrowserRouter>
-                        </SnackbarProvider>
-                    </StyledComponentsThemeProvider>
-                </MuiThemeProvider>
-            </ReduxProvider>
-        </StylesProvider>
+        <RendererContext.Provider value="canvas">
+            <StylesProvider injectFirst>
+                <ReduxProvider store={appStore}>
+                    <MuiThemeProvider theme={appTheme}>
+                        <StyledComponentsThemeProvider theme={appTheme}>
+                            <GlobalStyle />
+                            <SnackbarProvider maxSnack={3}>
+                                <BrowserRouter>
+                                    <Switch>
+                                        <Route exact path="/" component={LandingPage} />
+                                        <Route path="/landing" component={LandingPage} />
+                                        <Route path="/bcm" component={GeneExpressGrid} />
+                                        <Route component={PageNotFound} />
+                                    </Switch>
+                                </BrowserRouter>
+                            </SnackbarProvider>
+                        </StyledComponentsThemeProvider>
+                    </MuiThemeProvider>
+                </ReduxProvider>
+            </StylesProvider>
+        </RendererContext.Provider>
     );
 };
 

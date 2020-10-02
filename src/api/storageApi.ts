@@ -6,7 +6,7 @@ import { apiUrl } from './base';
 const baseUrl = `${apiUrl}/storage`;
 
 // eslint-disable-next-line import/prefer-default-export
-export const getStorageJson = async (storageId: number): Promise<Storage | null> => {
+export const getStorageJson = async (storageId: number): Promise<Storage> => {
     const url = `${baseUrl}/${storageId}`;
 
     const getStorageJsonResponse = await fetch.get(url);
