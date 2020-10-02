@@ -2,7 +2,7 @@ import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { generateTimeSeriesById } from 'tests/mock';
 import { getTimeSeries } from 'redux/stores/timeSeries';
-import { SamplesInfo } from 'redux/models/internal';
+import { BasketInfo } from 'redux/models/internal';
 import { customRender } from 'tests/test-utils';
 import DictyGrid from './dictyGrid';
 
@@ -12,7 +12,7 @@ const timeSeries = getTimeSeries({
     isFetching: false,
     selectedId: 1,
     isAddingToBasket: false,
-    selectedSamplesInfo: {} as SamplesInfo,
+    basketInfo: {} as BasketInfo,
 });
 
 describe('dictyGrid', () => {

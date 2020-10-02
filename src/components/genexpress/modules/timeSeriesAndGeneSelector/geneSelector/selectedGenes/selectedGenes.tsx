@@ -25,27 +25,27 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 type SelectedGenesProps = {
     selectedGenes: Gene[];
-    highlightedGenesNames: string[];
+    highlightedGenesIds: string[];
 } & PropsFromRedux;
 
 const SelectedGenes = ({
     selectedGenes,
-    highlightedGenesNames,
+    highlightedGenesIds,
     connectedGeneDeselected,
     connectedGeneHighlighted,
     connectedGeneUnhighlighted,
     connectedAllGenesDeselected,
 }: SelectedGenesProps): ReactElement => {
     const handleOnRemove = (gene: Gene): void => {
-        connectedGeneDeselected(gene);
+        connectedGeneDeselected(gene.feature_id);
     };
 
     const handleOnHighlight = (gene: Gene): void => {
-        connectedGeneHighlighted(gene.name);
+        connectedGeneHighlighted(gene.feature_id);
     };
 
     const handleOnUnhighlight = (gene: Gene): void => {
-        connectedGeneUnhighlighted(gene.name);
+        connectedGeneUnhighlighted(gene.feature_id);
     };
 
     const handleCopyClick = (): void => {
@@ -61,9 +61,9 @@ const SelectedGenes = ({
             <SelectedGenesContainer>
                 {selectedGenes.map((gene) => (
                     <GeneChip
-                        key={gene.name}
+                        key={gene.feature_id}
                         gene={gene}
-                        highlighted={highlightedGenesNames.includes(gene.name)}
+                        highlighted={highlightedGenesIds.includes(gene.feature_id)}
                         onRemove={(): void => handleOnRemove(gene)}
                         onHighlight={(): void => handleOnHighlight(gene)}
                         onUnhighlight={(): void => handleOnUnhighlight(gene)}

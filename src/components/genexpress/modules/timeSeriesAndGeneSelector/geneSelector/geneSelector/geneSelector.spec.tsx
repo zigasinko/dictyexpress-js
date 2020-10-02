@@ -2,7 +2,7 @@ import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { customRender } from 'tests/test-utils';
 import { testState, mockStore, generateGenesById } from 'tests/mock';
-import { genesSelected } from 'redux/stores/genes';
+import { genesFetchSucceeded, genesSelected } from 'redux/stores/genes';
 import { MockStoreEnhanced } from 'redux-mock-store';
 import { RootState } from 'redux/rootReducer';
 import { AppDispatch } from 'redux/appStore';
@@ -18,14 +18,15 @@ describe('geneSelector', () => {
 
     beforeEach(() => {
         initialState = testState();
-        initialState.timeSeries.selectedSamplesInfo = {
+        initialState.timeSeries.basketInfo = {
+            id: '1',
             source: 'DICTYBASE',
             species: 'Dictyostelium purpureum',
             type: 'gene',
         };
     });
 
-    it('should be disabled if selectedSamplesInfo is empty', () => {
+    it('should be disabled if basketInfo is empty', () => {
         customRender(<GeneSelector />);
 
         // "Search for a gene" input has to be disabled until time series is chosen.
@@ -36,7 +37,7 @@ describe('geneSelector', () => {
         let mockedStore: MockStoreEnhanced<RootState, AppDispatch>;
 
         beforeEach(() => {
-            initialState.selectedGenes.byId = {};
+            initialState.genes.byId = {};
             mockedStore = mockStore(initialState);
             mockedStore.clearActions();
 
@@ -54,7 +55,10 @@ describe('geneSelector', () => {
             });
 
             await waitFor(() => {
-                expect(mockedStore.getActions()).toEqual([genesSelected(genes)]);
+                expect(mockedStore.getActions()).toEqual([
+                    genesFetchSucceeded(genes),
+                    genesSelected(genes.map((gene) => gene.feature_id)),
+                ]);
             });
         });
 
@@ -73,7 +77,10 @@ describe('geneSelector', () => {
             });
 
             await waitFor(() => {
-                expect(mockedStore.getActions()).toEqual([genesSelected(genes)]);
+                expect(mockedStore.getActions()).toEqual([
+                    genesFetchSucceeded(genes),
+                    genesSelected(genes.map((gene) => gene.feature_id)),
+                ]);
             });
         });
 
@@ -85,7 +92,10 @@ describe('geneSelector', () => {
             await waitFor(() => fireEvent.click(screen.getByText(genes[1].name)));
 
             await waitFor(() =>
-                expect(mockedStore.getActions()).toEqual([genesSelected([genes[1]])]),
+                expect(mockedStore.getActions()).toEqual([
+                    genesFetchSucceeded(genes),
+                    genesSelected([genes[1].feature_id]),
+                ]),
             );
         });
     });
@@ -94,7 +104,7 @@ describe('geneSelector', () => {
         let mockedStore: MockStoreEnhanced<RootState, AppDispatch>;
 
         beforeEach(() => {
-            initialState.selectedGenes.byId = genesById;
+            initialState.genes.byId = genesById;
             mockedStore = mockStore(initialState);
             mockedStore.clearActions();
 

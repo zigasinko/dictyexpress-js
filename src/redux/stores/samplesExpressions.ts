@@ -4,10 +4,10 @@ import { SamplesExpressionsById } from '../models/internal';
 import createIsFetchingSlice from './fetch';
 
 // State slices.
-const samplesExpressionsInitialState = {} as SamplesExpressionsById;
-const samplesExpressionsSlice = createSlice({
+const samplesExpressionsByIdInitialState = {} as SamplesExpressionsById;
+const samplesExpressionsByIdSlice = createSlice({
     name: 'samplesExpressions',
-    initialState: samplesExpressionsInitialState,
+    initialState: samplesExpressionsByIdInitialState,
     reducers: {
         fetchSucceeded: (
             _state,
@@ -21,7 +21,7 @@ const samplesExpressionsSlice = createSlice({
 const isFetchingSamplesExpressionsSlice = createIsFetchingSlice('samplesExpressions');
 
 const samplesExpressionsReducer = combineReducers({
-    byId: samplesExpressionsSlice.reducer,
+    byId: samplesExpressionsByIdSlice.reducer,
     isFetchingSamplesExpressions: isFetchingSamplesExpressionsSlice.reducer,
 });
 
@@ -31,14 +31,16 @@ export const {
     ended: samplesExpressionsFetchEnded,
 } = isFetchingSamplesExpressionsSlice.actions;
 
-export const { fetchSucceeded: samplesExpressionsFetchSucceeded } = samplesExpressionsSlice.actions;
+export const {
+    fetchSucceeded: samplesExpressionsFetchSucceeded,
+} = samplesExpressionsByIdSlice.actions;
 
 export type SamplesExpressionsState = ReturnType<typeof samplesExpressionsReducer>;
 
 export default samplesExpressionsReducer;
 
 // Selectors (exposes the store to containers).
-export const getSamplesExpressionsIsFetching = (state: SamplesExpressionsState): boolean =>
+export const getIsFetchingSamplesExpressions = (state: SamplesExpressionsState): boolean =>
     state.isFetchingSamplesExpressions;
 
 export const getSamplesExpressionsById = (state: SamplesExpressionsState): SamplesExpressionsById =>

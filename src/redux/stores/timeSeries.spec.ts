@@ -1,5 +1,5 @@
 import { generateTimeSeriesById, generateBasket, generateSingleTimeSeries } from 'tests/mock';
-import { RelationsById, SamplesInfo } from 'redux/models/internal';
+import { RelationsById, BasketInfo } from 'redux/models/internal';
 import _ from 'lodash';
 import { Relation } from '@genialis/resolwe/dist/api/types/rest';
 import timeSeriesReducer, {
@@ -15,14 +15,6 @@ describe('timeSeries store', () => {
 
     beforeEach(() => {
         timeSeriesById = generateTimeSeriesById(2);
-
-        initialState = {
-            byId: {},
-            selectedId: 0,
-            isFetching: false,
-            isAddingToBasket: false,
-            selectedSamplesInfo: {} as SamplesInfo,
-        };
     });
 
     describe('empty initial state', () => {
@@ -36,7 +28,7 @@ describe('timeSeries store', () => {
                 selectedId: 0,
                 isFetching: false,
                 isAddingToBasket: false,
-                selectedSamplesInfo: {} as SamplesInfo,
+                basketInfo: {} as BasketInfo,
             };
         });
 
@@ -60,12 +52,13 @@ describe('timeSeries store', () => {
             expect(newState).toEqual(expectedState);
         });
 
-        it('should set selectedSamplesInfo with addSamplesToBasketSucceeded action', () => {
+        it('should set basketInfo with addSamplesToBasketSucceeded action', () => {
             const basket = generateBasket('123');
             const newState = timeSeriesReducer(initialState, addSamplesToBasketSucceeded(basket));
             const expectedState = {
                 ...initialState,
-                selectedSamplesInfo: {
+                basketInfo: {
+                    id: basket.id,
                     source: basket.permitted_sources[0],
                     species: basket.permitted_organisms[0],
                     type: 'gene',
@@ -83,7 +76,7 @@ describe('timeSeries store', () => {
                 selectedId: 0,
                 isFetching: false,
                 isAddingToBasket: false,
-                selectedSamplesInfo: {} as SamplesInfo,
+                basketInfo: {} as BasketInfo,
             };
         });
 

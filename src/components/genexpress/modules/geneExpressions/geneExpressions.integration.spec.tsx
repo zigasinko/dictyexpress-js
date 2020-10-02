@@ -72,13 +72,15 @@ describe('geneExpressions integration', () => {
             }
 
             if (req.url.includes('search')) {
-                return Promise.resolve(
-                    JSON.stringify([{ name: genes[0].name, feature_id: genes[0].feature_id }]),
-                );
+                return Promise.resolve(JSON.stringify([genes[0]]));
             }
 
             if (req.url.includes('csrf')) {
                 return Promise.resolve('');
+            }
+
+            if (req.url.includes('user?current_only')) {
+                return Promise.resolve(JSON.stringify({ items: [] }));
             }
 
             return Promise.reject(new Error(`bad url: ${req.url}`));
@@ -141,7 +143,8 @@ describe('geneExpressions integration', () => {
     describe('time series and one gene selected', () => {
         beforeEach(async () => {
             initialState.timeSeries.selectedId = timeSeries.id;
-            initialState.selectedGenes.byId = { [genes[0].feature_id]: genes[0] };
+            initialState.genes.byId = _.keyBy(genes, 'feature_id');
+            initialState.genes.selectedGenesIds = [genes[0].feature_id];
 
             ({ container } = customRender(<GeneExpressGrid />, {
                 initialState,
@@ -186,11 +189,11 @@ describe('geneExpressions integration', () => {
         it('should display tooltip and stroke the line on point hover', async () => {
             fireEvent.mouseMove(
                 container.querySelector(
-                    "g[role='graphics-symbol'].geneExpressionsPoints path",
+                    "g[role='graphics-symbol'].geneExpressionsPoints > path",
                 ) as Element,
             );
 
-            await screen.findByText('Gene name:');
+            await screen.findByText('Gene:');
         });
     });
 });

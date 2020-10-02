@@ -8,14 +8,15 @@ export type Gene = Pick<
 >;
 
 export type RelationsById = {
-    [_: string]: Relation;
+    [_: number]: Relation;
 };
 
 export type GenesById = {
     [_: string]: Gene;
 };
 
-export type SamplesInfo = {
+export type BasketInfo = {
+    id: string;
     source: string;
     species: string;
     type: 'gene';
@@ -47,10 +48,4 @@ export type SnackbarNotification = {
     key: SnackbarKey;
 } & Pick<SnackbarNotificationContent, 'message' | 'variant' | 'action'>;
 
-export type SnackbarNotifications = Array<SnackbarNotification>;
-
-export type GeneVisualizationData = {
-    x: string;
-    y: number;
-    geneName: string;
-};
+export type SnackbarNotifications = SnackbarNotification[];

@@ -6,11 +6,16 @@ import { connect, ConnectedProps, useDispatch } from 'react-redux';
 import TextField from '@material-ui/core/TextField';
 import { CircularProgress } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
-import { getSelectedGenes, getHighlightedGenesNames, genesSelected } from 'redux/stores/genes';
-import { Gene, SamplesInfo } from 'redux/models/internal';
+import {
+    getSelectedGenes,
+    getHighlightedGenesIds,
+    genesSelected,
+    genesFetchSucceeded,
+} from 'redux/stores/genes';
+import { Gene, BasketInfo } from 'redux/models/internal';
 import * as featureApi from 'api/featureApi';
 import SelectedGenes from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/selectedGenes/selectedGenes';
-import { getSelectedSamplesInfo } from 'redux/stores/timeSeries';
+import { getBasketInfo } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
 import { splitAndCleanGenesString } from 'utils/stringUtils';
 import GeneSetSelector from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/geneSets/geneSetSelector';
@@ -32,33 +37,35 @@ const mapStateToProps = (
     state: RootState,
 ): {
     selectedGenes: Gene[];
-    selectedSamplesInfo: SamplesInfo;
-    highlightedGenesNames: string[];
+    basketInfo: BasketInfo;
+    highlightedGenesIds: string[];
 } => {
     return {
-        selectedGenes: getSelectedGenes(state.selectedGenes),
-        selectedSamplesInfo: getSelectedSamplesInfo(state.timeSeries),
-        highlightedGenesNames: getHighlightedGenesNames(state.selectedGenes),
+        selectedGenes: getSelectedGenes(state.genes),
+        basketInfo: getBasketInfo(state.timeSeries),
+        highlightedGenesIds: getHighlightedGenesIds(state.genes),
     };
 };
 
 const connector = connect(mapStateToProps, {
+    connectedGenesFetchSucceeded: genesFetchSucceeded,
     connectedGenesSelected: genesSelected,
 });
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 const GeneSelector = ({
-    selectedSamplesInfo,
+    basketInfo,
     selectedGenes,
-    highlightedGenesNames,
+    highlightedGenesIds,
+    connectedGenesFetchSucceeded,
     connectedGenesSelected,
 }: PropsFromRedux): ReactElement => {
     const {
         source: autocompleteSource,
         species: autocompleteSpecies,
         type: autocompleteType,
-    } = selectedSamplesInfo;
+    } = basketInfo;
     const [autocompleteOpen, setAutocompleteOpen] = useState(false);
     const [value, setValue] = useState<Gene[]>([]);
     const [inputValue, setInputValue] = useState('');
@@ -67,6 +74,8 @@ const GeneSelector = ({
     const [genes, setGenes] = useState<Gene[]>([]);
     const { enqueueSnackbar } = useSnackbar();
     const dispatch = useDispatch();
+
+    const isDisabled = _.isEmpty(basketInfo);
 
     const fetchGenes = useCallback(
         debounce(async (queryValue: string): Promise<void> => {
@@ -80,6 +89,7 @@ const GeneSelector = ({
 
             if (genesResults != null) {
                 setGenes(genesResults);
+                connectedGenesFetchSucceeded(genesResults);
             } else {
                 enqueueSnackbar('Error fetching genes.', { variant: 'error' });
             }
@@ -87,7 +97,7 @@ const GeneSelector = ({
             setAutocompleteOpen(true);
             setIsLoading(false);
         }, 500),
-        [autocompleteSource, autocompleteSpecies, autocompleteType, selectedGenes],
+        [autocompleteSource, autocompleteSpecies, autocompleteType],
     );
 
     useEffect(() => {
@@ -112,15 +122,20 @@ const GeneSelector = ({
         setValue(selectedGenes);
     }, [selectedGenes]);
 
-    const handleOnInputChange = (_event: unknown, newValue: string | null): void => {
+    const handleOnInputChange = (
+        _event: unknown,
+        newValue: string | null,
+        reason: 'input' | 'reset' | 'clear',
+    ): void => {
+        if (reason === 'reset') {
+            return;
+        }
         setInputValue(newValue != null ? newValue : '');
     };
 
-    const isDisabled = _.isEmpty(selectedSamplesInfo);
-
     const handleOnChange = (_event: unknown, newValue: Gene[]): void => {
         setValue(newValue);
-        connectedGenesSelected(newValue);
+        connectedGenesSelected(newValue.map((gene) => gene.feature_id));
     };
 
     /**
@@ -134,14 +149,15 @@ const GeneSelector = ({
 
         try {
             const pastedGenes = await featureApi.getGenesByNames(
-                selectedSamplesInfo.source,
-                selectedSamplesInfo.species,
-                selectedSamplesInfo.type,
+                basketInfo.source,
+                basketInfo.species,
+                basketInfo.type,
                 genesNames,
             );
 
             if (pastedGenes != null) {
-                connectedGenesSelected(pastedGenes);
+                connectedGenesFetchSucceeded(pastedGenes);
+                connectedGenesSelected(pastedGenes.map((gene) => gene.feature_id));
 
                 // Get and display not found genes.
                 const notFoundGenesNames = genesNames.filter(
@@ -272,7 +288,7 @@ const GeneSelector = ({
             </Tooltip>
             <SelectedGenes
                 selectedGenes={selectedGenes}
-                highlightedGenesNames={highlightedGenesNames}
+                highlightedGenesIds={highlightedGenesIds}
             />
         </>
     );
