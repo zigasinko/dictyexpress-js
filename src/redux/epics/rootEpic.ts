@@ -9,8 +9,10 @@ import {
 import { connectToWebSocketServiceEpic, connectToServerEpic } from './connectToServerEpic';
 import { loginEpic, getCurrentUserEpic, logoutEpic } from './authenticationEpics';
 import { fetchSelectedDifferentialExpressionGenesEpic } from './genesEpics';
+import { layoutsChangedEpic } from './layoutsEpics';
 
 const rootEpic = combineEpics(
+    layoutsChangedEpic,
     connectToWebSocketServiceEpic,
     connectToServerEpic,
     loginEpic,

@@ -407,6 +407,7 @@ export const generateDifferentialExpressionsById = (n: number): DifferentialExpr
 };
 
 export const testState = (): RootState => ({
+    layouts: {},
     authentication: {
         user: generateUser(2),
         isLoggedIn: true,

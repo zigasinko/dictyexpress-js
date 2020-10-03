@@ -35,7 +35,7 @@ export const GenexpressTitle = styled(Title)`
     margin: 0;
 `;
 
-export const LoginInformationContainer = styled.div`
+export const ActionsContainer = styled.div`
     padding-right: 20px;
     display: inline-flex;
     flex-flow: row nowrap;

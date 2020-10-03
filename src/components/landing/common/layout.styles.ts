@@ -24,7 +24,7 @@ export const ContentContainer = styled.div<ContainerProps>`
     @media (min-width: ${breakpoints.mid}px) {
         width: 970px;
     }
-    @media (min-width: ${breakpoints.big}px) {
+    @media (min-width: ${breakpoints.large}px) {
         width: 1170px;
     }
 `;
@@ -56,7 +56,7 @@ export const SectionHorizontalLine = styled.hr`
     @media (min-width: ${breakpoints.mid}px) {
         width: 970px;
     }
-    @media (min-width: ${breakpoints.big}px) {
+    @media (min-width: ${breakpoints.large}px) {
         width: 1170px;
     }
 `;

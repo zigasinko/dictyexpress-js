@@ -7,13 +7,14 @@ import { User } from '@genialis/resolwe/dist/api/types/rest';
 import { getUser, getIsLoggedIn } from 'redux/stores/authentication';
 import { logout } from 'redux/epics/authenticationEpics';
 import DictyAppBar from 'components/common/dictyAppBar/dictyAppBar';
+import { layoutsReset } from 'redux/stores/layouts';
 import {
     GenexpressAppBarWrapper,
     DictyLogo,
     TitleContainer,
     GenexpressTitle,
     DesktopSectionContainer,
-    LoginInformationContainer,
+    ActionsContainer,
 } from './genexpressAppBar.styles';
 import Login from '../login/login';
 import { LoadingBar } from '../common/dictyModule/dictyModule.styles';
@@ -27,6 +28,7 @@ const mapStateToProps = (state: RootState): { user: User; isLoggedIn: boolean } 
 
 const connector = connect(mapStateToProps, {
     connectedLogout: logout,
+    connectedLayoutsReset: layoutsReset,
 });
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -38,8 +40,9 @@ type GenexpressAppBarProps = {
 const GenexpressAppBar = ({
     user,
     isLoggedIn,
-    connectedLogout,
     isLoading,
+    connectedLogout,
+    connectedLayoutsReset,
 }: GenexpressAppBarProps): ReactElement => {
     const [loginModalOpened, setLoginModalOpened] = useState(false);
 
@@ -57,13 +60,18 @@ const GenexpressAppBar = ({
         connectedLogout();
     };
 
+    const handleDefaultLayoutClick = (): void => {
+        connectedLayoutsReset();
+    };
+
     const desktopSection = (
         <DesktopSectionContainer>
             <TitleContainer>
                 <DictyLogo src={dictyLogo} alt="dictyExpress logo" />
                 <GenexpressTitle>dictyExpress</GenexpressTitle>
             </TitleContainer>
-            <LoginInformationContainer>
+            <ActionsContainer>
+                <Button onClick={handleDefaultLayoutClick}>Default layout</Button>
                 {isLoggedIn ? (
                     <Tooltip title="Logout">
                         <Button onClick={handleLogoutClick}>
@@ -73,7 +81,7 @@ const GenexpressAppBar = ({
                 ) : (
                     <Button onClick={handleLoginClick}>Login</Button>
                 )}
-            </LoginInformationContainer>
+            </ActionsContainer>
             {isLoading && <LoadingBar />}
         </DesktopSectionContainer>
     );

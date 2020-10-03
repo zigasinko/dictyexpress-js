@@ -6,6 +6,7 @@ import {
 import { Feature } from '@genialis/resolwe/dist/api/types/modules';
 import { VariantType, SnackbarKey } from 'notistack';
 import { Renderers } from 'vega';
+import { LayoutBreakpoint } from 'components/genexpress/common/constants';
 
 export type Gene = Pick<
     Feature,
@@ -84,3 +85,5 @@ export type SnackbarNotification = {
 export type SnackbarNotifications = SnackbarNotification[];
 
 export type DictyRenderers = Exclude<Renderers, 'none'>;
+
+export type BreakpointsCols = { [key in keyof typeof LayoutBreakpoint]: number };

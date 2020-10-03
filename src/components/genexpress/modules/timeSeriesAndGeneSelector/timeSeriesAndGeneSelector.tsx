@@ -13,6 +13,8 @@ import { fetchTimeSeries } from 'redux/epics/timeSeriesEpics';
 import GeneSelector from './geneSelector/geneSelector/geneSelector';
 import { TimeSeriesGridWrapper } from './timeSeriesAndGeneSelector.styles';
 
+export const moduleKey = 'timeSeriesAndGeneSelector';
+
 const mapStateToProps = (
     state: RootState,
 ): { timeSeries: Relation[]; selectedTimeSeries: Relation; isFetching: boolean } => {

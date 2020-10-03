@@ -19,19 +19,22 @@ const GeneSetSelector = ({
     onSelect,
 }: SelectGeneSetProps): ReactElement => {
     const [manageModalOpened, setManageModalOpened] = useState(false);
-    const [geneSets, setGeneSets] = useLocalStorage<GeneSet[]>(LocalStorageKey.GENE_LISTS, []);
+    const [localStorageGeneSets, localStorageSetGeneSets] = useLocalStorage<GeneSet[]>(
+        LocalStorageKey.GENE_SETS,
+        [],
+    );
 
     /**
      * Saves gene set to local storage so user can later use it from history.
      */
-    const addGeneSet = (): void => {
+    const handleSaveOnClick = (): void => {
         if (selectedGenes != null && selectedGenes.length > 0) {
             const newGeneSet = {
                 dateTime: new Date(),
                 genesNames: selectedGenes.map((gene) => gene.name),
             } as GeneSet;
 
-            setGeneSets((prevGeneSets) => [...prevGeneSets, newGeneSet]);
+            localStorageSetGeneSets((prevGeneSets) => [...prevGeneSets, newGeneSet]);
         }
     };
 
@@ -41,8 +44,10 @@ const GeneSetSelector = ({
     };
 
     const handleOnDelete = (geneSetsToDelete: GeneSet[]): void => {
-        const updatedGeneSets = geneSets.filter((geneSet) => !geneSetsToDelete.includes(geneSet));
-        setGeneSets(updatedGeneSets);
+        const updatedGeneSets = localStorageGeneSets.filter(
+            (geneSet) => !geneSetsToDelete.includes(geneSet),
+        );
+        localStorageSetGeneSets(updatedGeneSets);
     };
 
     return (
@@ -51,7 +56,7 @@ const GeneSetSelector = ({
                 <IconButtonWithTooltip
                     title="Save current gene set to local storage"
                     disabled={selectedGenes.length === 0}
-                    onClick={addGeneSet}
+                    onClick={handleSaveOnClick}
                 >
                     <SaveIcon />
                 </IconButtonWithTooltip>
@@ -67,7 +72,7 @@ const GeneSetSelector = ({
             {manageModalOpened && (
                 <ManageGeneSetsModal
                     open={manageModalOpened}
-                    geneSets={geneSets}
+                    geneSets={localStorageGeneSets}
                     onClick={handleOnClick}
                     onDelete={handleOnDelete}
                     onClose={(): void => setManageModalOpened(false)}

@@ -1,118 +1,32 @@
 import React, { ReactElement, useEffect } from 'react';
-import { Responsive, WidthProvider } from 'react-grid-layout';
+import { Layouts, Responsive, WidthProvider } from 'react-grid-layout';
 import { connect, ConnectedProps, useDispatch } from 'react-redux';
 import { RootState } from 'redux/rootReducer';
 import { getTimeSeriesIsFetching, getIsAddingToBasket } from 'redux/stores/timeSeries';
 import { getIsFetchingSamplesExpressions } from 'redux/stores/samplesExpressions';
-import { appStarted } from 'redux/epics/connectToServerEpic';
-import csrfApi from 'api/csrfApi';
 import { getIsLoggingOut } from 'redux/stores/authentication';
 import {
     getIsFetchingDifferentialExpressions,
     getIsFetchingDifferentialExpressionsData,
 } from 'redux/stores/differentialExpressions';
 import { breakpoints } from 'components/app/globalStyle';
+import { defaultBreakpointCols, getLayouts, layoutsChanged } from 'redux/stores/layouts';
+import _ from 'lodash';
+import { appStarted } from 'redux/epics/connectToServerEpic';
 import TimeSeriesAndGeneSelector from './modules/timeSeriesAndGeneSelector/timeSeriesAndGeneSelector';
 import GeneExpressions from './modules/geneExpressions/geneExpressions';
 import DictyModule from './common/dictyModule/dictyModule';
 import SnackbarNotifier from './snackbarNotifier/snackbarNotifier';
 import GenexpressAppBar from './genexpressAppBar/genexpressAppBar';
 import DifferentialExpressions from './modules/differentialExpressions/differentialExpressions';
+import { LayoutBreakpoint, ModulesKeys } from './common/constants';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
-const defaultLayout = {
-    lg: [
-        {
-            i: 'timeSeriesAndGeneSelector',
-            x: 0,
-            y: 0,
-            w: 4,
-            h: 4,
-            minW: 2,
-            minH: 3,
-        },
-        {
-            i: 'expressionTimeCourses',
-            x: 4,
-            y: 0,
-            w: 4,
-            h: 4,
-            minW: 2,
-            minH: 3,
-        },
-        {
-            i: 'differentialExpressions',
-            x: 8,
-            y: 0,
-            w: 4,
-            h: 4,
-            minW: 2,
-            minH: 3,
-        },
-    ],
-    md: [
-        {
-            i: 'timeSeriesAndGeneSelector',
-            x: 0,
-            y: 0,
-            w: 4,
-            h: 4,
-            minW: 2,
-            minH: 3,
-        },
-        {
-            i: 'expressionTimeCourses',
-            x: 4,
-            y: 0,
-            w: 4,
-            h: 4,
-            minW: 2,
-            minH: 3,
-        },
-        {
-            i: 'differentialExpressions',
-            x: 8,
-            y: 0,
-            w: 4,
-            h: 4,
-            minW: 2,
-            minH: 3,
-        },
-    ],
-    sm: [
-        {
-            i: 'timeSeriesAndGeneSelector',
-            x: 0,
-            y: 1,
-            w: 6,
-            h: 4,
-            minW: 2,
-            minH: 3,
-        },
-        {
-            i: 'expressionTimeCourses',
-            x: 0,
-            y: 1,
-            w: 6,
-            h: 4,
-            minW: 2,
-            minH: 3,
-        },
-        {
-            i: 'differentialExpressions',
-            x: 0,
-            y: 0,
-            w: 6,
-            h: 4,
-            minW: 2,
-            minH: 3,
-        },
-    ],
-};
 
 const mapStateToProps = (
     state: RootState,
 ): {
+    layouts: Layouts;
     isFetchingTimeSeries: boolean;
     isAddingToBasket: boolean;
     isFetchingSamplesExpressions: boolean;
@@ -121,6 +35,7 @@ const mapStateToProps = (
     isLoggingOut: boolean;
 } => {
     return {
+        layouts: getLayouts(state.layouts),
         isFetchingTimeSeries: getTimeSeriesIsFetching(state.timeSeries),
         isAddingToBasket: getIsAddingToBasket(state.timeSeries),
         isFetchingSamplesExpressions: getIsFetchingSamplesExpressions(state.samplesExpressions),
@@ -134,28 +49,42 @@ const mapStateToProps = (
     };
 };
 
-const connector = connect(mapStateToProps, {});
+const connector = connect(mapStateToProps, {
+    connectedLayoutsChanged: layoutsChanged,
+});
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 const GeneExpressGrid = ({
+    layouts,
     isFetchingTimeSeries,
     isAddingToBasket,
     isFetchingSamplesExpressions,
     isFetchingDifferentialExpressions,
     isFetchingDifferentialExpressionsData,
     isLoggingOut,
+    connectedLayoutsChanged,
 }: PropsFromRedux): ReactElement => {
     const dispatch = useDispatch();
 
     // This page is the entry point for geneExpress. Handle app initialization here.
     useEffect(() => {
-        // CSRF cookie has to be obtained in order to send any request to API.
-        csrfApi.getCSRFCookie();
-
         // Indicate that the app has started -> initialize WebSocket connection and
         dispatch(appStarted());
     }, [dispatch]);
+
+    const handleOnLayoutChange = (
+        _currentLayout: ReactGridLayout.Layout[],
+        allLayouts: Layouts,
+    ): void => {
+        /* react-grid-layout has a bug for mutating prop on item resize:
+         * https://github.com/STRML/react-grid-layout/pull/1156.
+         * Thats why cloned object has to be forwarded or else immer library
+         * marks it as read-only (cause it passed through the reducer)
+         * -> TypeError: Cannot assign to read only property 'w' of object '#<Object>'
+         */
+        connectedLayoutsChanged(_.cloneDeep(allLayouts));
+    };
 
     return (
         <>
@@ -164,12 +93,17 @@ const GeneExpressGrid = ({
             <ResponsiveGridLayout
                 className="layout"
                 draggableHandle=".dragHandle"
-                layouts={defaultLayout}
+                layouts={layouts}
                 verticalCompact
-                breakpoints={{ lg: breakpoints.big, md: breakpoints.mid, sm: breakpoints.small }}
-                cols={{ lg: 12, md: 10, sm: 6 }}
+                breakpoints={{
+                    [LayoutBreakpoint.large]: breakpoints.large,
+                    [LayoutBreakpoint.mid]: breakpoints.mid,
+                    [LayoutBreakpoint.small]: breakpoints.small,
+                }}
+                cols={defaultBreakpointCols}
+                onLayoutChange={handleOnLayoutChange}
             >
-                <div key="timeSeriesAndGeneSelector">
+                <div key={ModulesKeys.timeSeriesAndGeneSelector}>
                     <DictyModule
                         title="Time series and Gene Selection"
                         isLoading={isFetchingTimeSeries || isAddingToBasket}
@@ -177,7 +111,7 @@ const GeneExpressGrid = ({
                         <TimeSeriesAndGeneSelector />
                     </DictyModule>
                 </div>
-                <div key="expressionTimeCourses">
+                <div key={ModulesKeys.expressionTimeCourses}>
                     <DictyModule
                         title="Expression Time Courses"
                         isLoading={isFetchingSamplesExpressions}
@@ -185,7 +119,7 @@ const GeneExpressGrid = ({
                         <GeneExpressions />
                     </DictyModule>
                 </div>
-                <div key="differentialExpressions">
+                <div key={ModulesKeys.differentialExpressions}>
                     <DictyModule
                         title="Differential expressions"
                         isLoading={

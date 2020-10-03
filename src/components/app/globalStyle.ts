@@ -39,7 +39,7 @@ export const GlobalStyle = createGlobalStyle`
 export const breakpoints = {
     small: 768,
     mid: 992,
-    big: 1200,
+    large: 1200,
 };
 
 export const appBarHeight = 56;
