@@ -1,9 +1,13 @@
 import fetchApi from './fetch';
 import { authApiUrl } from './base';
 
-const baseUrl = `${authApiUrl}/login/`;
+const loginUrl = `${authApiUrl}/login/`;
+const logoutUrl = `${authApiUrl}/logout/`;
 
-// eslint-disable-next-line import/prefer-default-export
-export const auth = (): Promise<unknown> => {
-    return fetchApi.post(baseUrl, { username: 'sziga', password: 'geslo1234' });
+export const login = async (username: string, password: string): Promise<unknown> => {
+    return fetchApi.post(loginUrl, { username, password });
+};
+
+export const logout = async (): Promise<unknown> => {
+    return fetchApi.post(logoutUrl);
 };

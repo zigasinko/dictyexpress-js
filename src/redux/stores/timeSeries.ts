@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction, createSelector, createAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createSelector } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
 import _ from 'lodash';
 import { Relation } from '@genialis/resolwe/dist/api/types/rest';
@@ -66,12 +66,6 @@ export const {
 } = isFetchingSlice.actions;
 export const { started: addToBasketStarted, ended: addToBasketEnded } = isAddingToBasket.actions;
 export type TimeSeriesState = ReturnType<typeof timeSeriesReducer>;
-
-// Export epic actions.
-export const fetchTimeSeries = createAction('timeSeries/fetchTimeSeries');
-export const fetchTimeSeriesSamplesExpressions = createAction(
-    'timeSeries/fetchTimeSeriesSamplesExpressions',
-);
 
 export default timeSeriesReducer;
 
