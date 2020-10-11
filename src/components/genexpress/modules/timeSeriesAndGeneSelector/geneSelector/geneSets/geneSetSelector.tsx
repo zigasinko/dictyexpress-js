@@ -57,7 +57,7 @@ const GeneSetSelector = ({
                 </IconButtonWithTooltip>
                 <Button
                     size="small"
-                    onClick={(): void => setManageModalOpened(!manageModalOpened)}
+                    onClick={(): void => setManageModalOpened(true)}
                     disabled={disabled}
                 >
                     History

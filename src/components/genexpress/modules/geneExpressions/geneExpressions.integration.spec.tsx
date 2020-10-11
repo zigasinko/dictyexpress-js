@@ -77,7 +77,11 @@ describe('geneExpressions integration', () => {
                 );
             }
 
-            return Promise.reject(new Error('bad url'));
+            if (req.url.includes('csrf')) {
+                return Promise.resolve('');
+            }
+
+            return Promise.reject(new Error(`bad url: ${req.url}`));
         });
     });
 

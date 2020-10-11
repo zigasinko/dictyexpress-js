@@ -47,7 +47,14 @@ module.exports = {
         'import/extensions': [
             'error',
             'never',
-            { svg: 'always', woff: 'always', css: 'always', png: 'always', jpg: 'always' },
+            {
+                svg: 'always',
+                woff: 'always',
+                css: 'always',
+                png: 'always',
+                jpg: 'always',
+                ico: 'always',
+            },
         ],
         'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
         'prettier/prettier': 'error',

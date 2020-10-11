@@ -1,10 +1,5 @@
 import React, { ReactElement, ReactNode } from 'react';
-import {
-    ModuleHeader,
-    ModuleContent,
-    ModuleContainer,
-    ModuleHeaderLoadingBar,
-} from './dictyModule.styles';
+import { ModuleHeader, ModuleContent, ModuleContainer, LoadingBar } from './dictyModule.styles';
 
 type SelectedGenesProps = {
     children: ReactNode;
@@ -17,7 +12,7 @@ const DictyModule = ({ children, title, isLoading }: SelectedGenesProps): ReactE
         <ModuleContainer>
             <ModuleHeader className="dragHandle">
                 {title}
-                {isLoading && <ModuleHeaderLoadingBar color="secondary" />}
+                {isLoading && <LoadingBar color="secondary" />}
             </ModuleHeader>
             <ModuleContent>{children}</ModuleContent>
         </ModuleContainer>

@@ -1,4 +1,3 @@
-import { generateRandomString } from 'utils/stringUtils';
 import configureMockStore, { MockStoreEnhanced } from 'redux-mock-store';
 import {
     Relation,
@@ -14,6 +13,7 @@ import { BasketAddSamplesResponse } from 'redux/models/rest';
 import _ from 'lodash';
 import { createEpicMiddleware } from 'redux-observable';
 import { AppDispatch } from 'redux/appStore';
+import { generateRandomString } from 'utils/stringUtils';
 import {
     RelationsById,
     GenesById,
