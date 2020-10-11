@@ -7,6 +7,7 @@ export const ModuleContainer = styled.div`
 `;
 
 export const ModuleHeader = styled.div`
+    position: relative;
     width: 100%;
     font-size: 1rem;
     background-color: #eee;
@@ -16,15 +17,13 @@ export const ModuleHeader = styled.div`
     cursor: pointer;
     text-align: center;
     padding: 5px 0;
-    position: absolute;
-    top: 0;
-    left: 0;
 `;
 
-export const ModuleHeaderLoadingBar = styled(LinearProgress)`
-    position: absolute;
-    bottom: 0;
+export const LoadingBar = styled(LinearProgress)`
     width: 100%;
+    position: absolute;
+    bottom: -1px;
+    left: 0;
 `;
 
 export const ModuleContent = styled.div`

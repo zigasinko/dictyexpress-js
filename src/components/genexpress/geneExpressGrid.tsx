@@ -1,13 +1,17 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
-import { connect, ConnectedProps } from 'react-redux';
+import { connect, ConnectedProps, useDispatch } from 'react-redux';
 import { RootState } from 'redux/rootReducer';
 import { getTimeSeriesIsFetching, getIsAddingToBasket } from 'redux/stores/timeSeries';
 import { getSamplesExpressionsIsFetching } from 'redux/stores/samplesExpressions';
-import ConnectedTimeSeriesAndGeneSelector from './modules/timeSeriesAndGeneSelector/timeSeriesAndGeneSelector';
+import { appStarted } from 'redux/epics/connectToServerEpic';
+import { getCSRFCookie } from 'api/csrfApi';
+import { getIsLoggingOut } from 'redux/stores/authentication';
+import TimeSeriesAndGeneSelector from './modules/timeSeriesAndGeneSelector/timeSeriesAndGeneSelector';
 import GeneExpressions from './modules/geneExpressions/geneExpressions';
 import DictyModule from './common/dictyModule/dictyModule';
 import SnackbarNotifier from './snackbarNotifier/snackbarNotifier';
+import GenexpressAppBar from './genexpressAppBar/genexpressAppBar';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const defaultLayout = {
@@ -79,11 +83,13 @@ const mapStateToProps = (
     isFetchingTimeSeries: boolean;
     isAddingToBasket: boolean;
     isFetchingSamplesExpressions: boolean;
+    isLoggingOut: boolean;
 } => {
     return {
         isFetchingTimeSeries: getTimeSeriesIsFetching(state.timeSeries),
         isAddingToBasket: getIsAddingToBasket(state.timeSeries),
         isFetchingSamplesExpressions: getSamplesExpressionsIsFetching(state.samplesExpressions),
+        isLoggingOut: getIsLoggingOut(state.authentication),
     };
 };
 
@@ -95,9 +101,22 @@ const GeneExpressGrid = ({
     isFetchingTimeSeries,
     isAddingToBasket,
     isFetchingSamplesExpressions,
+    isLoggingOut,
 }: PropsFromRedux): ReactElement => {
+    const dispatch = useDispatch();
+
+    // This page is the entry point for geneExpress. Handle app initialization here.
+    useEffect(() => {
+        // CSRF cookie has to be obtained in order to send any request to API.
+        getCSRFCookie();
+
+        // Indicate that the app has started -> initialize WebSocket connection and
+        dispatch(appStarted());
+    }, [dispatch]);
+
     return (
         <>
+            <GenexpressAppBar isLoading={isLoggingOut} />
             <SnackbarNotifier />
             <ResponsiveGridLayout
                 className="layout"
@@ -112,7 +131,7 @@ const GeneExpressGrid = ({
                         title="Time series and Gene Selection"
                         isLoading={isFetchingTimeSeries || isAddingToBasket}
                     >
-                        <ConnectedTimeSeriesAndGeneSelector />
+                        <TimeSeriesAndGeneSelector />
                     </DictyModule>
                 </div>
                 <div key="secondModule">

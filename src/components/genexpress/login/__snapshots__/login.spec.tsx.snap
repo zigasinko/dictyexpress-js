@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`modal opened should display sign in form 1`] = `<DocumentFragment />`;
+
+exports[`should display sign in form 1`] = `<DocumentFragment />`;

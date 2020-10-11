@@ -13,6 +13,7 @@ export const ModalContainer = styled.div`
 `;
 
 export const ModalHeader = styled.h3`
+    position: relative;
     border-bottom: 1px solid #e5e5e5;
     min-height: 16px;
     margin: 0;
