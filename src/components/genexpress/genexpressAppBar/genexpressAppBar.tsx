@@ -5,8 +5,8 @@ import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from 'redux/rootReducer';
 import { User } from '@genialis/resolwe/dist/api/types/rest';
 import { getUser, getIsLoggedIn } from 'redux/stores/authentication';
-import { logout } from 'redux/epics/authenticationEpics';
 import DictyAppBar from 'components/common/dictyAppBar/dictyAppBar';
+import { logout } from 'redux/epics/epicsActions';
 import {
     GenexpressAppBarWrapper,
     DictyLogo,

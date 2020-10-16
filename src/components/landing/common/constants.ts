@@ -5,6 +5,6 @@ const SectionNames = {
     REFERENCES: 'references',
     CREDITS: 'credits',
     CONTACT: 'contact',
-};
+} as const;
 
 export default SectionNames;

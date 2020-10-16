@@ -81,9 +81,9 @@ const GeneSelector = ({
         debounce(async (queryValue: string): Promise<void> => {
             const genesResults = await featureApi.getGenes(
                 autocompleteSource,
-                autocompleteSpecies,
                 autocompleteType,
                 queryValue,
+                autocompleteSpecies,
                 20,
             );
 
@@ -122,6 +122,17 @@ const GeneSelector = ({
         setValue(selectedGenes);
     }, [selectedGenes]);
 
+    const closeDropDown = (): void => {
+        setAutocompleteOpen(false);
+    };
+
+    const openDropDown = (): void => {
+        // Display dropdown if there is anything in the input.
+        if (inputValue !== '') {
+            setAutocompleteOpen(true);
+        }
+    };
+
     const handleOnInputChange = (
         _event: unknown,
         newValue: string | null,
@@ -136,6 +147,9 @@ const GeneSelector = ({
     const handleOnChange = (_event: unknown, newValue: Gene[]): void => {
         setValue(newValue);
         connectedGenesSelected(newValue.map((gene) => gene.feature_id));
+
+        // Unfocus autocomplete element.
+        closeDropDown();
     };
 
     /**
@@ -150,9 +164,9 @@ const GeneSelector = ({
         try {
             const pastedGenes = await featureApi.getGenesByNames(
                 basketInfo.source,
-                basketInfo.species,
                 basketInfo.type,
                 genesNames,
+                basketInfo.species,
             );
 
             if (pastedGenes != null) {
@@ -209,17 +223,6 @@ const GeneSelector = ({
             }
         };
         reader.readAsText(file.slice(0, file.size));
-    };
-
-    const closeDropDown = (): void => {
-        setAutocompleteOpen(false);
-    };
-
-    const openDropDown = (): void => {
-        // Display dropdown if there is anything in the input.
-        if (inputValue !== '') {
-            setAutocompleteOpen(true);
-        }
     };
 
     return (

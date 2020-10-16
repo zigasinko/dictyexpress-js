@@ -10,23 +10,16 @@ import {
     getDifferentialExpressions,
     getSelectedDifferentialExpression,
 } from 'redux/stores/differentialExpressions';
-import {
-    FormControlLabel,
-    InputLabel,
-    MenuItem,
-    Select,
-    Switch,
-    TextField,
-    Tooltip,
-} from '@material-ui/core';
+import { FormControlLabel, MenuItem, Switch, TextField, Tooltip } from '@material-ui/core';
 import { SwapHoriz } from '@material-ui/icons';
 import { forwardToSentry } from 'utils/errorUtils';
 import { withSize, SizeMeProps } from 'react-sizeme';
+import DictySelect from 'components/genexpress/common/dictySelect/dictySelect';
 import DifferentialExpressionsVolcanoPlot from './differentialExpressionsVolcanoPlot';
 import {
     DifferentialExpressionsContainer,
     DifferentialExpressionsControls,
-    DifferentialExpressionsFormControl,
+    DifferentialExpressionsSelectWrapper,
     ThresholdFormControl,
     ThresholdFormControlsContainer,
     VolcanoPlotContainer,
@@ -284,21 +277,18 @@ const DifferentialExpressions = ({
                                 : ''
                         }
                     >
-                        <DifferentialExpressionsFormControl variant="outlined">
-                            <InputLabel id="differentialExpressionsDropdownLabel">
-                                Differential expression
-                            </InputLabel>
-                            <Select
-                                labelId="differentialExpressionsDropdownLabel"
+                        <DifferentialExpressionsSelectWrapper
+                            ref={differentialExpressionsSelectElement}
+                        >
+                            <DictySelect
+                                label="Differential expression"
                                 value={
                                     selectedDifferentialExpression != null
                                         ? selectedDifferentialExpression.id
                                         : ''
                                 }
-                                onChange={handleDifferentialExpressionsOnChange}
-                                label="Differential expression"
+                                handleOnChange={handleDifferentialExpressionsOnChange}
                                 disabled={differentialExpressions.length === 0}
-                                ref={differentialExpressionsSelectElement}
                             >
                                 {differentialExpressions.map((differentialExpression) => (
                                     <MenuItem
@@ -308,8 +298,8 @@ const DifferentialExpressions = ({
                                         {differentialExpression.name}
                                     </MenuItem>
                                 ))}
-                            </Select>
-                        </DifferentialExpressionsFormControl>
+                            </DictySelect>
+                        </DifferentialExpressionsSelectWrapper>
                     </Tooltip>
                     {volcanoPoints.length > 0 && (
                         <ThresholdFormControlsContainer>

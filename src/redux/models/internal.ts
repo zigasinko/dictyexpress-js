@@ -1,6 +1,7 @@
 import {
     DataDifferentialExpression,
     DataStatus,
+    GOEnrichmentNode,
     Relation,
     Storage,
 } from '@genialis/resolwe/dist/api/types/rest';
@@ -24,7 +25,7 @@ export type GenesById = {
 export type BasketInfo = {
     id: string;
     source: string;
-    species: string;
+    species?: string;
     type: 'gene';
 };
 
@@ -75,6 +76,20 @@ export type DifferentialExpression = {
 export type DifferentialExpressionsById = {
     [differentialExpressionId: number]: DifferentialExpression;
 };
+
+export type AspectValue = 'BP' | 'CC' | 'MF';
+export type Aspect = {
+    value: AspectValue;
+    label: string;
+};
+
+export type GOEnrichmentRow = {
+    path: string[];
+    children?: GOEnrichmentRow[];
+    depth: number;
+    score_percentage: number;
+    gene_associations: string[];
+} & Omit<GOEnrichmentNode, 'collapsed' | 'children'>;
 
 // If key is undefined, it will be generated in the reducer.
 export type SnackbarNotificationContent = {

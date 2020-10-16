@@ -71,13 +71,17 @@ const highlightedGenesSlice = createSlice({
     },
 });
 
-const isFetchingDifferentialExpressionGenesSlice = createIsFetchingSlice('genes');
+const isFetchingDifferentialExpressionGenesSlice = createIsFetchingSlice(
+    'differentialExpressionGenes',
+);
+const isFetchingAssociationsGenesSlice = createIsFetchingSlice('associationsGenes');
 
 const genesReducer = combineReducers({
     byId: genesByIdSlice.reducer,
     selectedGenesIds: selectedGenesIdsSlice.reducer,
     highlightedGenesIds: highlightedGenesSlice.reducer,
     isFetchingDifferentialExpressionGenes: isFetchingDifferentialExpressionGenesSlice.reducer,
+    isFetchingAssociationsGenes: isFetchingAssociationsGenesSlice.reducer,
 });
 
 // Export actions.
@@ -100,12 +104,17 @@ export const {
     ended: differentialExpressionGenesFetchEnded,
 } = isFetchingDifferentialExpressionGenesSlice.actions;
 
+export const {
+    started: associationsGenesFetchStarted,
+    ended: associationsGenesFetchEnded,
+} = isFetchingAssociationsGenesSlice.actions;
+
 export type GenesState = ReturnType<typeof genesReducer>;
 
 export default genesReducer;
 
 // Selectors (exposes the store to containers).
-const getGenesById = (state: GenesState): GenesById => state.byId;
+export const getGenesById = (state: GenesState): GenesById => state.byId;
 export const getSelectedGenesIds = (state: GenesState): string[] => state.selectedGenesIds;
 
 // createSelector function uses memoization so that only if byId slice changes it will get recomputed again.
@@ -123,3 +132,7 @@ export const getGenesIdsInStore = createSelector(getGenes, (genes) =>
 );
 
 export const getHighlightedGenesIds = (state: GenesState): string[] => state.highlightedGenesIds;
+export const isFetchingDifferentialExpressionGenes = (state: GenesState): boolean =>
+    state.isFetchingDifferentialExpressionGenes;
+export const getIsFetchingAssociationsGenes = (state: GenesState): boolean =>
+    state.isFetchingAssociationsGenes;

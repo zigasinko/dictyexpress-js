@@ -1,5 +1,4 @@
-import { createAction } from '@reduxjs/toolkit';
-import { ofType, Epic } from 'redux-observable';
+import { ofType, Epic, combineEpics } from 'redux-observable';
 import {
     map,
     startWith,
@@ -9,29 +8,29 @@ import {
     retryWhen,
     delay,
     take,
+    filter,
 } from 'rxjs/operators';
 import { concat, of, throwError } from 'rxjs';
 import { RootState } from 'redux/rootReducer';
 import { webSocket } from 'rxjs/webSocket';
-import { handleWebSocketMessage, sessionId } from 'api/queryObserverManager';
+import { handleWebSocketMessage } from 'api/queryObserverManager';
 import { Message } from '@genialis/resolwe/dist/api/connection';
 import { pushToSentryAndAddErrorSnackbar } from 'redux/stores/notifications';
+import { sessionId } from 'api/base';
+import {
+    appStarted,
+    connectionReady,
+    connectToServer,
+    disconnectFromServer,
+    reconnectToServer,
+} from './epicsActions';
 
 // ReconnectionTimeout = 60s.
 const reconnectionTimeout = 6000;
 const reconnectionMaxAttempts = 3;
 
-// Export epic actions.
-export const appStarted = createAction('appStarted');
-export const connectToServer = createAction<{
-    url: string;
-}>('connectToServer/connect');
-export const reconnectToServer = createAction('connectToServer/reconnect');
-export const disconnectFromServer = createAction('connectToServer/disconnect');
-export const connectionReady = createAction('connectToServer/connectionReady');
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const connectToWebSocketServiceEpic: Epic<any, any, RootState, any> = (action$) =>
+const connectToWebSocketServiceEpic: Epic<any, any, RootState, any> = (action$) =>
     action$.pipe(
         ofType(appStarted),
         map(() => {
@@ -42,7 +41,7 @@ export const connectToWebSocketServiceEpic: Epic<any, any, RootState, any> = (ac
     );
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const connectToServerEpic: Epic<any, any, RootState, any> = (action$) =>
+const connectToServerEpic: Epic<any, any, RootState, any> = (action$) =>
     action$.pipe(
         ofType(connectToServer),
         switchMap(({ payload: { url } }) => {
@@ -69,6 +68,7 @@ export const connectToServerEpic: Epic<any, any, RootState, any> = (action$) =>
                         map((message) => {
                             return handleWebSocketMessage(message as Message);
                         }),
+                        filter((outputAction) => outputAction != null),
                         retryWhen((errors) =>
                             errors.pipe(
                                 delay(reconnectionTimeout),
@@ -90,3 +90,5 @@ export const connectToServerEpic: Epic<any, any, RootState, any> = (action$) =>
             );
         }),
     );
+
+export default combineEpics(connectToWebSocketServiceEpic, connectToServerEpic);

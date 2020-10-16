@@ -19,6 +19,8 @@ import { GlobalStyle } from './globalStyle';
 import theme from './theme';
 import appStore from '../../redux/appStore';
 
+import 'ag-grid-enterprise';
+
 const appTheme = createMuiTheme(theme);
 
 const App = (): ReactElement => {

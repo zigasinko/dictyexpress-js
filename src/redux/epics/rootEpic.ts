@@ -1,27 +1,18 @@
 import { combineEpics } from 'redux-observable';
-import {
-    fetchTimeSeriesSamplesExpressionsEpic,
-    timeSeriesSelectedEpic,
-    fetchTimeSeriesEpic,
-    fetchDifferentialExpressionsDataEpic,
-    fetchDifferentialExpressionsEpic,
-} from './timeSeriesEpics';
-import { connectToWebSocketServiceEpic, connectToServerEpic } from './connectToServerEpic';
-import { loginEpic, getCurrentUserEpic, logoutEpic } from './authenticationEpics';
-import { fetchSelectedDifferentialExpressionGenesEpic } from './genesEpics';
+import authenticationEpics from './authenticationEpics';
+import connectToServerEpics from './connectToServerEpics';
+import gafEpics from './gafEpics';
+import genesEpics from './genesEpics';
+import gOEnrichmentEpics from './gOEnrichmentEpics';
+import timeSeriesEpics from './timeSeriesEpics';
 
 const rootEpic = combineEpics(
-    connectToWebSocketServiceEpic,
-    connectToServerEpic,
-    loginEpic,
-    logoutEpic,
-    getCurrentUserEpic,
-    fetchTimeSeriesSamplesExpressionsEpic,
-    fetchDifferentialExpressionsEpic,
-    fetchDifferentialExpressionsDataEpic,
-    fetchSelectedDifferentialExpressionGenesEpic,
-    timeSeriesSelectedEpic,
-    fetchTimeSeriesEpic,
+    authenticationEpics,
+    connectToServerEpics,
+    timeSeriesEpics,
+    gafEpics,
+    genesEpics,
+    gOEnrichmentEpics,
 );
 
 export default rootEpic;

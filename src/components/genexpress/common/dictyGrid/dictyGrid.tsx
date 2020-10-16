@@ -1,5 +1,5 @@
 import { AgGridReact } from 'ag-grid-react';
-import React, { ReactElement, useEffect, useState, useRef } from 'react';
+import React, { ReactElement, useEffect, useState, useRef, useCallback } from 'react';
 import {
     GridApi,
     RowSelectedEvent,
@@ -8,6 +8,7 @@ import {
     ColDef,
     SelectionChangedEvent,
     RowClickedEvent,
+    SortChangedEvent,
 } from 'ag-grid-community';
 import _ from 'lodash';
 import { DictyGridContainer, FilterTextField, GridWrapper } from './dictyGrid.styles';
@@ -19,13 +20,17 @@ type DictyGridProps<T> = {
     selectedData?: T[];
     isFetching?: boolean;
     columnDefs: ColDef[];
+    autoGroupColumnDef?: ColDef;
     selectionMode?: 'single' | 'multiple';
+    treeData?: boolean;
     suppressRowClickSelection?: boolean;
     getRowId: (data: T) => string;
     onReady?: () => void;
     onRowClicked?: (itemData: T) => void;
     onRowSelected?: (itemData: T) => void;
     onSelectionChanged?: (selectedItemsData: T[]) => void;
+    onSortChanged?: (event: SortChangedEvent) => void;
+    getDataPath?: (itemData: T) => string[];
 };
 
 const DictyGrid = <T extends {}>({
@@ -35,20 +40,23 @@ const DictyGrid = <T extends {}>({
     hideFilter = false,
     filterLabel,
     columnDefs,
+    autoGroupColumnDef,
     selectionMode,
+    treeData = false,
     suppressRowClickSelection = false,
     getRowId,
     onReady,
     onRowClicked,
     onRowSelected,
     onSelectionChanged,
+    onSortChanged,
+    getDataPath,
 }: DictyGridProps<T>): ReactElement => {
     const [filter, setFilter] = useState<string>('');
     const gridApi = useRef<GridApi | null>(null);
     const columnApi = useRef<ColumnApi | null>(null);
-    const gridElement = useRef<AgGridReact>(null);
 
-    useEffect(() => {
+    const setOverlay = useCallback(() => {
         if (isFetching) {
             gridApi.current?.showLoadingOverlay();
         } else if (data.length === 0) {
@@ -58,9 +66,20 @@ const DictyGrid = <T extends {}>({
         }
     }, [data.length, isFetching]);
 
+    useEffect(() => {
+        setOverlay();
+    }, [setOverlay]);
+
     const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
         setFilter(e.target.value);
     };
+
+    // Destroy grid after component is unmounted.
+    useEffect(() => {
+        return (): void => {
+            gridApi.current?.destroy();
+        };
+    }, []);
 
     // Execute onRowSelected callback with selected data.
     const handleRowSelected = (event: RowSelectedEvent): void => {
@@ -86,8 +105,8 @@ const DictyGrid = <T extends {}>({
     const handleOnGridReady = (params: GridReadyEvent): void => {
         gridApi.current = params.api;
         columnApi.current = params.columnApi;
-        gridApi.current?.hideOverlay();
         gridApi.current?.sizeColumnsToFit();
+        setOverlay();
 
         setSelectedData(selectedData);
 
@@ -112,8 +131,16 @@ const DictyGrid = <T extends {}>({
         onRowClicked?.(event.node.data);
     };
 
+    const handleOnSortChanged = (event: SortChangedEvent): void => {
+        onSortChanged?.(event);
+    };
+
+    const handleOnGridSizeChanged = (): void => {
+        gridApi.current?.sizeColumnsToFit();
+    };
+
     return (
-        <DictyGridContainer>
+        <DictyGridContainer id={`dictyGrid${treeData}`}>
             {!hideFilter && (
                 <FilterTextField
                     id="filterField"
@@ -125,13 +152,22 @@ const DictyGrid = <T extends {}>({
                     value={filter}
                 />
             )}
+
             <GridWrapper className="ag-theme-balham">
                 <AgGridReact
-                    data-testid="agGrid"
-                    ref={gridElement}
+                    // ag-grid only acknowledges treeData flag in initialization,
+                    // that's why it needs to be re-mounted each time treeData flag changes
+                    // -> done be React because the key is different.
+                    key={`treeView${treeData}`}
                     onGridReady={handleOnGridReady}
+                    onGridSizeChanged={handleOnGridSizeChanged}
                     defaultColDef={defaultColDef}
+                    animateRows
+                    groupDefaultExpanded={-1}
+                    enableCellChangeFlash
+                    onSortChanged={handleOnSortChanged}
                     columnDefs={columnDefs}
+                    autoGroupColumnDef={autoGroupColumnDef}
                     disableStaticMarkup={false}
                     rowSelection={selectionMode}
                     rowStyle={
@@ -144,10 +180,12 @@ const DictyGrid = <T extends {}>({
                     onRowSelected={handleRowSelected}
                     getRowNodeId={getRowId}
                     immutableData
+                    treeData={treeData}
                     onSelectionChanged={handleOnSelectionChanged}
                     rowData={data}
                     quickFilterText={filter}
                     onColumnResized={handleOnColumnResized}
+                    getDataPath={getDataPath}
                 />
             </GridWrapper>
         </DictyGridContainer>

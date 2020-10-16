@@ -5,6 +5,7 @@ import samplesExpressions from 'redux/stores/samplesExpressions';
 import notifications from 'redux/stores/notifications';
 import authentication from 'redux/stores/authentication';
 import differentialExpressions from 'redux/stores/differentialExpressions';
+import gOEnrichment from 'redux/stores/gOEnrichment';
 
 const rootReducer = combineReducers({
     authentication,
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
     genes,
     samplesExpressions,
     differentialExpressions,
+    gOEnrichment,
     notifications,
 });
 

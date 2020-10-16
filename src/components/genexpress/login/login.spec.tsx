@@ -6,7 +6,7 @@ import { MockStoreEnhanced } from 'redux-mock-store';
 import { RootState } from 'redux/rootReducer';
 import { AppDispatch } from 'redux/appStore';
 import { User } from '@genialis/resolwe/dist/api/types/rest';
-import { login } from 'redux/epics/authenticationEpics';
+import { login } from 'redux/epics/epicsActions';
 import Login from './login';
 
 const initialTestState = testState();

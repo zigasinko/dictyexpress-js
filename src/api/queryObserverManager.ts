@@ -3,10 +3,8 @@ import _ from 'lodash';
 import { Action } from '@reduxjs/toolkit';
 import { deserializeResponse } from 'utils/apiUtils';
 import * as queryObserverApi from 'api/queryObserverApi';
-import { v4 as uuidv4 } from 'uuid';
 import { forwardToSentry } from 'utils/errorUtils';
-
-export const sessionId = uuidv4();
+import { sessionId } from './base';
 
 const MESSAGE_ADDED = 'added';
 const MESSAGE_CHANGED = 'changed';
@@ -39,11 +37,16 @@ export const clearObservers = async (): Promise<void> => {
 
 /**
  * Performs a query and pushes it's parameters to list of observers that will be used (dispatched)
- * for incoming WebSocket messages.
+ * for incoming WebSocket messages. For query to be reactive it needs to have "observe" parameter
+ * filled with GUID (sessionId).
+ *
+ * @param query - Query with parameter observe=guid.
+ * @param webSocketMessageOutputReduxAction - Redux action that will be called after WebSocket emits
+ * a new message with the same observe guid.
  */
 export const reactiveRequest = async <T>(
     query: () => Promise<Response>,
-    webSocketMessageOutputReduxAction: (items: unknown[]) => Action,
+    webSocketMessageOutputReduxAction: QueryObserver['webSocketMessageOutputReduxAction'],
 ): Promise<T[]> => {
     const response = await query();
     const observerResponse = await deserializeResponse<QueryObserverResponse>(response);

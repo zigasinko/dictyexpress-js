@@ -4,7 +4,6 @@ import { connect, ConnectedProps, useDispatch } from 'react-redux';
 import { RootState } from 'redux/rootReducer';
 import { getTimeSeriesIsFetching, getIsAddingToBasket } from 'redux/stores/timeSeries';
 import { getIsFetchingSamplesExpressions } from 'redux/stores/samplesExpressions';
-import { appStarted } from 'redux/epics/connectToServerEpic';
 import { getCSRFCookie } from 'api/csrfApi';
 import { getIsLoggingOut } from 'redux/stores/authentication';
 import {
@@ -12,12 +11,15 @@ import {
     getIsFetchingDifferentialExpressionsData,
 } from 'redux/stores/differentialExpressions';
 import { breakpoints } from 'components/app/globalStyle';
+import { appStarted } from 'redux/epics/epicsActions';
+import { getIsFetchingGOEnrichmentJson } from 'redux/stores/gOEnrichment';
 import TimeSeriesAndGeneSelector from './modules/timeSeriesAndGeneSelector/timeSeriesAndGeneSelector';
 import GeneExpressions from './modules/geneExpressions/geneExpressions';
 import DictyModule from './common/dictyModule/dictyModule';
 import SnackbarNotifier from './snackbarNotifier/snackbarNotifier';
 import GenexpressAppBar from './genexpressAppBar/genexpressAppBar';
 import DifferentialExpressions from './modules/differentialExpressions/differentialExpressions';
+import GOEnrichment from './modules/gOEnrichment/gOEnrichment';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const defaultLayout = {
@@ -42,6 +44,15 @@ const defaultLayout = {
         },
         {
             i: 'differentialExpressions',
+            x: 8,
+            y: 0,
+            w: 4,
+            h: 4,
+            minW: 2,
+            minH: 3,
+        },
+        {
+            i: 'gOEnrichment',
             x: 8,
             y: 0,
             w: 4,
@@ -78,6 +89,15 @@ const defaultLayout = {
             minW: 2,
             minH: 3,
         },
+        {
+            i: 'gOEnrichment',
+            x: 8,
+            y: 0,
+            w: 4,
+            h: 4,
+            minW: 2,
+            minH: 3,
+        },
     ],
     sm: [
         {
@@ -107,6 +127,15 @@ const defaultLayout = {
             minW: 2,
             minH: 3,
         },
+        {
+            i: 'gOEnrichment',
+            x: 0,
+            y: 0,
+            w: 6,
+            h: 4,
+            minW: 2,
+            minH: 3,
+        },
     ],
 };
 
@@ -119,6 +148,7 @@ const mapStateToProps = (
     isFetchingDifferentialExpressions: boolean;
     isFetchingDifferentialExpressionsData: boolean;
     isLoggingOut: boolean;
+    isFetchingGOEnrichmentJson: boolean;
 } => {
     return {
         isFetchingTimeSeries: getTimeSeriesIsFetching(state.timeSeries),
@@ -131,6 +161,7 @@ const mapStateToProps = (
             state.differentialExpressions,
         ),
         isLoggingOut: getIsLoggingOut(state.authentication),
+        isFetchingGOEnrichmentJson: getIsFetchingGOEnrichmentJson(state.gOEnrichment),
     };
 };
 
@@ -145,6 +176,7 @@ const GeneExpressGrid = ({
     isFetchingDifferentialExpressions,
     isFetchingDifferentialExpressionsData,
     isLoggingOut,
+    isFetchingGOEnrichmentJson,
 }: PropsFromRedux): ReactElement => {
     const dispatch = useDispatch();
 
@@ -194,6 +226,14 @@ const GeneExpressGrid = ({
                         }
                     >
                         <DifferentialExpressions />
+                    </DictyModule>
+                </div>
+                <div key="gOEnrichment">
+                    <DictyModule
+                        title="Gene Ontology Enrichment"
+                        isLoading={isFetchingGOEnrichmentJson}
+                    >
+                        <GOEnrichment />
                     </DictyModule>
                 </div>
             </ResponsiveGridLayout>

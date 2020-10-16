@@ -8,6 +8,10 @@ import {
     DescriptorSchema,
     RelationPartition,
     User,
+    DataGafAnnotation,
+    Data,
+    DONE_DATA_STATUS,
+    Process,
 } from '@genialis/resolwe/dist/api/types/rest';
 import { BasketAddSamplesResponse } from 'redux/models/rest';
 import _ from 'lodash';
@@ -214,6 +218,187 @@ export const generateUser = (id: number): User => ({
     date_joined: getDateISOString(),
 });
 
+const generateProcess = (id: number): Process => ({
+    id: 1,
+    slug: 'clustering-hierarchical-samples',
+    name: 'Hierarchical clustering of samples',
+    created: getDateISOString(),
+    modified: getDateISOString(),
+    version: '2.0.0',
+    type: 'data:clustering:hierarchical:sample:',
+    category: 'Analyses:',
+    persistence: 'TMP',
+    description: 'Hierarchical clustering of samples.',
+    input_schema: [
+        {
+            name: 'processing',
+            group: [
+                {
+                    default: 'spearman',
+                    label: 'Distance metric',
+                    type: 'basic:string:',
+                    name: 'distance_metric',
+                    choices: [
+                        {
+                            value: 'spearman',
+                            label: 'spearman',
+                        },
+                        {
+                            value: 'pearson',
+                            label: 'pearson',
+                        },
+                        {
+                            value: 'euclidean',
+                            label: 'euclidean',
+                        },
+                    ],
+                },
+                {
+                    default: 'average',
+                    label: 'Linkage method',
+                    type: 'basic:string:',
+                    name: 'linkage_method',
+                    choices: [
+                        {
+                            value: 'average',
+                            label: 'average',
+                        },
+                        {
+                            value: 'single',
+                            label: 'single',
+                        },
+                        {
+                            value: 'complete',
+                            label: 'complete',
+                        },
+                    ],
+                },
+            ],
+        },
+    ],
+    output_schema: null,
+    run: null,
+    contributor: generateContributor(id),
+    current_user_permissions: [],
+    is_active: true,
+    data_name: '',
+    entity_descriptor_schema: undefined,
+    entity_input: '',
+    entity_type: undefined,
+    scheduling_class: 'BA',
+    entity_always_create: true,
+});
+
+export const generateData = (id: number): Data => ({
+    id,
+    created: getDateISOString(),
+    modified: getDateISOString(),
+    contributor: {
+        id: 1,
+        first_name: '',
+        last_name: '',
+        username: '',
+    },
+    current_user_permissions: [],
+    started: getDateISOString(),
+    finished: getDateISOString(),
+    scheduled: getDateISOString(),
+    duplicated: undefined,
+    checksum: '',
+    status: DONE_DATA_STATUS,
+    process_progress: 100,
+    process_rc: 0,
+    size: 123,
+    process_memory: 123,
+    process_cores: 2,
+    process_info: [],
+    process_warning: [],
+    process_error: [],
+    process: generateProcess(id),
+    output: {},
+    slug: `test-data-${id}`,
+    name: `Test Data ${id}`,
+    descriptor_schema: {
+        id: 1,
+        slug: 'test-schema',
+        name: 'Test Schema',
+        version: '1.0.0',
+        contributor: generateContributor(id),
+        schema: [],
+        created: getDateISOString(),
+        modified: getDateISOString(),
+    },
+    descriptor: {},
+    input: {},
+    tags: [],
+    entity: undefined,
+    collection: undefined,
+});
+
+export const generateGaf = (
+    id: number,
+): {
+    humanGaf: DataGafAnnotation;
+    mouseMGIGaf: DataGafAnnotation;
+    mouseUCSCGaf: DataGafAnnotation;
+} => {
+    const humanGaf = {
+        ...generateData(id),
+        name: 'Human gaf',
+        slug: 'human-gaf',
+        output: {
+            source: 'UniProtKB',
+            species: 'Homo sapiens',
+            gaf: {
+                file: 'goa_human.gaf.txt.gz',
+                size: 1231231,
+            },
+            gaf_obj: {
+                file: 'gaf_obj',
+                size: 1231231,
+            },
+        },
+    };
+
+    const mouseMGIGaf = {
+        ...generateData(id),
+        name: 'Mouse MGI gaf',
+        slug: 'mouse-mgi-gaf',
+        output: {
+            source: 'MGI',
+            species: 'Mus musculus',
+            gaf: {
+                file: 'gene_association.mgi.txt.gz',
+                size: 1231231,
+            },
+            gaf_obj: {
+                file: 'gaf_obj',
+                size: 1231231,
+            },
+        },
+    };
+
+    const mouseUCSCGaf = {
+        ...generateData(id),
+        name: 'Mouse UCSC gaf',
+        slug: 'mouse-ucsc-gaf',
+        output: {
+            source: 'UCSC',
+            species: 'Mus musculus',
+            gaf: {
+                file: 'gene_association.mgi.txt.gz',
+                size: 1231231,
+            },
+            gaf_obj: {
+                file: 'gaf_obj',
+                size: 1231231,
+            },
+        },
+    };
+
+    return { humanGaf, mouseMGIGaf, mouseUCSCGaf };
+};
+
 /**
  * Helper function that generates mock instances of objects for use in unit tests.
  *
@@ -297,6 +482,7 @@ export const testState = (): RootState => ({
         selectedGenesIds: [],
         highlightedGenesIds: [],
         isFetchingDifferentialExpressionGenes: false,
+        isFetchingAssociationsGenes: false,
     },
     samplesExpressions: {
         byId: {},
@@ -307,6 +493,18 @@ export const testState = (): RootState => ({
         isFetchingDifferentialExpressions: false,
         isFetchingDifferentialExpressionsData: false,
         selectedId: 0,
+    },
+    gOEnrichment: {
+        json: {
+            gene_associations: {},
+            total_genes: 0,
+            tree: {},
+        },
+        gaf: generateGaf(1).humanGaf,
+        source: '',
+        species: '',
+        pValueThreshold: 0.1,
+        isFetchingJson: false,
     },
     notifications: { notifications: [] as SnackbarNotifications },
 });

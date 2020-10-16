@@ -1,5 +1,4 @@
-import { createAction } from '@reduxjs/toolkit';
-import { ofType, Epic } from 'redux-observable';
+import { ofType, Epic, combineEpics } from 'redux-observable';
 import { Storage, Data } from '@genialis/resolwe/dist/api/types/rest';
 import { map, mergeMap, startWith, endWith, catchError, withLatestFrom } from 'rxjs/operators';
 import { of, from, forkJoin, concat, EMPTY } from 'rxjs';
@@ -17,7 +16,7 @@ import {
 } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
 import { pushToSentryAndAddErrorSnackbar } from 'redux/stores/notifications';
-import { Gene, SamplesExpressionsById } from 'redux/models/internal';
+import { SamplesExpressionsById } from 'redux/models/internal';
 import {
     samplesExpressionsFetchSucceeded,
     samplesExpressionsFetchStarted,
@@ -27,6 +26,7 @@ import * as relationApi from 'api/relationApi';
 import * as storageApi from 'api/storageApi';
 import * as basketApi from 'api/basketApi';
 import * as dataApi from 'api/dataApi';
+import * as differentialExpressionApi from 'api/differentialExpressionApi';
 import {
     differentialExpressionsDataFetchEnded,
     differentialExpressionsDataFetchStarted,
@@ -37,22 +37,16 @@ import {
     differentialExpressionStorageFetchSucceeded,
     getDifferentialExpression,
 } from 'redux/stores/differentialExpressions';
-import { loginSucceeded } from './authenticationEpics';
-import { fetchSelectedDifferentialExpressionGenes } from './genesEpics';
-
-// Export epic actions.
-export const selectGenes = createAction<Gene[]>('genes/selectGenes');
-export const pasteGenesNames = createAction<string[]>('genes/pasteGenesNames');
-export const fetchTimeSeries = createAction('timeSeries/fetchTimeSeries');
-export const fetchTimeSeriesSamplesExpressions = createAction(
-    'timeSeries/fetchTimeSeriesSamplesExpressions',
-);
-export const fetchDifferentialExpressionsData = createAction(
-    'timeSeries/fetchDifferentialExpressionsData',
-);
+import {
+    fetchTimeSeriesSamplesExpressions,
+    fetchDifferentialExpressionsData,
+    fetchTimeSeries,
+    loginSucceeded,
+    fetchSelectedDifferentialExpressionGenes,
+} from './epicsActions';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const timeSeriesSelectedEpic: Epic<any, any, RootState, any> = (action$, state$) => {
+const timeSeriesSelectedEpic: Epic<any, any, RootState, any> = (action$, state$) => {
     return action$.pipe(
         ofType(timeSeriesSelected),
         withLatestFrom(state$),
@@ -64,6 +58,7 @@ export const timeSeriesSelectedEpic: Epic<any, any, RootState, any> = (action$, 
                 mergeMap((response) => {
                     return concat(
                         of(addSamplesToBasketSucceeded(response)),
+                        /* of(fetchGaf()), */
                         of(fetchTimeSeriesSamplesExpressions()),
                         of(fetchDifferentialExpressionsData()),
                     );
@@ -84,7 +79,7 @@ export const timeSeriesSelectedEpic: Epic<any, any, RootState, any> = (action$, 
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const fetchTimeSeriesEpic: Epic<any, any, RootState, any> = (action$) => {
+const fetchTimeSeriesEpic: Epic<any, any, RootState, any> = (action$) => {
     return action$.pipe(
         ofType(fetchTimeSeries.toString(), loginSucceeded.toString()),
         mergeMap(() => {
@@ -116,10 +111,7 @@ const getSampleStorage = async (
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const fetchTimeSeriesSamplesExpressionsEpic: Epic<any, any, RootState, any> = (
-    action$,
-    state$,
-) => {
+const fetchTimeSeriesSamplesExpressionsEpic: Epic<any, any, RootState, any> = (action$, state$) => {
     return action$.pipe(
         ofType(fetchTimeSeriesSamplesExpressions),
         withLatestFrom(state$),
@@ -170,17 +162,14 @@ export const fetchTimeSeriesSamplesExpressionsEpic: Epic<any, any, RootState, an
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const fetchDifferentialExpressionsEpic: Epic<any, any, RootState, any> = (
-    action$,
-    state$,
-) => {
+const fetchDifferentialExpressionsEpic: Epic<any, any, RootState, any> = (action$, state$) => {
     return action$.pipe(
         ofType(fetchDifferentialExpressionsData),
         withLatestFrom(state$),
         mergeMap(([, state]) => {
             const basketId = getBasketId(state.timeSeries);
 
-            return from(dataApi.getDifferentialExpressions(basketId)).pipe(
+            return from(differentialExpressionApi.getDifferentialExpressions(basketId)).pipe(
                 map((differentialExpressions) => {
                     return differentialExpressionsFetchSucceeded(differentialExpressions);
                 }),
@@ -200,10 +189,7 @@ export const fetchDifferentialExpressionsEpic: Epic<any, any, RootState, any> = 
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const fetchDifferentialExpressionsDataEpic: Epic<any, any, RootState, any> = (
-    action$,
-    state$,
-) => {
+const fetchDifferentialExpressionsDataEpic: Epic<any, any, RootState, any> = (action$, state$) => {
     return action$.pipe(
         ofType(differentialExpressionSelected),
         withLatestFrom(state$),
@@ -243,3 +229,11 @@ export const fetchDifferentialExpressionsDataEpic: Epic<any, any, RootState, any
         }),
     );
 };
+
+export default combineEpics(
+    timeSeriesSelectedEpic,
+    fetchTimeSeriesEpic,
+    fetchTimeSeriesSamplesExpressionsEpic,
+    fetchDifferentialExpressionsEpic,
+    fetchDifferentialExpressionsDataEpic,
+);

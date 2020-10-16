@@ -4,6 +4,7 @@ import _ from 'lodash';
 import { combineReducers } from 'redux';
 import { DifferentialExpression, DifferentialExpressionsById } from '../models/internal';
 import createIsFetchingSlice from './fetch';
+import { timeSeriesSelected } from './timeSeries';
 
 // State slices.
 const differentialExpressionsByIdInitialState = {} as DifferentialExpressionsById;
@@ -39,6 +40,14 @@ const differentialExpressionsByIdSlice = createSlice({
                 'id',
             );
         },
+    },
+    extraReducers: (builder) => {
+        builder.addCase(
+            timeSeriesSelected,
+            (): DifferentialExpressionsById => {
+                return differentialExpressionsByIdInitialState;
+            },
+        );
     },
 });
 

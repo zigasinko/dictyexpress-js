@@ -13,7 +13,7 @@ export const DifferentialExpressionsControls = styled.div`
     align-items: center;
 `;
 
-export const DifferentialExpressionsFormControl = styled(FormControl)`
+export const DifferentialExpressionsSelectWrapper = styled(FormControl)`
     min-width: 200px;
 `;
 

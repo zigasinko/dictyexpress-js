@@ -13,3 +13,9 @@ export const getStorageJson = async (storageId: number): Promise<Storage> => {
 
     return deserializeResponse<Storage>(getStorageJsonResponse);
 };
+
+export const getGOEnrichmentJson = async (storageId: number): Promise<Storage> => {
+    const url = `${baseUrl}/${storageId}`;
+
+    return deserializeResponse<Storage>(await fetch.get(url));
+};

@@ -7,3 +7,18 @@ export type BasketAddSamplesResponse = {
     conflict_organisms: string[];
     conflict_sources: string[];
 };
+
+/**
+ * Process statuses.
+ */
+export const STATUS = {
+    UPLOADING: 'UP',
+    RESOLVING: 'RE',
+    WAITING: 'WT',
+    PREPARING: 'PP',
+    PROCESSING: 'PR',
+    DONE: 'OK',
+    ERROR: 'ER',
+    DIRTY: 'DR',
+    NO_STATUS: 'NO',
+};

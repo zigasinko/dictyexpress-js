@@ -6,6 +6,7 @@ import {
     ModalHeader,
     ModalContainer,
     CenteredModal,
+    FooterControlsContainer,
 } from 'components/genexpress/common/dictyModal/dictyModal.styles';
 import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
 import { Gene, VolcanoPoint } from 'redux/models/internal';
@@ -21,7 +22,6 @@ import { RootState } from 'redux/rootReducer';
 import { ValueGetterParams } from 'ag-grid-community';
 import {
     DifferentialExpressionInfo,
-    FooterContainer,
     GeneVolcanoPointsGridWrapper,
 } from './volcanoPointsSelectionModal.styles';
 
@@ -203,7 +203,7 @@ const VolcanoPointSelectionModal = ({
                     </GeneVolcanoPointsGridWrapper>
                 </ModalBody>
                 <ModalFooter>
-                    <FooterContainer>
+                    <FooterControlsContainer>
                         <FormControlLabel
                             control={
                                 <Checkbox
@@ -226,7 +226,7 @@ const VolcanoPointSelectionModal = ({
                             </Button>
                             <Button onClick={handleOnClose}>Close</Button>
                         </div>
-                    </FooterContainer>
+                    </FooterControlsContainer>
                 </ModalFooter>
             </ModalContainer>
         </CenteredModal>

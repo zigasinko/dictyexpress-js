@@ -5,8 +5,8 @@ import { testState, mockStore, generateUser } from 'tests/mock';
 import { MockStoreEnhanced } from 'redux-mock-store';
 import { RootState } from 'redux/rootReducer';
 import { AppDispatch } from 'redux/appStore';
-import { logout } from 'redux/epics/authenticationEpics';
 import { User } from '@genialis/resolwe/dist/api/types/rest';
+import { logout } from 'redux/epics/epicsActions';
 import GenexpressAppBar from './genexpressAppBar';
 
 const initialTestState = testState();
