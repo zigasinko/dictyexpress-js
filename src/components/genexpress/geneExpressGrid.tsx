@@ -20,6 +20,7 @@ import SnackbarNotifier from './snackbarNotifier/snackbarNotifier';
 import GenexpressAppBar from './genexpressAppBar/genexpressAppBar';
 import DifferentialExpressions from './modules/differentialExpressions/differentialExpressions';
 import GOEnrichment from './modules/gOEnrichment/gOEnrichment';
+import GOEnrichmentDevExpress from './modules/gOEnrichment/gOEnrichmentDevExpress';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const defaultLayout = {
@@ -217,7 +218,7 @@ const GeneExpressGrid = ({
                         <GeneExpressions />
                     </DictyModule>
                 </div>
-                <div key="differentialExpressions">
+                {/* <div key="differentialExpressions">
                     <DictyModule
                         title="Differential expressions"
                         isLoading={
@@ -226,6 +227,14 @@ const GeneExpressGrid = ({
                         }
                     >
                         <DifferentialExpressions />
+                    </DictyModule>
+                </div> */}
+                <div key="differentialExpressions">
+                    <DictyModule
+                        title="Gene Ontology Enrichment DevExpress"
+                        isLoading={isFetchingGOEnrichmentJson}
+                    >
+                        <GOEnrichmentDevExpress />
                     </DictyModule>
                 </div>
                 <div key="gOEnrichment">
