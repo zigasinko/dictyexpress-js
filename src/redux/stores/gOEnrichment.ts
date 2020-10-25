@@ -4,18 +4,37 @@ import {
     GOEnrichmentJson,
 } from '@genialis/resolwe/dist/api/types/rest';
 import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { findRow } from 'components/genexpress/modules/gOEnrichment/gOEnrichmentUtils';
+import _ from 'lodash';
 import { combineReducers } from 'redux';
+import { EnhancedGOEnrichmentJson, GOEnrichmentRow } from 'redux/models/internal';
 import createIsFetchingSlice from './fetch';
 import { timeSeriesSelected } from './timeSeries';
 
 // State slices.
-const gOEnrichmentJsonInitialState = {} as GOEnrichmentJson;
+const gOEnrichmentJsonInitialState = {} as EnhancedGOEnrichmentJson;
 const gOEnrichmentJsonSlice = createSlice({
     name: 'gOEnrichment',
     initialState: gOEnrichmentJsonInitialState,
     reducers: {
-        fetchSucceeded: (_state, action: PayloadAction<GOEnrichmentJson>): GOEnrichmentJson => {
+        fetchSucceeded: (
+            _state,
+            action: PayloadAction<EnhancedGOEnrichmentJson>,
+        ): EnhancedGOEnrichmentJson => {
             return action.payload;
+        },
+        rowToggled: (
+            state,
+            action: PayloadAction<{ aspect: string; row: GOEnrichmentRow }>,
+        ): EnhancedGOEnrichmentJson => {
+            // Find the row.
+            const row = findRow(state.tree[action.payload.aspect], action.payload.row.term_name);
+            if (row != null) {
+                row.collapsed = !row?.collapsed;
+            }
+
+            // Update the row and return the state.
+            return state;
         },
     },
 });
@@ -108,7 +127,10 @@ export { dataFetchSucceededAction as gOEnrichmentDataFetchSucceeded };
 
 export const { gafFetchSucceeded } = gafSlice.actions;
 
-export const { fetchSucceeded: gOEnrichmentJsonFetchSucceeded } = gOEnrichmentJsonSlice.actions;
+export const {
+    fetchSucceeded: gOEnrichmentJsonFetchSucceeded,
+    rowToggled: gOEnrichmentRowToggled,
+} = gOEnrichmentJsonSlice.actions;
 
 export type GOEnrichmentState = ReturnType<typeof gOEnrichmentReducer>;
 

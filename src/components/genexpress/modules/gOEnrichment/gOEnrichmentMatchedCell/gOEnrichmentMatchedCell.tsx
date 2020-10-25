@@ -1,8 +1,8 @@
 import React, { ReactElement } from 'react';
 import { ICellRendererParams } from 'ag-grid-community';
 import withMuiStylesProvider from 'components/genexpress/common/dictyGrid/withMuiThemeProvider';
-import { GOEnrichmentRow } from 'redux/models/internal';
 import { IconButton } from '@material-ui/core';
+import { GOEnrichmentRow } from 'redux/models/internal';
 import { MatchedButton, MatchedCellContainer } from './gOEnrichmentMatchedCell.styles';
 
 const GOEnrichmentScoreCell = ({

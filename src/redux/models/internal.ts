@@ -1,6 +1,7 @@
 import {
     DataDifferentialExpression,
     DataStatus,
+    GOEnrichmentJson,
     GOEnrichmentNode,
     Relation,
     Storage,
@@ -83,13 +84,19 @@ export type Aspect = {
     label: string;
 };
 
+export type EnhancedGOEnrichmentJson = {
+    tree: {
+        [aspectSlug: string]: GOEnrichmentRow[];
+    };
+} & Omit<GOEnrichmentJson, 'tree'>;
+
 export type GOEnrichmentRow = {
     path: string[];
     children?: GOEnrichmentRow[];
     depth: number;
     score_percentage: number;
     gene_associations: string[];
-} & Omit<GOEnrichmentNode, 'collapsed' | 'children'>;
+} & Omit<GOEnrichmentNode, 'children'>;
 
 // If key is undefined, it will be generated in the reducer.
 export type SnackbarNotificationContent = {

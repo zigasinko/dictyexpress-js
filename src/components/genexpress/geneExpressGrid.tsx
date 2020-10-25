@@ -21,6 +21,7 @@ import GenexpressAppBar from './genexpressAppBar/genexpressAppBar';
 import DifferentialExpressions from './modules/differentialExpressions/differentialExpressions';
 import GOEnrichment from './modules/gOEnrichment/gOEnrichment';
 import GOEnrichmentDevExpress from './modules/gOEnrichment/gOEnrichmentDevExpress';
+import GOEnrichmentCustomTreeData from './modules/gOEnrichment/gOEnrichmentCustomTreeData';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const defaultLayout = {
@@ -210,12 +211,20 @@ const GeneExpressGrid = ({
                         <TimeSeriesAndGeneSelector />
                     </DictyModule>
                 </div>
-                <div key="expressionTimeCourses">
+                {/* <div key="expressionTimeCourses">
                     <DictyModule
                         title="Expression Time Courses"
                         isLoading={isFetchingSamplesExpressions}
                     >
                         <GeneExpressions />
+                    </DictyModule>
+                </div> */}
+                <div key="expressionTimeCourses">
+                    <DictyModule
+                        title="Expression Time Courses"
+                        isLoading={isFetchingGOEnrichmentJson}
+                    >
+                        <GOEnrichmentCustomTreeData />
                     </DictyModule>
                 </div>
                 {/* <div key="differentialExpressions">

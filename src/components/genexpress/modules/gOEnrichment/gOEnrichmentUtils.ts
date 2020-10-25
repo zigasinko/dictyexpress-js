@@ -1,13 +1,13 @@
 /* eslint-disable no-param-reassign */
 import { GOEnrichmentJson } from '@genialis/resolwe/dist/api/types/rest';
 import _ from 'lodash';
-import { AspectValue, GOEnrichmentRow } from 'redux/models/internal';
+import { AspectValue, EnhancedGOEnrichmentJson, GOEnrichmentRow } from 'redux/models/internal';
 
 /**
  * Add augmented attributes: depth, score_percentage, gene_associations and source.
  */
 export const appendMissingAttributesToJson = (
-    json: GOEnrichmentJson,
+    json: EnhancedGOEnrichmentJson,
     source: string,
     species: string,
 ): void => {
@@ -24,19 +24,41 @@ export const appendMissingAttributesToJson = (
 
     _.each(json.tree, (aspectRows) => {
         let maxScore = -1;
-        walk(aspectRows as GOEnrichmentRow[], (item) => {
+        walk(aspectRows, (item) => {
             maxScore = Math.max(item.score, maxScore);
         });
 
-        walk(aspectRows as GOEnrichmentRow[], (item, depth) => {
+        walk(aspectRows, (item, depth) => {
             item.depth = depth;
             item.source = source;
             item.species = species;
             item.score_percentage = (item.score / maxScore) * 100;
             item.gene_associations = json.gene_associations[item.term_id];
-            item.path = [];
+            item.collapsed = false;
         });
     });
+};
+
+// Flatten the tree into rows.
+// TODO: add optional parameter to disable "collapsed" check
+export const flattenGoEnrichmentTree = (
+    items: GOEnrichmentRow[] | undefined,
+    path: string[],
+    disableCollapseCheck = false,
+): GOEnrichmentRow[] => {
+    return _.flatten(
+        _.map(items, (item) => {
+            const itemPath = [...path, item.term_name];
+            return [
+                { ...item, path: itemPath },
+                ...flattenGoEnrichmentTree(
+                    !disableCollapseCheck && item.collapsed ? undefined : item.children,
+                    [...itemPath],
+                    disableCollapseCheck,
+                ),
+            ];
+        }),
+    );
 };
 
 /**
@@ -45,6 +67,7 @@ export const appendMissingAttributesToJson = (
 export const ontologyJsonToOntologyRows = (
     gOEnrichmentJson: GOEnrichmentJson,
     aspect: AspectValue,
+    disableCollapseCheck = false,
 ): GOEnrichmentRow[] => {
     if (!gOEnrichmentJson) return [];
 
@@ -53,18 +76,27 @@ export const ontologyJsonToOntologyRows = (
         return json.tree[aspect] as GOEnrichmentRow[];
     };
 
-    // Flatten the tree into rows.
-    const flattenItems = (
-        items: GOEnrichmentRow[] | undefined,
-        path: string[],
-    ): GOEnrichmentRow[] => {
-        return _.flatten(
-            _.map(items, (item) => {
-                const itemPath = [...path, item.term_name];
-                return [{ ...item, path: itemPath }, ...flattenItems(item.children, [...itemPath])];
-            }),
-        );
-    };
+    return flattenGoEnrichmentTree(filterByAspect(gOEnrichmentJson), [], disableCollapseCheck);
+};
 
-    return flattenItems(filterByAspect(gOEnrichmentJson), []);
+export const findRow = (
+    rows: GOEnrichmentRow[],
+    termNameToFind: string,
+    currentPath = [] as string[],
+): GOEnrichmentRow | null => {
+    for (let i = 0; i < rows.length; i += 1) {
+        const currentRow = rows[i];
+        if (currentRow.term_name === termNameToFind) {
+            return currentRow;
+        }
+
+        if (currentRow.children != null) {
+            return findRow(currentRow.children, termNameToFind, [
+                ...currentPath,
+                currentRow.term_name,
+            ]);
+        }
+    }
+
+    return null;
 };

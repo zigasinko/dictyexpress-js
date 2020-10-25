@@ -1,4 +1,4 @@
-import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
+import React, { ChangeEvent, ReactElement, useEffect, useRef, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from 'redux/rootReducer';
 import { genesHighlighted, getSelectedGenes } from 'redux/stores/genes';
@@ -7,6 +7,7 @@ import {
     getGOEnrichmentJson,
     getIsFetchingGOEnrichmentJson,
     getPValueThreshold,
+    gOEnrichmentRowToggled,
     pValueThresholdChanged,
 } from 'redux/stores/gOEnrichment';
 import { Aspect, Gene, GOEnrichmentRow } from 'redux/models/internal';
@@ -22,10 +23,11 @@ import {
     GOEnrichmentControls,
     GOEnrichmentGridContainer,
 } from './gOEnrichment.styles';
-import { ontologyJsonToOntologyRows } from './gOEnrichmentUtils';
 import GOEnrichmentScoreCell from './scoreCell/gOEnrichmentScoreCell';
 import gOEnrichmentMatchedCell from './gOEnrichmentMatchedCell/gOEnrichmentMatchedCell';
+import GOEnrichmentTermCell from './gOEnrichmentTermCell/gOEnrichmentTermCell';
 import GOEnrichmentAssociationsModal from './gOEnrichmentAssociationsModal/gOEnrichmentAssociationsModal';
+import { ontologyJsonToOntologyRows } from './gOEnrichmentUtils';
 
 const mapStateToProps = (
     state: RootState,
@@ -46,6 +48,7 @@ const mapStateToProps = (
 const connector = connect(mapStateToProps, {
     connectedGenesHighlighted: genesHighlighted,
     connectedPValueThresholdChanged: pValueThresholdChanged,
+    connectedGOEnrichmentRowToggled: gOEnrichmentRowToggled,
 });
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -58,11 +61,12 @@ const aspectOptions: Aspect[] = [
 
 const pValueThresholdsOptions = [0.1, 0.05, 0.01, 0.001, 0.0001];
 
-const GOEnrichment = ({
+const GOEnrichmentCustomTreeData = ({
     gOEnrichmentJson,
     pValueThreshold,
     selectedGenes,
     connectedPValueThresholdChanged,
+    connectedGOEnrichmentRowToggled,
     isFetchingGOEnrichmentJson,
 }: PropsFromRedux): ReactElement => {
     const [selectedAspect, setSelectedAspect] = useState(aspectOptions[0]);
@@ -82,13 +86,11 @@ const GOEnrichment = ({
             return;
         }
 
-        let rows = ontologyJsonToOntologyRows(gOEnrichmentJson, selectedAspect.value, true);
-
+        let rows = ontologyJsonToOntologyRows(gOEnrichmentJson, selectedAspect.value);
         // If user is sorting gene ontology enrichment data, exclude duplicates.
         if (!treeView) {
             rows = _.uniqBy(rows, (row) => row.term_id);
         }
-
         setGOEnrichmentRows(rows);
     }, [gOEnrichmentJson, selectedAspect.value, treeView]);
 
@@ -114,10 +116,6 @@ const GOEnrichment = ({
         connectedPValueThresholdChanged(event.target.value as number);
     };
 
-    const getDataPath = (gOEnrichmentRow: GOEnrichmentRow): string[] => {
-        return gOEnrichmentRow.path;
-    };
-
     /**
      * Checks if sorting is applied and disabled tree view if it is.
      * @param event - Ag-Grid SortChangedEvent.
@@ -140,7 +138,23 @@ const GOEnrichment = ({
     };
 
     const getSort = (field: string): string | undefined => {
+        if (treeView) {
+            return undefined;
+        }
         return sortModel != null && sortModel.field === field ? sortModel.order : undefined;
+    };
+
+    /**
+     * Expend or collapse row and it's descendants.
+     * @param row - GOEnrichmentRow data.
+     */
+    const onToggleClick = (row: GOEnrichmentRow): void => {
+        // Do nothing with leaf rows.
+        if (row.collapsed == null) {
+            return;
+        }
+
+        connectedGOEnrichmentRowToggled({ aspect: selectedAspect.value, row });
     };
 
     /**
@@ -210,21 +224,23 @@ const GOEnrichment = ({
                 <GOEnrichmentGridContainer>
                     {gOEnrichmentRows.length > 0 && (
                         <DictyGrid
-                            treeData={treeView}
+                            key={`treeView${treeView}`}
                             isFetching={isFetchingGOEnrichmentJson}
                             data={gOEnrichmentRows}
                             hideFilter
                             columnDefs={[
-                                ...(!treeView
-                                    ? [
-                                          {
-                                              field: 'term_name',
-                                              headerName: 'Term',
-                                              flex: 1,
-                                              sort: getSort('term_name'),
-                                          },
-                                      ]
-                                    : []),
+                                {
+                                    field: 'term_name',
+                                    headerName: 'Term',
+                                    flex: 1,
+                                    sortable: false,
+                                    cellRendererFramework: treeView ? GOEnrichmentTermCell : null,
+                                    cellRendererParams: treeView
+                                        ? {
+                                              onToggleClick,
+                                          }
+                                        : null,
+                                },
                                 {
                                     field: 'pval',
                                     headerName: 'p-value',
@@ -246,22 +262,15 @@ const GOEnrichment = ({
                                     width: 60,
                                     sort: getSort('matched'),
                                     cellRendererFramework: gOEnrichmentMatchedCell,
-                                    cellRendererParams: { onMatchedGenesClick },
+                                    cellRendererParams: {
+                                        onMatchedGenesClick,
+                                    },
                                 },
                             ]}
-                            autoGroupColumnDef={{
-                                headerName: 'Term',
-                                flex: 1,
-                                hide: !treeView,
-                                cellRendererParams: {
-                                    suppressCount: true,
-                                },
-                            }}
                             onSortChanged={handleOnSortChanged}
                             // Path must also be included as a unique identifier because the same
                             // term_id can be found in multiple tree branches.
                             getRowId={(data): string => data.term_id + data.path.toString()}
-                            getDataPath={getDataPath}
                         />
                     )}
                     {allAspectsEmpty && 'Enriched terms not found.'}
@@ -280,4 +289,4 @@ const GOEnrichment = ({
     );
 };
 
-export default connector(GOEnrichment);
+export default connector(GOEnrichmentCustomTreeData);
