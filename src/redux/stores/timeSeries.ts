@@ -1,5 +1,4 @@
-import { createSlice, PayloadAction, createSelector } from '@reduxjs/toolkit';
-import { combineReducers } from 'redux';
+import { createSlice, PayloadAction, createSelector, combineReducers } from '@reduxjs/toolkit';
 import _ from 'lodash';
 import { Relation } from '@genialis/resolwe/dist/api/types/rest';
 import { BasketAddSamplesResponse } from 'redux/models/rest';

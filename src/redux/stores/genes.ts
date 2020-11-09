@@ -1,5 +1,4 @@
-import { createSlice, PayloadAction, createSelector } from '@reduxjs/toolkit';
-import { combineReducers } from 'redux';
+import { createSlice, PayloadAction, createSelector, combineReducers } from '@reduxjs/toolkit';
 import _ from 'lodash';
 import { Gene, GenesById } from 'redux/models/internal';
 import { timeSeriesSelected } from './timeSeries';

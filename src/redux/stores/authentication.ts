@@ -1,5 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { combineReducers } from 'redux';
+import { combineReducers, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { User } from '@genialis/resolwe/dist/api/types/rest';
 import _ from 'lodash';
 import createIsFetchingSlice from './fetch';

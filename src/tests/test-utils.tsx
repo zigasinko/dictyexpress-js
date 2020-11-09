@@ -4,7 +4,6 @@ import { render, RenderResult } from '@testing-library/react';
 import { ThemeProvider as StyledComponentsThemeProvider } from 'styled-components';
 import { createMuiTheme, StylesProvider, MuiThemeProvider } from '@material-ui/core';
 import { SnackbarProvider } from 'notistack';
-
 import { MockStoreEnhanced } from 'redux-mock-store';
 import { AppDispatch } from 'redux/appStore';
 import { RendererContext } from 'components/common/rendererContext';
@@ -20,6 +19,12 @@ export type customRenderOptions = {
     mockedStore?: MockStoreEnhanced<RootState, AppDispatch>;
 };
 
+/**
+ * Renders a component. If any customRender is called in parent beforeEach,
+ * unmount has to be called before the second customRender.
+ * @param ui - Component (ReactElement) to render.
+ * @param options - Custom render options like initialState or mockedStore.
+ */
 export const customRender = (ui: ReactElement, options?: customRenderOptions): RenderResult => {
     const store = getStore(options?.initialState);
     store.dispatch = jest.fn(store.dispatch);
@@ -46,6 +51,3 @@ export const customRender = (ui: ReactElement, options?: customRenderOptions): R
         ...options,
     });
 };
-
-// re-export everything
-export * from '@testing-library/react';

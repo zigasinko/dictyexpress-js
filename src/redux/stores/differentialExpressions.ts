@@ -1,9 +1,9 @@
 import { Storage } from '@genialis/resolwe/dist/api/types/rest';
-import { createSlice, PayloadAction, createSelector } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createSelector, combineReducers } from '@reduxjs/toolkit';
 import _ from 'lodash';
-import { combineReducers } from 'redux';
 import { DifferentialExpression, DifferentialExpressionsById } from '../models/internal';
 import createIsFetchingSlice from './fetch';
+import { timeSeriesSelected } from './timeSeries';
 
 // State slices.
 const differentialExpressionsByIdInitialState = {} as DifferentialExpressionsById;
@@ -38,6 +38,14 @@ const differentialExpressionsByIdSlice = createSlice({
                 .keyBy('id')
                 .value();
         },
+    },
+    extraReducers: (builder) => {
+        builder.addCase(
+            timeSeriesSelected,
+            (): DifferentialExpressionsById => {
+                return differentialExpressionsByIdInitialState;
+            },
+        );
     },
 });
 

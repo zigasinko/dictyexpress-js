@@ -1,7 +1,7 @@
-import { createSlice, PayloadAction, createSelector } from '@reduxjs/toolkit';
-import { combineReducers } from 'redux';
+import { createSlice, PayloadAction, createSelector, combineReducers } from '@reduxjs/toolkit';
 import { SamplesExpressionsById } from '../models/internal';
 import createIsFetchingSlice from './fetch';
+import { timeSeriesSelected } from './timeSeries';
 
 // State slices.
 const samplesExpressionsByIdInitialState = {} as SamplesExpressionsById;
@@ -13,8 +13,16 @@ const samplesExpressionsByIdSlice = createSlice({
             _state,
             action: PayloadAction<SamplesExpressionsById>,
         ): SamplesExpressionsById => {
-            return { ...action.payload };
+            return action.payload;
         },
+    },
+    extraReducers: (builder) => {
+        builder.addCase(
+            timeSeriesSelected,
+            (): SamplesExpressionsById => {
+                return samplesExpressionsByIdInitialState;
+            },
+        );
     },
 });
 

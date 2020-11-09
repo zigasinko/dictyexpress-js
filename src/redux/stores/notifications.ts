@@ -1,5 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { combineReducers } from 'redux';
+import { combineReducers, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SnackbarKey } from 'notistack';
 import { SnackbarNotification, SnackbarNotificationContent } from 'redux/models/internal';
 
