@@ -1,5 +1,5 @@
 import { AgGridReact } from 'ag-grid-react';
-import React, { ReactElement, useEffect, useState, useRef } from 'react';
+import React, { ReactElement, useEffect, useState, useRef, useCallback } from 'react';
 import {
     GridApi,
     RowSelectedEvent,
@@ -8,8 +8,10 @@ import {
     ColDef,
     SelectionChangedEvent,
     RowClickedEvent,
+    SortChangedEvent,
 } from 'ag-grid-community';
 import _ from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 import { DictyGridContainer, FilterTextField, GridWrapper } from './dictyGrid.styles';
 
 type DictyGridProps<T> = {
@@ -23,6 +25,9 @@ type DictyGridProps<T> = {
     columnDefs: ColDef[];
     selectionMode?: 'single' | 'multiple';
     suppressRowClickSelection?: boolean;
+    disableAnimateRows?: boolean;
+    disableAutoSizeAllColumns?: boolean;
+    disableSizeColumnsToFit?: boolean;
     getRowId: (data: T) => string;
     onReady?: () => void;
     onRowClicked?: (itemData: T) => void;
@@ -31,6 +36,18 @@ type DictyGridProps<T> = {
     onSortChanged?: (event: SortChangedEvent) => void;
 };
 
+const defaultColumnDef = {
+    flex: 1,
+    resizable: true,
+    sortable: true,
+};
+
+/**
+ * DictyGrid component is the basis for all data grids. It is a wrapper around AgGrid component.
+ *
+ * AgGrid will get reinitialized if columnDefs change, so make sure you pass column definitions
+ * with a persistent object (e.g. useRef).
+ */
 const DictyGrid = <T extends {}>({
     data,
     selectedData,
@@ -40,18 +57,22 @@ const DictyGrid = <T extends {}>({
     columnDefs,
     selectionMode,
     suppressRowClickSelection = false,
+    disableAnimateRows = false,
+    disableAutoSizeAllColumns = false,
+    disableSizeColumnsToFit = false,
     getRowId,
     onReady,
     onRowClicked,
     onRowSelected,
     onSelectionChanged,
+    onSortChanged,
 }: DictyGridProps<T>): ReactElement => {
     const [filter, setFilter] = useState<string>('');
     const gridApi = useRef<GridApi | null>(null);
     const columnApi = useRef<ColumnApi | null>(null);
-    const gridElement = useRef<AgGridReact>(null);
+    const [gridKey, setGridKey] = useState(uuidv4());
 
-    useEffect(() => {
+    const setOverlay = useCallback(() => {
         if (isFetching) {
             gridApi.current?.showLoadingOverlay();
         } else if (data.length === 0) {
@@ -61,18 +82,48 @@ const DictyGrid = <T extends {}>({
         }
     }, [data.length, isFetching]);
 
+    useEffect(() => {
+        setOverlay();
+    }, [setOverlay]);
+
     const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
         setFilter(e.target.value);
     };
 
-    // Execute onRowSelected callback with selected data.
+    useEffect(() => {
+        return (): void => {
+            gridApi.current?.destroy();
+        };
+    }, []);
+
+    const sizeColumns = useCallback((): void => {
+        if (!disableAutoSizeAllColumns) {
+            columnApi.current?.autoSizeAllColumns();
+        }
+
+        if (!disableSizeColumnsToFit) {
+            gridApi.current?.sizeColumnsToFit();
+        }
+    }, [disableAutoSizeAllColumns, disableSizeColumnsToFit]);
+
+    /**
+     * Hook to set grid key. Add non-reactive agGrid properties (like columnDefs)
+     * to dependency list.
+     */
+    useEffect(() => {
+        setGridKey(uuidv4());
+    }, [columnDefs]);
+
     const handleRowSelected = (event: RowSelectedEvent): void => {
         if (event.node.isSelected()) {
             onRowSelected?.(event.node.data);
         }
     };
 
-    // If any value is already selected, it needs to be manually set as selected or else grid won't show it.
+    /**
+     * If any value is already selected, it needs to be manually set as selected or else grid won't show it.
+     * @param dataToSelect - Data that will be marked as selected.
+     */
     const setSelectedData = (dataToSelect: T[] | undefined): void => {
         if (_.isEmpty(dataToSelect) || dataToSelect == null) {
             return;
@@ -89,22 +140,25 @@ const DictyGrid = <T extends {}>({
     const handleOnGridReady = (params: GridReadyEvent): void => {
         gridApi.current = params.api;
         columnApi.current = params.columnApi;
-        gridApi.current?.hideOverlay();
-        gridApi.current?.sizeColumnsToFit();
+
+        setOverlay();
 
         setSelectedData(selectedData);
 
         onReady?.();
     };
 
-    const defaultColDef = {
-        flex: 1,
-        resizable: true,
-        sortable: true,
+    const handleOnRendered = (): void => {
+        sizeColumns();
     };
 
+    // TODO: check if resetting row heights is necessary after column resize event.
     const handleOnColumnResized = (): void => {
         gridApi.current?.resetRowHeights();
+    };
+
+    const handleOnGridSizeChanged = (): void => {
+        sizeColumns();
     };
 
     const handleOnSelectionChanged = (event: SelectionChangedEvent): void => {
@@ -113,6 +167,10 @@ const DictyGrid = <T extends {}>({
 
     const handleOnRowClicked = (event: RowClickedEvent): void => {
         onRowClicked?.(event.node.data);
+    };
+
+    const handleOnSortChanged = (event: SortChangedEvent): void => {
+        onSortChanged?.(event);
     };
 
     return (
@@ -130,12 +188,17 @@ const DictyGrid = <T extends {}>({
             )}
             <GridWrapper className="ag-theme-balham">
                 <AgGridReact
-                    data-testid="agGrid"
-                    ref={gridElement}
+                    key={gridKey}
                     onGridReady={handleOnGridReady}
-                    defaultColDef={defaultColDef}
+                    onGridSizeChanged={handleOnGridSizeChanged}
+                    defaultColDef={defaultColumnDef}
+                    animateRows={!disableAnimateRows}
+                    onFirstDataRendered={handleOnRendered}
+                    groupDefaultExpanded={-1}
+                    suppressColumnVirtualisation
+                    onSortChanged={handleOnSortChanged}
                     columnDefs={columnDefs}
-                    disableStaticMarkup={false}
+                    disableStaticMarkup
                     rowSelection={selectionMode}
                     rowStyle={
                         selectionMode != null || handleOnRowClicked != null

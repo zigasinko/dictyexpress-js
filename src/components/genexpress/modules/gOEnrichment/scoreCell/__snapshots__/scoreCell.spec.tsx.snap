@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`gOEnrichmentScoreCell should render as default snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="sc-AxjAm ivPtqg"
+  >
+    <div
+      aria-valuemax="100"
+      aria-valuemin="0"
+      aria-valuenow="0"
+      class="MuiLinearProgress-root MuiLinearProgress-colorSecondary sc-AxiKw fYFrQr MuiLinearProgress-determinate"
+      role="progressbar"
+    >
+      <div
+        class="MuiLinearProgress-bar MuiLinearProgress-barColorSecondary MuiLinearProgress-bar1Determinate"
+        style="transform: translateX(-100%);"
+      />
+    </div>
+    <span
+      class="sc-AxirZ iZuHAh"
+    >
+      12.00
+    </span>
+  </div>
+</DocumentFragment>
+`;

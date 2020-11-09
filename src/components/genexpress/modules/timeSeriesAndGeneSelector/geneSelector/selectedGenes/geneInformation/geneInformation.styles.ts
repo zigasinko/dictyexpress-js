@@ -12,7 +12,6 @@ export const GeneInformationHeader = styled.div`
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
-    align-content: center;
     margin-bottom: 10px;
 `;
 

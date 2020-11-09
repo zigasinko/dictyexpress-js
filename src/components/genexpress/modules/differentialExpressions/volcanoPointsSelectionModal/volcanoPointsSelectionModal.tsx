@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import Button from '@material-ui/core/Button';
 import {
     ModalFooter,
@@ -6,6 +6,7 @@ import {
     ModalHeader,
     ModalContainer,
     CenteredModal,
+    FooterControlsContainer,
 } from 'components/genexpress/common/dictyModal/dictyModal.styles';
 import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
 import { Gene, VolcanoPoint } from 'redux/models/internal';
@@ -21,7 +22,6 @@ import { RootState } from 'redux/rootReducer';
 import { ValueGetterParams } from 'ag-grid-community';
 import {
     DifferentialExpressionInfo,
-    FooterContainer,
     GeneVolcanoPointsGridWrapper,
 } from './volcanoPointsSelectionModal.styles';
 
@@ -140,6 +140,43 @@ const VolcanoPointSelectionModal = ({
         }
     };
 
+    const columnDefs = useRef([
+        {
+            headerCheckboxSelection: true,
+            checkboxSelection: true,
+            width: 25,
+        },
+        {
+            valueGetter: (params: ValueGetterParams): string => {
+                return params.data.point.geneId;
+            },
+            headerName: 'ID',
+            width: 90,
+        },
+        {
+            valueGetter: (params: ValueGetterParams): string => {
+                return params.data.gene?.name;
+            },
+            headerName: 'Name',
+            width: 90,
+            sort: 'asc',
+        },
+        {
+            valueGetter: (params: ValueGetterParams): number => {
+                return params.data.point.logFcValue;
+            },
+            headerName: 'log2(Fold Change)',
+            width: 90,
+        },
+        {
+            valueGetter: (params: ValueGetterParams): number => {
+                return params.data.point.logProbValue;
+            },
+            headerName: probFieldLabel,
+            width: 90,
+        },
+    ]);
+
     return (
         <CenteredModal
             open
@@ -154,56 +191,19 @@ const VolcanoPointSelectionModal = ({
                         Differential Expression: {differentialExpressionName}
                     </DifferentialExpressionInfo>
                     <GeneVolcanoPointsGridWrapper>
-                        {geneVolcanoPoints.length > 0 && (
-                            <DictyGrid
-                                data={geneVolcanoPoints}
-                                getRowId={(data): string => data.point.geneId}
-                                filterLabel="Filter"
-                                selectedData={selectedGeneVolcanoPoints}
-                                columnDefs={[
-                                    {
-                                        headerCheckboxSelection: true,
-                                        checkboxSelection: true,
-                                        width: 25,
-                                    },
-                                    {
-                                        valueGetter: (params: ValueGetterParams): string => {
-                                            return params.data.point.geneId;
-                                        },
-                                        headerName: 'ID',
-                                        width: 90,
-                                    },
-                                    {
-                                        valueGetter: (params: ValueGetterParams): string => {
-                                            return params.data.gene?.name;
-                                        },
-                                        headerName: 'Name',
-                                        width: 90,
-                                        sort: 'asc',
-                                    },
-                                    {
-                                        valueGetter: (params: ValueGetterParams): number => {
-                                            return params.data.point.logFcValue;
-                                        },
-                                        headerName: 'log2(Fold Change)',
-                                        width: 90,
-                                    },
-                                    {
-                                        valueGetter: (params: ValueGetterParams): number => {
-                                            return params.data.point.logProbValue;
-                                        },
-                                        headerName: probFieldLabel,
-                                        width: 90,
-                                    },
-                                ]}
-                                selectionMode="multiple"
-                                onSelectionChanged={setSelectedGeneVolcanoPoints}
-                            />
-                        )}
+                        <DictyGrid
+                            data={geneVolcanoPoints}
+                            getRowId={(data): string => data.point.geneId}
+                            filterLabel="Filter"
+                            selectedData={selectedGeneVolcanoPoints}
+                            columnDefs={columnDefs.current}
+                            selectionMode="multiple"
+                            onSelectionChanged={setSelectedGeneVolcanoPoints}
+                        />
                     </GeneVolcanoPointsGridWrapper>
                 </ModalBody>
                 <ModalFooter>
-                    <FooterContainer>
+                    <FooterControlsContainer>
                         <FormControlLabel
                             control={
                                 <Checkbox
@@ -226,7 +226,7 @@ const VolcanoPointSelectionModal = ({
                             </Button>
                             <Button onClick={handleOnClose}>Close</Button>
                         </div>
-                    </FooterContainer>
+                    </FooterControlsContainer>
                 </ModalFooter>
             </ModalContainer>
         </CenteredModal>

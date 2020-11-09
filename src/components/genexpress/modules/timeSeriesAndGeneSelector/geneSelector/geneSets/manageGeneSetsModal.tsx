@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useRef, useState } from 'react';
 import Button from '@material-ui/core/Button';
 import { ValueFormatterParams } from 'ag-grid-community';
 import {
@@ -40,6 +40,32 @@ const ManageGeneSetsModal = ({
         onClick(geneSet);
     };
 
+    const columnDefs = useRef([
+        {
+            headerCheckboxSelection: true,
+            checkboxSelection: true,
+            width: 25,
+        },
+        {
+            field: 'dateTime',
+            headerName: 'Date',
+            width: 90,
+            sort: 'desc',
+            valueFormatter: (params: ValueFormatterParams): string => {
+                return params.value.toLocaleString('en-US');
+            },
+        },
+        {
+            field: 'genesNames',
+            headerName: 'Genes',
+            autoHeight: true,
+            cellStyle: { 'white-space': 'normal' },
+            valueFormatter: (params: ValueFormatterParams): string => {
+                return params.value.join(', ');
+            },
+        },
+    ]);
+
     return (
         <CenteredModal
             open={open}
@@ -57,31 +83,7 @@ const ManageGeneSetsModal = ({
                         <DictyGrid
                             data={geneSets}
                             getRowId={(data): string => data.dateTime.toString()}
-                            columnDefs={[
-                                {
-                                    headerCheckboxSelection: true,
-                                    checkboxSelection: true,
-                                    width: 25,
-                                },
-                                {
-                                    field: 'dateTime',
-                                    headerName: 'Date',
-                                    width: 90,
-                                    sort: 'desc',
-                                    valueFormatter: (params: ValueFormatterParams): string => {
-                                        return params.value.toLocaleString('en-US');
-                                    },
-                                },
-                                {
-                                    field: 'genesNames',
-                                    headerName: 'Genes',
-                                    autoHeight: true,
-                                    cellStyle: { 'white-space': 'normal' },
-                                    valueFormatter: (params: ValueFormatterParams): string => {
-                                        return params.value.join(', ');
-                                    },
-                                },
-                            ]}
+                            columnDefs={columnDefs.current}
                             selectionMode="multiple"
                             onSelectionChanged={geneSetsSelectionChangedHandler}
                             onRowClicked={handleOnClick}

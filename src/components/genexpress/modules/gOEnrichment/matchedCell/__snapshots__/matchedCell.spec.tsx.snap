@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`gOEnrichmentMatchedCell should render as default snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="sc-AxjAm ivPtqg"
+  >
+    <button
+      class="MuiButtonBase-root MuiButton-root MuiButton-text sc-AxirZ jkhdTE MuiButton-textSecondary MuiButton-fullWidth"
+      tabindex="0"
+      type="button"
+    >
+      <span
+        class="MuiButton-label"
+      >
+        12/250
+      </span>
+      <span
+        class="MuiTouchRipple-root"
+      />
+    </button>
+  </div>
+</DocumentFragment>
+`;

@@ -30,3 +30,10 @@ export const ModalFooter = styled.div`
     text-align: right;
     border-top: 1px solid #e5e5e5;
 `;
+
+export const FooterControlsContainer = styled.div`
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+`;

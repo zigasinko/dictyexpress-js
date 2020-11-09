@@ -12,6 +12,7 @@ import {
 import { breakpoints } from 'components/app/globalStyle';
 import { defaultBreakpointCols, getLayouts, layoutsChanged } from 'redux/stores/layouts';
 import _ from 'lodash';
+import { getIsFetchingGOEnrichmentJson } from 'redux/stores/gOEnrichment';
 import { appStarted } from 'redux/epics/epicsActions';
 import TimeSeriesAndGeneSelector from './modules/timeSeriesAndGeneSelector/timeSeriesAndGeneSelector';
 import GeneExpressions from './modules/geneExpressions/geneExpressions';
@@ -19,6 +20,7 @@ import DictyModule from './common/dictyModule/dictyModule';
 import SnackbarNotifier from './snackbarNotifier/snackbarNotifier';
 import GenexpressAppBar from './genexpressAppBar/genexpressAppBar';
 import DifferentialExpressions from './modules/differentialExpressions/differentialExpressions';
+import GOEnrichment from './modules/gOEnrichment/gOEnrichment';
 import { LayoutBreakpoint, ModulesKeys } from './common/constants';
 import { ResponsiveGridLayoutContainer } from './geneExpressGrid.styles';
 
@@ -34,6 +36,7 @@ const mapStateToProps = (
     isFetchingDifferentialExpressions: boolean;
     isFetchingDifferentialExpressionsData: boolean;
     isLoggingOut: boolean;
+    isFetchingGOEnrichmentJson: boolean;
 } => {
     return {
         layouts: getLayouts(state.layouts),
@@ -47,6 +50,7 @@ const mapStateToProps = (
             state.differentialExpressions,
         ),
         isLoggingOut: getIsLoggingOut(state.authentication),
+        isFetchingGOEnrichmentJson: getIsFetchingGOEnrichmentJson(state.gOEnrichment),
     };
 };
 
@@ -64,6 +68,7 @@ const GeneExpressGrid = ({
     isFetchingDifferentialExpressions,
     isFetchingDifferentialExpressionsData,
     isLoggingOut,
+    isFetchingGOEnrichmentJson,
     connectedLayoutsChanged,
 }: PropsFromRedux): ReactElement => {
     const dispatch = useDispatch();
@@ -130,6 +135,14 @@ const GeneExpressGrid = ({
                             }
                         >
                             <DifferentialExpressions />
+                        </DictyModule>
+                    </div>
+                    <div key={ModulesKeys.gOEnrichment}>
+                        <DictyModule
+                            title="Gene Ontology Enrichment"
+                            isLoading={isFetchingGOEnrichmentJson}
+                        >
+                            <GOEnrichment />
                         </DictyModule>
                     </div>
                 </ResponsiveGridLayout>

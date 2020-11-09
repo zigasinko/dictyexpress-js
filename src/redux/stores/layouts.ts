@@ -87,6 +87,16 @@ const getBreakpointLayouts = (
             }[breakpoint],
         ),
         generateModuleLayout(
+            ModulesKeys.gOEnrichment,
+            breakpoint,
+            availableSpaceInCols,
+            {
+                large: 5,
+                mid: 4,
+                small: defaultBreakpointCols.small,
+            }[breakpoint],
+        ),
+        generateModuleLayout(
             ModulesKeys.differentialExpressions,
             breakpoint,
             availableSpaceInCols,

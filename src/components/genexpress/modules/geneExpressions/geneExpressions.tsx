@@ -61,7 +61,11 @@ const GeneExpressions = ({
 
     // Each time timeSeries or genes changes, visualization data must be refreshed.
     useEffect(() => {
-        if (timeSeries == null || Object.keys(samplesExpressionsById).length === 0) {
+        if (
+            timeSeries == null ||
+            Object.keys(samplesExpressionsById).length === 0 ||
+            genes.length === 0
+        ) {
             return;
         }
 

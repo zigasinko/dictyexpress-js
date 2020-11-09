@@ -11,6 +11,7 @@ import {
     getHighlightedGenesIds,
     genesSelected,
     genesFetchSucceeded,
+    allGenesDeselected,
 } from 'redux/stores/genes';
 import { Gene, BasketInfo } from 'redux/models/internal';
 import featureApi from 'api/featureApi';
@@ -50,6 +51,7 @@ const mapStateToProps = (
 const connector = connect(mapStateToProps, {
     connectedGenesFetchSucceeded: genesFetchSucceeded,
     connectedGenesSelected: genesSelected,
+    connectedAllGenesDeselected: allGenesDeselected,
 });
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -60,6 +62,7 @@ const GeneSelector = ({
     highlightedGenesIds,
     connectedGenesFetchSucceeded,
     connectedGenesSelected,
+    connectedAllGenesDeselected,
 }: PropsFromRedux): ReactElement => {
     const {
         source: autocompleteSource,
@@ -122,6 +125,16 @@ const GeneSelector = ({
         setValue(selectedGenes);
     }, [selectedGenes]);
 
+    const closeDropDown = (): void => {
+        setAutocompleteOpen(false);
+    };
+
+    const openDropDown = (): void => {
+        if (inputValue !== '') {
+            setAutocompleteOpen(true);
+        }
+    };
+
     const handleOnInputChange = (
         _event: unknown,
         newValue: string | null,
@@ -136,6 +149,8 @@ const GeneSelector = ({
     const handleOnChange = (_event: unknown, newValue: Gene[]): void => {
         setValue(newValue);
         connectedGenesSelected(newValue.map((gene) => gene.feature_id));
+
+        closeDropDown();
     };
 
     /**
@@ -156,6 +171,7 @@ const GeneSelector = ({
             );
 
             connectedGenesFetchSucceeded(pastedGenes);
+            connectedAllGenesDeselected();
             connectedGenesSelected(pastedGenes.map((gene) => gene.feature_id));
 
             // Get and display not found genes.
@@ -207,17 +223,6 @@ const GeneSelector = ({
             }
         };
         reader.readAsText(file.slice(0, file.size));
-    };
-
-    const closeDropDown = (): void => {
-        setAutocompleteOpen(false);
-    };
-
-    const openDropDown = (): void => {
-        // Display dropdown if there is anything in the input.
-        if (inputValue !== '') {
-            setAutocompleteOpen(true);
-        }
     };
 
     return (

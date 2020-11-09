@@ -37,13 +37,16 @@ describe('dictyGrid', () => {
         timeSeries.forEach((ts) => expect(screen.getByText(ts.collection.name)));
     });
 
-    it('should filter results', () => {
+    it('should filter results', async () => {
         // Simulate filter change.
         fireEvent.change(screen.getByLabelText('Filter'), {
             target: { value: timeSeries[1].collection.name },
         });
 
         // Check if results are filtered (first time series isn't shown).
+        await waitFor(() => {
+            expect(screen.queryByText(timeSeries[0].collection.name)).toBeNull();
+        });
         expect(screen.queryByText(timeSeries[0].collection.name)).toBeNull();
     });
 

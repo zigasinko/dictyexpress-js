@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`gOEnrichmentTermCell should render as default snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="sc-AxjAm hsMoXt"
+  >
+    <svg
+      aria-hidden="true"
+      class="MuiSvgIcon-root sc-AxirZ ccgTKL"
+      depth="3"
+      focusable="false"
+      viewBox="0 0 24 24"
+    >
+      <path
+        d="M19 15l-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"
+      />
+    </svg>
+    <span>
+      Test term
+    </span>
+  </div>
+</DocumentFragment>
+`;

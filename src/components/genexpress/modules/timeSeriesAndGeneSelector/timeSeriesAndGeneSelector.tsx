@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useRef } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from 'redux/rootReducer';
 import {
@@ -51,6 +51,11 @@ const TimeSeriesAndGeneSelector = ({
         }
     };
 
+    const columnDefs = useRef([
+        { field: 'id', headerName: 'Id', width: 20 },
+        { field: 'collection.name', headerName: 'Name', width: 50 },
+    ]);
+
     return (
         <TimeSeriesGridWrapper>
             <DictyGrid
@@ -59,10 +64,7 @@ const TimeSeriesAndGeneSelector = ({
                 data={timeSeries}
                 selectionMode="single"
                 filterLabel="Filter time series"
-                columnDefs={[
-                    { field: 'id', headerName: 'Id', width: 20 },
-                    { field: 'collection.name', headerName: 'Name', width: 50 },
-                ]}
+                columnDefs={columnDefs.current}
                 getRowId={(data): string => data.id.toString()}
                 onRowSelected={onRowSelectedHandler}
                 selectedData={selectedTimeSeries != null ? [selectedTimeSeries] : undefined}

@@ -7,6 +7,7 @@ export enum ModulesKeys {
     timeSeriesAndGeneSelector = 'timeSeriesAndGeneSelector',
     expressionTimeCourses = 'expressionTimeCourses',
     differentialExpressions = 'differentialExpressions',
+    gOEnrichment = 'gOEnrichment',
 }
 
 export enum LayoutBreakpoint {

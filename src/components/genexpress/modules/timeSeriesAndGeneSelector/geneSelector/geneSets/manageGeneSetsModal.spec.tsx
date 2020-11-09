@@ -5,7 +5,7 @@ import { customRender } from 'tests/test-utils';
 import ManageGeneSetsModal from './manageGeneSetsModal';
 
 // GeneSets have to be sorted so that first element in array is also first row in grid.
-// Needed to assert selected item with 'Toggle Row Selection' (first row).
+// Needed to assert selected item with '~toggle Row Selection' (first row).
 const testGeneSets = generateGeneSets(5).sort(
     (a, b) => b.dateTime.getTime() - a.dateTime.getTime(),
 );
@@ -42,7 +42,7 @@ describe('manageGeneSets', () => {
 
     it('should call onDelete with selected gene sets', async () => {
         // Simulate select first row (gene set).
-        fireEvent.click(screen.getAllByLabelText('Toggle Row Selection', { exact: false })[0]);
+        fireEvent.click(screen.getAllByLabelText('toggle Row Selection', { exact: false })[0]);
         fireEvent.click(await screen.findByText('Delete selected'));
 
         expect(mockedOnDelete.mock.calls.length).toBe(1);
