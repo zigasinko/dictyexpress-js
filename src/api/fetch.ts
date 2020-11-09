@@ -1,6 +1,7 @@
 import { getCookie } from '../utils/documentHelpers';
+import { sessionId } from './base';
 
-type QueryParams = { [key: string]: string };
+type QueryParams = { [key: string]: string | number };
 type BodyParams = {};
 
 /**
@@ -59,7 +60,7 @@ const request = async (
     if (params) {
         if (method === 'GET') {
             Object.keys(params).forEach((key) =>
-                fullUrl.searchParams.append(key, (params as QueryParams)[key]),
+                fullUrl.searchParams.append(key, (params as QueryParams)[key].toString()),
             );
         } else {
             options.body = JSON.stringify(params as BodyParams);
@@ -73,6 +74,14 @@ const request = async (
 
 const get = (url: string, params?: QueryParams, ignoreErrors?: boolean): Promise<Response> => {
     return request(url, params, 'GET', ignoreErrors);
+};
+
+const getReactive = (
+    url: string,
+    params?: QueryParams,
+    ignoreErrors?: boolean,
+): Promise<Response> => {
+    return request(url, { ...params, observe: sessionId }, 'GET', ignoreErrors);
 };
 
 const post = (url: string, params?: BodyParams, ignoreErrors?: boolean): Promise<Response> => {
@@ -89,6 +98,7 @@ const remove = (url: string, params?: BodyParams, ignoreErrors?: boolean): Promi
 
 export default {
     get,
+    getReactive,
     post,
     put,
     remove,

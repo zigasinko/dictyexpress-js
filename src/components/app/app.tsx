@@ -15,12 +15,12 @@ import LandingPage from 'components/landing/landingPage';
 import PageNotFound from 'components/pageNotFound';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
 import { RendererContext } from 'components/common/rendererContext';
-import csrfApi from 'api/csrfApi';
+import { getCSRFCookie } from 'api';
 import { GlobalStyle } from './globalStyle';
 import theme from './theme';
 import appStore from '../../redux/appStore';
 
-csrfApi.getCSRFCookie();
+getCSRFCookie();
 
 const appTheme = createMuiTheme(theme);
 

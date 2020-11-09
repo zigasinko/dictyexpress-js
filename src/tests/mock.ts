@@ -8,6 +8,7 @@ import {
     DescriptorSchema,
     RelationPartition,
     User,
+    DataGafAnnotation,
     Storage,
     DONE_DATA_STATUS,
     Data,
@@ -19,6 +20,7 @@ import { createEpicMiddleware } from 'redux-observable';
 import { AppDispatch } from 'redux/appStore';
 import { generateRandomString, generateRandomStrings } from 'utils/stringUtils';
 import { generateRandomNumbers } from 'utils/numberUtils';
+import { flattenGoEnrichmentTree } from 'utils/gOEnrichmentUtils';
 import {
     RelationsById,
     GenesById,
@@ -32,6 +34,8 @@ import {
     VolcanoPoint,
     DifferentialExpression,
     DifferentialExpressionsById,
+    GOEnrichmentRow,
+    EnhancedGOEnrichmentJson,
 } from '../redux/models/internal';
 import { RootState } from '../redux/rootReducer';
 
@@ -334,14 +338,129 @@ export const generateUser = (id: number): User => ({
 
 export const generateStorage = <T>(id: number, json: T): Storage => ({
     id,
-    slug: `test-storage-${id}`,
-    name: `Test Storage ${id}`,
+    slug: 'test-storage',
+    name: 'Test Storage',
     data: 1,
     json,
-    contributor: generateContributor(1),
+    contributor: generateContributor(id),
     created: getDateISOString(),
     modified: getDateISOString(),
 });
+
+export const generateGOEnrichmentRow = (id: number): GOEnrichmentRow => ({
+    gene_ids: [],
+    term_name: `Parent-${id}-${generateRandomString(5)}`,
+    term_id: `Parent-${id}-${generateRandomString(5)}`,
+    pval: 0.05,
+    score: 500,
+    total: 250,
+    matched: 125,
+    path: [],
+    score_percentage: 0,
+    gene_associations: [],
+    children: [
+        {
+            gene_ids: [],
+            term_name: `Child-${id}-${generateRandomString(5)}`,
+            term_id: `Child-${id}-${generateRandomString(5)}`,
+            pval: 0.01,
+            score: 250,
+            total: 250,
+            matched: 125,
+            path: [],
+            score_percentage: 0,
+            gene_associations: [],
+            children: [],
+        },
+    ],
+});
+
+export const generateGeneOntologyStorageJson = (genesIds: string[]): EnhancedGOEnrichmentJson => {
+    const json: EnhancedGOEnrichmentJson = {
+        total_genes: 500,
+        gene_associations: {},
+        tree: {
+            BP: [generateGOEnrichmentRow(0), generateGOEnrichmentRow(1)],
+            CC: [generateGOEnrichmentRow(2)],
+            MF: [generateGOEnrichmentRow(3)],
+        },
+    };
+    const allRows = [
+        ...flattenGoEnrichmentTree(json.tree.BP, []),
+        ...flattenGoEnrichmentTree(json.tree.CC, []),
+        ...flattenGoEnrichmentTree(json.tree.MF, []),
+    ];
+
+    allRows.forEach((row): void => {
+        json.gene_associations[row.term_id] = genesIds;
+    });
+
+    return json;
+};
+
+export const generateGaf = (
+    id: number,
+): {
+    humanGaf: DataGafAnnotation;
+    mouseMGIGaf: DataGafAnnotation;
+    mouseUCSCGaf: DataGafAnnotation;
+} => {
+    const humanGaf = {
+        ...generateData(id),
+        name: 'Human gaf',
+        slug: 'human-gaf',
+        output: {
+            source: 'UniProtKB',
+            species: 'Homo sapiens',
+            gaf: {
+                file: 'goa_human.gaf.txt.gz',
+                size: 1231231,
+            },
+            gaf_obj: {
+                file: 'gaf_obj',
+                size: 1231231,
+            },
+        },
+    };
+
+    const mouseMGIGaf = {
+        ...generateData(id),
+        name: 'Mouse MGI gaf',
+        slug: 'mouse-mgi-gaf',
+        output: {
+            source: 'MGI',
+            species: 'Mus musculus',
+            gaf: {
+                file: 'gene_association.mgi.txt.gz',
+                size: 1231231,
+            },
+            gaf_obj: {
+                file: 'gaf_obj',
+                size: 1231231,
+            },
+        },
+    };
+
+    const mouseUCSCGaf = {
+        ...generateData(id),
+        name: 'Mouse UCSC gaf',
+        slug: 'mouse-ucsc-gaf',
+        output: {
+            source: 'UCSC',
+            species: 'Mus musculus',
+            gaf: {
+                file: 'gene_association.mgi.txt.gz',
+                size: 1231231,
+            },
+            gaf_obj: {
+                file: 'gaf_obj',
+                size: 1231231,
+            },
+        },
+    };
+
+    return { humanGaf, mouseMGIGaf, mouseUCSCGaf };
+};
 
 /**
  * Helper function that generates mock instances of objects for use in unit tests.
@@ -406,40 +525,57 @@ export const generateDifferentialExpressionsById = (n: number): DifferentialExpr
     );
 };
 
-export const testState = (): RootState => ({
-    layouts: {},
-    authentication: {
-        user: generateUser(2),
-        isLoggedIn: true,
-        isLoggingIn: false,
-        isLoggingOut: false,
-        isFetchingUser: false,
-    },
-    timeSeries: {
-        byId: generateTimeSeriesById(2),
-        selectedId: 1,
-        isFetching: false,
-        isAddingToBasket: false,
-        basketInfo: {} as BasketInfo,
-    },
-    genes: {
-        byId: generateGenesById(2),
-        selectedGenesIds: [],
-        highlightedGenesIds: [],
-        isFetchingDifferentialExpressionGenes: false,
-    },
-    samplesExpressions: {
-        byId: {},
-        isFetchingSamplesExpressions: false,
-    },
-    differentialExpressions: {
-        byId: {},
-        isFetchingDifferentialExpressions: false,
-        isFetchingDifferentialExpressionsData: false,
-        selectedId: 0,
-    },
-    notifications: { notifications: [] as SnackbarNotifications },
-});
+export const testState = (): RootState => {
+    const timeSeriesById = generateTimeSeriesById(2);
+
+    return {
+        layouts: {},
+        authentication: {
+            user: generateUser(2),
+            isLoggedIn: true,
+            isLoggingIn: false,
+            isLoggingOut: false,
+            isFetchingUser: false,
+        },
+        timeSeries: {
+            byId: timeSeriesById,
+            selectedId: _.flatMap(timeSeriesById)[0].id,
+            isFetching: false,
+            isAddingToBasket: false,
+            basketInfo: {} as BasketInfo,
+        },
+        genes: {
+            byId: generateGenesById(2),
+            selectedGenesIds: [],
+            highlightedGenesIds: [],
+            isFetchingDifferentialExpressionGenes: false,
+            isFetchingAssociationsGenes: false,
+        },
+        samplesExpressions: {
+            byId: {},
+            isFetchingSamplesExpressions: false,
+        },
+        differentialExpressions: {
+            byId: {},
+            isFetchingDifferentialExpressions: false,
+            isFetchingDifferentialExpressionsData: false,
+            selectedId: 0,
+        },
+        gOEnrichment: {
+            json: {
+                gene_associations: {},
+                total_genes: 0,
+                tree: {},
+            },
+            gaf: generateGaf(1).humanGaf,
+            source: '',
+            species: '',
+            pValueThreshold: 0.1,
+            isFetchingJson: false,
+        },
+        notifications: { notifications: [] as SnackbarNotifications },
+    };
+};
 
 export const mockStore = (
     initialTestState: RootState,

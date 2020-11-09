@@ -18,6 +18,8 @@ type DictyGridProps<T> = {
     data: T[];
     selectedData?: T[];
     isFetching?: boolean;
+    // AgGrid will remount if columnDefs change, so make sure you pass
+    // column definitions with a persistent object (e.g. useRef / root scope).
     columnDefs: ColDef[];
     selectionMode?: 'single' | 'multiple';
     suppressRowClickSelection?: boolean;
@@ -26,6 +28,7 @@ type DictyGridProps<T> = {
     onRowClicked?: (itemData: T) => void;
     onRowSelected?: (itemData: T) => void;
     onSelectionChanged?: (selectedItemsData: T[]) => void;
+    onSortChanged?: (event: SortChangedEvent) => void;
 };
 
 const DictyGrid = <T extends {}>({

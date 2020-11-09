@@ -16,6 +16,7 @@ import { webSocket } from 'rxjs/webSocket';
 import queryObserverManager from 'api/queryObserverManager';
 import { Message } from '@genialis/resolwe/dist/api/connection';
 import { handleError } from 'utils/errorUtils';
+import { sessionId, webSocketUrl } from 'api/base';
 import { filterNullAndUndefined } from './rxjsCustomFilters';
 import {
     appStarted,
@@ -34,7 +35,7 @@ const connectToWebSocketServiceEpic: Epic<Action, Action, RootState> = (action$)
         ofType(appStarted),
         map(() => {
             return connectToServer({
-                url: 'wss://qa2.genialis.com/ws/',
+                url: webSocketUrl,
             });
         }),
     );
@@ -49,12 +50,12 @@ const connectToServerEpic: Epic<Action, Action, RootState> = (action$) =>
                 startWith(null),
                 map(() => {
                     return webSocket({
-                        url: `${url + queryObserverManager.sessionId}?subscribe-broadcast`,
+                        url: `${url + sessionId}`,
                         WebSocketCtor: WebSocket,
                     });
                 }),
-                switchMap((webSocketConnection$) =>
-                    webSocketConnection$.pipe(
+                switchMap((webSocketConnection$) => {
+                    return webSocketConnection$.pipe(
                         takeUntil(
                             action$.pipe(
                                 ofType(
@@ -83,8 +84,8 @@ const connectToServerEpic: Epic<Action, Action, RootState> = (action$) =>
                             );
                         }),
                         startWith(connectionReady()),
-                    ),
-                ),
+                    );
+                }),
             );
         }),
     );

@@ -1,3 +1,4 @@
+import { DataGOEnrichmentAnalysis } from '@genialis/resolwe/dist/api/types/rest';
 import { createAction } from '@reduxjs/toolkit';
 import { Gene } from 'redux/models/internal';
 
@@ -43,3 +44,6 @@ export const fetchGOEnrichmentStorage = createAction<number>(
     'gOEnrichment/fetchGOEnrichmentStorage',
 );
 export const gafAlreadyFetched = createAction('gOEnrichment/gafAlreadyFetched');
+export const gOEnrichmentDataFetchSucceeded = createAction<DataGOEnrichmentAnalysis>(
+    'gOEnrichment/dataFetchSucceeded',
+);

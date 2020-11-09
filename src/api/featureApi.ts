@@ -8,21 +8,22 @@ const searchUrl = `${apiUrl}/kb/feature/search`;
 
 const getGenes = async (
     source: string,
-    species: string,
     type: string,
     value: string,
+    species?: string,
     limit?: number,
 ): Promise<Gene[] | null> => {
-    if (source === '' || species === '' || value === '') {
+    if (source === '' || value === '') {
         return null;
     }
 
+    // Species property won't be included if it's null.
     const payload = {
         source: [source],
-        species: [species],
         type,
         query: value,
         limit,
+        ...(species != null && { species: [species] }),
     };
 
     const getGenesResponse = await fetch.post(autocompleteUrl, payload);
@@ -31,9 +32,9 @@ const getGenes = async (
 
 const getGenesByNames = async (
     source: string,
-    species: string,
     type: string,
     genesNames: string[],
+    species?: string,
 ): Promise<Gene[]> => {
     if (genesNames.length === 0) {
         throw new Error("Genes names can't be empty.");
@@ -41,9 +42,9 @@ const getGenesByNames = async (
 
     const payload = {
         source: [source],
-        species: [species],
         type,
         query: genesNames.toString(),
+        ...(species != null && { species: [species] }),
     };
 
     const getGenesResponse = await fetch.post(searchUrl, payload);

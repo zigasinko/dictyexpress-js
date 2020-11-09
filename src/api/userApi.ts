@@ -9,7 +9,7 @@ const baseUrl = `${apiUrl}/user`;
 
 const getCurrentUser = async (): Promise<User> => {
     const getUserRequest = (): Promise<Response> =>
-        fetch.get(baseUrl, { current_only: '1', observe: queryObserverManager.sessionId });
+        fetch.getReactive(baseUrl, { current_only: '1' });
 
     const webSocketMessageOutputReduxAction = (
         items: unknown[],

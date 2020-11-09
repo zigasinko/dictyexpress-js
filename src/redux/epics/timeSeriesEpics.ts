@@ -26,6 +26,7 @@ import relationApi from 'api/relationApi';
 import storageApi from 'api/storageApi';
 import basketApi from 'api/basketApi';
 import dataApi from 'api/dataApi';
+import differentialExpressionApi from 'api/differentialExpressionApi';
 import {
     differentialExpressionsDataFetchEnded,
     differentialExpressionsDataFetchStarted,
@@ -149,7 +150,7 @@ const fetchDifferentialExpressionsEpic: Epic<Action, Action, RootState> = (actio
         mergeMap(([, state]) => {
             const basketId = getBasketId(state.timeSeries);
 
-            return from(dataApi.getDifferentialExpressions(basketId)).pipe(
+            return from(differentialExpressionApi.getDifferentialExpressions(basketId)).pipe(
                 map((differentialExpressions) => {
                     return differentialExpressionsFetchSucceeded(differentialExpressions);
                 }),

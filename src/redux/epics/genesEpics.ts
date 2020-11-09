@@ -16,6 +16,8 @@ import geneListApi from 'api/geneListApi';
 import { getSelectedDifferentialExpressionGeneIds } from 'redux/stores/differentialExpressions';
 import {
     allGenesDeselected,
+    associationsGenesFetchEnded,
+    associationsGenesFetchStarted,
     differentialExpressionGenesFetchEnded,
     differentialExpressionGenesFetchStarted,
     geneDeselected,
@@ -25,14 +27,8 @@ import {
 } from 'redux/stores/genes';
 import { handleError } from 'utils/errorUtils';
 import { Gene } from 'redux/models/internal';
-import { fetchSelectedDifferentialExpressionGenes } from './epicsActions';
+import { fetchAssociationsGenes, fetchSelectedDifferentialExpressionGenes } from './epicsActions';
 
-/**
- * Function that returns observable
- * @param geneIds - IDs of genes that need to be .
- * @param state - Current redux store state.
- * @param species - If species parameter is given, use this one instead of basketInfo species to fetch the genes.
- */
 const fetchGenesActionObservable = (
     geneIds: string[],
     state: RootState,
@@ -49,7 +45,7 @@ const fetchGenesActionObservable = (
 
     const basketInfo = getBasketInfo(state.timeSeries);
     return from(
-        geneListApi.listByIds(basketInfo.source, species ?? basketInfo.species, geneIdsToFetch),
+        geneListApi.listByIds(basketInfo.source, geneIdsToFetch, species ?? basketInfo.species),
     ).pipe(
         map((response) => {
             return genesFetchSucceeded(response);
@@ -82,6 +78,26 @@ const fetchSelectedDifferentialExpressionGenesEpic: Epic<Action, Action, RootSta
     );
 };
 
+const fetchAssociationsGenesEpic: Epic<Action, Action, RootState> = (action$, state$) => {
+    return action$.pipe(
+        ofType<Action, ReturnType<typeof fetchAssociationsGenes>>(
+            fetchAssociationsGenes.toString(),
+        ),
+        withLatestFrom(state$),
+        mergeMap(([action, state]) => {
+            return fetchGenesActionObservable(
+                action.payload.geneIds,
+                state,
+                action.payload.species ?? '',
+            ).pipe(
+                catchError((error) => of(handleError('Error retrieving associated genes.', error))),
+                startWith(associationsGenesFetchStarted()),
+                endWith(associationsGenesFetchEnded()),
+            );
+        }),
+    );
+};
+
 const geneDeselectedEpic: Epic<Action, Action, RootState> = (action$, state$) => {
     return action$.pipe(
         ofType(geneDeselected),
@@ -94,4 +110,8 @@ const geneDeselectedEpic: Epic<Action, Action, RootState> = (action$, state$) =>
     );
 };
 
-export default combineEpics(fetchSelectedDifferentialExpressionGenesEpic, geneDeselectedEpic);
+export default combineEpics(
+    fetchSelectedDifferentialExpressionGenesEpic,
+    fetchAssociationsGenesEpic,
+    geneDeselectedEpic,
+);

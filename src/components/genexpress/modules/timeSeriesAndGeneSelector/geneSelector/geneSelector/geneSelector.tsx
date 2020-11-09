@@ -81,9 +81,9 @@ const GeneSelector = ({
         debounce(async (queryValue: string): Promise<void> => {
             const genesResults = await featureApi.getGenes(
                 autocompleteSource,
-                autocompleteSpecies,
                 autocompleteType,
                 queryValue,
+                autocompleteSpecies,
                 20,
             );
 
@@ -150,9 +150,9 @@ const GeneSelector = ({
         try {
             const pastedGenes = await featureApi.getGenesByNames(
                 basketInfo.source,
-                basketInfo.species,
                 basketInfo.type,
                 genesNames,
+                basketInfo.species,
             );
 
             connectedGenesFetchSucceeded(pastedGenes);
