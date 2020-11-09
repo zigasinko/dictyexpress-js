@@ -1,5 +1,5 @@
-import { Action, createAction } from '@reduxjs/toolkit';
-import { ofType, Epic } from 'redux-observable';
+import { Action } from '@reduxjs/toolkit';
+import { ofType, Epic, combineEpics } from 'redux-observable';
 import { map, startWith, endWith, catchError, mergeMap } from 'rxjs/operators';
 import { of, from } from 'rxjs';
 import { RootState } from 'redux/rootReducer';
@@ -18,15 +18,9 @@ import queryObserverManager from 'api/queryObserverManager';
 import { handleError } from 'utils/errorUtils';
 import _ from 'lodash';
 import { addErrorSnackbar } from 'redux/stores/notifications';
-import { appStarted } from './connectToServerEpic';
+import { appStarted, login, loginSucceeded, logout, logoutSucceeded } from './epicsActions';
 
-// Export epic actions.
-export const login = createAction<{ username: string; password: string }>('authentication/login');
-export const loginSucceeded = createAction('authentication/loginSucceeded');
-export const logout = createAction('authentication/logout');
-export const logoutSucceeded = createAction('authentication/logoutSucceeded');
-
-export const loginEpic: Epic<Action, Action, RootState> = (action$) =>
+const loginEpic: Epic<Action, Action, RootState> = (action$) =>
     action$.pipe(
         ofType<Action, ReturnType<typeof login>>(login.toString()),
         mergeMap((action) => {
@@ -51,7 +45,7 @@ export const loginEpic: Epic<Action, Action, RootState> = (action$) =>
         }),
     );
 
-export const logoutEpic: Epic<Action, Action, RootState> = (action$) =>
+const logoutEpic: Epic<Action, Action, RootState> = (action$) =>
     action$.pipe(
         ofType(logout),
         mergeMap(() => {
@@ -66,7 +60,7 @@ export const logoutEpic: Epic<Action, Action, RootState> = (action$) =>
         }),
     );
 
-export const getCurrentUserEpic: Epic<Action, Action, RootState> = (action$) =>
+const getCurrentUserEpic: Epic<Action, Action, RootState> = (action$) =>
     action$.pipe(
         ofType(appStarted.toString(), loginSucceeded.toString(), logoutSucceeded.toString()),
         mergeMap(() => {
@@ -78,3 +72,5 @@ export const getCurrentUserEpic: Epic<Action, Action, RootState> = (action$) =>
             );
         }),
     );
+
+export default combineEpics(loginEpic, logoutEpic, getCurrentUserEpic);

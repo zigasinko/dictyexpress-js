@@ -1,5 +1,5 @@
-import { Action, createAction } from '@reduxjs/toolkit';
-import { ofType, Epic } from 'redux-observable';
+import { Action } from '@reduxjs/toolkit';
+import { ofType, Epic, combineEpics } from 'redux-observable';
 import {
     map,
     startWith,
@@ -17,21 +17,19 @@ import queryObserverManager from 'api/queryObserverManager';
 import { Message } from '@genialis/resolwe/dist/api/connection';
 import { handleError } from 'utils/errorUtils';
 import { filterNullAndUndefined } from './rxjsCustomFilters';
+import {
+    appStarted,
+    connectionReady,
+    connectToServer,
+    disconnectFromServer,
+    reconnectToServer,
+} from './epicsActions';
 
 // ReconnectionTimeout = 60s.
 const reconnectionTimeout = 6000;
 const reconnectionMaxAttempts = 3;
 
-// Export epic actions.
-export const appStarted = createAction('appStarted');
-export const connectToServer = createAction<{
-    url: string;
-}>('connectToServer/connect');
-export const reconnectToServer = createAction('connectToServer/reconnect');
-export const disconnectFromServer = createAction('connectToServer/disconnect');
-export const connectionReady = createAction('connectToServer/connectionReady');
-
-export const connectToWebSocketServiceEpic: Epic<Action, Action, RootState> = (action$) =>
+const connectToWebSocketServiceEpic: Epic<Action, Action, RootState> = (action$) =>
     action$.pipe(
         ofType(appStarted),
         map(() => {
@@ -41,7 +39,7 @@ export const connectToWebSocketServiceEpic: Epic<Action, Action, RootState> = (a
         }),
     );
 
-export const connectToServerEpic: Epic<Action, Action, RootState> = (action$) =>
+const connectToServerEpic: Epic<Action, Action, RootState> = (action$) =>
     action$.pipe(
         ofType<Action, ReturnType<typeof connectToServer>>(connectToServer.toString()),
         switchMap(({ payload: { url } }) => {
@@ -90,3 +88,5 @@ export const connectToServerEpic: Epic<Action, Action, RootState> = (action$) =>
             );
         }),
     );
+
+export default combineEpics(connectToWebSocketServiceEpic, connectToServerEpic);

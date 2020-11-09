@@ -27,10 +27,10 @@ const selectedIdSlice = createSlice({
     },
 });
 
-const initialBasketInfoState = {} as BasketInfo;
+const basketInfoInitialState = {} as BasketInfo;
 const basketInfoSlice = createSlice({
     name: 'timeSeries',
-    initialState: initialBasketInfoState,
+    initialState: basketInfoInitialState,
     reducers: {
         addSamplesToBasketSucceeded: (
             _state,
@@ -69,6 +69,7 @@ export const {
     started: addToBasketStarted,
     ended: addToBasketEnded,
 } = isAddingToBasketSlice.actions;
+
 export type TimeSeriesState = ReturnType<typeof timeSeriesReducer>;
 
 export default timeSeriesReducer;

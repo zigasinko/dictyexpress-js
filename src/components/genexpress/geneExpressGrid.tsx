@@ -12,7 +12,7 @@ import {
 import { breakpoints } from 'components/app/globalStyle';
 import { defaultBreakpointCols, getLayouts, layoutsChanged } from 'redux/stores/layouts';
 import _ from 'lodash';
-import { appStarted } from 'redux/epics/connectToServerEpic';
+import { appStarted } from 'redux/epics/epicsActions';
 import TimeSeriesAndGeneSelector from './modules/timeSeriesAndGeneSelector/timeSeriesAndGeneSelector';
 import GeneExpressions from './modules/geneExpressions/geneExpressions';
 import DictyModule from './common/dictyModule/dictyModule';

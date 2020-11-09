@@ -3,7 +3,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from 'redux/rootReducer';
 import { getIsLoggingIn } from 'redux/stores/authentication';
 import { TextField, Button } from '@material-ui/core';
-import { login } from 'redux/epics/authenticationEpics';
+import { login } from 'redux/epics/epicsActions';
 import {
     ModalHeader,
     ModalContainer,
