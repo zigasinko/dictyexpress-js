@@ -42,12 +42,6 @@ const defaultColumnDef = {
     sortable: true,
 };
 
-/**
- * DictyGrid component is the basis for all data grids. It is a wrapper around AgGrid component.
- *
- * AgGrid will get reinitialized if columnDefs change, so make sure you pass column definitions
- * with a persistent object (e.g. useRef).
- */
 const DictyGrid = <T extends {}>({
     data,
     selectedData,

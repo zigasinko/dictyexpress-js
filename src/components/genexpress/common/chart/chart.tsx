@@ -1,13 +1,23 @@
-import React, { ReactElement, useRef, useEffect, useCallback, useContext } from 'react';
+import React, {
+    ReactElement,
+    useRef,
+    useEffect,
+    useCallback,
+    useContext,
+    forwardRef,
+    useImperativeHandle,
+    ForwardRefRenderFunction,
+} from 'react';
 import * as vega from 'vega';
 import * as vegaTooltip from 'vega-tooltip';
-import { withSize, SizeMeProps } from 'react-sizeme';
+import { SizeMeProps } from 'react-sizeme';
 import { Spec } from 'vega';
 import { useDispatch } from 'react-redux';
 import { handleError } from 'utils/errorUtils';
 import { RendererContext } from 'components/common/rendererContext';
 import { vegaTheme } from '../theming/vegaTheme';
 import useUpdateEffect from '../useUpdateEffect';
+import withSizeme from '../withSizeme';
 
 export type DataHandler = {
     name: string;
@@ -31,7 +41,13 @@ type ChartProps = {
     updatableSignalDefinitions?: Array<SignalDefinition>;
     dataHandlers?: Array<DataHandler>;
     vegaSpecification: Spec;
-} & SizeMeProps;
+};
+
+export type ChartHandle = {
+    getChartView: () => vega.View | null;
+    getSvgImage: () => Promise<Blob | null>;
+    getPngImage: () => Promise<string | null>;
+};
 
 const chartPadding = { top: 20, left: 15, bottom: 15, right: 15 };
 
@@ -47,13 +63,16 @@ const chartPadding = { top: 20, left: 15, bottom: 15, right: 15 };
  *
  * Setting `renderer` to 'svg' will help with debugging, because it's more descriptive.
  */
-const Chart = ({
-    updatableDataDefinitions,
-    updatableSignalDefinitions,
-    dataHandlers,
-    size: { width, height },
-    vegaSpecification,
-}: ChartProps): ReactElement => {
+const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
+    {
+        updatableDataDefinitions,
+        updatableSignalDefinitions,
+        dataHandlers,
+        size: { width, height },
+        vegaSpecification,
+    }: ChartProps & SizeMeProps,
+    ref,
+): ReactElement => {
     const dispatch = useDispatch();
     const renderer = useContext(RendererContext);
 
@@ -61,7 +80,31 @@ const Chart = ({
 
     // Element with the chart.
     const chartElement = useRef<HTMLDivElement>(null);
-    const chartView = useRef<vega.View>();
+    const chartView = useRef<vega.View | null>(null);
+
+    /* Customize instance value that is exposed to parent components (ref).
+     * Used to expose chartView, chart images (svg / png).
+     */
+    useImperativeHandle(ref, () => ({
+        getChartView: (): vega.View | null => {
+            return chartView.current;
+        },
+        getSvgImage: async (): Promise<Blob | null> => {
+            if (chartView.current == null) {
+                return Promise.resolve(null);
+            }
+            const blob = await chartView.current.toSVG();
+            return new Blob([blob], { type: 'image/svg+xml' });
+        },
+        getPngImage: async (): Promise<string | null> => {
+            if (chartView.current == null) {
+                return Promise.resolve(null);
+            }
+            const pngBase64 = (await chartView.current.toCanvas()).toDataURL('image/png');
+
+            return pngBase64.substring(pngBase64.indexOf(',') + 1);
+        },
+    }));
 
     /**
      * Retrieve width of chart element (chart container div).
@@ -95,7 +138,7 @@ const Chart = ({
         } catch (error) {
             dispatch(handleError('Error generating chart.', error));
         }
-    }, [dispatch]);
+    }, [chartView, dispatch]);
 
     /**
      * Set chart width and height via Vega API.
@@ -105,7 +148,7 @@ const Chart = ({
         chartView.current?.height(getChartElementHeight());
 
         runChart();
-    }, [getChartElementHeight, getChartElementWidth, runChart]);
+    }, [chartView, getChartElementHeight, getChartElementWidth, runChart]);
 
     /**
      * Resize on parent element width / height change.
@@ -121,6 +164,7 @@ const Chart = ({
         const defaultSpecification: vega.Spec = {
             width: getChartElementWidth(),
             height: getChartElementHeight(),
+            background: 'white',
             padding: chartPadding,
             autosize: {
                 type: 'fit',
@@ -155,7 +199,14 @@ const Chart = ({
             // registered on external DOM elements.
             chartView.current?.finalize();
         };
-    }, [getChartElementHeight, getChartElementWidth, renderer, runChart, vegaSpecification]);
+    }, [
+        chartView,
+        getChartElementHeight,
+        getChartElementWidth,
+        renderer,
+        runChart,
+        vegaSpecification,
+    ]);
 
     /**
      * Manage data handlers.
@@ -179,7 +230,7 @@ const Chart = ({
 
             addedDataHandlers.current = dataHandlers;
         }
-    }, [dataHandlers]);
+    }, [chartView, dataHandlers]);
 
     /**
      * Update chart data when updatableDataDefinitions (data) changes.
@@ -192,7 +243,7 @@ const Chart = ({
 
             runChart();
         }
-    }, [updatableDataDefinitions, runChart]);
+    }, [updatableDataDefinitions, runChart, chartView]);
 
     /**
      * Update chart data when updatableSignalDefinitions (value) changes.
@@ -205,7 +256,7 @@ const Chart = ({
 
             runChart();
         }
-    }, [updatableSignalDefinitions, runChart]);
+    }, [updatableSignalDefinitions, runChart, chartView]);
 
     return (
         <div style={{ width: '100%', height: '100%' }}>
@@ -214,9 +265,6 @@ const Chart = ({
     );
 };
 
-export default withSize({
-    monitorHeight: true,
-    monitorWidth: true,
-    refreshRate: 100,
-    refreshMode: 'debounce',
-})(Chart);
+export type ChartRef = React.ElementRef<typeof Chart>;
+
+export default withSizeme(forwardRef(Chart));

@@ -15,12 +15,12 @@ import _ from 'lodash';
 import { getIsFetchingGOEnrichmentJson } from 'redux/stores/gOEnrichment';
 import { appStarted } from 'redux/epics/epicsActions';
 import TimeSeriesAndGeneSelector from './modules/timeSeriesAndGeneSelector/timeSeriesAndGeneSelector';
-import GeneExpressions from './modules/geneExpressions/geneExpressions';
 import DictyModule from './common/dictyModule/dictyModule';
 import SnackbarNotifier from './snackbarNotifier/snackbarNotifier';
 import GenexpressAppBar from './genexpressAppBar/genexpressAppBar';
 import DifferentialExpressions from './modules/differentialExpressions/differentialExpressions';
 import GOEnrichment from './modules/gOEnrichment/gOEnrichment';
+import GeneExpressions from './modules/geneExpressions/geneExpressions';
 import { LayoutBreakpoint, ModulesKeys } from './common/constants';
 import { ResponsiveGridLayoutContainer } from './geneExpressGrid.styles';
 

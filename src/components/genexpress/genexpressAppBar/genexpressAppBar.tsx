@@ -9,20 +9,51 @@ import DictyAppBar from 'components/common/dictyAppBar/dictyAppBar';
 import { layoutsReset } from 'redux/stores/layouts';
 import { logout } from 'redux/epics/epicsActions';
 import {
+    getIsFetchingDifferentialExpressions,
+    getIsFetchingDifferentialExpressionsData,
+} from 'redux/stores/differentialExpressions';
+import { getTimeSeriesIsFetching, getIsAddingToBasket } from 'redux/stores/timeSeries';
+import { getIsFetchingSamplesExpressions } from 'redux/stores/samplesExpressions';
+import { getIsFetchingGOEnrichmentJson } from 'redux/stores/gOEnrichment';
+import {
     GenexpressAppBarWrapper,
     DictyLogo,
     TitleContainer,
     GenexpressTitle,
     DesktopSectionContainer,
     ActionsContainer,
+    DownloadIcon,
 } from './genexpressAppBar.styles';
 import Login from '../login/login';
 import { LoadingBar } from '../common/dictyModule/dictyModule.styles';
+import * as reportBuilder from '../common/reportBuilder/reportBuilder';
+import IconButtonWithTooltip from '../common/iconButtonWithTooltip/iconButtonWithTooltip';
 
-const mapStateToProps = (state: RootState): { user: User; isLoggedIn: boolean } => {
+const mapStateToProps = (
+    state: RootState,
+): {
+    user: User;
+    isLoggedIn: boolean;
+    isFetchingDifferentialExpressions: boolean;
+    isFetchingDifferentialExpressionsData: boolean;
+    isFetchingTimeSeries: boolean;
+    isAddingToBasket: boolean;
+    isFetchingSamplesExpressions: boolean;
+    isFetchingGOEnrichmentJson: boolean;
+} => {
     return {
         user: getUser(state.authentication),
         isLoggedIn: getIsLoggedIn(state.authentication),
+        isFetchingDifferentialExpressions: getIsFetchingDifferentialExpressions(
+            state.differentialExpressions,
+        ),
+        isFetchingDifferentialExpressionsData: getIsFetchingDifferentialExpressionsData(
+            state.differentialExpressions,
+        ),
+        isFetchingTimeSeries: getTimeSeriesIsFetching(state.timeSeries),
+        isAddingToBasket: getIsAddingToBasket(state.timeSeries),
+        isFetchingSamplesExpressions: getIsFetchingSamplesExpressions(state.samplesExpressions),
+        isFetchingGOEnrichmentJson: getIsFetchingGOEnrichmentJson(state.gOEnrichment),
     };
 };
 
@@ -43,6 +74,12 @@ const GenexpressAppBar = ({
     isLoading,
     connectedLogout,
     connectedLayoutsReset,
+    isFetchingDifferentialExpressions,
+    isFetchingDifferentialExpressionsData,
+    isFetchingTimeSeries,
+    isAddingToBasket,
+    isFetchingSamplesExpressions,
+    isFetchingGOEnrichmentJson,
 }: GenexpressAppBarProps): ReactElement => {
     const [loginModalOpened, setLoginModalOpened] = useState(false);
 
@@ -64,6 +101,18 @@ const GenexpressAppBar = ({
         connectedLayoutsReset();
     };
 
+    const handleExportClick = (): void => {
+        reportBuilder.exportToZip();
+    };
+
+    const areExportingModulesLoading =
+        isFetchingDifferentialExpressions ||
+        isFetchingDifferentialExpressionsData ||
+        isFetchingTimeSeries ||
+        isAddingToBasket ||
+        isFetchingSamplesExpressions ||
+        isFetchingGOEnrichmentJson;
+
     const desktopSection = (
         <DesktopSectionContainer>
             <TitleContainer>
@@ -71,6 +120,17 @@ const GenexpressAppBar = ({
                 <GenexpressTitle>dictyExpress</GenexpressTitle>
             </TitleContainer>
             <ActionsContainer>
+                <IconButtonWithTooltip
+                    title={
+                        areExportingModulesLoading
+                            ? 'Export will be available when all modules are loaded.'
+                            : 'Export'
+                    }
+                    disabled={areExportingModulesLoading}
+                    onClick={handleExportClick}
+                >
+                    <DownloadIcon />
+                </IconButtonWithTooltip>
                 <Button onClick={handleDefaultLayoutClick}>Default layout</Button>
                 {isLoggedIn ? (
                     <Tooltip title="Logout">

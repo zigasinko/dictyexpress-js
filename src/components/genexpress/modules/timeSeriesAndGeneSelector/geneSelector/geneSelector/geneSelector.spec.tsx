@@ -1,6 +1,6 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
-import { customRender } from 'tests/test-utils';
+import { customRender, validateExportFile } from 'tests/test-utils';
 import { testState, mockStore, generateGenesById } from 'tests/mock';
 import { allGenesDeselected, genesFetchSucceeded, genesSelected } from 'redux/stores/genes';
 import { MockStoreEnhanced } from 'redux-mock-store';
@@ -96,10 +96,24 @@ describe('geneSelector', () => {
 
             await waitFor(() =>
                 expect(mockedStore.getActions()).toEqual([
-                    genesFetchSucceeded(genes),
+                    genesFetchSucceeded([genes[1]]),
                     genesSelected([genes[1].feature_id]),
                 ]),
             );
+        });
+
+        it('should export empty Genes/selected_genes.tsv file', async () => {
+            await validateExportFile('Genes/selected_genes.tsv', (exportFile) => {
+                expect(exportFile).toBeDefined();
+                expect(exportFile?.content).toEqual('');
+            });
+        });
+
+        it('should export empty Genes/highlighted_genes.tsv file', async () => {
+            await validateExportFile('Genes/selected_genes.tsv', (exportFile) => {
+                expect(exportFile).toBeDefined();
+                expect(exportFile?.content).toEqual('');
+            });
         });
     });
 
@@ -130,6 +144,51 @@ describe('geneSelector', () => {
             // Second one should only be visible in autocomplete dropdown.
             await waitFor(() => {
                 expect(screen.getAllByText(genes[1].name)).toHaveLength(1);
+            });
+        });
+
+        it('should export filled Genes/selected_genes.tsv file', async () => {
+            await validateExportFile('Genes/selected_genes.tsv', (exportFile) => {
+                expect(exportFile?.content).toContain(genes[0].name);
+                expect(exportFile?.content).toContain(genes[0].full_name);
+            });
+        });
+
+        it('should export empty Genes/highlighted_genes.tsv file', async () => {
+            await validateExportFile('Genes/highlighted_genes.tsv', (exportFile) => {
+                expect(exportFile?.content).toEqual('');
+            });
+        });
+    });
+
+    describe('genes already selected and highlighted', () => {
+        beforeEach(() => {
+            initialState.genes.byId = genesById;
+            initialState.genes.selectedGenesIds = genes.map((gene) => gene.feature_id);
+            initialState.genes.highlightedGenesIds = [genes[0].feature_id];
+
+            customRender(<GeneSelector />, {
+                initialState,
+            });
+        });
+
+        it('should export filled Genes/selected_genes.tsv file', async () => {
+            await validateExportFile('Genes/selected_genes.tsv', (exportFile) => {
+                for (let i = 1; i < initialState.genes.selectedGenesIds.length; i += 1) {
+                    const selectedGene = genesById[initialState.genes.selectedGenesIds[i]];
+                    expect(exportFile?.content).toContain(selectedGene.name);
+                    expect(exportFile?.content).toContain(selectedGene.full_name);
+                }
+            });
+        });
+
+        it('should export empty Genes/highlighted_genes.tsv file', async () => {
+            await validateExportFile('Genes/highlighted_genes.tsv', (exportFile) => {
+                for (let i = 1; i < initialState.genes.highlightedGenesIds.length; i += 1) {
+                    const highlightedGene = genesById[initialState.genes.highlightedGenesIds[i]];
+                    expect(exportFile?.content).toContain(highlightedGene.name);
+                    expect(exportFile?.content).toContain(highlightedGene.full_name);
+                }
             });
         });
     });

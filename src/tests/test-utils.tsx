@@ -7,6 +7,10 @@ import { SnackbarProvider } from 'notistack';
 import { MockStoreEnhanced } from 'redux-mock-store';
 import { AppDispatch } from 'redux/appStore';
 import { RendererContext } from 'components/common/rendererContext';
+import {
+    ExportFile,
+    getRegisteredComponentsExportFiles,
+} from 'components/genexpress/common/reportBuilder/reportBuilder';
 import { RootState } from '../redux/rootReducer';
 import theme from '../components/app/theme';
 import { GlobalStyle } from '../components/app/globalStyle';
@@ -44,4 +48,14 @@ export const customRender = (ui: ReactElement, options?: customRenderOptions): R
         wrapper: AllTheProviders as ComponentType,
         ...options,
     });
+};
+
+export const validateExportFile = async (
+    expectedPath: string,
+    validateContent: (exportFile: ExportFile) => void,
+): Promise<void> => {
+    const files = await getRegisteredComponentsExportFiles();
+
+    const exportFile = files.find(({ path }) => path === expectedPath);
+    validateContent(exportFile as ExportFile);
 };

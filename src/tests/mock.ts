@@ -100,15 +100,23 @@ export const generateSingleTimeSeries = (id: number): Relation => ({
     unit: null,
 });
 
-export const generateGene = (id: number | string): Gene => ({
+export const generateGene = (
+    id: number | string,
+    source = 'ENSEMBL',
+    species = 'Homo sapiens',
+): Gene => ({
     feature_id: id.toString(),
     aliases: [`TestGene${id}_alias1`, `TestGene${id}_alias2`],
     name: `TestGene${id}`,
     full_name: `Test gene ${id}`,
     description: 'This is a test gene',
-    source: 'ENSEMBL',
-    species: 'Homo sapiens',
+    source,
+    species,
 });
+
+export const generateGenes = (genesIds: string[], source?: string, species?: string): Gene[] => {
+    return genesIds.map((geneId) => generateGene(geneId, source, species));
+};
 
 export const generateNotification = (key: string | number): SnackbarNotification => ({
     key,
@@ -347,8 +355,11 @@ export const generateStorage = <T>(id: number, json: T): Storage => ({
     modified: getDateISOString(),
 });
 
-export const generateGOEnrichmentRow = (id: number): GOEnrichmentRow => ({
-    gene_ids: [],
+export const generateGOEnrichmentRow = (
+    id: number,
+    genesIds = [] as string[],
+): GOEnrichmentRow => ({
+    gene_ids: genesIds,
     term_name: `Parent-${id}-${generateRandomString(5)}`,
     term_id: `Parent-${id}-${generateRandomString(5)}`,
     pval: 0.05,
@@ -380,9 +391,23 @@ export const generateGeneOntologyStorageJson = (genesIds: string[]): EnhancedGOE
         total_genes: 500,
         gene_associations: {},
         tree: {
-            BP: [generateGOEnrichmentRow(0), generateGOEnrichmentRow(1)],
-            CC: [generateGOEnrichmentRow(2)],
-            MF: [generateGOEnrichmentRow(3)],
+            BP: [
+                generateGOEnrichmentRow(0, genesIds),
+                generateGOEnrichmentRow(1, genesIds),
+                generateGOEnrichmentRow(2, genesIds),
+                generateGOEnrichmentRow(3, genesIds),
+                generateGOEnrichmentRow(4, genesIds),
+            ],
+            CC: [
+                generateGOEnrichmentRow(5, genesIds),
+                generateGOEnrichmentRow(6, genesIds),
+                generateGOEnrichmentRow(7, genesIds),
+            ],
+            MF: [
+                generateGOEnrichmentRow(8, genesIds),
+                generateGOEnrichmentRow(9, genesIds),
+                generateGOEnrichmentRow(10, genesIds),
+            ],
         },
     };
     const allRows = [

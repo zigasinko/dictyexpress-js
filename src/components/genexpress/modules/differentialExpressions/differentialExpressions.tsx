@@ -1,9 +1,9 @@
-import React, { ReactElement, useEffect, useState, ChangeEvent, useMemo, useRef } from 'react';
+import React, { ReactElement, useEffect, useState, ChangeEvent, useRef, useCallback } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import _ from 'lodash';
 import { RootState } from 'redux/rootReducer';
-import { getHighlightedGenesIds, getSelectedGenesIds } from 'redux/stores/genes';
-import { DifferentialExpression, Thresholds, VolcanoPoint } from 'redux/models/internal';
+import { getGenesById, getHighlightedGenesIds, getSelectedGenesIds } from 'redux/stores/genes';
+import { DifferentialExpression, GenesById, Thresholds, VolcanoPoint } from 'redux/models/internal';
 import { getMinMax, logOfBase } from 'utils/math';
 import {
     differentialExpressionSelected,
@@ -17,7 +17,11 @@ import { logError } from 'utils/errorUtils';
 import { Relation } from '@genialis/resolwe/dist/api/types/rest';
 import { getSelectedTimeSeries } from 'redux/stores/timeSeries';
 import DictySelect from 'components/genexpress/common/dictySelect/dictySelect';
+import { objectsArrayToTsv } from 'utils/reportUtils';
+import useReport from 'components/genexpress/common/reportBuilder/useReport';
+import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
 import DifferentialExpressionsVolcanoPlot from './differentialExpressionsVolcanoPlot';
+import { ChartHandle } from '../../common/chart/chart';
 import {
     DifferentialExpressionsContainer,
     DifferentialExpressionsControls,
@@ -36,6 +40,7 @@ const mapStateToProps = (
     selectedDifferentialExpression: DifferentialExpression;
     highlightedGenesIds: string[];
     selectedGenesIds: string[];
+    genesById: GenesById;
 } => {
     return {
         selectedTimeSeries: getSelectedTimeSeries(state.timeSeries),
@@ -48,6 +53,7 @@ const mapStateToProps = (
         // Highlighted genes IDs.
         highlightedGenesIds: getHighlightedGenesIds(state.genes),
         selectedGenesIds: getSelectedGenesIds(state.genes),
+        genesById: getGenesById(state.genes),
     };
 };
 
@@ -69,10 +75,13 @@ const DifferentialExpressions = ({
     highlightedGenesIds,
     selectedGenesIds,
     size: { width },
+    genesById,
     connectedDifferentialExpressionSelected,
 }: DifferentialExpressionsProps): ReactElement => {
     const differentialExpressionsSelectElement = useRef<HTMLDivElement>(null);
     const [volcanoPointSelectionModalOpened, setVolcanoPointSelectionModalOpened] = useState(false);
+
+    const chartRef = useRef<ChartHandle>();
 
     const [volcanoPoints, setVolcanoPoints] = useState<VolcanoPoint[]>([]);
     const [selectedVolcanoPoints, setSelectedVolcanoPoints] = useState<VolcanoPoint[]>([]);
@@ -89,7 +98,7 @@ const DifferentialExpressions = ({
             : 'p value';
     const probFieldLabel = probField.toUpperCase();
 
-    const defaultThresholds: Thresholds = useMemo(() => {
+    const defaultThresholds: Thresholds = useStateWithEffect(() => {
         if (selectedDifferentialExpression == null) {
             return { pValue: 0.01, pValueLog: 2, fc: 2, fcLog: 1 };
         }
@@ -183,6 +192,55 @@ const DifferentialExpressions = ({
             secondLevel: availableWidth > 666, // 4 * FormControl.offsetWidth(135) + FormControlLabel.offsetWidth(78) + 2 * swap icon width(24)
         });
     }, [width]);
+
+    const getCaption = useCallback((): string => {
+        return `
+Differential expression: The x-axis indicates the log2 value of fold-change in
+differential expression ${selectedDifferentialExpression?.name}. The ${probFieldLabel} on the
+y-axis is the probability that the gene is differentially expressed. Higher
+-log10(${probFieldLabel}) indicates higher probability that the gene is
+differentially expressed and not a false positive, while the value of 3
+corresponds to 99.999% chance that the gene is differentially expressed. Genes
+which are significantly up-regulated are located in the upper right square of
+each graph (these have a positive log fold value), while down-regulated genes
+are located in the upper left square (these have a negative log fold value).
+Genes in the lower left and right squares of the graph are probably false
+positives.
+        `.trim();
+    }, [probFieldLabel, selectedDifferentialExpression]);
+
+    useReport(
+        async (processFile) => {
+            processFile(
+                'Differential Expressions/selected_differential_expression.tsv',
+                objectsArrayToTsv([_.omit(selectedDifferentialExpression, ['output'])]),
+                false,
+            );
+
+            if (volcanoPoints.length === 0) {
+                return;
+            }
+            const dataTable = volcanoPoints.map((volcanoPoint) => ({
+                ...volcanoPoint,
+                gene_symbol: genesById[volcanoPoint.geneId] && genesById[volcanoPoint.geneId].name,
+            }));
+            processFile('Differential Expressions/table.tsv', objectsArrayToTsv(dataTable), false);
+            if (chartRef.current != null) {
+                processFile(
+                    'Differential Expressions/volcano_image.png',
+                    await chartRef.current.getPngImage(),
+                    true,
+                );
+                processFile(
+                    'Differential Expressions/volcano_image.svg',
+                    await chartRef.current.getSvgImage(),
+                    true,
+                );
+                processFile('Differential Expressions/caption.txt', getCaption(), false);
+            }
+        },
+        [genesById, getCaption, selectedDifferentialExpression, volcanoPoints],
+    );
 
     const handleDifferentialExpressionsOnChange = (
         event: ChangeEvent<{ value: unknown }>,
@@ -358,6 +416,7 @@ const DifferentialExpressions = ({
                             logFcOutliersLimit={logFcOutliersLimit}
                             displayOutliers={displayOutliers}
                             onSelect={handlePlotOnSelect}
+                            ref={chartRef}
                         />
                     </VolcanoPlotContainer>
                 )}

@@ -17,13 +17,17 @@ import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
 import DictySelect from 'components/genexpress/common/dictySelect/dictySelect';
 import { formatNumber } from 'utils/math';
 import { SortChangedEvent, ValueFormatterParams } from 'ag-grid-community';
+import useReport from 'components/genexpress/common/reportBuilder/useReport';
+import { objectsArrayToTsv } from 'utils/reportUtils';
+import { advancedJoin } from 'utils/arrayUtils';
+import { ontologyJsonToOntologyRows, ontologyJsonToTermsTable } from 'utils/gOEnrichmentUtils';
+import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
 import {
     GOEnrichmentContainer,
     GOEnrichmentControl,
     GOEnrichmentControls,
     GOEnrichmentGridContainer,
 } from './gOEnrichment.styles';
-import { ontologyJsonToOntologyRows } from './gOEnrichmentUtils';
 import ScoreCell from './scoreCell/scoreCell';
 import GOEnrichmentMatchedCell from './matchedCell/matchedCell';
 import TermCell from './termCell/termCell';
@@ -101,6 +105,61 @@ const GOEnrichment = ({
         setAllAspectsEmpty(_.isEmpty(valuesInAllAspects));
     }, [gOEnrichmentJson]);
 
+    const getCaption = useCallback((): string => {
+        const genes = advancedJoin(selectedGenes.map(({ name }) => name));
+        const termTables = advancedJoin(aspectOptions.map(({ label }) => `${label}.tsv`));
+
+        return `
+Identified significantly enriched Gene Ontology terms (p-value < ${pValueThreshold})
+for selected genes (${genes}).
+
+Tables ${termTables} are sorted by p-value.
+A list of all gene associations for each term is available in a separate file - all_associations.tsv.
+    `.trim();
+    }, [pValueThreshold, selectedGenes]);
+
+    useReport(
+        async (processFile) => {
+            if (_.isEmpty(gOEnrichmentJson)) {
+                return;
+            }
+            const associationsTable = _.flatten(
+                _.map(gOEnrichmentJson.gene_associations, (allAssociations, term) => {
+                    return _.map(allAssociations, (association) => {
+                        return { term, association };
+                    });
+                }),
+            );
+
+            const allAspectsTermsTablePromises = aspectOptions.map(async (aspectOption) => {
+                return {
+                    termsTable: await ontologyJsonToTermsTable(
+                        gOEnrichmentJson,
+                        aspectOption.value,
+                    ),
+                    aspectOption,
+                };
+            });
+
+            const termTables = await Promise.all(allAspectsTermsTablePromises);
+
+            termTables.forEach(({ termsTable, aspectOption }) => {
+                processFile(
+                    `Gene Ontology Enrichment Analysis/${aspectOption.label}.tsv`,
+                    objectsArrayToTsv(termsTable),
+                    false,
+                );
+            });
+            processFile(
+                'Gene Ontology Enrichment Analysis/all_associations.tsv',
+                objectsArrayToTsv(associationsTable),
+                false,
+            );
+            processFile('Gene Ontology Enrichment Analysis/caption.txt', getCaption(), false);
+        },
+        [gOEnrichmentJson, getCaption],
+    );
+
     const handleAspectsOnChange = (event: ChangeEvent<{ value: unknown }>): void => {
         const selectedAspectOption = aspectOptions.find(
             (aspectOption) => aspectOption.value === event.target.value,
@@ -145,6 +204,44 @@ const GOEnrichment = ({
         setClickedGOEnrichmentRow(row);
         setGOEnrichmentAssociationsModalOpened(true);
     };
+
+    const columnDefs = useStateWithEffect(
+        () => [
+            {
+                field: 'pval',
+                headerName: 'p-value',
+                width: 85,
+                sort: getSort('pval'),
+                valueFormatter: ({ value }: ValueFormatterParams): string =>
+                    formatNumber(value, 'long'),
+            },
+            {
+                field: 'score',
+                headerName: 'Score',
+                sort: getSort('score'),
+                cellRendererFramework: ScoreCell,
+                minWidth: 85,
+            },
+            {
+                field: 'matched',
+                headerName: 'N',
+                width: 100,
+                sort: getSort('matched'),
+                cellRendererFramework: GOEnrichmentMatchedCell,
+                cellRendererParams: {
+                    onMatchedGenesClickHandler,
+                },
+            },
+            {
+                field: 'term_name',
+                headerName: 'Term',
+                width: 400,
+                sortable: !treeView,
+                cellRendererFramework: treeView ? TermCell : null,
+            },
+        ],
+        [getSort, treeView],
+    );
 
     return (
         <>
@@ -215,40 +312,7 @@ const GOEnrichment = ({
                             data={gOEnrichmentRows}
                             hideFilter
                             disableSizeColumnsToFit
-                            columnDefs={[
-                                {
-                                    field: 'pval',
-                                    headerName: 'p-value',
-                                    width: 85,
-                                    sort: getSort('pval'),
-                                    valueFormatter: ({ value }: ValueFormatterParams): string =>
-                                        formatNumber(value, 'long'),
-                                },
-                                {
-                                    field: 'score',
-                                    headerName: 'Score',
-                                    sort: getSort('score'),
-                                    cellRendererFramework: ScoreCell,
-                                    minWidth: 85,
-                                },
-                                {
-                                    field: 'matched',
-                                    headerName: 'N',
-                                    width: 100,
-                                    sort: getSort('matched'),
-                                    cellRendererFramework: GOEnrichmentMatchedCell,
-                                    cellRendererParams: {
-                                        onMatchedGenesClickHandler,
-                                    },
-                                },
-                                {
-                                    field: 'term_name',
-                                    headerName: 'Term',
-                                    width: 400,
-                                    sortable: !treeView,
-                                    cellRendererFramework: treeView ? TermCell : null,
-                                },
-                            ]}
+                            columnDefs={columnDefs}
                             onSortChanged={onSortChangedHandler}
                             // Path must also be included as a unique identifier because the same
                             // term_id can be found in multiple tree branches.

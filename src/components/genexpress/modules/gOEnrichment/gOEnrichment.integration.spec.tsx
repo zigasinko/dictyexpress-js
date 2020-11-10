@@ -20,7 +20,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { Server, WebSocket } from 'mock-socket';
 import { sessionId, webSocketUrl } from 'api/base';
-import { appendMissingAttributesToJson } from './gOEnrichmentUtils';
+import { appendMissingAttributesToJson } from 'utils/gOEnrichmentUtils';
 import { aspectOptions } from './gOEnrichment';
 
 const genesById = generateGenesById(2);

@@ -14,8 +14,8 @@ import _ from 'lodash';
 import { genesSelected } from 'redux/stores/genes';
 import { fetchAssociationsGenes } from 'redux/epics/epicsActions';
 import { GOEnrichmentRow } from 'redux/models/internal';
+import { appendMissingAttributesToJson } from 'utils/gOEnrichmentUtils';
 import GOEnrichmentAssociationsModal from './associationsModal';
-import { appendMissingAttributesToJson } from '../gOEnrichmentUtils';
 
 const genesById = generateGenesById(2);
 const genes = _.flatMap(genesById);

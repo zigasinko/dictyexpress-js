@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState, useCallback } from 'react';
+import React, { ReactElement, useEffect, useState, useCallback, useRef } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import _ from 'lodash';
 import { RootState } from 'redux/rootReducer';
@@ -7,6 +7,8 @@ import { Relation, RelationPartition } from '@genialis/resolwe/dist/api/types/re
 import { SamplesExpressionsById, Gene } from 'redux/models/internal';
 import { getSelectedTimeSeries, getSelectedTimeSeriesLabels } from 'redux/stores/timeSeries';
 import { getSamplesExpressionsById } from 'redux/stores/samplesExpressions';
+import { ChartHandle } from 'components/genexpress/common/chart/chart';
+import useReport from 'components/genexpress/common/reportBuilder/useReport';
 import GeneExpressionsLineChart, { GeneVisualizationData } from './geneExpressionsLineChart';
 
 const mapStateToProps = (
@@ -47,6 +49,7 @@ const GeneExpressions = ({
     highlightedGenesIds,
 }: PropsFromRedux): ReactElement => {
     const [genesExpressionsData, setGenesExpressionsData] = useState<GeneVisualizationData[]>([]);
+    const chartRef = useRef<ChartHandle>();
 
     const findLabelPartitions = useCallback(
         (label: string): RelationPartition[] => {
@@ -55,8 +58,8 @@ const GeneExpressions = ({
         [timeSeries],
     );
 
-    const handleOnHighlight = (genesNames: string[]): void => {
-        connectedGenesHighlighted(genesNames);
+    const handleOnHighlight = (genesIds: string[]): void => {
+        connectedGenesHighlighted(genesIds);
     };
 
     // Each time timeSeries or genes changes, visualization data must be refreshed.
@@ -90,6 +93,21 @@ const GeneExpressions = ({
         setGenesExpressionsData(newGenesExpressionsData);
     }, [timeSeries, genes, timeSeriesLabels, findLabelPartitions, samplesExpressionsById]);
 
+    useReport(async (processFile) => {
+        if (chartRef.current != null) {
+            processFile(
+                'Expression Time Courses/expression_time_courses.png',
+                await chartRef.current.getPngImage(),
+                true,
+            );
+            processFile(
+                'Expression Time Courses/expression_time_courses.svg',
+                await chartRef.current.getSvgImage(),
+                true,
+            );
+        }
+    }, []);
+
     return (
         <>
             {genesExpressionsData.length > 0 && (
@@ -97,6 +115,7 @@ const GeneExpressions = ({
                     data={genesExpressionsData}
                     highlightedGenesIds={highlightedGenesIds}
                     onHighlight={handleOnHighlight}
+                    ref={chartRef}
                 />
             )}
         </>

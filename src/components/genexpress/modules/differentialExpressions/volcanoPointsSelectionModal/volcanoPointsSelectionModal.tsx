@@ -32,7 +32,6 @@ const mapStateToProps = (
     selectedGenesIds: string[];
 } => {
     return {
-        // Genes to be visualized.
         genes: getGenes(state.genes),
         selectedGenesIds: getSelectedGenesIds(state.genes),
     };

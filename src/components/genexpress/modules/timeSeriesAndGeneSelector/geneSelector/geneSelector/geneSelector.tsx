@@ -21,6 +21,8 @@ import { splitAndCleanGenesString } from 'utils/stringUtils';
 import GeneSetSelector from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/geneSets/geneSetSelector';
 import { handleError } from 'utils/errorUtils';
 import { getGenes, getGenesByNames } from 'api';
+import { objectsArrayToTsv } from 'utils/reportUtils';
+import useReport from 'components/genexpress/common/reportBuilder/useReport';
 import { AutoCompleteItemSpan, TitleSection } from './geneSelector.styles';
 
 const itemRender = (option: Gene): ReactElement => {
@@ -92,7 +94,6 @@ const GeneSelector = ({
 
             if (genesResults != null) {
                 setGenes(genesResults);
-                connectedGenesFetchSucceeded(genesResults);
             } else {
                 enqueueSnackbar('Error fetching genes.', { variant: 'error' });
             }
@@ -125,6 +126,20 @@ const GeneSelector = ({
         setValue(selectedGenes);
     }, [selectedGenes]);
 
+    useReport(
+        (processFile) => {
+            processFile('Genes/selected_genes.tsv', objectsArrayToTsv(selectedGenes), false);
+            processFile(
+                'Genes/highlighted_genes.tsv',
+                objectsArrayToTsv(
+                    selectedGenes.filter((gene) => highlightedGenesIds.includes(gene.feature_id)),
+                ),
+                false,
+            );
+        },
+        [highlightedGenesIds, selectedGenes],
+    );
+
     const closeDropDown = (): void => {
         setAutocompleteOpen(false);
     };
@@ -148,6 +163,7 @@ const GeneSelector = ({
 
     const handleOnChange = (_event: unknown, newValue: Gene[]): void => {
         setValue(newValue);
+        connectedGenesFetchSucceeded(newValue);
         connectedGenesSelected(newValue.map((gene) => gene.feature_id));
 
         closeDropDown();

@@ -58,6 +58,12 @@ module.exports = {
         ],
         'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
         'prettier/prettier': 'error',
+        'react-hooks/exhaustive-deps': [
+            'warn',
+            {
+                additionalHooks: '(useReport|useStateWithEffect)',
+            },
+        ],
     },
     settings: {
         'import/resolver': {

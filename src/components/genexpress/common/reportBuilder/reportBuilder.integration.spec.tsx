@@ -1,0 +1,34 @@
+import React from 'react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
+import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
+import { customRender } from 'tests/test-utils';
+import { testState } from 'tests/mock';
+import * as documentHelpers from 'utils/documentHelpers';
+
+describe('reportBuilder integration', () => {
+    beforeEach(() => {
+        // eslint-disable-next-line @typescript-eslint/unbound-method
+        window.URL.createObjectURL = jest.fn();
+        // eslint-disable-next-line @typescript-eslint/unbound-method
+        window.URL.revokeObjectURL = jest.fn();
+    });
+
+    it('should download zip after export is clicked', async () => {
+        const initialState = testState();
+        customRender(<GeneExpressGrid />, {
+            initialState,
+        });
+
+        // There is no clean way to unit test file download, so all we can do is spy on saveAs
+        // (documentHelpers) method.
+        const saveAsSpy = jest.spyOn(documentHelpers, 'saveAs').mockImplementation(() => {});
+
+        await waitFor(() => expect(screen.getByLabelText('Export')).toBeEnabled());
+
+        fireEvent.click(screen.getByLabelText('Export'));
+
+        await waitFor(() => {
+            expect(saveAsSpy).toBeCalled();
+        });
+    });
+});

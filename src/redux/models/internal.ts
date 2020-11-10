@@ -90,6 +90,19 @@ export type GOEnrichmentRow = {
     gene_associations: string[];
 } & Omit<GOEnrichmentNode, 'children'>;
 
+export type GOEnrichmentTerm = {
+    p_value: GOEnrichmentNode['pval'];
+    score: GOEnrichmentNode['score'];
+    selected_gene_associations_number: GOEnrichmentNode['matched'];
+    selected_gene_associations_names?: string[];
+    all_gene_associations_number: GOEnrichmentNode['total'];
+    term_id: GOEnrichmentNode['term_id'];
+    term_name: GOEnrichmentNode['term_name'];
+    source: GOEnrichmentNode['source'];
+    species: GOEnrichmentNode['species'];
+    selected_gene_associations: GOEnrichmentNode['gene_ids'];
+};
+
 // If key is undefined, it will be generated in the reducer.
 export type SnackbarNotificationContent = {
     key?: SnackbarKey;

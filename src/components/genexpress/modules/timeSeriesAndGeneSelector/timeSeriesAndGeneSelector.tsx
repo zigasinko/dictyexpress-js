@@ -10,6 +10,8 @@ import {
 import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
 import { Relation } from '@genialis/resolwe/dist/api/types/rest';
 import { fetchTimeSeries } from 'redux/epics/epicsActions';
+import useReport from 'components/genexpress/common/reportBuilder/useReport';
+import { objectsArrayToTsv } from 'utils/reportUtils';
 import GeneSelector from './geneSelector/geneSelector/geneSelector';
 import { TimeSeriesGridWrapper } from './timeSeriesAndGeneSelector.styles';
 
@@ -39,6 +41,27 @@ const TimeSeriesAndGeneSelector = ({
     isFetching,
     connectedTimeSeriesSelected,
 }: PropsFromRedux): ReactElement => {
+    useReport(
+        (processFile) => {
+            processFile(
+                'Collection/selectedCollection.tsv',
+                selectedTimeSeries != null
+                    ? objectsArrayToTsv([
+                          {
+                              id: selectedTimeSeries.id,
+                              created: selectedTimeSeries.created,
+                              modified: selectedTimeSeries.modified,
+                              name: selectedTimeSeries.collection.name,
+                              contributor_username: selectedTimeSeries.contributor.username,
+                          },
+                      ])
+                    : '',
+                false,
+            );
+        },
+        [selectedTimeSeries],
+    );
+
     const onRowSelectedHandler = (newSelectedTimeSeries: Relation): void => {
         if (selectedTimeSeries == null || newSelectedTimeSeries.id !== selectedTimeSeries.id) {
             connectedTimeSeriesSelected(newSelectedTimeSeries.id);
@@ -50,6 +73,12 @@ const TimeSeriesAndGeneSelector = ({
             connectedFetchTimeSeries();
         }
     };
+
+    /* debugger;
+    const [updatableDataDefinitions, setUpdatableDataDefinitions] = useState<string>(() => {
+        debugger;
+        return 'asdf';
+    }); */
 
     const columnDefs = useRef([
         { field: 'id', headerName: 'Id', width: 20 },

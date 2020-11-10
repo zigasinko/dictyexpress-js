@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
-import { customRender } from 'tests/test-utils';
+import { customRender, validateExportFile } from 'tests/test-utils';
 import {
     testState,
     generateGene,
@@ -138,6 +138,24 @@ describe('geneExpressions integration', () => {
                 container.querySelectorAll("g[role='graphics-symbol'].genesExpressionsLines"),
             ).toHaveLength(1);
         });
+
+        it('should not export Expression Time Courses/expression_time_courses.png file', async () => {
+            await validateExportFile(
+                'Expression Time Courses/expression_time_courses.png',
+                (exportFile) => {
+                    expect(exportFile).toBeUndefined();
+                },
+            );
+        });
+
+        it('should not export Expression Time Courses/expression_time_courses.png file', async () => {
+            await validateExportFile(
+                'Expression Time Courses/expression_time_courses.svg',
+                (exportFile) => {
+                    expect(exportFile).toBeUndefined();
+                },
+            );
+        });
     });
 
     describe('time series and one gene selected', () => {
@@ -194,6 +212,24 @@ describe('geneExpressions integration', () => {
             );
 
             await screen.findByText('Gene:');
+        });
+
+        it('should export visualization Expression Time Courses/expression_time_courses.png file', async () => {
+            await validateExportFile(
+                'Expression Time Courses/expression_time_courses.png',
+                (exportFile) => {
+                    expect(exportFile).toBeDefined();
+                },
+            );
+        });
+
+        it('should export visualization Expression Time Courses/expression_time_courses.svg file', async () => {
+            await validateExportFile(
+                'Expression Time Courses/expression_time_courses.svg',
+                (exportFile) => {
+                    expect(exportFile).toBeDefined();
+                },
+            );
         });
     });
 });

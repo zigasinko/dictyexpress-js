@@ -5,7 +5,6 @@ export type StyledIconButtonProps = {
     nopadding?: boolean;
 };
 
-// eslint-disable-next-line import/prefer-default-export
 export const StyledIconButton = styled(IconButton)<StyledIconButtonProps>`
     && {
         ${(props): FlattenSimpleInterpolation | null =>

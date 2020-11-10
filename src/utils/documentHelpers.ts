@@ -43,3 +43,12 @@ export const getCookie = (name: string): string => {
 export const setClipboardText = (text: string): void => {
     navigator.clipboard.writeText(text);
 };
+
+export const saveAs = (content: string | Blob, filename: string, contentType: string): void => {
+    const a = document.createElement('a');
+    const file = new Blob([content], { type: contentType });
+
+    a.href = URL.createObjectURL(file);
+    a.download = filename;
+    a.click();
+};

@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
-import { customRender } from 'tests/test-utils';
+import { customRender, validateExportFile } from 'tests/test-utils';
 import {
     testState,
     generateDifferentialExpressionsById,
@@ -10,6 +10,7 @@ import {
 } from 'tests/mock';
 import _ from 'lodash';
 import { RootState } from 'redux/rootReducer';
+import { getSelectedDifferentialExpression } from 'redux/stores/differentialExpressions';
 
 const differentialExpressionsById = generateDifferentialExpressionsById(2);
 const differentialExpressions = _.flatMap(differentialExpressionsById);
@@ -46,19 +47,21 @@ describe('differentialExpressions integration', () => {
     });
 
     describe('differentialExpression not selected', () => {
-        beforeEach(() => {
+        beforeEach(async () => {
             initialState = testState();
             initialState.differentialExpressions.byId = differentialExpressionsById;
 
             ({ container } = customRender(<GeneExpressGrid />, {
                 initialState,
             }));
+
+            await screen.findByLabelText('Differential expression');
         });
 
         it('should show volcano plot after differential expression is chosen', async () => {
             // Click on dropdown. MouseDown event has to be used, because material-ui Select component
             // listens to mouseDown event to expand options menu.
-            fireEvent.mouseDown(await screen.findByLabelText('Differential expression'));
+            fireEvent.mouseDown(screen.getByLabelText('Differential expression'));
 
             // Click on dropdown item (first differential expression).
             fireEvent.click(await screen.findByText(differentialExpressions[0].name));
@@ -80,6 +83,22 @@ describe('differentialExpressions integration', () => {
                 expect(
                     container.querySelectorAll("g[role='graphics-symbol'].yThresholdsRect"),
                 ).toHaveLength(1);
+            });
+        });
+
+        // Export tests.
+        it('should export empty Differential Expressions/selected_differential_expression.tsv file', async () => {
+            await validateExportFile(
+                'Differential Expressions/selected_differential_expression.tsv',
+                (exportFile) => {
+                    expect(exportFile?.content).toEqual('');
+                },
+            );
+        });
+
+        it('should not export empty Differential Expressions/table.tsv file', async () => {
+            await validateExportFile('Differential Expressions/table.tsv', (exportFile) => {
+                expect(exportFile).toBeUndefined();
             });
         });
     });
@@ -143,6 +162,40 @@ describe('differentialExpressions integration', () => {
                         "g[role='graphics-symbol'].volcanoPointHighlighted > path[fill='#00BCD4']",
                     ),
                 ).toHaveLength(1);
+            });
+        });
+
+        // Export tests.
+        it('should export Differential Expressions/selected_differential_expression.tsv file', async () => {
+            await validateExportFile(
+                'Differential Expressions/selected_differential_expression.tsv',
+                (exportFile) => {
+                    expect(exportFile?.content).toContain(
+                        getSelectedDifferentialExpression(initialState.differentialExpressions)
+                            .name,
+                    );
+                },
+            );
+        });
+
+        it('should export visualization Differential Expressions/volcano_image.png file', async () => {
+            await validateExportFile('Differential Expressions/volcano_image.png', (exportFile) => {
+                expect(exportFile).toBeDefined();
+            });
+        });
+
+        it('should export visualization Differential Expressions/volcano_image.svg file', async () => {
+            await validateExportFile('Differential Expressions/volcano_image.svg', (exportFile) => {
+                expect(exportFile).toBeDefined();
+            });
+        });
+
+        it('should export Differential Expressions/caption.txt file', async () => {
+            await validateExportFile('Differential Expressions/caption.txt', (exportFile) => {
+                expect(exportFile?.content).toContain('Differential expression');
+                expect(exportFile?.content).toContain(
+                    getSelectedDifferentialExpression(initialState.differentialExpressions).name,
+                );
             });
         });
     });

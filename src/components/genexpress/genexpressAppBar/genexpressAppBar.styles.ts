@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { AppBar } from '@material-ui/core';
 import { Title } from 'components/landing/common/title.styles';
+import { GetApp } from '@material-ui/icons';
 
 export const GenexpressAppBarWrapper = styled(AppBar)`
     background-color: #fff;
@@ -40,4 +41,8 @@ export const ActionsContainer = styled.div`
     display: inline-flex;
     flex-flow: row nowrap;
     align-items: center;
+`;
+
+export const DownloadIcon = styled(GetApp)`
+    font-size: 1.2rem;
 `;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
-import { customRender } from 'tests/test-utils';
+import { customRender, validateExportFile } from 'tests/test-utils';
 import {
     testState,
     mockStore,
@@ -11,10 +11,11 @@ import {
 import { RootState } from 'redux/rootReducer';
 import _ from 'lodash';
 import { EnhancedGOEnrichmentJson } from 'redux/models/internal';
+import * as reportBuilder from 'components/genexpress/common/reportBuilder/reportBuilder';
 import { MockStoreEnhanced } from 'redux-mock-store';
 import { AppDispatch } from 'redux/appStore';
-import GOEnrichment from './gOEnrichment';
-import { appendMissingAttributesToJson } from './gOEnrichmentUtils';
+import { appendMissingAttributesToJson } from 'utils/gOEnrichmentUtils';
+import GOEnrichment, { aspectOptions } from './gOEnrichment';
 
 const genesById = generateGenesById(2);
 const genes = _.flatMap(genesById);
@@ -41,6 +42,11 @@ describe('gOEnrichment', () => {
 
         it('should display a message that enriched terms were not found', () => {
             screen.getByText('Enriched terms not found.');
+        });
+
+        it('should not export anything', async () => {
+            const files = await reportBuilder.getRegisteredComponentsExportFiles();
+            expect(files).toHaveLength(0);
         });
 
         describe('gene selected', () => {
@@ -92,12 +98,7 @@ describe('gOEnrichment', () => {
             }));
 
             // Wait for first aspect (Biological process) rows to render.
-            await waitFor(
-                () => {
-                    screen.getByText(initialState.gOEnrichment.json.tree.BP[0].term_name);
-                },
-                { timeout: 2500 },
-            );
+            await screen.findByText(initialState.gOEnrichment.json.tree.BP[0].term_name);
         });
 
         it('should display a message that enriched terms for selected aspect were not found', async () => {
@@ -151,6 +152,47 @@ describe('gOEnrichment', () => {
             await waitFor(() => {
                 expect(container.querySelector('.ag-react-container svg')).not.toBeInTheDocument();
             });
+        });
+
+        it('should export a tsv file for each aspect option', async () => {
+            const files = await reportBuilder.getRegisteredComponentsExportFiles();
+            aspectOptions.forEach((aspectOption) => {
+                const exportedFile = _.find(
+                    files,
+                    ({ path }) =>
+                        path === `Gene Ontology Enrichment Analysis/${aspectOption.label}.tsv`,
+                );
+                expect(exportedFile).toBeDefined();
+
+                if (initialState.gOEnrichment.json.tree[aspectOption.value][0] != null) {
+                    expect(exportedFile?.content).toContain(
+                        initialState.gOEnrichment.json.tree[aspectOption.value][0].term_name,
+                    );
+                }
+            });
+        });
+
+        it('should export Gene Ontology Enrichment Analysis/all_associations.tsv file', async () => {
+            await validateExportFile(
+                'Gene Ontology Enrichment Analysis/all_associations.tsv',
+                (exportFile) => {
+                    expect(exportFile).toBeDefined();
+                    expect(exportFile?.content).toContain(
+                        _.keys(initialState.gOEnrichment.json.gene_associations)[0],
+                    );
+                },
+            );
+        });
+
+        it('should export Gene Ontology Enrichment Analysis/caption.txt file', async () => {
+            await validateExportFile(
+                'Gene Ontology Enrichment Analysis/caption.txt',
+                (exportFile) => {
+                    expect(exportFile?.content).toContain(
+                        'Identified significantly enriched Gene Ontology terms',
+                    );
+                },
+            );
         });
     });
 });
