@@ -8,7 +8,7 @@ import { CircularProgress } from '@material-ui/core';
 import { useSnackbar } from 'notistack';
 import { getSelectedGenes, getHighlightedGenesNames, genesSelected } from 'redux/stores/genes';
 import { Gene, SamplesInfo } from 'redux/models/internal';
-import { getGenes, getGenesByNames } from 'api/featureApi';
+import featureApi from 'api/featureApi';
 import SelectedGenes from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/selectedGenes/selectedGenes';
 import { getSelectedSamplesInfo } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
@@ -70,7 +70,7 @@ const GeneSelector = ({
 
     const fetchGenes = useCallback(
         debounce(async (queryValue: string): Promise<void> => {
-            const genesResults = await getGenes(
+            const genesResults = await featureApi.getGenes(
                 autocompleteSource,
                 autocompleteSpecies,
                 autocompleteType,
@@ -133,7 +133,7 @@ const GeneSelector = ({
         setIsFetchingPastedGenes(true);
 
         try {
-            const pastedGenes = await getGenesByNames(
+            const pastedGenes = await featureApi.getGenesByNames(
                 selectedSamplesInfo.source,
                 selectedSamplesInfo.species,
                 selectedSamplesInfo.type,

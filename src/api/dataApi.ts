@@ -5,8 +5,7 @@ import { apiUrl } from './base';
 
 const baseUrl = `${apiUrl}/data`;
 
-// eslint-disable-next-line import/prefer-default-export
-export const getDataBySamplesIds = async (samplesIds: number[]): Promise<SampleData[]> => {
+const getDataBySamplesIds = async (samplesIds: number[]): Promise<SampleData[]> => {
     if (samplesIds.length === 0) {
         return [] as SampleData[];
     }
@@ -18,3 +17,5 @@ export const getDataBySamplesIds = async (samplesIds: number[]): Promise<SampleD
 
     return deserializeResponse<SampleData[]>(getSamplesDataResponse);
 };
+
+export default { getDataBySamplesIds };

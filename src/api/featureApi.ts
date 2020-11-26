@@ -6,7 +6,7 @@ import { apiUrl } from './base';
 const autocompleteUrl = `${apiUrl}/kb/feature/autocomplete`;
 const searchUrl = `${apiUrl}/kb/feature/search`;
 
-export const getGenes = async (
+const getGenes = async (
     source: string,
     species: string,
     type: string,
@@ -29,7 +29,7 @@ export const getGenes = async (
     return deserializeResponse<Gene[]>(getGenesResponse);
 };
 
-export const getGenesByNames = async (
+const getGenesByNames = async (
     source: string,
     species: string,
     type: string,
@@ -49,3 +49,5 @@ export const getGenesByNames = async (
     const getGenesResponse = await fetch.post(searchUrl, payload);
     return deserializeResponse<Gene[]>(getGenesResponse);
 };
+
+export default { getGenes, getGenesByNames };
