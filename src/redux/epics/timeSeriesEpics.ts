@@ -8,30 +8,33 @@ import {
     addToBasketStarted,
     addToBasketEnded,
     addSamplesToBasketSucceeded,
-    fetchTimeSeries,
     timeSeriesSelected,
     timeSeriesFetchStarted,
     timeSeriesFetchEnded,
     timeSeriesFetchSucceeded,
-    fetchTimeSeriesSamplesExpressions,
     getSelectedTimeSeries,
 } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
 import { SamplesExpressionsById, Gene } from 'redux/models/internal';
-import { getStorageJson } from 'api/storageApi';
+import storageApi from 'api/storageApi';
 import {
     samplesExpressionsFetchSucceeded,
     samplesExpressionsFetchStarted,
     samplesExpressionsFetchEnded,
 } from 'redux/stores/samplesExpressions';
 import { handleError } from 'utils/errorUtils';
-import * as relationApi from '../../api/relationApi';
-import * as basketApi from '../../api/basketApi';
-import * as dataApi from '../../api/dataApi';
+import relationApi from 'api/relationApi';
+import basketApi from 'api/basketApi';
+import dataApi from 'api/dataApi';
+import { loginSucceeded } from './authenticationEpics';
 
 // Export epic actions.
 export const selectGenes = createAction<Gene[]>('genes/selectGenes');
 export const pasteGenesNames = createAction<string[]>('genes/pasteGenesNames');
+export const fetchTimeSeries = createAction('timeSeries/fetchTimeSeries');
+export const fetchTimeSeriesSamplesExpressions = createAction(
+    'timeSeries/fetchTimeSeriesSamplesExpressions',
+);
 
 export const timeSeriesSelectedEpic: Epic<Action, Action, RootState> = (action$, state$) => {
     return action$.pipe(
@@ -65,7 +68,7 @@ export const timeSeriesSelectedEpic: Epic<Action, Action, RootState> = (action$,
 
 export const fetchTimeSeriesEpic: Epic<Action, Action, RootState> = (action$) => {
     return action$.pipe(
-        ofType(fetchTimeSeries.toString()),
+        ofType(fetchTimeSeries.toString(), loginSucceeded.toString()),
         mergeMap(() => {
             return from(relationApi.getTimeSeriesRelations()).pipe(
                 map((response) => timeSeriesFetchSucceeded(response)),
@@ -84,7 +87,7 @@ export const fetchTimeSeriesEpic: Epic<Action, Action, RootState> = (action$) =>
 const getSampleStorage = async (
     sampleData: Data,
 ): Promise<{ sampleId: number; storage: Storage | null }> => {
-    const storage = await getStorageJson(sampleData.output.exp_json);
+    const storage = await storageApi.getStorageJson(sampleData.output.exp_json);
 
     return {
         sampleId: sampleData.entity != null ? sampleData.entity.id : 0,

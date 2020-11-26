@@ -6,10 +6,10 @@ import {
     getTimeSeriesIsFetching,
     getSelectedTimeSeries,
     timeSeriesSelected,
-    fetchTimeSeries,
 } from 'redux/stores/timeSeries';
 import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
 import { Relation } from '@genialis/resolwe/dist/api/types/rest';
+import { fetchTimeSeries } from 'redux/epics/timeSeriesEpics';
 import ConnectedGeneSelector from './geneSelector/geneSelector/geneSelector';
 import { TimeSeriesGridWrapper } from './timeSeriesAndGeneSelector.styles';
 

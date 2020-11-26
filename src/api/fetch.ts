@@ -30,6 +30,7 @@ const request = async (
     url: string,
     params?: QueryParams | BodyParams,
     method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET',
+    ignoreErrors = false,
 ): Promise<Response> => {
     const headers = new Headers({ 'Content-Type': 'application/json' });
 
@@ -65,23 +66,25 @@ const request = async (
         }
     }
 
-    return fetch(fullUrl.toString(), options).then(throwErrorIfResponseNotOk);
+    return fetch(fullUrl.toString(), options).then((response) =>
+        ignoreErrors ? response : throwErrorIfResponseNotOk(response),
+    );
 };
 
-const get = (url: string, params?: QueryParams): Promise<Response> => {
-    return request(url, params);
+const get = (url: string, params?: QueryParams, ignoreErrors?: boolean): Promise<Response> => {
+    return request(url, params, 'GET', ignoreErrors);
 };
 
-const post = (url: string, params?: BodyParams): Promise<Response> => {
-    return request(url, params, 'POST');
+const post = (url: string, params?: BodyParams, ignoreErrors?: boolean): Promise<Response> => {
+    return request(url, params, 'POST', ignoreErrors);
 };
 
-const put = (url: string, params?: BodyParams): Promise<Response> => {
-    return request(url, params, 'PUT');
+const put = (url: string, params?: BodyParams, ignoreErrors?: boolean): Promise<Response> => {
+    return request(url, params, 'PUT', ignoreErrors);
 };
 
-const remove = (url: string, params?: BodyParams): Promise<Response> => {
-    return request(url, params, 'DELETE');
+const remove = (url: string, params?: BodyParams, ignoreErrors?: boolean): Promise<Response> => {
+    return request(url, params, 'DELETE', ignoreErrors);
 };
 
 export default {

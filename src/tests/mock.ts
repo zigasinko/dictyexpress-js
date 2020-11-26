@@ -8,6 +8,7 @@ import {
     Collection,
     DescriptorSchema,
     RelationPartition,
+    User,
 } from '@genialis/resolwe/dist/api/types/rest';
 import { BasketAddSamplesResponse } from 'redux/models/rest';
 import _ from 'lodash';
@@ -135,6 +136,22 @@ export const generatePartition = (id: number, entityId: number): RelationPartiti
     label: `${id}Hr`,
 });
 
+export const generateUser = (id: number): User => ({
+    id,
+    username: 'testUser',
+    email: 'test@mail.com',
+    first_name: 'Test',
+    last_name: 'User',
+    job_title: 'Developer',
+    company: 'Genialis',
+    department: 'Software development',
+    location: 'Ljubljana',
+    lab: 'Bio',
+    phone_number: '031123456',
+    last_login: getDateISOString(),
+    date_joined: getDateISOString(),
+});
+
 /**
  * Helper function that generates mock instances of objects for use in unit tests.
  *
@@ -185,6 +202,13 @@ export const generateSamplesExpressionsById = (n: number): SamplesExpressionsByI
 
 export const testState = (): RootState => {
     return {
+        authentication: {
+            user: generateUser(2),
+            isLoggedIn: true,
+            isLoggingIn: false,
+            isLoggingOut: false,
+            isFetchingUser: false,
+        },
         timeSeries: {
             byId: generateTimeSeriesById(2),
             selectedId: 1,
