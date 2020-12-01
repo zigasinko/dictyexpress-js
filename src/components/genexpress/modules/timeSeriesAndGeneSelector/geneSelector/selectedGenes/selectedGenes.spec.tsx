@@ -12,12 +12,13 @@ import SelectedGenes from './selectedGenes';
 const initialState = testState();
 const genes = [generateGene(0), generateGene(1)];
 
-initialState.timeSeries.selectedSamplesInfo = {
+initialState.timeSeries.basketInfo = {
+    id: '1',
     source: BasketInfoData.SOURCE,
     species: BasketInfoData.SPECIES,
     type: 'gene',
 };
-initialState.selectedGenes.byId = {
+initialState.genes.byId = {
     [genes[0].name]: genes[0],
     [genes[1].name]: genes[1],
 };
@@ -36,7 +37,7 @@ describe('selectedGenes', () => {
     });
 
     it('should show genes', () => {
-        customRender(<SelectedGenes selectedGenes={genes} highlightedGenesNames={[]} />, {
+        customRender(<SelectedGenes selectedGenes={genes} highlightedGenesIds={[]} />, {
             mockedStore,
         });
 
@@ -45,7 +46,7 @@ describe('selectedGenes', () => {
     });
 
     it('should copy selected genes names', () => {
-        customRender(<SelectedGenes selectedGenes={genes} highlightedGenesNames={[]} />, {
+        customRender(<SelectedGenes selectedGenes={genes} highlightedGenesIds={[]} />, {
             mockedStore,
         });
 
@@ -58,7 +59,7 @@ describe('selectedGenes', () => {
     });
 
     it('should clear all genes', () => {
-        customRender(<SelectedGenes selectedGenes={genes} highlightedGenesNames={[]} />, {
+        customRender(<SelectedGenes selectedGenes={genes} highlightedGenesIds={[]} />, {
             mockedStore,
         });
 

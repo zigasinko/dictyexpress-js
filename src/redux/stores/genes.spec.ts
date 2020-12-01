@@ -4,13 +4,12 @@ import { generateGenesById, generateGene } from 'tests/mock';
 import genesReducer, {
     genesSelected,
     GenesState,
-    geneSelected,
     geneDeselected,
-    getSelectedGenes,
     allGenesDeselected,
     geneHighlighted,
     genesHighlighted,
     geneUnhighlighted,
+    genesFetchSucceeded,
 } from './genes';
 import { timeSeriesSelected } from './timeSeries';
 
@@ -27,33 +26,40 @@ describe('genes store', () => {
         beforeEach(() => {
             initialState = {
                 byId: {},
-                highlightedGenesNames: [],
+                selectedGenesIds: [],
+                highlightedGenesIds: [],
+                isFetchingDifferentialExpressionGenes: false,
             };
 
             genes = _.flatMap(genesById);
         });
 
-        it('should add a gene to byId with selected action', () => {
-            const geneToSelect = genes[0];
-            const newState = genesReducer(initialState, geneSelected(geneToSelect));
+        it('should add a gene to byId with genesFetchSucceeded action', () => {
+            const newState = genesReducer(initialState, genesFetchSucceeded(genes));
             const expectedState = {
                 ...initialState,
-                byId: { [geneToSelect.name]: genesById[geneToSelect.name] },
+                byId: genesById,
             };
 
             expect(newState).toEqual(expectedState);
         });
 
-        it('should add genes to byId with selectedMultiple action', () => {
-            const newState = genesReducer(initialState, genesSelected(genes));
-            const expectedState = { ...initialState, byId: genesById };
+        it('should add selected genes feature_ids to selectedGenesId with genesSelected action', () => {
+            const newState = genesReducer(
+                initialState,
+                genesSelected(genes.map((gene) => gene.feature_id)),
+            );
+            const expectedState = {
+                ...initialState,
+                selectedGenesIds: genes.map((gene) => gene.feature_id),
+            };
 
             expect(newState).toEqual(expectedState);
         });
 
         it('should highlight a gene', () => {
             const newState = genesReducer(initialState, geneHighlighted(genes[0].name));
-            const expectedState = { ...initialState, highlightedGenesNames: [genes[0].name] };
+            const expectedState = { ...initialState, highlightedGenesIds: [genes[0].name] };
 
             expect(newState).toEqual(expectedState);
         });
@@ -61,111 +67,117 @@ describe('genes store', () => {
         it('should highlight multiple genes', () => {
             const newState = genesReducer(
                 initialState,
-                genesHighlighted([genes[0].name, genes[1].name]),
+                genesHighlighted(genes.map((gene) => gene.feature_id)),
             );
             const expectedState = {
                 ...initialState,
-                highlightedGenesNames: [genes[0].name, genes[1].name],
+                highlightedGenesIds: genes.map((gene) => gene.feature_id),
             };
-
-            expect(newState).toEqual(expectedState);
-        });
-
-        it('should unhighlight gene', () => {
-            const newState = genesReducer(initialState, geneUnhighlighted('asdf'));
-            const expectedState = { ...initialState };
 
             expect(newState).toEqual(expectedState);
         });
     });
 
-    describe('not empty initial state', () => {
+    describe('not empty initial state, both genes selected and highlighted', () => {
         beforeEach(() => {
             initialState = {
                 byId: genesById,
-                highlightedGenesNames: [],
+                selectedGenesIds: genes.map((gene) => gene.feature_id),
+                highlightedGenesIds: genes.map((gene) => gene.feature_id),
+                isFetchingDifferentialExpressionGenes: false,
             };
-
-            genes = getSelectedGenes(initialState);
-            initialState.highlightedGenesNames = [genes[0].name];
         });
 
-        it('should add a gene to byId with selected action', () => {
-            const geneToSelect = generateGene(456);
-            const newState = genesReducer(initialState, geneSelected(geneToSelect));
+        it('should add genes to byId with genesFetchSucceeded action', () => {
+            const newGene = generateGene(5);
+            const newState = genesReducer(initialState, genesFetchSucceeded([newGene]));
             const expectedState = {
                 ...initialState,
-                byId: { ...genesById, [geneToSelect.name]: geneToSelect },
+                byId: { ...initialState.byId, [newGene.feature_id]: newGene },
             };
 
             expect(newState).toEqual(expectedState);
         });
 
-        it('should add genes to byId with selectedMultiple action', () => {
+        it('should add selected genes feature_ids to selectedGenesId with genesSelected action', () => {
             const genesByIdToSelect = generateGenesById(2);
-            const genesToSelect = _.flatMap(genesByIdToSelect);
 
-            const newState = genesReducer(initialState, genesSelected(genesToSelect));
-            const expectedState = { ...initialState, byId: genesByIdToSelect };
-
-            expect(newState).toEqual(expectedState);
-        });
-
-        it('should remove a gene from byId with geneDeselected action', () => {
-            const newState = genesReducer(initialState, geneDeselected(genes[0]));
+            const newState = genesReducer(
+                initialState,
+                genesSelected(Object.keys(genesByIdToSelect)),
+            );
             const expectedState = {
                 ...initialState,
-                byId: { [genes[1].name]: genes[1] },
+                selectedGenesIds: [
+                    ...initialState.selectedGenesIds,
+                    ...Object.keys(genesByIdToSelect),
+                ],
             };
 
             expect(newState).toEqual(expectedState);
         });
 
-        it('should clear selected genes byId with deselectAll action', () => {
+        it('should remove gene from selected and highlighted genes ids with geneDeselected action', () => {
+            const newState = genesReducer(initialState, geneDeselected(genes[0].feature_id));
+            const expectedState = {
+                ...initialState,
+                selectedGenesIds: [genes[1].feature_id],
+                highlightedGenesIds: [genes[1].feature_id],
+            };
+
+            expect(newState).toEqual(expectedState);
+        });
+
+        it('should clear selected and highlighted genes ids with deselectAll action', () => {
             const newState = genesReducer(initialState, allGenesDeselected());
             const expectedState = {
                 ...initialState,
-                byId: {},
+                selectedGenesIds: [],
+                highlightedGenesIds: [],
             };
 
             expect(newState).toEqual(expectedState);
         });
 
-        it('should clear selected genes byId when timeSeries is selected', () => {
+        it('should clear selected and highlighted genes ids when timeSeries is selected', () => {
             const newState = genesReducer(initialState, timeSeriesSelected(0));
             const expectedState = {
                 ...initialState,
-                byId: {},
+                selectedGenesIds: [],
+                highlightedGenesIds: [],
             };
 
             expect(newState).toEqual(expectedState);
         });
 
         it('should highlight a gene', () => {
-            const highlightedGeneName = 'asdf';
-            const newState = genesReducer(initialState, geneHighlighted(highlightedGeneName));
+            const newGene = generateGene(5);
+            const newState = genesReducer(initialState, geneHighlighted(newGene.feature_id));
             const expectedState = {
                 ...initialState,
-                highlightedGenesNames: [...initialState.highlightedGenesNames, highlightedGeneName],
+                highlightedGenesIds: [...initialState.highlightedGenesIds, newGene.feature_id],
             };
 
             expect(newState).toEqual(expectedState);
         });
 
         it('should highlight multiple genes', () => {
-            const highlightedGenesNames = ['asdf', 'qwer'];
-            const newState = genesReducer(initialState, genesHighlighted(highlightedGenesNames));
+            const genesByIdToHighlight = generateGenesById(2);
+            const newState = genesReducer(
+                initialState,
+                genesHighlighted(Object.keys(genesByIdToHighlight)),
+            );
             const expectedState = {
                 ...initialState,
-                highlightedGenesNames: [...highlightedGenesNames],
+                highlightedGenesIds: Object.keys(genesByIdToHighlight),
             };
 
             expect(newState).toEqual(expectedState);
         });
 
         it('should unhighlight gene', () => {
-            const newState = genesReducer(initialState, geneUnhighlighted('asdf'));
-            const expectedState = { ...initialState };
+            const newState = genesReducer(initialState, geneUnhighlighted(genes[0].feature_id));
+            const expectedState = { ...initialState, highlightedGenesIds: [genes[1].feature_id] };
 
             expect(newState).toEqual(expectedState);
         });

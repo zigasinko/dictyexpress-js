@@ -1,29 +1,35 @@
 import React, { ReactElement, useRef, useMemo } from 'react';
 import _ from 'lodash';
 import { Spec } from 'vega';
-import { GeneVisualizationData } from 'redux/models/internal';
-import Chart, { DataDefinition } from 'components/genexpress/common/chart/chart';
+import Chart, { DataDefinition } from '../../common/chart/chart';
 
+export type GeneVisualizationData = {
+    x: string;
+    y: number;
+    geneId: string;
+};
+
+// TODO: rename vega chart / component names to something more concise
 type LineChartVegaProps = {
-    data: Array<GeneVisualizationData>;
-    highlighted: string[];
-    onHighlight: (genesNames: string[]) => void;
+    data: GeneVisualizationData[];
+    highlightedGenesIds: string[];
+    onHighlight: (genesIds: string[]) => void;
 };
 
 const GeneExpressionsLineChart: React.FunctionComponent<LineChartVegaProps> = ({
     data,
-    highlighted,
+    highlightedGenesIds,
     onHighlight,
 }: LineChartVegaProps): ReactElement => {
     const updatableDataDefinitions: Array<DataDefinition> = useMemo(
         () => [
             {
                 name: 'highlighted',
-                data: highlighted,
+                data: highlightedGenesIds,
             },
             { name: 'table', data },
         ],
-        [data, highlighted],
+        [data, highlightedGenesIds],
     );
 
     // Data handlers that is updated (and reattached) only if highlighted variable changes.
@@ -34,20 +40,20 @@ const GeneExpressionsLineChart: React.FunctionComponent<LineChartVegaProps> = ({
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 handler: (name: string, value: any): void => {
                     if (value != null && value.length > 0) {
-                        const highlightedGenesNames = value.map(
+                        const selectedGenesIds = value.map(
                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             (geneNameObject: { data: any }) => geneNameObject.data,
                         );
-                        if (_.difference(highlightedGenesNames, highlighted).length > 0) {
-                            onHighlight(highlightedGenesNames);
+                        if (_.difference(selectedGenesIds, highlightedGenesIds).length > 0) {
+                            onHighlight(selectedGenesIds);
                         }
-                    } else if (highlighted.length > 0) {
+                    } else if (highlightedGenesIds.length > 0) {
                         onHighlight([]);
                     }
                 },
             },
         ],
-        [highlighted, onHighlight],
+        [highlightedGenesIds, onHighlight],
     );
 
     const renderSpecification = useRef<Spec>({
@@ -82,7 +88,7 @@ const GeneExpressionsLineChart: React.FunctionComponent<LineChartVegaProps> = ({
                     {
                         events:
                             '@genesExpressionsLines:click, @legendSymbol:click, @legendLabel:click',
-                        update: 'datum.geneName == null ? datum.value : datum.geneName',
+                        update: 'datum.geneId == null ? datum.value : datum.geneId',
                         force: true,
                     },
                 ],
@@ -94,7 +100,7 @@ const GeneExpressionsLineChart: React.FunctionComponent<LineChartVegaProps> = ({
                     {
                         events:
                             '@legendSymbol:mouseover, @legendLabel:mouseover, @genesExpressionsLines:mouseover, @geneExpressionsPoints:mouseover',
-                        update: '{geneName: datum.geneName == null ? datum.value : datum.geneName}',
+                        update: '{geneId: datum.geneId == null ? datum.value : datum.geneId}',
                         force: true,
                     },
                 ],
@@ -127,7 +133,7 @@ const GeneExpressionsLineChart: React.FunctionComponent<LineChartVegaProps> = ({
             },
             {
                 name: 'highlighted',
-                values: highlighted,
+                values: highlightedGenesIds,
                 on: [
                     { trigger: 'clear', remove: true },
                     { trigger: '!ctrl', remove: true },
@@ -160,7 +166,7 @@ const GeneExpressionsLineChart: React.FunctionComponent<LineChartVegaProps> = ({
                             fontWeight: [
                                 {
                                     test:
-                                        "indata('hovered', 'geneName', datum.value) || indata('highlighted', 'data', datum.value)",
+                                        "indata('hovered', 'geneId', datum.value) || indata('highlighted', 'data', datum.value)",
                                     value: 'bold',
                                 },
                                 { value: 'normal' },
@@ -177,7 +183,7 @@ const GeneExpressionsLineChart: React.FunctionComponent<LineChartVegaProps> = ({
                     facet: {
                         name: 'series',
                         data: 'table',
-                        groupby: 'geneName',
+                        groupby: 'geneId',
                     },
                 },
                 marks: [
@@ -189,18 +195,14 @@ const GeneExpressionsLineChart: React.FunctionComponent<LineChartVegaProps> = ({
                             enter: {
                                 x: { scale: 'xscale', field: 'x' },
                                 y: { scale: 'yscale', field: 'y' },
-                                stroke: { scale: 'colorscale', field: 'geneName' },
+                                stroke: { scale: 'colorscale', field: 'geneId' },
                                 strokeWidth: { value: 2 },
-                                tooltip: {
-                                    signal:
-                                        "{'Gene name': datum.geneName, 'Time': datum.x, 'Score': datum.y}",
-                                },
                             },
                             update: {
                                 strokeWidth: [
                                     {
                                         test:
-                                            "indata('hovered', 'geneName', datum.geneName) || indata('highlighted', 'data', datum.geneName)",
+                                            "indata('hovered', 'geneId', datum.geneId) || indata('highlighted', 'data', datum.geneId)",
                                         value: 4,
                                     },
                                     { value: 2 },
@@ -217,12 +219,12 @@ const GeneExpressionsLineChart: React.FunctionComponent<LineChartVegaProps> = ({
                             enter: {
                                 x: { scale: 'xscale', field: 'x' },
                                 y: { scale: 'yscale', field: 'y' },
-                                fill: { scale: 'colorscale', field: 'geneName' },
-                                stroke: { scale: 'colorscale', field: 'geneName' },
+                                fill: { scale: 'colorscale', field: 'geneId' },
+                                stroke: { scale: 'colorscale', field: 'geneId' },
                                 strokeWidth: { value: 1 },
                                 tooltip: {
                                     signal:
-                                        "{'Gene name': datum.geneName, 'Time': datum.x, 'Score': datum.y}",
+                                        "{'Gene': datum.geneId, 'Time': datum.x, 'Score': datum.y}",
                                 },
                             },
                         },
@@ -249,7 +251,7 @@ const GeneExpressionsLineChart: React.FunctionComponent<LineChartVegaProps> = ({
                 name: 'colorscale',
                 type: 'ordinal',
                 range: 'category',
-                domain: { data: 'table', field: 'geneName' },
+                domain: { data: 'table', field: 'geneId' },
             },
         ],
         axes: [

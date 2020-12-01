@@ -2,12 +2,12 @@ import React, { ReactElement, useEffect, useState, useCallback } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import _ from 'lodash';
 import { RootState } from 'redux/rootReducer';
-import { getSelectedGenes, getHighlightedGenesNames, genesHighlighted } from 'redux/stores/genes';
+import { getSelectedGenes, getHighlightedGenesIds, genesHighlighted } from 'redux/stores/genes';
 import { Relation, RelationPartition } from '@genialis/resolwe/dist/api/types/rest';
-import { SamplesExpressionsById, GeneVisualizationData, Gene } from 'redux/models/internal';
+import { SamplesExpressionsById, Gene } from 'redux/models/internal';
 import { getSelectedTimeSeries, getSelectedTimeSeriesLabels } from 'redux/stores/timeSeries';
 import { getSamplesExpressionsById } from 'redux/stores/samplesExpressions';
-import GeneExpressionsLineChart from './geneExpressionsLineChart';
+import GeneExpressionsLineChart, { GeneVisualizationData } from './geneExpressionsLineChart';
 
 const mapStateToProps = (
     state: RootState,
@@ -16,7 +16,7 @@ const mapStateToProps = (
     timeSeriesLabels: string[];
     genes: Gene[];
     samplesExpressionsById: SamplesExpressionsById;
-    highlightedGenesNames: string[];
+    highlightedGenesIds: string[];
 } => {
     return {
         // Time series to be visualized.
@@ -24,11 +24,11 @@ const mapStateToProps = (
         // Time series labels (time points).
         timeSeriesLabels: getSelectedTimeSeriesLabels(state.timeSeries),
         // Genes to be visualized.
-        genes: getSelectedGenes(state.selectedGenes),
+        genes: getSelectedGenes(state.genes),
         // Samples gene expressions data.
         samplesExpressionsById: getSamplesExpressionsById(state.samplesExpressions),
-        // Genes names that are highlighted.
-        highlightedGenesNames: getHighlightedGenesNames(state.selectedGenes),
+        // Highlighted genes IDs.
+        highlightedGenesIds: getHighlightedGenesIds(state.genes),
     };
 };
 
@@ -44,7 +44,7 @@ const GeneExpressions = ({
     genes,
     samplesExpressionsById,
     connectedGenesHighlighted,
-    highlightedGenesNames,
+    highlightedGenesIds,
 }: PropsFromRedux): ReactElement => {
     const [genesExpressionsData, setGenesExpressionsData] = useState<GeneVisualizationData[]>([]);
 
@@ -55,12 +55,9 @@ const GeneExpressions = ({
         [timeSeries],
     );
 
-    const handleOnHighlight = useCallback(
-        (genesNames: string[]): void => {
-            connectedGenesHighlighted(genesNames);
-        },
-        [connectedGenesHighlighted],
-    );
+    const handleOnHighlight = (genesNames: string[]): void => {
+        connectedGenesHighlighted(genesNames);
+    };
 
     // Each time timeSeries or genes changes, visualization data must be refreshed.
     useEffect(() => {
@@ -81,7 +78,7 @@ const GeneExpressions = ({
                 newGenesExpressionsData.push({
                     x: label,
                     y: _.mean(values),
-                    geneName: gene.name,
+                    geneId: gene.feature_id,
                 });
             });
         });
@@ -94,7 +91,7 @@ const GeneExpressions = ({
             {genesExpressionsData.length > 0 && (
                 <GeneExpressionsLineChart
                     data={genesExpressionsData}
-                    highlighted={highlightedGenesNames}
+                    highlightedGenesIds={highlightedGenesIds}
                     onHighlight={handleOnHighlight}
                 />
             )}

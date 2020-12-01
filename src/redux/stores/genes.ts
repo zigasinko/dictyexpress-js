@@ -3,35 +3,40 @@ import { combineReducers } from 'redux';
 import _ from 'lodash';
 import { Gene, GenesById } from 'redux/models/internal';
 import { timeSeriesSelected } from './timeSeries';
+import createIsFetchingSlice from './fetch';
 
 // State slices.
-const selectedGenesInitialState = {} as GenesById;
-const selectedGenesSlice = createSlice({
+const genesByIdInitialState = {} as GenesById;
+const genesByIdSlice = createSlice({
     name: 'genes',
-    initialState: selectedGenesInitialState,
+    initialState: genesByIdInitialState,
     reducers: {
-        selected: (state, action: PayloadAction<Gene>): GenesById => {
-            return { ...state, [action.payload.name]: action.payload };
+        fetchSucceeded: (state, action: PayloadAction<Gene[]>): GenesById => {
+            const newState = { ...state, ..._.keyBy(action.payload, 'feature_id') };
+            return newState;
         },
-        selectedMultiple: (_state, action: PayloadAction<Gene[]>): GenesById => {
-            return _.keyBy(action.payload, 'name');
+    },
+});
+
+const selectedGenesIdsInitialState = [] as string[];
+const selectedGenesIdsSlice = createSlice({
+    name: 'genes',
+    initialState: selectedGenesIdsInitialState,
+    reducers: {
+        selectedMultiple: (state, action: PayloadAction<string[]>): string[] => {
+            return _.uniq([...state, ...action.payload]);
         },
-        deselected: (state, action: PayloadAction<Gene>): GenesById => {
-            const { [action.payload.name]: value, ...remainingGenes } = state;
-            return remainingGenes;
+        deselected: (state, action: PayloadAction<string>): string[] => {
+            return state.filter((geneId) => geneId !== action.payload);
         },
-        deselectedAll: (): GenesById => {
-            return selectedGenesInitialState;
+        deselectedAll: (): string[] => {
+            return selectedGenesIdsInitialState;
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(
-            timeSeriesSelected,
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            (_state, _action): GenesById => {
-                return selectedGenesInitialState;
-            },
-        );
+        builder.addCase(timeSeriesSelected, (): string[] => {
+            return selectedGenesIdsInitialState;
+        });
     },
 });
 
@@ -43,27 +48,46 @@ const highlightedGenesSlice = createSlice({
         highlighted: (state, action: PayloadAction<string>): string[] => {
             return [...state, action.payload];
         },
-        highlightedMultiple: (state, action: PayloadAction<string[]>): string[] => {
+        highlightedMultiple: (_state, action: PayloadAction<string[]>): string[] => {
             return [...action.payload];
         },
         unhighlighted: (state, action: PayloadAction<string>): string[] => {
-            return state.filter((geneName) => action.payload !== geneName);
+            return state.filter((geneId) => action.payload !== geneId);
         },
+    },
+    extraReducers: (builder) => {
+        builder.addCase(
+            selectedGenesIdsSlice.actions.deselected,
+            (state, action: PayloadAction<string>): string[] => {
+                return state.filter((highlightedGeneId) => action.payload !== highlightedGeneId);
+            },
+        );
+        builder.addCase(timeSeriesSelected, (): string[] => {
+            return highlightedGenesInitialState;
+        });
+        builder.addCase(selectedGenesIdsSlice.actions.deselectedAll, (): string[] => {
+            return highlightedGenesInitialState;
+        });
     },
 });
 
+const isFetchingDifferentialExpressionGenesSlice = createIsFetchingSlice('genes');
+
 const genesReducer = combineReducers({
-    byId: selectedGenesSlice.reducer,
-    highlightedGenesNames: highlightedGenesSlice.reducer,
+    byId: genesByIdSlice.reducer,
+    selectedGenesIds: selectedGenesIdsSlice.reducer,
+    highlightedGenesIds: highlightedGenesSlice.reducer,
+    isFetchingDifferentialExpressionGenes: isFetchingDifferentialExpressionGenesSlice.reducer,
 });
 
 // Export actions.
+export const { fetchSucceeded: genesFetchSucceeded } = genesByIdSlice.actions;
+
 export const {
     selectedMultiple: genesSelected,
-    selected: geneSelected,
     deselected: geneDeselected,
     deselectedAll: allGenesDeselected,
-} = selectedGenesSlice.actions;
+} = selectedGenesIdsSlice.actions;
 
 export const {
     highlighted: geneHighlighted,
@@ -71,17 +95,31 @@ export const {
     unhighlighted: geneUnhighlighted,
 } = highlightedGenesSlice.actions;
 
+export const {
+    started: differentialExpressionGenesFetchStarted,
+    ended: differentialExpressionGenesFetchEnded,
+} = isFetchingDifferentialExpressionGenesSlice.actions;
+
 export type GenesState = ReturnType<typeof genesReducer>;
 
 export default genesReducer;
 
 // Selectors (exposes the store to containers).
-const byIdSelector = (state: GenesState): GenesById => state.byId;
+const getGenesById = (state: GenesState): GenesById => state.byId;
+export const getSelectedGenesIds = (state: GenesState): string[] => state.selectedGenesIds;
 
 // createSelector function uses memoization so that only if byId slice changes it will get recomputed again.
-export const getSelectedGenes = createSelector(byIdSelector, (genesById) => {
-    return _.flatMap(genesById);
-});
+export const getSelectedGenes = createSelector(
+    getGenesById,
+    getSelectedGenesIds,
+    (genesById, selectedGenesIds) => {
+        return selectedGenesIds.map((geneId) => genesById[geneId]);
+    },
+);
 
-export const getHighlightedGenesNames = (state: GenesState): string[] =>
-    state.highlightedGenesNames;
+export const getGenes = createSelector(getGenesById, (genesById) => _.flatMap(genesById));
+export const getGenesIdsInStore = createSelector(getGenes, (genes) =>
+    genes.map((gene) => gene.feature_id),
+);
+
+export const getHighlightedGenesIds = (state: GenesState): string[] => state.highlightedGenesIds;

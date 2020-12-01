@@ -185,7 +185,7 @@ export const generateTimeSeriesById = (n: number): RelationsById => {
 };
 
 export const generateGenesById = (n: number): GenesById => {
-    return generateInstances<Gene>(n, (instance) => instance.name, generateGene);
+    return generateInstances<Gene>(n, (instance) => instance.feature_id, generateGene);
 };
 
 export const generateRelationsById = (n: number): RelationsById => {
@@ -216,9 +216,11 @@ export const testState = (): RootState => {
             isAddingToBasket: false,
             basketInfo: {} as BasketInfo,
         },
-        selectedGenes: {
+        genes: {
             byId: generateGenesById(2),
-            highlightedGenesNames: [],
+            selectedGenesIds: [],
+            highlightedGenesIds: [],
+            isFetchingDifferentialExpressionGenes: false,
         },
         samplesExpressions: {
             byId: {},
