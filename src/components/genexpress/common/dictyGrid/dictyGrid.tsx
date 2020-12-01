@@ -10,7 +10,7 @@ import {
     RowClickedEvent,
 } from 'ag-grid-community';
 import _ from 'lodash';
-import { FilterTextField, GridWrapper } from './dictyGrid.styles';
+import { DictyGridContainer, FilterTextField, GridWrapper } from './dictyGrid.styles';
 
 type DictyGridProps<T> = {
     hideFilter?: boolean;
@@ -113,7 +113,7 @@ const DictyGrid = <T extends {}>({
     };
 
     return (
-        <>
+        <DictyGridContainer>
             {!hideFilter && (
                 <FilterTextField
                     id="filterField"
@@ -150,7 +150,7 @@ const DictyGrid = <T extends {}>({
                     onColumnResized={handleOnColumnResized}
                 />
             </GridWrapper>
-        </>
+        </DictyGridContainer>
     );
 };
 
