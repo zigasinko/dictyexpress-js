@@ -3,7 +3,7 @@ import { Responsive, WidthProvider } from 'react-grid-layout';
 import { connect, ConnectedProps, useDispatch } from 'react-redux';
 import { RootState } from 'redux/rootReducer';
 import { getTimeSeriesIsFetching, getIsAddingToBasket } from 'redux/stores/timeSeries';
-import { getSamplesExpressionsIsFetching } from 'redux/stores/samplesExpressions';
+import { getIsFetchingSamplesExpressions } from 'redux/stores/samplesExpressions';
 import { appStarted } from 'redux/epics/connectToServerEpic';
 import csrfApi from 'api/csrfApi';
 import { getIsLoggingOut } from 'redux/stores/authentication';
@@ -88,7 +88,7 @@ const mapStateToProps = (
     return {
         isFetchingTimeSeries: getTimeSeriesIsFetching(state.timeSeries),
         isAddingToBasket: getIsAddingToBasket(state.timeSeries),
-        isFetchingSamplesExpressions: getSamplesExpressionsIsFetching(state.samplesExpressions),
+        isFetchingSamplesExpressions: getIsFetchingSamplesExpressions(state.samplesExpressions),
         isLoggingOut: getIsLoggingOut(state.authentication),
     };
 };

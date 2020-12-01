@@ -5,13 +5,13 @@ import { Gene } from 'redux/models/internal';
 import ConnectedGeneInformation from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/selectedGenes/geneInformation/geneInformation';
 import { GeneChipWrapper } from './geneChip.styles';
 
-export interface GeneChipProps {
+export type GeneChipProps = {
     gene: Gene;
     highlighted: boolean;
     onHighlight: () => void;
     onUnhighlight: () => void;
     onRemove: () => void;
-}
+};
 export const GeneChip = ({
     gene,
     onRemove,

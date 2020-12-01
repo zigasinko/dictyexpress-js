@@ -62,7 +62,7 @@ const DictyGrid = <T extends {}>({
         setFilter(e.target.value);
     };
 
-    // Set selected so that grid knows which row to mark as "selected" and execute onRowSelected callback.
+    // Execute onRowSelected callback with selected data.
     const handleRowSelected = (event: RowSelectedEvent): void => {
         if (event.node.isSelected()) {
             onRowSelected?.(event.node.data);
@@ -100,15 +100,15 @@ const DictyGrid = <T extends {}>({
         sortable: true,
     };
 
-    const onColumnResized = (): void => {
+    const handleOnColumnResized = (): void => {
         gridApi.current?.resetRowHeights();
     };
 
-    const handleSelectionChanged = (event: SelectionChangedEvent): void => {
+    const handleOnSelectionChanged = (event: SelectionChangedEvent): void => {
         onSelectionChanged?.(event.api.getSelectedNodes().map((selectedNode) => selectedNode.data));
     };
 
-    const handleRowClicked = (event: RowClickedEvent): void => {
+    const handleOnRowClicked = (event: RowClickedEvent): void => {
         onRowClicked?.(event.node.data);
     };
 
@@ -135,19 +135,19 @@ const DictyGrid = <T extends {}>({
                     disableStaticMarkup={false}
                     rowSelection={selectionMode}
                     rowStyle={
-                        selectionMode != null || handleRowClicked != null
+                        selectionMode != null || handleOnRowClicked != null
                             ? { cursor: 'pointer' }
                             : {}
                     }
                     suppressRowClickSelection={suppressRowClickSelection}
-                    onRowClicked={handleRowClicked}
+                    onRowClicked={handleOnRowClicked}
                     onRowSelected={handleRowSelected}
                     getRowNodeId={getRowId}
                     immutableData
-                    onSelectionChanged={handleSelectionChanged}
+                    onSelectionChanged={handleOnSelectionChanged}
                     rowData={data}
                     quickFilterText={filter}
-                    onColumnResized={onColumnResized}
+                    onColumnResized={handleOnColumnResized}
                 />
             </GridWrapper>
         </>

@@ -27,7 +27,7 @@ describe('genexpressAppBar', () => {
             });
         });
 
-        it('should open login dialog', async () => {
+        it('should open login modal', async () => {
             fireEvent.click(await screen.findByText('Login'));
 
             expect(await screen.findByLabelText('Username'));

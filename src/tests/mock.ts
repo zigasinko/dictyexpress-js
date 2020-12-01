@@ -17,7 +17,7 @@ import { generateRandomString } from 'utils/stringUtils';
 import {
     RelationsById,
     GenesById,
-    SamplesInfo,
+    BasketInfo,
     SnackbarNotifications,
     SnackbarNotification,
     SamplesExpressionsById,
@@ -214,7 +214,7 @@ export const testState = (): RootState => {
             selectedId: 1,
             isFetching: false,
             isAddingToBasket: false,
-            selectedSamplesInfo: {} as SamplesInfo,
+            basketInfo: {} as BasketInfo,
         },
         selectedGenes: {
             byId: generateGenesById(2),

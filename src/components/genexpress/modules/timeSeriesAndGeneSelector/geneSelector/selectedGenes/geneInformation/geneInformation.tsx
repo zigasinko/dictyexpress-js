@@ -11,12 +11,12 @@ import {
     GeneInformationHeader,
 } from './geneInformation.styles';
 
-export interface GeneInformationProps {
+export type GeneInformationProps = {
     gene: Gene;
     highlighted?: boolean;
     onHighlight?: () => void;
     onUnhighlight?: () => void;
-}
+};
 export const GeneInformation = ({
     gene,
     onHighlight,

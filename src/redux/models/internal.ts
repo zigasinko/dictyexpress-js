@@ -8,14 +8,15 @@ export type Gene = Pick<
 >;
 
 export type RelationsById = {
-    [_: string]: Relation;
+    [_: number]: Relation;
 };
 
 export type GenesById = {
     [_: string]: Gene;
 };
 
-export type SamplesInfo = {
+export type BasketInfo = {
+    id: string;
     source: string;
     species: string;
     type: 'gene';
