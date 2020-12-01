@@ -5,7 +5,7 @@ import { GeneSet, Gene } from 'redux/models/internal';
 import { LocalStorageKey } from 'components/genexpress/common/constants';
 import useLocalStorage from 'components/genexpress/common/useLocalStorage';
 import IconButtonWithTooltip from 'components/genexpress/common/iconButtonWithTooltip/iconButtonWithTooltip';
-import ManageGeneSets from './manageGeneSets';
+import ManageGeneSetsModal from './manageGeneSetsModal';
 
 type SelectGeneSetProps = {
     selectedGenes: Gene[];
@@ -64,13 +64,15 @@ const GeneSetSelector = ({
                 </Button>
             </div>
 
-            <ManageGeneSets
-                open={manageModalOpened}
-                geneSets={geneSets}
-                onClick={handleOnClick}
-                onDelete={handleOnDelete}
-                onClose={(): void => setManageModalOpened(false)}
-            />
+            {manageModalOpened && (
+                <ManageGeneSetsModal
+                    open={manageModalOpened}
+                    geneSets={geneSets}
+                    onClick={handleOnClick}
+                    onDelete={handleOnDelete}
+                    onClose={(): void => setManageModalOpened(false)}
+                />
+            )}
         </>
     );
 };

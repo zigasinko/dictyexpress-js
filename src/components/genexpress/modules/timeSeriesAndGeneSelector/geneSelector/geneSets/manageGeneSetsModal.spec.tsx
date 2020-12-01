@@ -2,7 +2,7 @@ import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { generateGeneSets } from 'tests/mock';
 import { customRender } from 'tests/test-utils';
-import ManageGeneSets from './manageGeneSets';
+import ManageGeneSetsModal from './manageGeneSetsModal';
 
 // GeneSets have to be sorted so that first element in array is also first row in grid.
 // Needed to assert selected item with 'Toggle Row Selection' (first row).
@@ -24,7 +24,7 @@ describe('manageGeneSets', () => {
         mockedOnClose = jest.fn();
 
         customRender(
-            <ManageGeneSets
+            <ManageGeneSetsModal
                 geneSets={testGeneSets}
                 onDelete={mockedOnDelete}
                 onClick={mockedOnClick}

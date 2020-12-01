@@ -10,26 +10,26 @@ import {
 } from 'components/genexpress/common/dictyModal/dictyModal.styles';
 import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
 import { GeneSet } from 'redux/models/internal';
-import { ManageGeneSetsGridWrapper } from './manageGeneSets.styles';
+import { ManageGeneSetsGridWrapper } from './manageGeneSetsModal.styles';
 
-interface GeneSetsProps {
+type ManageGeneSetsModalProps = {
     geneSets: GeneSet[];
     onDelete: (geneSets: GeneSet[]) => void;
     onClick: (geneSet: GeneSet) => void;
     onClose: () => void;
     open: boolean;
-}
+};
 
-const ManageGeneSets = ({
+const ManageGeneSetsModal = ({
     open,
     geneSets,
     onDelete,
     onClick,
     onClose,
-}: GeneSetsProps): ReactElement => {
+}: ManageGeneSetsModalProps): ReactElement => {
     const [selectedGeneSets, setSelectedGeneSets] = useState<GeneSet[]>([]);
-    const geneSetsSelectionChangedHandler = (nextSelectedGeneSets: GeneSet[]): void => {
-        setSelectedGeneSets(nextSelectedGeneSets);
+    const geneSetsSelectionChangedHandler = (newSelectedGeneSets: GeneSet[]): void => {
+        setSelectedGeneSets(newSelectedGeneSets);
     };
 
     const handleOnDelete = (): void => {
@@ -57,7 +57,6 @@ const ManageGeneSets = ({
                         <DictyGrid
                             data={geneSets}
                             getRowId={(data): string => data.dateTime.toString()}
-                            filterLabel="Filter time series"
                             columnDefs={[
                                 {
                                     headerCheckboxSelection: true,
@@ -102,4 +101,4 @@ const ManageGeneSets = ({
     );
 };
 
-export default ManageGeneSets;
+export default ManageGeneSetsModal;
