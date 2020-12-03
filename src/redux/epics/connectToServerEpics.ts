@@ -10,7 +10,7 @@ import {
     delay,
     take,
 } from 'rxjs/operators';
-import { concat, of, throwError } from 'rxjs';
+import { merge, of, throwError } from 'rxjs';
 import { RootState } from 'redux/rootReducer';
 import { webSocket } from 'rxjs/webSocket';
 import { Message } from '@genialis/resolwe/dist/api/connection';
@@ -52,10 +52,26 @@ const connectToServerEpic: Epic<Action, Action, RootState> = (action$) =>
                     return webSocket({
                         url: `${url + sessionId}`,
                         WebSocketCtor: WebSocket,
-                    });
+                    }).pipe(
+                        retryWhen((errors) => {
+                            return errors.pipe(
+                                delay(reconnectionTimeout),
+                                take(reconnectionMaxAttempts),
+                                (o) => merge(o, throwError(o)),
+                            );
+                        }),
+                        catchError((err) => {
+                            return of(
+                                handleError(
+                                    `WebSocket connection failed after ${reconnectionMaxAttempts} tries.`,
+                                    err,
+                                ),
+                            );
+                        }),
+                    );
                 }),
-                switchMap((webSocketConnection$) => {
-                    return webSocketConnection$.pipe(
+                switchMap((webSocketConnection$) =>
+                    webSocketConnection$.pipe(
                         takeUntil(
                             action$.pipe(
                                 ofType(
@@ -68,24 +84,9 @@ const connectToServerEpic: Epic<Action, Action, RootState> = (action$) =>
                             return handleWebSocketMessage(message as Message);
                         }),
                         filterNullAndUndefined(),
-                        retryWhen((errors) =>
-                            errors.pipe(
-                                delay(reconnectionTimeout),
-                                take(reconnectionMaxAttempts),
-                                (o) => concat(o, throwError(o)),
-                            ),
-                        ),
-                        catchError((err) => {
-                            return of(
-                                handleError(
-                                    `WebSocket connection failed after ${reconnectionMaxAttempts} tries.`,
-                                    err,
-                                ),
-                            );
-                        }),
-                        startWith(connectionReady()),
-                    );
-                }),
+                    ),
+                ),
+                startWith(connectionReady()),
             );
         }),
     );

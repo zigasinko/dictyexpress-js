@@ -1,5 +1,5 @@
 import { ofType, Epic, combineEpics } from 'redux-observable';
-import { map, mergeMap, startWith, endWith, catchError, withLatestFrom } from 'rxjs/operators';
+import { map, startWith, endWith, catchError, withLatestFrom, switchMap } from 'rxjs/operators';
 import { of, from } from 'rxjs';
 import { RootState } from 'redux/rootReducer';
 import { geneDeselected, getSelectedGenes } from 'redux/stores/genes';
@@ -17,18 +17,25 @@ import {
 import { handleError } from 'utils/errorUtils';
 import { Action } from '@reduxjs/toolkit';
 import { appendMissingAttributesToJson } from 'utils/gOEnrichmentUtils';
+import { DisposeFunction as QueryObserverDisposeFunction } from 'api/queryObserverManager';
 import {
-    getDataFetchSucceededActionIfDone,
-    getGOEnrichmentData,
-    getOrCreateGOEnrichmentData,
-    getStorageJson,
-} from 'api';
+    DataGOEnrichmentAnalysis,
+    DONE_DATA_STATUS,
+    ERROR_DATA_STATUS,
+} from '@genialis/resolwe/dist/api/types/rest';
+import { getOrCreateGOEnrichmentData, getDataReactive, getStorage } from 'api';
 import {
     fetchGOEnrichmentData,
     gafAlreadyFetched,
     gOEnrichmentDataFetchSucceeded,
 } from './epicsActions';
 import { filterNullAndUndefined } from './rxjsCustomFilters';
+
+/* Clustering process pushes clustering data via WebSocket. If new process is started,
+ * we must unsubscribe previous queryObserver. Otherwise data / errors can be displayed
+ * after parameters have already changed.
+ */
+let activeQueryObserverDisposeFunction: QueryObserverDisposeFunction;
 
 const getOrCreateGOEnrichmentEpic: Epic<Action, Action, RootState> = (action$, state$) => {
     return action$.pipe(
@@ -39,7 +46,13 @@ const getOrCreateGOEnrichmentEpic: Epic<Action, Action, RootState> = (action$, s
             pValueThresholdChanged.toString(),
         ),
         withLatestFrom(state$),
-        mergeMap(([, state]) => {
+        switchMap(([, state]) => {
+            // Cleanup queryObserverManager existing observer waiting to receive clustering
+            // data via WebSocket.
+            if (activeQueryObserverDisposeFunction != null) {
+                activeQueryObserverDisposeFunction();
+            }
+
             const selectedGenes = getSelectedGenes(state.genes);
 
             if (selectedGenes.length === 0) {
@@ -69,13 +82,38 @@ const getOrCreateGOEnrichmentEpic: Epic<Action, Action, RootState> = (action$, s
     );
 };
 
+/**
+ * Determines if analysis was successful (throws error if not) and returns "gOEnrichmentDataFetchSucceeded"
+ * action, if output terms (storageId) is not empty.
+ * @param response - DataGOEnrichmentAnalysis response.
+ */
+const handleGOEnrichmentAnalysisDataResponse = (
+    response: DataGOEnrichmentAnalysis,
+): ReturnType<typeof handleError> | ReturnType<typeof gOEnrichmentDataFetchSucceeded> | null => {
+    if (response.status === ERROR_DATA_STATUS) {
+        const errorMessage = `Gene Ontology Enrichment analysis ended with an error ${
+            response.process_error.length > 0 ? response.process_error[0] : ''
+        }`;
+        return handleError(errorMessage, new Error(errorMessage));
+    }
+
+    if (response.status === DONE_DATA_STATUS && response.output.terms != null) {
+        return gOEnrichmentDataFetchSucceeded(response);
+    }
+
+    return null;
+};
+
 const fetchGOEnrichmentDataEpic: Epic<Action, Action, RootState> = (action$) => {
     return action$.pipe(
         ofType<Action, ReturnType<typeof fetchGOEnrichmentData>>(fetchGOEnrichmentData.toString()),
-        mergeMap((action) => {
-            return from(getGOEnrichmentData(action.payload)).pipe(
+        switchMap((action) => {
+            return from(
+                getDataReactive(action.payload, handleGOEnrichmentAnalysisDataResponse),
+            ).pipe(
                 map((response) => {
-                    return getDataFetchSucceededActionIfDone(response);
+                    activeQueryObserverDisposeFunction = response.disposeFunction;
+                    return handleGOEnrichmentAnalysisDataResponse(response.item);
                 }),
                 filterNullAndUndefined(),
                 catchError((error) => {
@@ -97,8 +135,8 @@ const fetchGOEnrichmentStorageEpic: Epic<Action, Action, RootState> = (action$, 
             gOEnrichmentDataFetchSucceeded.toString(),
         ),
         withLatestFrom(state$),
-        mergeMap(([action, state]) => {
-            return from(getStorageJson(action.payload.output.terms)).pipe(
+        switchMap(([action, state]) => {
+            return from(getStorage(action.payload.output.terms)).pipe(
                 // Save gene ontology enrichment json to redux store. Data will be extracted and displayed in
                 // gOEnrichment visualization component (table).
                 map((storage) => {

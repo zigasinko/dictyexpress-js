@@ -1,15 +1,13 @@
+import { Data, DONE_DATA_STATUS } from '@genialis/resolwe/dist/api/types/rest';
+import { handleError } from 'utils/errorUtils';
 import {
-    Data,
-    DataGOEnrichmentAnalysis,
-    DONE_DATA_STATUS,
-    ERROR_DATA_STATUS,
-} from '@genialis/resolwe/dist/api/types/rest';
-import { PayloadAction } from '@reduxjs/toolkit';
-import { gOEnrichmentDataFetchSucceeded } from 'redux/epics/epicsActions';
+    DisposeFunction as QueryObserverDisposeFunction,
+    reactiveRequest,
+} from 'api/queryObserverManager';
+import { Action } from '@reduxjs/toolkit';
 import { deserializeResponse } from '../utils/apiUtils';
 import { apiUrl } from './base';
 import { get, getReactive } from './fetch';
-import { reactiveRequest } from './queryObserverManager';
 
 const baseUrl = `${apiUrl}/data`;
 
@@ -35,44 +33,21 @@ export const getDataBySamplesIds = async (samplesIds: number[]): Promise<Data[]>
     return deserializeResponse<Data[]>(getSamplesDataResponse);
 };
 
-/**
- * Determines if analysis was successful (throws error if not) and returns "fetchGOEnrichmentStorage"
- * action, if output terms (storageId) is not empty.
- * @param response
- */
-export const getDataFetchSucceededActionIfDone = (
-    response: DataGOEnrichmentAnalysis,
-): PayloadAction<DataGOEnrichmentAnalysis> | null => {
-    if (response.status === ERROR_DATA_STATUS) {
-        throw new Error(
-            `Analysis ended with an error ${
-                response.process_error.length > 0 ? response.process_error[0] : ''
-            }`,
-        );
-    }
-
-    // TODO: check if this condition is ok or would status be better?
-    if (response.output.terms != null) {
-        return gOEnrichmentDataFetchSucceeded(response);
-    }
-
-    return null;
-};
-
-export const getGOEnrichmentData = async (dataId: number): Promise<DataGOEnrichmentAnalysis> => {
-    const getGOEnrichmentDataRequest = (): Promise<Response> =>
-        getReactive(baseUrl, { id: dataId });
+export const getDataReactive = async <T>(
+    dataId: number,
+    handleDataResponse: (items: T) => Action | null,
+): Promise<{ item: T; disposeFunction: QueryObserverDisposeFunction }> => {
+    const getClusteringDataRequest = (): Promise<Response> => getReactive(baseUrl, { id: dataId });
 
     const webSocketMessageOutputReduxAction = (
         items: unknown[],
-    ): PayloadAction<DataGOEnrichmentAnalysis> | null => {
-        return getDataFetchSucceededActionIfDone(items[0] as DataGOEnrichmentAnalysis);
+    ): ReturnType<typeof handleError> | Action | null => {
+        return handleDataResponse(items[0] as T);
     };
 
-    return (
-        await reactiveRequest<DataGOEnrichmentAnalysis>(
-            getGOEnrichmentDataRequest,
-            webSocketMessageOutputReduxAction,
-        )
-    )[0];
+    const { items, disposeFunction } = await reactiveRequest<T>(
+        getClusteringDataRequest,
+        webSocketMessageOutputReduxAction,
+    );
+    return { item: items[0], disposeFunction };
 };

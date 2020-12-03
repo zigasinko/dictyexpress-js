@@ -5,16 +5,11 @@ import { get } from './fetch';
 
 const baseUrl = `${apiUrl}/storage`;
 
-export const getStorageJson = async (storageId: number): Promise<Storage> => {
+// eslint-disable-next-line import/prefer-default-export
+export const getStorage = async (storageId: number): Promise<Storage> => {
     const url = `${baseUrl}/${storageId}`;
 
     const getStorageJsonResponse = await get(url);
 
     return deserializeResponse<Storage>(getStorageJsonResponse);
-};
-
-export const getGOEnrichmentJson = async (storageId: number): Promise<Storage> => {
-    const url = `${baseUrl}/${storageId}`;
-
-    return deserializeResponse<Storage>(await get(url));
 };

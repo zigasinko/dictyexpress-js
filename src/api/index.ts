@@ -5,13 +5,8 @@ export { unsubscribe } from './queryObserverApi';
 export { getCSRFCookie } from './csrfApi';
 export { getDifferentialExpressions } from './differentialExpressionApi';
 export { getOrCreateGOEnrichmentData } from './getOrCreateApi';
-export { getStorageJson, getGOEnrichmentJson } from './storageApi';
+export { getStorage } from './storageApi';
 export { listByIds } from './geneListApi';
 export { getTimeSeriesRelations } from './relationApi';
 export { getCurrentUser } from './userApi';
-export {
-    getGafs,
-    getDataBySamplesIds,
-    getDataFetchSucceededActionIfDone,
-    getGOEnrichmentData,
-} from './dataApi';
+export { getGafs, getDataBySamplesIds, getDataReactive } from './dataApi';

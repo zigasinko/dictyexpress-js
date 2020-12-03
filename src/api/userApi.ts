@@ -17,5 +17,6 @@ export const getCurrentUser = async (): Promise<User> => {
         return userFetchSucceeded(items[0] as User);
     };
 
-    return (await reactiveRequest<User>(getUserRequest, webSocketMessageOutputReduxAction))[0];
+    return (await reactiveRequest<User>(getUserRequest, webSocketMessageOutputReduxAction))
+        .items[0];
 };

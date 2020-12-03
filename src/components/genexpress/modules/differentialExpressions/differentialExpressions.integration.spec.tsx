@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
-import { customRender, validateExportFile } from 'tests/test-utils';
+import { customRender, handleCommonRequests, validateExportFile } from 'tests/test-utils';
 import {
     testState,
     generateDifferentialExpressionsById,
@@ -34,15 +34,7 @@ describe('differentialExpressions integration', () => {
                 );
             }
 
-            if (req.url.includes('csrf')) {
-                return Promise.resolve('');
-            }
-
-            if (req.url.includes('user?current_only')) {
-                return Promise.resolve(JSON.stringify({ items: [] }));
-            }
-
-            return Promise.reject(new Error(`bad url: ${req.url}`));
+            return handleCommonRequests(req) ?? Promise.reject(new Error(`bad url: ${req.url}`));
         });
     });
 

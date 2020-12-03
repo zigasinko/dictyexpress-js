@@ -16,14 +16,30 @@ type QueryObserver = {
     webSocketMessageOutputReduxAction: (items: unknown[]) => Action | null;
 };
 
+export type DisposeFunction = () => Promise<void>;
+export type ItemsAndDisposeFunction<T> = {
+    items: T[];
+    disposeFunction: DisposeFunction;
+};
+
 let observers: QueryObserver[] = [];
+
+/**
+ * Removes observer from list of observers (it's WebSocket messages won't be handled)
+ * and returns a promise for unsubscribe from queryObserverApi.
+ * @param observerId - Observer ID.
+ */
+const unsubscribeObserver = (observerId: string): Promise<void> => {
+    observers = _.remove(observers, { observerId });
+    return unsubscribe(observerId, sessionId);
+};
 
 /**
  * Unsubscribes all existing observers from WebSocket and clears observers array.
  */
 export const clearObservers = async (): Promise<void> => {
     const unsubscribePromises = observers.map((observer) =>
-        unsubscribe(observer.observerId, sessionId),
+        unsubscribeObserver(observer.observerId),
     );
 
     try {
@@ -31,14 +47,12 @@ export const clearObservers = async (): Promise<void> => {
     } catch (error) {
         logError('Error unsubscribing from queryobserver.', error);
     }
-
-    observers = [];
 };
 
 export const reactiveRequest = async <T>(
     query: () => Promise<Response>,
     webSocketMessageOutputReduxAction: QueryObserver['webSocketMessageOutputReduxAction'],
-): Promise<T[]> => {
+): Promise<ItemsAndDisposeFunction<T>> => {
     const response = await query();
     const observerResponse = await deserializeResponse<QueryObserverResponse>(response);
 
@@ -48,7 +62,10 @@ export const reactiveRequest = async <T>(
         webSocketMessageOutputReduxAction,
     });
 
-    return observerResponse.items as T[];
+    return {
+        items: observerResponse.items as T[],
+        disposeFunction: (): Promise<void> => unsubscribeObserver(observerResponse.observer),
+    };
 };
 
 const getObserver = (observerId: string): QueryObserver | undefined => {

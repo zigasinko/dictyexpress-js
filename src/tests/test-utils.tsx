@@ -59,3 +59,25 @@ export const validateExportFile = async (
     const exportFile = files.find(({ path }) => path === expectedPath);
     validateContent(exportFile as ExportFile);
 };
+
+/**
+ * FetchMock mockResponse is defined in needed tests. This function handles (returns
+ * empty responses) all common request that can be called in different modules (mostly
+ * in integration tests).
+ * @param request - Request that was intercepted by fetch-mock.
+ */
+export const handleCommonRequests = (request: Request): Promise<string> | null => {
+    if (request.url.includes('csrf')) {
+        return Promise.resolve('');
+    }
+
+    if (request.url.includes('unsubscribe')) {
+        return Promise.resolve('');
+    }
+
+    if (request.url.includes('user?current_only')) {
+        return Promise.resolve(JSON.stringify({ items: [] }));
+    }
+
+    return null;
+};

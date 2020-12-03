@@ -8,7 +8,7 @@ import {
     GOEnrichmentRow,
     GOEnrichmentTerm,
 } from 'redux/models/internal';
-import { listByIds } from 'api/geneListApi';
+import { listByIds } from 'api';
 
 export const appendMissingAttributesToJson = (
     gOEnrichmentJson: EnhancedGOEnrichmentJson,
