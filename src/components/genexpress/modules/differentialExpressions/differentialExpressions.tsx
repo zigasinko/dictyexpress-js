@@ -50,7 +50,6 @@ const mapStateToProps = (
         selectedDifferentialExpression: getSelectedDifferentialExpression(
             state.differentialExpressions,
         ),
-        // Highlighted genes IDs.
         highlightedGenesIds: getHighlightedGenesIds(state.genes),
         selectedGenesIds: getSelectedGenesIds(state.genes),
         genesById: getGenesById(state.genes),
@@ -316,7 +315,6 @@ positives.
         <ThresholdFormControl>
             <TextField
                 id={`${thresholdField}fc_threshold`}
-                // variant="outlined"
                 color="secondary"
                 size="small"
                 label={label}
