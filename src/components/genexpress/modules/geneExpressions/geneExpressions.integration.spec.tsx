@@ -196,7 +196,7 @@ describe('geneExpressions integration', () => {
             );
         });
 
-        it('should display tooltip and stroke the line on point hover', async () => {
+        it('should display tooltip on point hover', async () => {
             fireEvent.mouseMove(
                 container.querySelector(
                     "g[role='graphics-symbol'].geneExpressionsPoints > path",

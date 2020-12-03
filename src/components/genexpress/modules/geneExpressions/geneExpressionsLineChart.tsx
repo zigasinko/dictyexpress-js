@@ -61,7 +61,7 @@ const getVegaSpecification = (
                 {
                     events:
                         '@legendSymbol:mouseover, @legendLabel:mouseover, @genesExpressionsLines:mouseover, @geneExpressionsPoints:mouseover',
-                    update: '{geneId: datum.geneId == null ? datum.value : datum.geneId}',
+                    update: 'datum.geneId == null ? datum.value : datum.geneId',
                     force: true,
                 },
             ],
@@ -104,7 +104,7 @@ const getVegaSpecification = (
                 },
                 {
                     trigger: 'ctrl && clicked',
-                    toggle: 'clicked',
+                    toggle: '{data: clicked}',
                 },
             ],
         },
@@ -127,7 +127,7 @@ const getVegaSpecification = (
                         fontWeight: [
                             {
                                 test:
-                                    "indata('hovered', 'geneId', datum.value) || indata('highlighted', 'data', datum.value)",
+                                    "indata('highlighted', 'data', datum.value) || indata('hovered', 'data', datum.value)",
                                 value: 'bold',
                             },
                             { value: 'normal' },
@@ -163,7 +163,7 @@ const getVegaSpecification = (
                             strokeWidth: [
                                 {
                                     test:
-                                        "indata('hovered', 'geneId', datum.geneId) || indata('highlighted', 'data', datum.geneId)",
+                                        "indata('highlighted', 'data', datum.geneId) || indata('hovered', 'data', datum.geneId)",
                                     value: 4,
                                 },
                                 { value: 2 },
@@ -254,12 +254,12 @@ const GeneExpressionsLineChart = forwardRef(
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     handler: (name: string, value: any): void => {
                         if (value != null && value.length > 0) {
-                            const selectedGenesIds = value.map(
+                            const chartHighlightedGenesIds = value.map(
                                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                 (geneNameObject: { data: any }) => geneNameObject.data,
                             );
-                            if (_.difference(selectedGenesIds, highlightedGenesIds).length > 0) {
-                                onHighlight(selectedGenesIds);
+                            if (_.xor(chartHighlightedGenesIds, highlightedGenesIds).length > 0) {
+                                onHighlight(chartHighlightedGenesIds);
                             }
                         } else if (highlightedGenesIds.length > 0) {
                             onHighlight([]);
