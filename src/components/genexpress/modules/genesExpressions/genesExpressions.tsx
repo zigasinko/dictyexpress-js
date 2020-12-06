@@ -7,7 +7,7 @@ import { Gene, GeneExpression } from 'redux/models/internal';
 import { getSelectedTimeSeries, getSelectedTimeSeriesLabels } from 'redux/stores/timeSeries';
 import { ChartHandle } from 'components/genexpress/common/chart/chart';
 import useReport from 'components/genexpress/common/reportBuilder/useReport';
-import GeneExpressionsLineChart from './geneExpressionsLineChart';
+import GenesExpressionsLineChart from './genesExpressionsLineChart';
 
 const mapStateToProps = (
     state: RootState,
@@ -68,7 +68,7 @@ const GenesExpressionsWidget = ({
     return (
         <>
             {genesExpressions.length > 0 && (
-                <GeneExpressionsLineChart
+                <GenesExpressionsLineChart
                     genesExpressions={genesExpressions}
                     highlightedGenesIds={highlightedGenesIds}
                     onHighlight={handleOnHighlight}
