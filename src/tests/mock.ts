@@ -27,15 +27,15 @@ import {
     BasketInfo,
     SnackbarNotifications,
     SnackbarNotification,
-    SamplesExpressionsById,
+    SamplesGenesExpressionsById,
     GeneSet,
     Gene,
-    GeneExpression,
     VolcanoPoint,
     DifferentialExpression,
     DifferentialExpressionsById,
     GOEnrichmentRow,
     EnhancedGOEnrichmentJson,
+    GenesExpressionById,
 } from '../redux/models/internal';
 import { RootState } from '../redux/rootReducer';
 
@@ -134,10 +134,31 @@ export const generateBasket = (id: string): BasketAddSamplesResponse => ({
     permitted_sources: ['UCSC'],
 });
 
+export const generateGenesExpressionsById = (genesIds: string[]): GenesExpressionById => {
+    return genesIds.reduce(
+        (byId, geneId) => ({
+            ...byId,
+            [geneId]: generateRandomNumbers(1, () => Math.random() * 10)[0],
+        }),
+        {} as GenesExpressionById,
+    );
+};
+
 const generateDifferentialExpressionFile = (): { file: string; size: number } => ({
     file: `${generateRandomString(5)}.tab.gz`,
     size: 1234,
 });
+
+export const generateRelationPartition = (id: number, entityId: number): RelationPartition => ({
+    id,
+    entity: entityId,
+    position: 0,
+    label: `${id}Hr`,
+});
+
+export const generateRelationPartitions = (entityIds: number[]): RelationPartition[] => {
+    return _.times(entityIds.length, (i) => generateRelationPartition(i, entityIds[i]));
+};
 
 const generateProcess = (id: number): Process => ({
     id: 1,
@@ -256,7 +277,7 @@ export const generateData = (id: number): Data => ({
     collection: undefined,
 });
 
-export const generateGeneExpression = (geneId: number): GeneExpression => ({
+export const generateGeneExpression = (geneId: number): GenesExpressionById => ({
     [geneId.toString()]: new Date().getTime(),
 });
 
@@ -500,14 +521,14 @@ type InstanceById<T> = {
 let lastInstanceId = 1;
 export const generateInstances = <T>(
     n: number,
-    getId: (instance: T) => string | number,
+    getId: (instance: T, instanceIndex: number) => string | number,
     generateSingleInstance: (id: number) => T,
 ): InstanceById<T> => {
     const instancesById = {} as InstanceById<T>;
 
     for (let i = lastInstanceId; i < lastInstanceId + n; i += 1) {
         const instance = generateSingleInstance(i);
-        instancesById[getId(instance)] = instance;
+        instancesById[getId(instance, i)] = instance;
     }
 
     lastInstanceId += n;
@@ -534,11 +555,14 @@ export const generateRelationsById = (n: number): RelationsById => {
     return generateInstances<Relation>(n, (instance) => instance.id, generateSingleTimeSeries);
 };
 
-export const generateSamplesExpressionsById = (n: number): SamplesExpressionsById => {
-    return generateInstances<GeneExpression>(
+export const generateSamplesExpressionsById = (
+    n: number,
+    genesIds: string[],
+): SamplesGenesExpressionsById => {
+    return generateInstances<GenesExpressionById>(
         n,
-        (instance) => Object.keys(instance)[0],
-        generateGeneExpression,
+        (_instance, instanceIndex) => instanceIndex,
+        () => generateGenesExpressionsById(genesIds),
     );
 };
 

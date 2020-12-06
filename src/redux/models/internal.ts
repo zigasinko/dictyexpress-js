@@ -30,17 +30,24 @@ export type BasketInfo = {
     type: 'gene';
 };
 
-export type GeneSet = {
-    dateTime: Date;
-    genesNames: string[];
+export type GeneExpression = {
+    geneId: string;
+    geneName: string;
+    label: string;
+    value: number;
 };
 
-export type GeneExpression = {
+export type GenesExpressionById = {
     [geneId: string]: number;
 };
 
-export type SamplesExpressionsById = {
-    [sampleId: number]: GeneExpression;
+export type SamplesGenesExpressionsById = {
+    [sampleId: number]: GenesExpressionById;
+};
+
+export type GeneSet = {
+    dateTime: Date;
+    genesNames: string[];
 };
 
 export type VolcanoPoint = {

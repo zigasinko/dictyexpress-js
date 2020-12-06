@@ -1,15 +1,13 @@
-import React, { ReactElement, useEffect, useState, useCallback, useRef } from 'react';
+import React, { ReactElement, useRef } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import _ from 'lodash';
-import { RootState } from 'redux/rootReducer';
+import { getSelectedGenesExpressions, RootState } from 'redux/rootReducer';
 import { getSelectedGenes, getHighlightedGenesIds, genesHighlighted } from 'redux/stores/genes';
-import { Relation, RelationPartition } from '@genialis/resolwe/dist/api/types/rest';
-import { SamplesExpressionsById, Gene } from 'redux/models/internal';
+import { Relation } from '@genialis/resolwe/dist/api/types/rest';
+import { Gene, GeneExpression } from 'redux/models/internal';
 import { getSelectedTimeSeries, getSelectedTimeSeriesLabels } from 'redux/stores/timeSeries';
-import { getSamplesExpressionsById } from 'redux/stores/samplesExpressions';
 import { ChartHandle } from 'components/genexpress/common/chart/chart';
 import useReport from 'components/genexpress/common/reportBuilder/useReport';
-import GeneExpressionsLineChart, { GeneVisualizationData } from './geneExpressionsLineChart';
+import GeneExpressionsLineChart from './geneExpressionsLineChart';
 
 const mapStateToProps = (
     state: RootState,
@@ -17,7 +15,7 @@ const mapStateToProps = (
     timeSeries: Relation;
     timeSeriesLabels: string[];
     genes: Gene[];
-    samplesExpressionsById: SamplesExpressionsById;
+    genesExpressions: GeneExpression[];
     highlightedGenesIds: string[];
 } => {
     return {
@@ -27,8 +25,8 @@ const mapStateToProps = (
         timeSeriesLabels: getSelectedTimeSeriesLabels(state.timeSeries),
         // Genes to be visualized.
         genes: getSelectedGenes(state.genes),
-        // Samples gene expressions data.
-        samplesExpressionsById: getSamplesExpressionsById(state.samplesExpressions),
+        // Gene expressions data.
+        genesExpressions: getSelectedGenesExpressions(state),
         // Highlighted genes IDs.
         highlightedGenesIds: getHighlightedGenesIds(state.genes),
     };
@@ -40,59 +38,18 @@ const connector = connect(mapStateToProps, {
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-const GeneExpressions = ({
-    timeSeries,
-    timeSeriesLabels,
-    genes,
-    samplesExpressionsById,
+const GenesExpressionsWidget = ({
+    genesExpressions,
     connectedGenesHighlighted,
     highlightedGenesIds,
 }: PropsFromRedux): ReactElement => {
-    const [genesExpressionsData, setGenesExpressionsData] = useState<GeneVisualizationData[]>([]);
     const chartRef = useRef<ChartHandle>();
 
-    const findLabelPartitions = useCallback(
-        (label: string): RelationPartition[] => {
-            return timeSeries?.partitions?.filter((partition) => partition.label === label);
-        },
-        [timeSeries],
-    );
-
-    const handleOnHighlight = (genesIds: string[]): void => {
-        connectedGenesHighlighted(genesIds);
+    const handleOnHighlight = (genesNames: string[]): void => {
+        connectedGenesHighlighted(genesNames);
     };
 
-    // Each time timeSeries or genes changes, visualization data must be refreshed.
-    useEffect(() => {
-        if (
-            timeSeries == null ||
-            Object.keys(samplesExpressionsById).length === 0 ||
-            genes.length === 0
-        ) {
-            return;
-        }
-
-        const newGenesExpressionsData = [] as GeneVisualizationData[];
-
-        timeSeriesLabels.forEach((label) => {
-            const timePointPartitions = findLabelPartitions(label);
-            genes.forEach((gene) => {
-                const values: number[] = [];
-                timePointPartitions.forEach((partition) => {
-                    values.push(samplesExpressionsById[partition.entity][gene.feature_id]);
-                });
-
-                newGenesExpressionsData.push({
-                    x: label,
-                    y: _.mean(values),
-                    geneId: gene.feature_id,
-                });
-            });
-        });
-
-        setGenesExpressionsData(newGenesExpressionsData);
-    }, [timeSeries, genes, timeSeriesLabels, findLabelPartitions, samplesExpressionsById]);
-
+    // Register reportBuilder getComponentReport function.
     useReport(async (processFile) => {
         if (chartRef.current != null) {
             processFile(
@@ -110,9 +67,9 @@ const GeneExpressions = ({
 
     return (
         <>
-            {genesExpressionsData.length > 0 && (
+            {genesExpressions.length > 0 && (
                 <GeneExpressionsLineChart
-                    data={genesExpressionsData}
+                    genesExpressions={genesExpressions}
                     highlightedGenesIds={highlightedGenesIds}
                     onHighlight={handleOnHighlight}
                     ref={chartRef}
@@ -122,4 +79,4 @@ const GeneExpressions = ({
     );
 };
 
-export default connector(GeneExpressions);
+export default connector(GenesExpressionsWidget);

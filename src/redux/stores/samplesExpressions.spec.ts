@@ -4,7 +4,7 @@ import samplesExpressionsReducer, {
     samplesExpressionsFetchSucceeded,
 } from './samplesExpressions';
 
-const samplesExpressionsById = generateSamplesExpressionsById(2);
+const samplesExpressionsById = generateSamplesExpressionsById(2, []);
 
 describe('samplesExpressions store', () => {
     let initialState: SamplesExpressionsState;

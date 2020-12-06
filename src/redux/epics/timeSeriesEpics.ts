@@ -15,7 +15,7 @@ import {
     getBasketId,
 } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
-import { SamplesExpressionsById } from 'redux/models/internal';
+import { SamplesGenesExpressionsById } from 'redux/models/internal';
 import {
     samplesExpressionsFetchSucceeded,
     samplesExpressionsFetchStarted,
@@ -115,7 +115,7 @@ const fetchTimeSeriesSamplesExpressionsEpic: Epic<Action, Action, RootState> = (
         ofType(fetchTimeSeriesSamplesExpressions.toString()),
         withLatestFrom(state$),
         mergeMap(([, state]) => {
-            const timeSeriesSamplesExpressions = {} as SamplesExpressionsById;
+            const timeSeriesSamplesExpressions = {} as SamplesGenesExpressionsById;
             const timeSeriesSamplesIds = getSelectedTimeSeriesSamplesIds(state.timeSeries);
 
             return from(getDataBySamplesIds(timeSeriesSamplesIds)).pipe(

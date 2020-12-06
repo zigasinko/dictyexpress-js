@@ -1,25 +1,25 @@
 import { createSlice, PayloadAction, createSelector, combineReducers } from '@reduxjs/toolkit';
-import { SamplesExpressionsById } from '../models/internal';
+import { SamplesGenesExpressionsById } from '../models/internal';
 import createIsFetchingSlice from './fetch';
 import { timeSeriesSelected } from './timeSeries';
 
 // State slices.
-const samplesExpressionsByIdInitialState = {} as SamplesExpressionsById;
+const samplesExpressionsByIdInitialState = {} as SamplesGenesExpressionsById;
 const samplesExpressionsByIdSlice = createSlice({
     name: 'samplesExpressions',
     initialState: samplesExpressionsByIdInitialState,
     reducers: {
         fetchSucceeded: (
             _state,
-            action: PayloadAction<SamplesExpressionsById>,
-        ): SamplesExpressionsById => {
+            action: PayloadAction<SamplesGenesExpressionsById>,
+        ): SamplesGenesExpressionsById => {
             return action.payload;
         },
     },
     extraReducers: (builder) => {
         builder.addCase(
             timeSeriesSelected,
-            (): SamplesExpressionsById => {
+            (): SamplesGenesExpressionsById => {
                 return samplesExpressionsByIdInitialState;
             },
         );
@@ -51,8 +51,9 @@ export default samplesExpressionsReducer;
 export const getIsFetchingSamplesExpressions = (state: SamplesExpressionsState): boolean =>
     state.isFetchingSamplesExpressions;
 
-export const getSamplesExpressionsById = (state: SamplesExpressionsState): SamplesExpressionsById =>
-    state.byId;
+export const getSamplesExpressionsById = (
+    state: SamplesExpressionsState,
+): SamplesGenesExpressionsById => state.byId;
 
 export const getSamplesExpressionsSamplesIds = createSelector(
     getSamplesExpressionsById,

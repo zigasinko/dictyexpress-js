@@ -4,21 +4,25 @@ import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
 import { customRender, handleCommonRequests, validateExportFile } from 'tests/test-utils';
 import {
     testState,
-    generateGene,
     generateSamplesExpressionsById,
-    generatePartition,
     generateTimeSeriesById,
+    generateRelationPartitions,
+    generateGenesById,
 } from 'tests/mock';
 import { RootState } from 'redux/rootReducer';
 import _ from 'lodash';
 
-const genes = [generateGene(1), generateGene(2)];
-const samplesExpressionsById = generateSamplesExpressionsById(5);
-const samplesExpressionsIds = Object.keys(samplesExpressionsById);
+const genesById = generateGenesById(2);
+const genes = _.flatMap(genesById);
+const samplesExpressionsById = generateSamplesExpressionsById(
+    5,
+    genes.map((gene) => gene.feature_id),
+);
+const samplesExpressionsIds = _.map(_.keys(samplesExpressionsById), Number);
 const timeSeriesById = generateTimeSeriesById(1);
-const timeSeries = _.flatMap(timeSeriesById)[0];
+const selectedTimeSeries = _.flatMap(timeSeriesById)[0];
 
-describe('geneExpressions integration', () => {
+describe('genesExpressions integration', () => {
     let initialState: RootState;
     let container: HTMLElement;
 
@@ -82,12 +86,11 @@ describe('geneExpressions integration', () => {
     beforeEach(() => {
         initialState = testState();
         // Set timeSeries partitions so that correct samplesExpressions can be retrieved
-        // via fetchMock.
+        // via fetchMock and gene expressions can be chosen from selected time series.
         initialState.timeSeries.byId = timeSeriesById;
-        initialState.timeSeries.byId[timeSeries.id].partitions = _.times(5, (i) =>
-            generatePartition(i, parseInt(samplesExpressionsIds[i], 10)),
+        initialState.timeSeries.byId[selectedTimeSeries.id].partitions = generateRelationPartitions(
+            samplesExpressionsIds,
         );
-        initialState.samplesExpressions.byId = samplesExpressionsById;
     });
 
     describe('time series not selected', () => {
@@ -106,7 +109,9 @@ describe('geneExpressions integration', () => {
         it('should show line graph after time series and gene is pasted', async () => {
             // Simulate time series click.
             fireEvent.click(
-                screen.getByText(initialState.timeSeries.byId[timeSeries.id]?.collection.name),
+                screen.getByText(
+                    initialState.timeSeries.byId[selectedTimeSeries.id]?.collection.name,
+                ),
             );
 
             // Wait for "Search for a gene" input to get enabled.
@@ -119,16 +124,15 @@ describe('geneExpressions integration', () => {
                 clipboardData: { getData: jest.fn().mockReturnValueOnce(genes[0].name) },
             });
 
-            // Wait for points to be drawn on the plot.
-            await waitFor(() =>
+            // Wait for points and lines to be drawn on the plot.
+            await waitFor(() => {
                 expect(
-                    container.querySelectorAll("g[role='graphics-symbol'].geneExpressionsPoints"),
-                ).toHaveLength(1),
-            );
-            // Lines should also be be drawn on the plot.
-            expect(
-                container.querySelectorAll("g[role='graphics-symbol'].genesExpressionsLines"),
-            ).toHaveLength(1);
+                    container.querySelectorAll("g[role='graphics-symbol'].genesExpressionsPoints"),
+                ).toHaveLength(1);
+                expect(
+                    container.querySelectorAll("g[role='graphics-symbol'].genesExpressionsLines"),
+                ).toHaveLength(1);
+            });
         });
 
         it('should not export Expression Time Courses/expression_time_courses.png file', async () => {
@@ -152,9 +156,10 @@ describe('geneExpressions integration', () => {
 
     describe('time series and one gene selected', () => {
         beforeEach(async () => {
-            initialState.timeSeries.selectedId = timeSeries.id;
-            initialState.genes.byId = _.keyBy(genes, 'feature_id');
+            initialState.timeSeries.selectedId = selectedTimeSeries.id;
+            initialState.genes.byId = genesById;
             initialState.genes.selectedGenesIds = [genes[0].feature_id];
+            initialState.samplesExpressions.byId = samplesExpressionsById;
 
             ({ container } = customRender(<GeneExpressGrid />, {
                 initialState,
@@ -162,7 +167,7 @@ describe('geneExpressions integration', () => {
 
             await waitFor(() =>
                 expect(
-                    container.querySelectorAll("g[role='graphics-symbol'].geneExpressionsPoints"),
+                    container.querySelectorAll("g[role='graphics-symbol'].genesExpressionsPoints"),
                 ).toHaveLength(1),
             );
         });
@@ -176,8 +181,8 @@ describe('geneExpressions integration', () => {
 
             await waitFor(() =>
                 expect(
-                    container.querySelectorAll("g[role='graphics-symbol'].geneExpressionsPoints"),
-                ).toHaveLength(1),
+                    container.querySelectorAll("g[role='graphics-symbol'].genesExpressionsLines"),
+                ).toHaveLength(2),
             );
         });
 
@@ -199,7 +204,7 @@ describe('geneExpressions integration', () => {
         it('should display tooltip on point hover', async () => {
             fireEvent.mouseMove(
                 container.querySelector(
-                    "g[role='graphics-symbol'].geneExpressionsPoints > path",
+                    "g[role='graphics-symbol'].genesExpressionsPoints > path",
                 ) as Element,
             );
 

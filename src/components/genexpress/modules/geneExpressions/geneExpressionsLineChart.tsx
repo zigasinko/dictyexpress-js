@@ -2,22 +2,17 @@ import React, { ReactElement, useRef, forwardRef } from 'react';
 import _ from 'lodash';
 import { Spec } from 'vega';
 import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
+import { GeneExpression } from 'redux/models/internal';
 import Chart, { DataDefinition, DataHandler } from '../../common/chart/chart';
 
-export type GeneVisualizationData = {
-    x: string;
-    y: number;
-    geneId: string;
-};
-
 type GeneExpressionsLineChartProps = {
-    data: GeneVisualizationData[];
+    genesExpressions: GeneExpression[];
     highlightedGenesIds: string[];
     onHighlight: (genesIds: string[]) => void;
 };
 
 const getVegaSpecification = (
-    data: GeneExpressionsLineChartProps['data'],
+    genesExpressions: GeneExpressionsLineChartProps['genesExpressions'],
     highlightedGenesIds: GeneExpressionsLineChartProps['highlightedGenesIds'],
 ): Spec => ({
     signals: [
@@ -60,7 +55,7 @@ const getVegaSpecification = (
             on: [
                 {
                     events:
-                        '@legendSymbol:mouseover, @legendLabel:mouseover, @genesExpressionsLines:mouseover, @geneExpressionsPoints:mouseover',
+                        '@legendSymbol:mouseover, @legendLabel:mouseover, @genesExpressionsLines:mouseover, @genesExpressionsPoints:mouseover',
                     update: 'datum.geneId == null ? datum.value : datum.geneId',
                     force: true,
                 },
@@ -72,7 +67,7 @@ const getVegaSpecification = (
             on: [
                 {
                     events:
-                        '@legendSymbol:mouseout, @legendLabel:mouseout, @genesExpressionsLines:mouseout, @geneExpressionsPoints:mouseout',
+                        '@legendSymbol:mouseout, @legendLabel:mouseout, @genesExpressionsLines:mouseout, @genesExpressionsPoints:mouseout',
                     update: '{}',
                     force: true,
                 },
@@ -83,7 +78,7 @@ const getVegaSpecification = (
         {
             name: 'table',
             transform: [],
-            values: data,
+            values: genesExpressions,
         },
         {
             name: 'hovered',
@@ -124,6 +119,7 @@ const getVegaSpecification = (
                     name: 'legendLabel',
                     interactive: true,
                     update: {
+                        text: { scale: 'geneLookup', field: 'value' },
                         fontWeight: [
                             {
                                 test:
@@ -154,8 +150,8 @@ const getVegaSpecification = (
                     from: { data: 'series' },
                     encode: {
                         enter: {
-                            x: { scale: 'xscale', field: 'x' },
-                            y: { scale: 'yscale', field: 'y' },
+                            x: { scale: 'xscale', field: 'label' },
+                            y: { scale: 'yscale', field: 'value' },
                             stroke: { scale: 'colorscale', field: 'geneId' },
                             strokeWidth: { value: 2 },
                         },
@@ -174,17 +170,18 @@ const getVegaSpecification = (
                 },
                 {
                     type: 'symbol',
-                    name: 'geneExpressionsPoints',
+                    name: 'genesExpressionsPoints',
                     from: { data: 'series' },
                     encode: {
                         enter: {
-                            x: { scale: 'xscale', field: 'x' },
-                            y: { scale: 'yscale', field: 'y' },
+                            x: { scale: 'xscale', field: 'label' },
+                            y: { scale: 'yscale', field: 'value' },
                             fill: { scale: 'colorscale', field: 'geneId' },
                             stroke: { scale: 'colorscale', field: 'geneId' },
                             strokeWidth: { value: 1 },
                             tooltip: {
-                                signal: "{'Gene': datum.geneId, 'Time': datum.x, 'Score': datum.y}",
+                                signal:
+                                    "{'Gene': datum.geneName, 'Time': datum.label, 'Score': datum.value}",
                             },
                         },
                     },
@@ -197,7 +194,7 @@ const getVegaSpecification = (
             name: 'xscale',
             type: 'point',
             range: 'width',
-            domain: { data: 'table', field: 'x' },
+            domain: { data: 'table', field: 'label' },
         },
         {
             name: 'yscale',
@@ -205,12 +202,18 @@ const getVegaSpecification = (
             range: 'height',
             nice: true,
             zero: true,
-            domain: { data: 'table', field: 'y' },
+            domain: { data: 'table', field: 'value' },
         },
         {
             name: 'colorscale',
             type: 'ordinal',
             range: 'category',
+            domain: { data: 'table', field: 'geneId' },
+        },
+        {
+            name: 'geneLookup',
+            type: 'ordinal',
+            range: { data: 'table', field: 'geneName' },
             domain: { data: 'table', field: 'geneId' },
         },
     ],
@@ -232,7 +235,7 @@ const getVegaSpecification = (
 
 const GeneExpressionsLineChart = forwardRef(
     (
-        { data, highlightedGenesIds, onHighlight }: GeneExpressionsLineChartProps,
+        { genesExpressions, highlightedGenesIds, onHighlight }: GeneExpressionsLineChartProps,
         ref,
     ): ReactElement => {
         const updatableDataDefinitions: DataDefinition[] = useStateWithEffect<DataDefinition[]>(
@@ -241,9 +244,9 @@ const GeneExpressionsLineChart = forwardRef(
                     name: 'highlighted',
                     data: highlightedGenesIds,
                 },
-                { name: 'table', data },
+                { name: 'table', data: genesExpressions },
             ],
-            [data, highlightedGenesIds],
+            [genesExpressions, highlightedGenesIds],
         );
 
         // Data handlers that is updated (and reattached) only if highlighted variable changes.
@@ -252,11 +255,11 @@ const GeneExpressionsLineChart = forwardRef(
                 {
                     name: 'highlighted',
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    handler: (name: string, value: any): void => {
+                    handler: (_name: string, value: any): void => {
                         if (value != null && value.length > 0) {
                             const chartHighlightedGenesIds = value.map(
                                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                (geneNameObject: { data: any }) => geneNameObject.data,
+                                (geneIdObject: { data: any }) => geneIdObject.data,
                             );
                             if (_.xor(chartHighlightedGenesIds, highlightedGenesIds).length > 0) {
                                 onHighlight(chartHighlightedGenesIds);
@@ -270,7 +273,9 @@ const GeneExpressionsLineChart = forwardRef(
             [highlightedGenesIds, onHighlight],
         );
 
-        const renderSpecification = useRef<Spec>(getVegaSpecification(data, highlightedGenesIds));
+        const renderSpecification = useRef<Spec>(
+            getVegaSpecification(genesExpressions, highlightedGenesIds),
+        );
 
         return (
             <Chart
