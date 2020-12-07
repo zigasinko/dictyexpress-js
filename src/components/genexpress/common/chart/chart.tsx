@@ -1,11 +1,13 @@
-import React, { ReactElement, useRef, useEffect, useCallback } from 'react';
+import React, { ReactElement, useRef, useEffect, useCallback, useContext } from 'react';
 import * as vega from 'vega';
 import * as vegaTooltip from 'vega-tooltip';
 import { withSize, SizeMeProps } from 'react-sizeme';
 import { Spec } from 'vega';
 import { useDispatch } from 'react-redux';
 import { handleError } from 'utils/errorUtils';
+import { RendererContext } from 'components/common/rendererContext';
 import { vegaTheme } from '../theming/vegaTheme';
+import useUpdateEffect from '../useUpdateEffect';
 
 export type DataHandler = {
     name: string;
@@ -19,32 +21,41 @@ export type DataDefinition = {
     data: Array<any>;
 };
 
+export type SignalDefinition = {
+    name: string;
+    value: unknown;
+};
+
 type ChartProps = {
-    updatableDataDefinitions: Array<DataDefinition>;
+    updatableDataDefinitions?: Array<DataDefinition>;
+    updatableSignalDefinitions?: Array<SignalDefinition>;
     dataHandlers?: Array<DataHandler>;
     vegaSpecification: Spec;
 } & SizeMeProps;
 
-const chartPadding = { top: 40, left: 10, bottom: 10, right: 10 };
+const chartPadding = { top: 20, left: 15, bottom: 15, right: 15 };
 
 /**
  * Chart component is the basis for all charts that want to use Vega charting library.
  *
  * For performance reasons, chart will get reinitialized only if vegaSpecification changes.
- * All other updates are handled with API calls (set data -> run. That's why we must pass
+ * All other updates are handled with API calls (set data -> run). That's why we must pass
  * updatableDataDefinitions for each data that can get updated.
  *
  * Add all data handlers (that execute after data object changes) via 'dataHandlers'
  * variable. All handlers will be automatically removed after view is removed from DOM.
+ *
+ * Setting `renderer` to 'svg' will help with debugging, because it's more descriptive.
  */
 const Chart = ({
     updatableDataDefinitions,
+    updatableSignalDefinitions,
     dataHandlers,
     size: { width, height },
     vegaSpecification,
 }: ChartProps): ReactElement => {
-    const renderer = 'svg';
     const dispatch = useDispatch();
+    const renderer = useContext(RendererContext);
 
     const addedDataHandlers = useRef<Array<DataHandler>>([]);
 
@@ -55,23 +66,23 @@ const Chart = ({
     /**
      * Retrieve width of chart element (chart container div).
      */
-    const getChartWidth = useCallback((): number => {
+    const getChartElementWidth = useCallback((): number => {
         if (!chartElement.current) {
             return 0;
         }
 
-        return chartElement.current.clientWidth - chartPadding.left - chartPadding.right;
+        return chartElement.current.clientWidth;
     }, []);
 
     /**
      * Retrieve height of chart element (chart container div).
      */
-    const getChartHeight = useCallback((): number => {
+    const getChartElementHeight = useCallback((): number => {
         if (!chartElement.current) {
             return 0;
         }
 
-        return chartElement.current.clientHeight - chartPadding.top - chartPadding.bottom;
+        return chartElement.current.clientHeight;
     }, []);
 
     /**
@@ -90,16 +101,16 @@ const Chart = ({
      * Set chart width and height via Vega API.
      */
     const resizeChart = useCallback((): void => {
-        chartView.current?.width(getChartWidth());
-        chartView.current?.height(getChartHeight());
+        chartView.current?.width(getChartElementWidth());
+        chartView.current?.height(getChartElementHeight());
 
         runChart();
-    }, [getChartHeight, getChartWidth, runChart]);
+    }, [getChartElementHeight, getChartElementWidth, runChart]);
 
     /**
      * Resize on parent element width / height change.
      */
-    useEffect(() => {
+    useUpdateEffect(() => {
         resizeChart();
     }, [width, height, resizeChart]);
 
@@ -108,8 +119,8 @@ const Chart = ({
      */
     useEffect((): undefined | (() => void) => {
         const defaultSpecification: vega.Spec = {
-            width: getChartWidth(),
-            height: getChartHeight(),
+            width: getChartElementWidth(),
+            height: getChartElementHeight(),
             padding: chartPadding,
             autosize: {
                 type: 'fit',
@@ -127,9 +138,7 @@ const Chart = ({
         const generateChart = (): void => {
             chartView.current = new vega.View(vega.parse(renderSpecification, vegaTheme), {
                 renderer,
-                container: '#view',
-                hover: true,
-                logLevel: vega.Error,
+                container: chartElement.current != null ? chartElement.current : undefined,
             });
 
             const tooltipHandler = new vegaTooltip.Handler({});
@@ -146,7 +155,7 @@ const Chart = ({
             // registered on external DOM elements.
             chartView.current?.finalize();
         };
-    }, [getChartHeight, getChartWidth, runChart, vegaSpecification]);
+    }, [getChartElementHeight, getChartElementWidth, renderer, runChart, vegaSpecification]);
 
     /**
      * Manage data handlers.
@@ -176,12 +185,27 @@ const Chart = ({
      * Update chart data when updatableDataDefinitions (data) changes.
      */
     useEffect(() => {
-        updatableDataDefinitions.forEach((dataDefinition) => {
-            chartView.current?.data(dataDefinition.name, dataDefinition.data);
-        });
+        if (updatableDataDefinitions != null) {
+            updatableDataDefinitions.forEach((dataDefinition) => {
+                chartView.current?.data(dataDefinition.name, dataDefinition.data);
+            });
 
-        runChart();
+            runChart();
+        }
     }, [updatableDataDefinitions, runChart]);
+
+    /**
+     * Update chart data when updatableSignalDefinitions (value) changes.
+     */
+    useEffect(() => {
+        if (updatableSignalDefinitions != null) {
+            updatableSignalDefinitions.forEach((signalDefinition) => {
+                chartView.current?.signal(signalDefinition.name, signalDefinition.value);
+            });
+
+            runChart();
+        }
+    }, [updatableSignalDefinitions, runChart]);
 
     return (
         <div style={{ width: '100%', height: '100%' }}>

@@ -1,6 +1,7 @@
 import { Relation } from '@genialis/resolwe/dist/api/types/rest';
 import { Feature } from '@genialis/resolwe/dist/api/types/modules';
 import { VariantType, SnackbarKey } from 'notistack';
+import { Renderers } from 'vega';
 
 export type Gene = Pick<
     Feature,
@@ -49,3 +50,5 @@ export type SnackbarNotification = {
 } & Pick<SnackbarNotificationContent, 'message' | 'variant' | 'action'>;
 
 export type SnackbarNotifications = SnackbarNotification[];
+
+export type DictyRenderers = Exclude<Renderers, 'none'>;
