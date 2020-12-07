@@ -5,7 +5,7 @@ import { apiUrl } from './base';
 
 const baseUrl = `${apiUrl}/storage`;
 
-const getStorageJson = async (storageId: number): Promise<Storage | null> => {
+const getStorageJson = async (storageId: number): Promise<Storage> => {
     const url = `${baseUrl}/${storageId}`;
 
     const getStorageJsonResponse = await fetch.get(url);

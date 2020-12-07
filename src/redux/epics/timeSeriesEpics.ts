@@ -40,9 +40,9 @@ export const timeSeriesSelectedEpic: Epic<Action, Action, RootState> = (action$,
     return action$.pipe(
         ofType<Action, ReturnType<typeof timeSeriesSelected>>(timeSeriesSelected.toString()),
         withLatestFrom(state$),
-        mergeMap(([action, state]) => {
+        mergeMap(([, state]) => {
             // Add samples to (visualization) basket so that genes can be searched via autocomplete (/kb/feature/autocomplete api).
-            const samplesIds = getTimeSeriesSamplesIds(action.payload, state.timeSeries);
+            const samplesIds = getSelectedTimeSeriesSamplesIds(state.timeSeries);
 
             return from(basketApi.addToBasket(samplesIds)).pipe(
                 mergeMap((response) => {
@@ -86,7 +86,7 @@ export const fetchTimeSeriesEpic: Epic<Action, Action, RootState> = (action$) =>
  */
 const getSampleStorage = async (
     sampleData: Data,
-): Promise<{ sampleId: number; storage: Storage | null }> => {
+): Promise<{ sampleId: number; storage: Storage }> => {
     const storage = await storageApi.getStorageJson(sampleData.output.exp_json);
 
     return {
@@ -105,17 +105,12 @@ export const fetchTimeSeriesSamplesExpressionsEpic: Epic<Action, Action, RootSta
         mergeMap(([, state]) => {
             const timeSeriesSamplesExpressions = {} as SamplesExpressionsById;
 
-            const selectedTimeSeriesId = getSelectedTimeSeries(state.timeSeries);
-
-            const timeSeriesSamplesIds = getTimeSeriesSamplesIds(
-                selectedTimeSeriesId.id,
-                state.timeSeries,
-            );
+            const timeSeriesSamplesIds = getSelectedTimeSeriesSamplesIds(state.timeSeries);
 
             return from(dataApi.getDataBySamplesIds(timeSeriesSamplesIds)).pipe(
-                mergeMap((response) => {
+                mergeMap((sampleData) => {
                     // Once samples data is retrieved use it's output.exp_json to retrieve genes expressions.
-                    return forkJoin(response.map(getSampleStorage)).pipe(
+                    return forkJoin(sampleData.map(getSampleStorage)).pipe(
                         map((sampleStorages) => {
                             sampleStorages.forEach(({ sampleId, storage }) => {
                                 if (storage != null) {

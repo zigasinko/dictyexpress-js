@@ -87,9 +87,6 @@ export const getTimeSeries = createSelector(getTimeSeriesById, (timeSeriesById):
     );
 });
 
-export const getTimeSeriesSamplesIds = (timeSeriesId: number, state: TimeSeriesState): number[] =>
-    state.byId[timeSeriesId].partitions.map((partition) => partition.entity);
-
 export const getSelectedTimeSeries = createSelector(
     getTimeSeriesById,
     getSelectedTimeSeriesId,
@@ -107,5 +104,12 @@ export const getSelectedTimeSeriesLabels = createSelector(
         return _.uniq(
             _.compact(selectedTimeSeries?.partitions?.map((partition) => partition.label)),
         );
+    },
+);
+
+export const getSelectedTimeSeriesSamplesIds = createSelector(
+    getSelectedTimeSeries,
+    (selectedTimeSeries) => {
+        return selectedTimeSeries.partitions.map((partition) => partition.entity);
     },
 );
