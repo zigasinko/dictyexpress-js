@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { Action } from '@reduxjs/toolkit';
 import { deserializeResponse } from 'utils/apiUtils';
 import { logError } from 'utils/errorUtils';
+import { EMPTY, Observable } from 'rxjs';
 import { sessionId } from './base';
 import { unsubscribe } from './queryObserverApi';
 
@@ -13,7 +14,7 @@ const MESSAGE_REMOVED = 'removed';
 type QueryObserver = {
     items: unknown[];
     observerId: string;
-    webSocketMessageOutputReduxAction: (items: unknown[]) => Action | null;
+    webSocketMessageOutputObservable: (items: unknown[]) => Observable<Action | never>;
 };
 
 export type DisposeFunction = () => Promise<void>;
@@ -51,7 +52,7 @@ export const clearObservers = async (): Promise<void> => {
 
 export const reactiveRequest = async <T>(
     query: () => Promise<Response>,
-    webSocketMessageOutputReduxAction: QueryObserver['webSocketMessageOutputReduxAction'],
+    webSocketMessageOutputReduxAction: QueryObserver['webSocketMessageOutputObservable'],
 ): Promise<ItemsAndDisposeFunction<T>> => {
     const response = await query();
     const observerResponse = await deserializeResponse<QueryObserverResponse>(response);
@@ -59,7 +60,7 @@ export const reactiveRequest = async <T>(
     observers.push({
         observerId: observerResponse.observer,
         items: observerResponse.items,
-        webSocketMessageOutputReduxAction,
+        webSocketMessageOutputObservable: webSocketMessageOutputReduxAction,
     });
 
     return {
@@ -105,16 +106,16 @@ const update = (message: Message, currentItems: unknown[]): unknown[] => {
 };
 
 /**
- * Gets the correct observer based on observerId, updates it's items (based on WebSocket message)
- * and returns redux Action that should be dispatched to redux (usually fetchSucceeded with
- * payload).
+ * Gets the correct observer based on observerId, updates it's items (based on WebSocket
+ * message) and returns Observable with redux Action that should be dispatched to redux
+ * (usually fetchSucceeded with payload).
  * @param message - Incoming WebSocket message.
  */
-export const handleWebSocketMessage = (message: Message): Action | null => {
+export const handleWebSocketMessage = (message: Message): Observable<Action | never> => {
     const observer = getObserver(message.observer);
     if (observer == null) {
-        return null;
+        return EMPTY;
     }
     observer.items = update(message, observer.items);
-    return observer.webSocketMessageOutputReduxAction(observer.items);
+    return observer.webSocketMessageOutputObservable(observer.items);
 };

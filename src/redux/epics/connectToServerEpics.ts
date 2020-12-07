@@ -9,6 +9,7 @@ import {
     retryWhen,
     delay,
     take,
+    mergeMap,
 } from 'rxjs/operators';
 import { merge, of, throwError } from 'rxjs';
 import { RootState } from 'redux/rootReducer';
@@ -80,7 +81,7 @@ const connectToServerEpic: Epic<Action, Action, RootState> = (action$) =>
                                 ),
                             ),
                         ),
-                        map((message) => {
+                        mergeMap((message) => {
                             return handleWebSocketMessage(message as Message);
                         }),
                         filterNullAndUndefined(),

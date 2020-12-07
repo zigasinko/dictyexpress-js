@@ -1,6 +1,14 @@
 import { ofType, Epic, combineEpics } from 'redux-observable';
-import { map, startWith, endWith, catchError, withLatestFrom, switchMap } from 'rxjs/operators';
-import { of, from, merge } from 'rxjs';
+import {
+    map,
+    startWith,
+    endWith,
+    catchError,
+    withLatestFrom,
+    switchMap,
+    mergeMap,
+} from 'rxjs/operators';
+import { of, from, EMPTY, merge, Observable } from 'rxjs';
 import { RootState } from 'redux/rootReducer';
 import {
     allGenesDeselected,
@@ -125,25 +133,33 @@ const getOrCreateClusteringEpic: Epic<Action, Action, RootState> = (action$, sta
 };
 
 /**
- * Determines if analysis was successful (throws error if not) and returns "fetchGOEnrichmentStorage"
- * action, if output terms (storageId) is not empty.
+ * Determines if analysis was successful (throws error if not) and returns Observable with
+ * "fetchGOEnrichmentStorage" action, if output terms (storageId) is not empty.
  * @param response - ClusteringData response.
  */
 const handleClusteringDataResponse = (
     response: ClusteringData,
-): ReturnType<typeof handleError> | ReturnType<typeof fetchClusteringStorage> | null => {
+): Observable<
+    | ReturnType<typeof handleError>
+    | ReturnType<typeof fetchClusteringStorage>
+    | ReturnType<typeof clusteringDataFetchEnded>
+    | never
+> => {
     if (response.status === ERROR_DATA_STATUS) {
         const errorMessage = `Hierarchical Clustering analysis ended with an error ${
             response.process_error.length > 0 ? response.process_error[0] : ''
         }`;
-        return handleError(errorMessage, new Error(errorMessage));
+        return merge(
+            of(handleError(errorMessage, new Error(errorMessage))),
+            of(clusteringDataFetchEnded()),
+        );
     }
 
     if (response.status === DONE_DATA_STATUS && response.output.cluster != null) {
-        return fetchClusteringStorage(response.output.cluster);
+        return of(fetchClusteringStorage(response.output.cluster));
     }
 
-    return null;
+    return EMPTY;
 };
 
 const fetchClusteringDataEpic: Epic<Action, Action, RootState> = (action$) => {
@@ -151,13 +167,12 @@ const fetchClusteringDataEpic: Epic<Action, Action, RootState> = (action$) => {
         ofType<Action, ReturnType<typeof fetchClusteringData>>(fetchClusteringData.toString()),
         switchMap((action) => {
             return from(getDataReactive(action.payload, handleClusteringDataResponse)).pipe(
-                map((response) => {
+                mergeMap((response) => {
                     activeQueryObserverDisposeFunction = response.disposeFunction;
                     return handleClusteringDataResponse(response.item);
                 }),
-                filterNullAndUndefined(),
-                catchError((error) =>
-                    merge(
+                catchError((error) => {
+                    return merge(
                         of(
                             handleError(
                                 'Hierarchical clustering analysis ended with an error.',
@@ -165,8 +180,9 @@ const fetchClusteringDataEpic: Epic<Action, Action, RootState> = (action$) => {
                             ),
                         ),
                         of(clusteringDataFetchEnded()),
-                    ),
-                ),
+                    );
+                }),
+                filterNullAndUndefined(),
             );
         }),
     );

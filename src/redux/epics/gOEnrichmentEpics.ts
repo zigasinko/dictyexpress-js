@@ -1,6 +1,14 @@
 import { ofType, Epic, combineEpics } from 'redux-observable';
-import { map, startWith, endWith, catchError, withLatestFrom, switchMap } from 'rxjs/operators';
-import { of, from } from 'rxjs';
+import {
+    map,
+    startWith,
+    endWith,
+    catchError,
+    withLatestFrom,
+    switchMap,
+    mergeMap,
+} from 'rxjs/operators';
+import { of, from, EMPTY, Observable, merge } from 'rxjs';
 import { RootState } from 'redux/rootReducer';
 import { geneDeselected, getSelectedGenes } from 'redux/stores/genes';
 import {
@@ -83,25 +91,33 @@ const getOrCreateGOEnrichmentEpic: Epic<Action, Action, RootState> = (action$, s
 };
 
 /**
- * Determines if analysis was successful (throws error if not) and returns "gOEnrichmentDataFetchSucceeded"
- * action, if output terms (storageId) is not empty.
+ * Determines if analysis was successful (throws error if not) and returns Observable
+ * with "gOEnrichmentDataFetchSucceeded" action, if output terms (storageId) is not empty.
  * @param response - DataGOEnrichmentAnalysis response.
  */
 const handleGOEnrichmentAnalysisDataResponse = (
     response: DataGOEnrichmentAnalysis,
-): ReturnType<typeof handleError> | ReturnType<typeof gOEnrichmentDataFetchSucceeded> | null => {
+): Observable<
+    | ReturnType<typeof handleError>
+    | ReturnType<typeof gOEnrichmentDataFetchSucceeded>
+    | ReturnType<typeof gOEnrichmentJsonFetchEnded>
+    | never
+> => {
     if (response.status === ERROR_DATA_STATUS) {
         const errorMessage = `Gene Ontology Enrichment analysis ended with an error ${
             response.process_error.length > 0 ? response.process_error[0] : ''
         }`;
-        return handleError(errorMessage, new Error(errorMessage));
+        return merge(
+            of(handleError(errorMessage, new Error(errorMessage))),
+            of(gOEnrichmentJsonFetchEnded()),
+        );
     }
 
     if (response.status === DONE_DATA_STATUS && response.output.terms != null) {
-        return gOEnrichmentDataFetchSucceeded(response);
+        return of(gOEnrichmentDataFetchSucceeded(response));
     }
 
-    return null;
+    return EMPTY;
 };
 
 const fetchGOEnrichmentDataEpic: Epic<Action, Action, RootState> = (action$) => {
@@ -111,7 +127,7 @@ const fetchGOEnrichmentDataEpic: Epic<Action, Action, RootState> = (action$) => 
             return from(
                 getDataReactive(action.payload, handleGOEnrichmentAnalysisDataResponse),
             ).pipe(
-                map((response) => {
+                mergeMap((response) => {
                     activeQueryObserverDisposeFunction = response.disposeFunction;
                     return handleGOEnrichmentAnalysisDataResponse(response.item);
                 }),

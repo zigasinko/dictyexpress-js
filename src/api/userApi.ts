@@ -1,6 +1,7 @@
 import { User } from '@genialis/resolwe/dist/api/types/rest';
 import { userFetchSucceeded } from 'redux/stores/authentication';
 import { PayloadAction } from '@reduxjs/toolkit';
+import { Observable, of } from 'rxjs';
 import { apiUrl } from './base';
 import { getReactive } from './fetch';
 import { reactiveRequest } from './queryObserverManager';
@@ -13,8 +14,8 @@ export const getCurrentUser = async (): Promise<User> => {
 
     const webSocketMessageOutputReduxAction = (
         items: unknown[],
-    ): PayloadAction<User | undefined> => {
-        return userFetchSucceeded(items[0] as User);
+    ): Observable<PayloadAction<User | undefined>> => {
+        return of(userFetchSucceeded(items[0] as User));
     };
 
     return (await reactiveRequest<User>(getUserRequest, webSocketMessageOutputReduxAction))

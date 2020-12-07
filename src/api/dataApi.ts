@@ -5,6 +5,7 @@ import {
     reactiveRequest,
 } from 'api/queryObserverManager';
 import { Action } from '@reduxjs/toolkit';
+import { Observable } from 'rxjs';
 import { deserializeResponse } from '../utils/apiUtils';
 import { apiUrl } from './base';
 import { get, getReactive } from './fetch';
@@ -35,13 +36,13 @@ export const getDataBySamplesIds = async (samplesIds: number[]): Promise<Data[]>
 
 export const getDataReactive = async <T>(
     dataId: number,
-    handleDataResponse: (items: T) => Action | null,
+    handleDataResponse: (items: T) => Observable<Action | never>,
 ): Promise<{ item: T; disposeFunction: QueryObserverDisposeFunction }> => {
     const getClusteringDataRequest = (): Promise<Response> => getReactive(baseUrl, { id: dataId });
 
     const webSocketMessageOutputReduxAction = (
         items: unknown[],
-    ): ReturnType<typeof handleError> | Action | null => {
+    ): Observable<ReturnType<typeof handleError> | Action | never> => {
         return handleDataResponse(items[0] as T);
     };
 
