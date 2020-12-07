@@ -7,6 +7,7 @@ import { getIsFetchingSamplesExpressions } from 'redux/stores/samplesExpressions
 import { appStarted } from 'redux/epics/connectToServerEpic';
 import csrfApi from 'api/csrfApi';
 import { getIsLoggingOut } from 'redux/stores/authentication';
+import { breakpoints } from 'components/app/globalStyle';
 import TimeSeriesAndGeneSelector from './modules/timeSeriesAndGeneSelector/timeSeriesAndGeneSelector';
 import GeneExpressions from './modules/geneExpressions/geneExpressions';
 import DictyModule from './common/dictyModule/dictyModule';
@@ -18,17 +19,17 @@ const defaultLayout = {
     lg: [
         {
             i: 'timeSeriesAndGeneSelector',
-            x: 1,
-            y: 1,
+            x: 0,
+            y: 0,
             w: 4,
             h: 4,
             minW: 2,
             minH: 3,
         },
         {
-            i: 'secondModule',
-            x: 6,
-            y: 1,
+            i: 'expressionTimeCourses',
+            x: 4,
+            y: 0,
             w: 4,
             h: 4,
             minW: 2,
@@ -38,8 +39,17 @@ const defaultLayout = {
     md: [
         {
             i: 'timeSeriesAndGeneSelector',
-            x: 1,
-            y: 1,
+            x: 0,
+            y: 0,
+            w: 4,
+            h: 4,
+            minW: 2,
+            minH: 3,
+        },
+        {
+            i: 'expressionTimeCourses',
+            x: 4,
+            y: 0,
             w: 4,
             h: 4,
             minW: 2,
@@ -66,8 +76,8 @@ const defaultLayout = {
             minH: 3,
         },
         {
-            i: 'secondModule',
-            x: 5,
+            i: 'expressionTimeCourses',
+            x: 0,
             y: 1,
             w: 6,
             h: 4,
@@ -123,7 +133,7 @@ const GeneExpressGrid = ({
                 draggableHandle=".dragHandle"
                 layouts={defaultLayout}
                 verticalCompact
-                breakpoints={{ lg: 1200, md: 996, sm: 768 }}
+                breakpoints={{ lg: breakpoints.big, md: breakpoints.mid, sm: breakpoints.small }}
                 cols={{ lg: 12, md: 10, sm: 6 }}
             >
                 <div key="timeSeriesAndGeneSelector">
@@ -134,7 +144,7 @@ const GeneExpressGrid = ({
                         <TimeSeriesAndGeneSelector />
                     </DictyModule>
                 </div>
-                <div key="secondModule">
+                <div key="expressionTimeCourses">
                     <DictyModule
                         title="Expression Time Courses"
                         isLoading={isFetchingSamplesExpressions}
