@@ -27,3 +27,6 @@ export const splitAndCleanGenesString = (dirtyString: string): string[] => {
 export const generateRandomString = (length: number): string => {
     return Math.random().toString(36).substr(2, length);
 };
+
+export const generateRandomStrings = (arrayLength: number, stringLength = 5): string[] =>
+    _.times(arrayLength, () => generateRandomString(stringLength));
