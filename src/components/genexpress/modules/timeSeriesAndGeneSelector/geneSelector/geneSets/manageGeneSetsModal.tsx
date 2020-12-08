@@ -17,11 +17,9 @@ type ManageGeneSetsModalProps = {
     onDelete: (geneSets: GeneSet[]) => void;
     onClick: (geneSet: GeneSet) => void;
     onClose: () => void;
-    open: boolean;
 };
 
 const ManageGeneSetsModal = ({
-    open,
     geneSets,
     onDelete,
     onClick,
@@ -68,7 +66,7 @@ const ManageGeneSetsModal = ({
 
     return (
         <CenteredModal
-            open={open}
+            open
             aria-labelledby="modalTitle"
             aria-describedby="modalDescription"
             onClose={onClose}

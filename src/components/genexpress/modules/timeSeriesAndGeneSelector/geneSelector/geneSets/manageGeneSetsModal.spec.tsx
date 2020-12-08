@@ -29,7 +29,6 @@ describe('manageGeneSets', () => {
                 onDelete={mockedOnDelete}
                 onClick={mockedOnClick}
                 onClose={mockedOnClose}
-                open
             />,
         );
     });

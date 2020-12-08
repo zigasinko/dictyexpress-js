@@ -71,7 +71,6 @@ const GeneSetSelector = ({
 
             {manageModalOpened && (
                 <ManageGeneSetsModal
-                    open={manageModalOpened}
                     geneSets={localStorageGeneSets}
                     onClick={handleOnClick}
                     onDelete={handleOnDelete}
