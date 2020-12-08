@@ -9,6 +9,7 @@ import {
     StylesProvider,
     ThemeProvider as MuiThemeProvider,
     createMuiTheme,
+    CssBaseline,
 } from '@material-ui/core';
 import { SnackbarProvider } from 'notistack';
 import LandingPage from 'components/landing/landingPage';
@@ -30,6 +31,7 @@ const App = (): ReactElement => {
             <StylesProvider injectFirst>
                 <ReduxProvider store={appStore}>
                     <MuiThemeProvider theme={appTheme}>
+                        <CssBaseline />
                         <StyledComponentsThemeProvider theme={appTheme}>
                             <GlobalStyle />
                             <SnackbarProvider maxSnack={3}>

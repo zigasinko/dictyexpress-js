@@ -15,7 +15,7 @@ export const DesktopSectionContainer = styled.div`
 `;
 
 export const DictyLogo = styled.img`
-    padding: 10px;
+    margin: 10px;
     height: 25px;
 `;
 
