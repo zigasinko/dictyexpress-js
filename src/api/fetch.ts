@@ -1,3 +1,4 @@
+import { ResponseError } from 'redux/models/internal';
 import { getCookie } from '../utils/documentHelpers';
 import { sessionId } from './base';
 
@@ -21,7 +22,7 @@ const csrfSafeMethod = (method: string): boolean => {
  */
 const throwErrorIfResponseNotOk = (response: Response): Response => {
     if (!response.ok) {
-        throw new Error(`${response.status} - ${response.statusText}`);
+        throw new ResponseError(response);
     }
 
     return response;
@@ -31,7 +32,6 @@ const request = async (
     url: string,
     params?: QueryParams | BodyParams,
     method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET',
-    ignoreErrors = false,
 ): Promise<Response> => {
     const headers = new Headers({ 'Content-Type': 'application/json' });
 
@@ -60,54 +60,32 @@ const request = async (
     if (params) {
         if (method === 'GET') {
             Object.keys(params).forEach((key) =>
-                fullUrl.searchParams.append(key, (params as QueryParams)[key].toString()),
+                fullUrl.searchParams.append(key, (params as QueryParams)[key]?.toString()),
             );
         } else {
             options.body = JSON.stringify(params as BodyParams);
         }
     }
 
-    return fetch(fullUrl.toString(), options).then((response) =>
-        ignoreErrors ? response : throwErrorIfResponseNotOk(response),
-    );
+    return fetch(fullUrl.toString(), options).then(throwErrorIfResponseNotOk);
 };
 
-export const get = (
-    url: string,
-    params?: QueryParams,
-    ignoreErrors?: boolean,
-): Promise<Response> => {
-    return request(url, params, 'GET', ignoreErrors);
+export const get = (url: string, params?: QueryParams): Promise<Response> => {
+    return request(url, params, 'GET');
 };
 
-export const getReactive = (
-    url: string,
-    params?: QueryParams,
-    ignoreErrors?: boolean,
-): Promise<Response> => {
-    return request(url, { ...params, observe: sessionId }, 'GET', ignoreErrors);
+export const getReactive = (url: string, params?: QueryParams): Promise<Response> => {
+    return request(url, { ...params, observe: sessionId }, 'GET');
 };
 
-export const post = (
-    url: string,
-    params?: BodyParams,
-    ignoreErrors?: boolean,
-): Promise<Response> => {
-    return request(url, params, 'POST', ignoreErrors);
+export const post = (url: string, params?: BodyParams): Promise<Response> => {
+    return request(url, params, 'POST');
 };
 
-export const put = (
-    url: string,
-    params?: BodyParams,
-    ignoreErrors?: boolean,
-): Promise<Response> => {
-    return request(url, params, 'PUT', ignoreErrors);
+export const put = (url: string, params?: BodyParams): Promise<Response> => {
+    return request(url, params, 'PUT');
 };
 
-export const remove = (
-    url: string,
-    params?: BodyParams,
-    ignoreErrors?: boolean,
-): Promise<Response> => {
-    return request(url, params, 'DELETE', ignoreErrors);
+export const remove = (url: string, params?: BodyParams): Promise<Response> => {
+    return request(url, params, 'DELETE');
 };

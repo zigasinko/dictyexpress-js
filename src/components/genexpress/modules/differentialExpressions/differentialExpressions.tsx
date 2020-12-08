@@ -298,8 +298,7 @@ positives.
                 break;
             }
             default: {
-                const errorMessage = `Threshold field ${thresholdField} not recognized`;
-                logError(errorMessage, new Error(errorMessage));
+                logError(`Threshold field ${thresholdField} not recognized`);
             }
         }
 

@@ -17,6 +17,8 @@ import _ from 'lodash';
 import { addErrorSnackbar } from 'redux/stores/notifications';
 import { getCurrentUser, login as loginRequest, logout as logoutRequest } from 'api';
 import { clearObservers } from 'api/queryObserverManager';
+import { setSentryUser } from 'utils/sentryUtils';
+import { ResponseError } from 'redux/models/internal';
 import { appStarted, login, loginSucceeded, logout, logoutSucceeded } from './epicsActions';
 
 const loginEpic: Epic<Action, Action, RootState> = (action$) =>
@@ -24,19 +26,17 @@ const loginEpic: Epic<Action, Action, RootState> = (action$) =>
         ofType<Action, ReturnType<typeof login>>(login.toString()),
         mergeMap((action) => {
             return from(loginRequest(action.payload.username, action.payload.password)).pipe(
-                mergeMap((response) => {
-                    if (!response.ok) {
-                        return from(response.json()).pipe(
+                mergeMap(() => from(clearObservers()).pipe(map(loginSucceeded))),
+                catchError((error) => {
+                    if (error instanceof ResponseError) {
+                        return from(error.response.json()).pipe(
                             map((responseJson) => {
                                 const errorMessage = _.values(responseJson).join('\n');
                                 return addErrorSnackbar(errorMessage);
                             }),
                         );
                     }
-                    return from(clearObservers()).pipe(map(loginSucceeded));
-                }),
-                catchError((error) => {
-                    return of(handleError(`Error logging in.`, error));
+                    return of(handleError(`Error logging in.`));
                 }),
                 startWith(loginStarted()),
                 endWith(loginEnded()),
@@ -64,7 +64,12 @@ const getCurrentUserEpic: Epic<Action, Action, RootState> = (action$) =>
         ofType(appStarted.toString(), loginSucceeded.toString(), logoutSucceeded.toString()),
         mergeMap(() => {
             return from(getCurrentUser()).pipe(
-                map(userFetchSucceeded),
+                map((user) => {
+                    // Propagate user to sentry context, so future sentry logs will include
+                    // user information.
+                    setSentryUser(user);
+                    return userFetchSucceeded(user);
+                }),
                 catchError((error) => of(handleError(`Error fetching user profile`, error))),
                 startWith(userFetchStarted()),
                 endWith(userFetchEnded()),

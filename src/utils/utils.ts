@@ -33,8 +33,5 @@ import { logError } from './errorUtils';
 export const assertExhaustive = (
     unexpectedValue: never | { [descriptiveKey: string]: never },
 ): void => {
-    const errorMessage = `Value ${JSON.stringify(
-        unexpectedValue,
-    )} not handled despite type-exhaustive check`;
-    logError(errorMessage, new Error(errorMessage));
+    logError(`Value ${JSON.stringify(unexpectedValue)} not handled despite type-exhaustive check`);
 };

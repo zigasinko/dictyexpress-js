@@ -69,11 +69,14 @@ const getProcessDataEpicsFactory = <DataType extends Data>({
 }: ProcessDataEpicsFactoryProps<DataType>): Epic<Action, Action, RootState> => {
     const handleAnalysisDataResponse = (response: DataType): Observable<Action | never> => {
         if (response.status === ERROR_DATA_STATUS) {
-            const errorMessage = `${processInfo.name} analysis ended with an error ${
-                response.process_error.length > 0 ? response.process_error[0] : ''
-            }`;
             return merge(
-                of(handleError(errorMessage, new Error(errorMessage))),
+                of(
+                    handleError(
+                        `${processInfo.name} analysis ended with an error ${
+                            response.process_error.length > 0 ? response.process_error[0] : ''
+                        }`,
+                    ),
+                ),
                 of(processEndedActionCreator()),
             );
         }
