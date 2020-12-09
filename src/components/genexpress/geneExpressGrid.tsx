@@ -20,6 +20,7 @@ import SnackbarNotifier from './snackbarNotifier/snackbarNotifier';
 import GenexpressAppBar from './genexpressAppBar/genexpressAppBar';
 import DifferentialExpressions from './modules/differentialExpressions/differentialExpressions';
 import { LayoutBreakpoint, ModulesKeys } from './common/constants';
+import { ResponsiveGridLayoutContainer } from './geneExpressGrid.styles';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -90,47 +91,49 @@ const GeneExpressGrid = ({
         <>
             <GenexpressAppBar isLoading={isLoggingOut} />
             <SnackbarNotifier />
-            <ResponsiveGridLayout
-                className="layout"
-                draggableHandle=".dragHandle"
-                layouts={layouts}
-                verticalCompact
-                breakpoints={{
-                    [LayoutBreakpoint.large]: breakpoints.large,
-                    [LayoutBreakpoint.mid]: breakpoints.mid,
-                    [LayoutBreakpoint.small]: breakpoints.small,
-                }}
-                cols={defaultBreakpointCols}
-                onLayoutChange={handleOnLayoutChange}
-            >
-                <div key={ModulesKeys.timeSeriesAndGeneSelector}>
-                    <DictyModule
-                        title="Time series and Gene Selection"
-                        isLoading={isFetchingTimeSeries || isAddingToBasket}
-                    >
-                        <TimeSeriesAndGeneSelector />
-                    </DictyModule>
-                </div>
-                <div key={ModulesKeys.expressionTimeCourses}>
-                    <DictyModule
-                        title="Expression Time Courses"
-                        isLoading={isFetchingSamplesExpressions}
-                    >
-                        <GeneExpressions />
-                    </DictyModule>
-                </div>
-                <div key={ModulesKeys.differentialExpressions}>
-                    <DictyModule
-                        title="Differential expressions"
-                        isLoading={
-                            isFetchingDifferentialExpressions ||
-                            isFetchingDifferentialExpressionsData
-                        }
-                    >
-                        <DifferentialExpressions />
-                    </DictyModule>
-                </div>
-            </ResponsiveGridLayout>
+            <ResponsiveGridLayoutContainer>
+                <ResponsiveGridLayout
+                    className="layout"
+                    draggableHandle=".dragHandle"
+                    layouts={layouts}
+                    verticalCompact
+                    breakpoints={{
+                        [LayoutBreakpoint.large]: breakpoints.large,
+                        [LayoutBreakpoint.mid]: breakpoints.mid,
+                        [LayoutBreakpoint.small]: breakpoints.small,
+                    }}
+                    cols={defaultBreakpointCols}
+                    onLayoutChange={handleOnLayoutChange}
+                >
+                    <div key={ModulesKeys.timeSeriesAndGeneSelector}>
+                        <DictyModule
+                            title="Time series and Gene Selection"
+                            isLoading={isFetchingTimeSeries || isAddingToBasket}
+                        >
+                            <TimeSeriesAndGeneSelector />
+                        </DictyModule>
+                    </div>
+                    <div key={ModulesKeys.expressionTimeCourses}>
+                        <DictyModule
+                            title="Expression Time Courses"
+                            isLoading={isFetchingSamplesExpressions}
+                        >
+                            <GeneExpressions />
+                        </DictyModule>
+                    </div>
+                    <div key={ModulesKeys.differentialExpressions}>
+                        <DictyModule
+                            title="Differential expressions"
+                            isLoading={
+                                isFetchingDifferentialExpressions ||
+                                isFetchingDifferentialExpressionsData
+                            }
+                        >
+                            <DifferentialExpressions />
+                        </DictyModule>
+                    </div>
+                </ResponsiveGridLayout>
+            </ResponsiveGridLayoutContainer>
         </>
     );
 };
