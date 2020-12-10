@@ -9,6 +9,7 @@ import authentication from 'redux/stores/authentication';
 import differentialExpressions from 'redux/stores/differentialExpressions';
 import layouts from 'redux/stores/layouts';
 import gOEnrichment from 'redux/stores/gOEnrichment';
+import clustering from 'redux/stores/clustering';
 import { combineReducers, createSelector } from '@reduxjs/toolkit';
 import _ from 'lodash';
 import { GeneExpression } from './models/internal';
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
     samplesExpressions,
     differentialExpressions,
     gOEnrichment,
+    clustering,
     notifications,
 });
 

@@ -45,6 +45,37 @@ export type SamplesGenesExpressionsById = {
     [sampleId: number]: GenesExpressionById;
 };
 
+export type BasketExpression = {
+    id: number;
+    exp_type: string;
+};
+
+export type MergedClusteringData = {
+    order: {
+        nodeIndex: number;
+        order: number;
+        gene: Gene;
+    }[];
+    linkage: {
+        nodeIndex: number;
+        node1: number;
+        node2: number;
+        distance: number;
+    }[];
+};
+
+export type Coordinates = {
+    x: number;
+    y: number;
+};
+
+export type ClusterNode = {
+    nodeIndex: number;
+    parent?: ClusterNode;
+    gene?: Gene;
+    expressions?: Pick<GeneExpression, 'label' | 'value'>[];
+} & Coordinates;
+
 export type GeneSet = {
     dateTime: Date;
     genesNames: string[];
@@ -79,8 +110,9 @@ export type DifferentialExpressionsById = {
 };
 
 export type AspectValue = 'BP' | 'CC' | 'MF';
-export type Aspect = {
-    value: AspectValue;
+
+export type Option<T> = {
+    value: T;
     label: string;
 };
 

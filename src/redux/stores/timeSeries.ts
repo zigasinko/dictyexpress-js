@@ -43,6 +43,30 @@ const basketInfoSlice = createSlice({
             };
         },
     },
+    extraReducers: (builder) => {
+        builder.addCase(
+            selectedIdSlice.actions.selected,
+            (): BasketInfo => {
+                return basketInfoInitialState;
+            },
+        );
+    },
+});
+
+const basketExpressionsIdsInitialState = [] as number[];
+const basketExpressionsIdsSlice = createSlice({
+    name: 'timeSeries',
+    initialState: basketExpressionsIdsInitialState,
+    reducers: {
+        fetchBasketExpressionsIdsSucceeded: (_state, action: PayloadAction<number[]>): number[] => {
+            return action.payload;
+        },
+    },
+    extraReducers: (builder) => {
+        builder.addCase(selectedIdSlice.actions.selected, (): number[] => {
+            return basketExpressionsIdsInitialState;
+        });
+    },
 });
 
 const isFetchingSlice = createIsFetchingSlice('timeSeries');
@@ -54,12 +78,14 @@ const timeSeriesReducer = combineReducers({
     isFetching: isFetchingSlice.reducer,
     isAddingToBasket: isAddingToBasketSlice.reducer,
     basketInfo: basketInfoSlice.reducer,
+    basketExpressionsIds: basketExpressionsIdsSlice.reducer,
 });
 
 // Export actions.
 export const { selected: timeSeriesSelected } = selectedIdSlice.actions;
 export const { fetchSucceeded: timeSeriesFetchSucceeded } = timeSeriesByIdSlice.actions;
 export const { addSamplesToBasketSucceeded } = basketInfoSlice.actions;
+export const { fetchBasketExpressionsIdsSucceeded } = basketExpressionsIdsSlice.actions;
 export const {
     started: timeSeriesFetchStarted,
     ended: timeSeriesFetchEnded,
@@ -79,6 +105,8 @@ const getSelectedTimeSeriesId = (state: TimeSeriesState): number => state.select
 
 export const getTimeSeriesIsFetching = (state: TimeSeriesState): boolean => state.isFetching;
 export const getIsAddingToBasket = (state: TimeSeriesState): boolean => state.isAddingToBasket;
+export const getBasketExpressionsIds = (state: TimeSeriesState): number[] =>
+    state.basketExpressionsIds;
 
 // createSelector function uses memoization so that only if byId slice changes it will get recomputed again.
 export const getTimeSeries = createSelector(getTimeSeriesById, (timeSeriesById): Relation[] => {

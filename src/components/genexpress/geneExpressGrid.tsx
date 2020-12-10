@@ -20,7 +20,7 @@ import SnackbarNotifier from './snackbarNotifier/snackbarNotifier';
 import GenexpressAppBar from './genexpressAppBar/genexpressAppBar';
 import DifferentialExpressions from './modules/differentialExpressions/differentialExpressions';
 import GOEnrichment from './modules/gOEnrichment/gOEnrichment';
-import GeneExpressions from './modules/geneExpressions/geneExpressions';
+import GeneExpressions from './modules/genesExpressions/genesExpressions';
 import { LayoutBreakpoint, ModulesKeys } from './common/constants';
 import { ResponsiveGridLayoutContainer } from './geneExpressGrid.styles';
 

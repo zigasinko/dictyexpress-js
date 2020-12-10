@@ -1,4 +1,4 @@
-import { DataGOEnrichmentAnalysis } from '@genialis/resolwe/dist/api/types/rest';
+import { DataGOEnrichmentAnalysis, Storage } from '@genialis/resolwe/dist/api/types/rest';
 import { createAction } from '@reduxjs/toolkit';
 import { Gene } from 'redux/models/internal';
 
@@ -46,4 +46,11 @@ export const fetchGOEnrichmentStorage = createAction<number>(
 export const gafAlreadyFetched = createAction('gOEnrichment/gafAlreadyFetched');
 export const gOEnrichmentDataFetchSucceeded = createAction<DataGOEnrichmentAnalysis>(
     'gOEnrichment/dataFetchSucceeded',
+);
+
+// ClusteringEpics.
+export const fetchClusteringData = createAction<number>('clustering/fetchClusteringData');
+export const fetchClusteringStorage = createAction<number>('clustering/fetchClusteringStorage');
+export const fetchClusteringStorageSucceeded = createAction<Storage>(
+    'clustering/fetchClusteringStorageSucceeded',
 );

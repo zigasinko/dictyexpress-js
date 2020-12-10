@@ -10,7 +10,7 @@ import {
     pValueThresholdChanged,
     pValueThresholdsOptions,
 } from 'redux/stores/gOEnrichment';
-import { Aspect, Gene, GOEnrichmentRow } from 'redux/models/internal';
+import { Option, AspectValue, Gene, GOEnrichmentRow } from 'redux/models/internal';
 import { GOEnrichmentJson } from '@genialis/resolwe/dist/api/types/rest';
 import _ from 'lodash';
 import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
@@ -55,7 +55,7 @@ const connector = connect(mapStateToProps, {
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-export const aspectOptions: Aspect[] = [
+export const aspectOptions: Option<AspectValue>[] = [
     { value: 'BP', label: 'Biological process' },
     { value: 'CC', label: 'Cellular component' },
     { value: 'MF', label: 'Molecular function' },

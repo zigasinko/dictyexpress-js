@@ -9,10 +9,11 @@ import {
     RelationPartition,
     User,
     DataGafAnnotation,
-    Storage,
     DONE_DATA_STATUS,
     Data,
     Process,
+    Storage,
+    GeneClustering,
 } from '@genialis/resolwe/dist/api/types/rest';
 import { BasketAddSamplesResponse } from 'redux/models/rest';
 import _ from 'lodash';
@@ -35,7 +36,9 @@ import {
     DifferentialExpressionsById,
     GOEnrichmentRow,
     EnhancedGOEnrichmentJson,
+    MergedClusteringData,
     GenesExpressionById,
+    BasketExpression,
 } from '../redux/models/internal';
 import { RootState } from '../redux/rootReducer';
 
@@ -444,6 +447,37 @@ export const generateGeneOntologyStorageJson = (genesIds: string[]): EnhancedGOE
     return json;
 };
 
+/**
+ * Generates a random hierarchical clustering json.
+ * @param genesIds Ids of genes.
+ */
+export const generateHierarchicalClusteringJson = (): GeneClustering => ({
+    gene_symbols: {
+        0: { gene: '0' },
+        1: { gene: '1' },
+        2: { gene: '2' },
+        3: { gene: '3' },
+        4: { gene: '4' },
+        5: { gene: '5' },
+        6: { gene: '6' },
+        7: { gene: '7' },
+        8: { gene: '8' },
+        9: { gene: '9' },
+    },
+    order: [5, 7, 0, 9, 6, 2, 3, 1, 4, 8],
+    linkage: [
+        [5, 7, 0.9915330047411279, 2],
+        [0, 9, 0.991637162935653, 2],
+        [2, 3, 0.9942398675865292, 2],
+        [6, 12, 0.9960644853043414, 3],
+        [4, 8, 0.9978522707762737, 2],
+        [10, 11, 0.9981767213801558, 4],
+        [1, 14, 1.0013150593721503, 3],
+        [13, 16, 1.001429036046999, 6],
+        [15, 17, 1.002131717343846, 10],
+    ],
+});
+
 export const generateGaf = (
     id: number,
 ): {
@@ -507,6 +541,11 @@ export const generateGaf = (
 
     return { humanGaf, mouseMGIGaf, mouseUCSCGaf };
 };
+
+export const generateBasketExpression = (): BasketExpression => ({
+    id: generateRandomNumbers(1, () => Math.random() * 10000)[0],
+    exp_type: 'polyA',
+});
 
 /**
  * Helper function that generates mock instances of objects for use in unit tests.
@@ -592,6 +631,7 @@ export const testState = (): RootState => {
             isFetching: false,
             isAddingToBasket: false,
             basketInfo: {} as BasketInfo,
+            basketExpressionsIds: [],
         },
         genes: {
             byId: generateGenesById(2),
@@ -621,6 +661,12 @@ export const testState = (): RootState => {
             species: '',
             pValueThreshold: 0.1,
             isFetchingJson: false,
+        },
+        clustering: {
+            distanceMeasure: 'pearson',
+            isFetchingClusteringData: false,
+            linkageFunction: 'average',
+            mergedData: {} as MergedClusteringData,
         },
         notifications: { notifications: [] as SnackbarNotifications },
     };

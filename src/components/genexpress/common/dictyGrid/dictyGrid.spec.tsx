@@ -13,6 +13,7 @@ const timeSeries = getTimeSeries({
     selectedId: 1,
     isAddingToBasket: false,
     basketInfo: {} as BasketInfo,
+    basketExpressionsIds: [],
 });
 
 describe('dictyGrid', () => {

@@ -13,6 +13,7 @@ import {
     timeSeriesFetchEnded,
     timeSeriesFetchSucceeded,
     getBasketId,
+    fetchBasketExpressionsIdsSucceeded,
 } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
 import { SamplesGenesExpressionsById } from 'redux/models/internal';
@@ -38,6 +39,7 @@ import {
     getDifferentialExpressions,
     getTimeSeriesRelations,
     getStorage,
+    getBasketExpressions,
 } from 'api';
 import {
     fetchTimeSeriesSamplesExpressions,
@@ -87,6 +89,25 @@ const timeSeriesSelectedEpic: Epic<Action, Action, RootState> = (action$, state$
                 ),
                 startWith(addToBasketStarted()),
                 endWith(addToBasketEnded()),
+            );
+        }),
+    );
+};
+
+const fetchBasketExpressionsEpic: Epic<Action, Action, RootState> = (action$, state$) => {
+    return action$.pipe(
+        ofType<Action, ReturnType<typeof addSamplesToBasketSucceeded>>(
+            addSamplesToBasketSucceeded.toString(),
+        ),
+        withLatestFrom(state$),
+        mergeMap(([action]) => {
+            return from(getBasketExpressions(action.payload.id)).pipe(
+                map((basketExpressions) => {
+                    return fetchBasketExpressionsIdsSucceeded(
+                        basketExpressions.map((basketExpression) => basketExpression.id),
+                    );
+                }),
+                catchError((error) => of(handleError(`Error fetching basket expressions.`, error))),
             );
         }),
     );
@@ -212,4 +233,5 @@ export default combineEpics(
     fetchTimeSeriesSamplesExpressionsEpic,
     fetchDifferentialExpressionsEpic,
     fetchDifferentialExpressionsDataEpic,
+    fetchBasketExpressionsEpic,
 );

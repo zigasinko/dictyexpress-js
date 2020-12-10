@@ -1,34 +1,43 @@
-import { generateTimeSeriesById, generateBasket, generateSingleTimeSeries } from 'tests/mock';
-import { RelationsById, BasketInfo } from 'redux/models/internal';
+import {
+    generateTimeSeriesById,
+    generateBasket,
+    generateSingleTimeSeries,
+    generateBasketExpression,
+} from 'tests/mock';
+import { BasketInfo } from 'redux/models/internal';
 import _ from 'lodash';
-import { Relation } from '@genialis/resolwe/dist/api/types/rest';
 import timeSeriesReducer, {
     timeSeriesSelected,
     TimeSeriesState,
     timeSeriesFetchSucceeded,
     addSamplesToBasketSucceeded,
+    fetchBasketExpressionsIdsSucceeded,
 } from './timeSeries';
 
+const timeSeriesById = generateTimeSeriesById(2);
+const timeSeries = _.flatMap(timeSeriesById);
+const basket = generateBasket('123');
+const basketInfo = {
+    id: basket.id,
+    source: basket.permitted_sources[0],
+    species: basket.permitted_organisms[0],
+    type: 'gene',
+} as BasketInfo;
+const basketExpressions = [generateBasketExpression(), generateBasketExpression()];
+const basketExpressionsIds = basketExpressions.map((basketExpression) => basketExpression.id);
+
 describe('timeSeries store', () => {
-    let timeSeriesById: RelationsById;
     let initialState: TimeSeriesState;
 
-    beforeEach(() => {
-        timeSeriesById = generateTimeSeriesById(2);
-    });
-
     describe('empty initial state', () => {
-        let timeSeries: Relation[];
-
         beforeEach(() => {
-            timeSeries = _.flatMap(timeSeriesById);
-
             initialState = {
                 byId: {},
                 selectedId: 0,
                 isFetching: false,
                 isAddingToBasket: false,
                 basketInfo: {} as BasketInfo,
+                basketExpressionsIds: [],
             };
         });
 
@@ -53,16 +62,23 @@ describe('timeSeries store', () => {
         });
 
         it('should set basketInfo with addSamplesToBasketSucceeded action', () => {
-            const basket = generateBasket('123');
             const newState = timeSeriesReducer(initialState, addSamplesToBasketSucceeded(basket));
             const expectedState = {
                 ...initialState,
-                basketInfo: {
-                    id: basket.id,
-                    source: basket.permitted_sources[0],
-                    species: basket.permitted_organisms[0],
-                    type: 'gene',
-                },
+                basketInfo,
+            };
+
+            expect(newState).toEqual(expectedState);
+        });
+
+        it('should set basketExpressionsIds with fetchBasketExpressionsIdsSucceeded action', () => {
+            const newState = timeSeriesReducer(
+                initialState,
+                fetchBasketExpressionsIdsSucceeded(basketExpressionsIds),
+            );
+            const expectedState = {
+                ...initialState,
+                basketExpressionsIds,
             };
 
             expect(newState).toEqual(expectedState);
@@ -73,14 +89,15 @@ describe('timeSeries store', () => {
         beforeEach(() => {
             initialState = {
                 byId: timeSeriesById,
-                selectedId: 0,
+                selectedId: 2,
                 isFetching: false,
                 isAddingToBasket: false,
-                basketInfo: {} as BasketInfo,
+                basketInfo,
+                basketExpressionsIds,
             };
         });
 
-        it('should set fetched timeSeries to state with timeSeriesFetchSucceeded action', () => {
+        it('should set new fetched timeSeries to state with timeSeriesFetchSucceeded action', () => {
             const newRelation = generateSingleTimeSeries(2);
             const newState = timeSeriesReducer(
                 initialState,
@@ -89,6 +106,18 @@ describe('timeSeries store', () => {
             const expectedState = {
                 ...initialState,
                 byId: { [newRelation.id]: newRelation },
+            };
+
+            expect(newState).toEqual(expectedState);
+        });
+
+        it('should clear basketInfo, basketExpressionsIds on timeSeriesSelected action', () => {
+            const newState = timeSeriesReducer(initialState, timeSeriesSelected(1));
+            const expectedState = {
+                ...initialState,
+                selectedId: 1,
+                basketInfo: {} as BasketInfo,
+                basketExpressionsIds: [],
             };
 
             expect(newState).toEqual(expectedState);
