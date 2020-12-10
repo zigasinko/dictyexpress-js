@@ -11,7 +11,7 @@ import React, {
 import * as vega from 'vega';
 import * as vegaTooltip from 'vega-tooltip';
 import { SizeMeProps } from 'react-sizeme';
-import { Spec } from 'vega';
+import { SignalValue, Spec } from 'vega';
 import { useDispatch } from 'react-redux';
 import { handleError } from 'utils/errorUtils';
 import { RendererContext } from 'components/common/rendererContext';
@@ -23,6 +23,12 @@ export type DataHandler = {
     name: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     handler: (name: string, value: any) => void;
+};
+
+export type SignalHandler = {
+    name: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    handler: (name: string, value: SignalValue) => void;
 };
 
 export type DataDefinition = {
@@ -40,6 +46,7 @@ type ChartProps = {
     updatableDataDefinitions?: Array<DataDefinition>;
     updatableSignalDefinitions?: Array<SignalDefinition>;
     dataHandlers?: Array<DataHandler>;
+    signalHandlers?: Array<SignalHandler>;
     vegaSpecification: Spec;
 };
 
@@ -47,6 +54,7 @@ export type ChartHandle = {
     getChartView: () => vega.View | null;
     getSvgImage: () => Promise<Blob | null>;
     getPngImage: () => Promise<string | null>;
+    getChartDivElement: () => HTMLDivElement | null;
 };
 
 const chartPadding = { top: 20, left: 15, bottom: 15, right: 15 };
@@ -68,6 +76,7 @@ const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
         updatableDataDefinitions,
         updatableSignalDefinitions,
         dataHandlers,
+        signalHandlers,
         size: { width, height },
         vegaSpecification,
     }: ChartProps & SizeMeProps,
@@ -77,6 +86,7 @@ const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
     const renderer = useContext(RendererContext);
 
     const addedDataHandlers = useRef<Array<DataHandler>>([]);
+    const addedSignalHandlers = useRef<Array<DataHandler>>([]);
 
     // Element with the chart.
     const chartElement = useRef<HTMLDivElement>(null);
@@ -104,6 +114,7 @@ const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
 
             return pngBase64.substring(pngBase64.indexOf(',') + 1);
         },
+        getChartDivElement: (): HTMLDivElement | null => chartElement.current,
     }));
 
     /**
@@ -233,6 +244,33 @@ const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
     }, [chartView, dataHandlers]);
 
     /**
+     * Manage signal handlers.
+     */
+    useEffect(() => {
+        if (signalHandlers != null && chartView.current != null) {
+            // If any handlers are already attached, first remove them all.
+            for (let i = 0; i < addedSignalHandlers.current.length; i += 1) {
+                const addedSignalHandler = addedSignalHandlers.current[i];
+                chartView.current.removeSignalListener(
+                    addedSignalHandler.name,
+                    addedSignalHandler.handler,
+                );
+            }
+
+            // Add new handlers.
+            for (let i = 0; i < signalHandlers.length; i += 1) {
+                const newSignalHandler = signalHandlers[i];
+                chartView.current.addSignalListener(
+                    newSignalHandler.name,
+                    newSignalHandler.handler,
+                );
+            }
+
+            addedSignalHandlers.current = signalHandlers;
+        }
+    }, [chartView, signalHandlers]);
+
+    /**
      * Update chart data when updatableDataDefinitions (data) changes.
      */
     useEffect(() => {
@@ -264,7 +302,5 @@ const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
         </div>
     );
 };
-
-export type ChartRef = React.ElementRef<typeof Chart>;
 
 export default withSizeme(forwardRef(Chart));
