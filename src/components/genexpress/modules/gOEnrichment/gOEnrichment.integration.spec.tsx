@@ -113,7 +113,12 @@ describe('goEnrichment integration', () => {
 
                 fireEvent.click(await screen.findByText(genes[0].name));
 
-                await screen.findByText(gOEnrichmentJson.tree.BP[0].term_name);
+                await waitFor(
+                    () => {
+                        screen.getByText(gOEnrichmentJson.tree.BP[0].term_name);
+                    },
+                    { timeout: 1500 },
+                );
             });
         });
 

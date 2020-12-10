@@ -14,13 +14,15 @@ import { defaultBreakpointCols, getLayouts, layoutsChanged } from 'redux/stores/
 import _ from 'lodash';
 import { getIsFetchingGOEnrichmentJson } from 'redux/stores/gOEnrichment';
 import { appStarted } from 'redux/epics/epicsActions';
+import { getIsFetchingClusteringData } from 'redux/stores/clustering';
 import TimeSeriesAndGeneSelector from './modules/timeSeriesAndGeneSelector/timeSeriesAndGeneSelector';
 import DictyModule from './common/dictyModule/dictyModule';
 import SnackbarNotifier from './snackbarNotifier/snackbarNotifier';
 import GenexpressAppBar from './genexpressAppBar/genexpressAppBar';
 import DifferentialExpressions from './modules/differentialExpressions/differentialExpressions';
 import GOEnrichment from './modules/gOEnrichment/gOEnrichment';
-import GeneExpressions from './modules/genesExpressions/genesExpressions';
+import Clustering from './modules/clustering/clustering';
+import GenesExpressions from './modules/genesExpressions/genesExpressions';
 import { LayoutBreakpoint, ModulesKeys } from './common/constants';
 import { ResponsiveGridLayoutContainer } from './geneExpressGrid.styles';
 
@@ -37,6 +39,7 @@ const mapStateToProps = (
     isFetchingDifferentialExpressionsData: boolean;
     isLoggingOut: boolean;
     isFetchingGOEnrichmentJson: boolean;
+    isFetchingClusteringData: boolean;
 } => {
     return {
         layouts: getLayouts(state.layouts),
@@ -51,6 +54,7 @@ const mapStateToProps = (
         ),
         isLoggingOut: getIsLoggingOut(state.authentication),
         isFetchingGOEnrichmentJson: getIsFetchingGOEnrichmentJson(state.gOEnrichment),
+        isFetchingClusteringData: getIsFetchingClusteringData(state.clustering),
     };
 };
 
@@ -67,6 +71,7 @@ const GeneExpressGrid = ({
     isFetchingSamplesExpressions,
     isFetchingDifferentialExpressions,
     isFetchingDifferentialExpressionsData,
+    isFetchingClusteringData,
     isLoggingOut,
     isFetchingGOEnrichmentJson,
     connectedLayoutsChanged,
@@ -123,7 +128,7 @@ const GeneExpressGrid = ({
                             title="Expression Time Courses"
                             isLoading={isFetchingSamplesExpressions}
                         >
-                            <GeneExpressions />
+                            <GenesExpressions />
                         </DictyModule>
                     </div>
                     <div key={ModulesKeys.differentialExpressions}>
@@ -143,6 +148,14 @@ const GeneExpressGrid = ({
                             isLoading={isFetchingGOEnrichmentJson}
                         >
                             <GOEnrichment />
+                        </DictyModule>
+                    </div>
+                    <div key={ModulesKeys.clustering}>
+                        <DictyModule
+                            title="Hierarchical Clustering"
+                            isLoading={isFetchingClusteringData}
+                        >
+                            <Clustering />
                         </DictyModule>
                     </div>
                 </ResponsiveGridLayout>

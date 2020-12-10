@@ -102,6 +102,16 @@ const getBreakpointLayouts = (
             availableSpaceInCols,
             width,
         ),
+        generateModuleLayout(
+            ModulesKeys.clustering,
+            breakpoint,
+            availableSpaceInCols,
+            {
+                large: 4,
+                mid: 3,
+                small: defaultBreakpointCols.small,
+            }[breakpoint],
+        ),
     ];
 };
 
