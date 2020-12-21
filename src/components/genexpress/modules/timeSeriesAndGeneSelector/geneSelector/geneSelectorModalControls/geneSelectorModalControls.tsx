@@ -1,0 +1,99 @@
+import React, { ReactElement, useState } from 'react';
+import Button from '@material-ui/core/Button';
+import {
+    ModalFooter,
+    FooterControlsContainer,
+} from 'components/genexpress/common/dictyModal/dictyModal.styles';
+import { Checkbox, FormControlLabel } from '@material-ui/core';
+import { connect, ConnectedProps } from 'react-redux';
+import { allGenesDeselected, genesSelected } from 'redux/stores/genes';
+
+const connector = connect(null, {
+    connectedGenesSelected: genesSelected,
+    connectedAllGenesDeselected: allGenesDeselected,
+});
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+type GeneSelectorModalControlsProps = {
+    selectedGenesIds: string[];
+    allGenesIds: string[];
+    onClose: () => void;
+} & PropsFromRedux;
+
+const GeneSelectorModalControls = ({
+    selectedGenesIds,
+    allGenesIds,
+    onClose,
+    connectedGenesSelected,
+    connectedAllGenesDeselected,
+}: GeneSelectorModalControlsProps): ReactElement => {
+    const [append, setAppend] = useState(true);
+
+    const handleAppendCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+        setAppend(event.target.checked);
+    };
+
+    /**
+     * Sets redux store with selected genes (already selected are cleared first).
+     * @param genesIds - Genes IDs.
+     */
+    const setSelectedGenes = (genesIds: string[]): void => {
+        connectedAllGenesDeselected();
+        connectedGenesSelected(genesIds);
+        onClose();
+    };
+
+    /**
+     * Updates (appends) redux store with selected genes.
+     * @param genesIds - Genes IDs.
+     */
+    const appendSelectedGenes = (genesIds: string[]): void => {
+        connectedGenesSelected(genesIds);
+        onClose();
+    };
+
+    const handleSelectOnClick = (): void => {
+        if (append) {
+            appendSelectedGenes(selectedGenesIds);
+        } else {
+            setSelectedGenes(selectedGenesIds);
+        }
+    };
+
+    const handleSelectAllOnClick = (): void => {
+        if (append) {
+            appendSelectedGenes(allGenesIds);
+        } else {
+            setSelectedGenes(allGenesIds);
+        }
+    };
+
+    return (
+        <ModalFooter>
+            <FooterControlsContainer>
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={append}
+                            onChange={handleAppendCheckboxChange}
+                            name="append"
+                        />
+                    }
+                    label="Append selected genes to Genes module"
+                />
+                <div>
+                    <Button onClick={handleSelectOnClick} disabled={selectedGenesIds.length === 0}>
+                        Select
+                    </Button>
+                    <Button onClick={handleSelectAllOnClick} disabled={allGenesIds.length === 0}>
+                        Select all {allGenesIds.length}
+                    </Button>
+                    <Button onClick={onClose}>Close</Button>
+                </div>
+            </FooterControlsContainer>
+        </ModalFooter>
+    );
+};
+
+export default connector(GeneSelectorModalControls);

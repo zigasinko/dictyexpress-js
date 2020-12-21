@@ -1,23 +1,15 @@
 import React, { ReactElement, useEffect, useRef, useState } from 'react';
-import Button from '@material-ui/core/Button';
 import {
-    ModalFooter,
     ModalBody,
     ModalHeader,
     ModalContainer,
     CenteredModal,
-    FooterControlsContainer,
 } from 'components/genexpress/common/dictyModal/dictyModal.styles';
 import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
+import GeneSelectorModalControls from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/geneSelectorModalControls/geneSelectorModalControls';
 import { Gene, VolcanoPoint } from 'redux/models/internal';
-import { Checkbox, FormControlLabel } from '@material-ui/core';
 import { connect, ConnectedProps } from 'react-redux';
-import {
-    allGenesDeselected,
-    genesSelected,
-    getGenes,
-    getSelectedGenesIds,
-} from 'redux/stores/genes';
+import { getGenes, getSelectedGenesIds } from 'redux/stores/genes';
 import { RootState } from 'redux/rootReducer';
 import { ValueGetterParams } from 'ag-grid-community';
 import {
@@ -37,10 +29,7 @@ const mapStateToProps = (
     };
 };
 
-const connector = connect(mapStateToProps, {
-    connectedGenesSelected: genesSelected,
-    connectedAllGenesDeselected: allGenesDeselected,
-});
+const connector = connect(mapStateToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
@@ -63,10 +52,7 @@ const VolcanoPointSelectionModal = ({
     selectedGenesIds,
     genes,
     handleOnClose,
-    connectedGenesSelected,
-    connectedAllGenesDeselected,
 }: VolcanoPointSelectionModalProps): ReactElement => {
-    const [append, setAppend] = useState(true);
     const [geneVolcanoPoints, setGeneVolcanoPoints] = useState<GeneVolcanoPoint[]>([]);
     const [selectedGeneVolcanoPoints, setSelectedGeneVolcanoPoints] = useState<GeneVolcanoPoint[]>(
         [],
@@ -93,51 +79,6 @@ const VolcanoPointSelectionModal = ({
             ),
         );
     }, [geneVolcanoPoints, selectedGenesIds]);
-
-    const handleAppendCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        setAppend(event.target.checked);
-    };
-
-    /**
-     * Handles user points selection in volcano point selection modal.
-     *  -> Updates (appends) redux store with selected genes.
-     * @param genesIds - IDs of genes that were selected on differential expressions volcano plot.
-     */
-    const appendSelectedGenes = (genesIds: string[]): void => {
-        connectedGenesSelected(genesIds);
-        handleOnClose();
-    };
-
-    /**
-     * Handles user points selection in volcano point selection modal.
-     *  -> Sets redux store with selected genes (already selected are cleared first).
-     * @param genesIds - IDs of genes that were selected on differential expressions volcano plot.
-     */
-    const setSelectedGenes = (genesIds: string[]): void => {
-        connectedAllGenesDeselected();
-        connectedGenesSelected(genesIds);
-        handleOnClose();
-    };
-
-    const handleSelectOnClick = (): void => {
-        const selectedVolcanoPointsGenesIds = selectedGeneVolcanoPoints.map(
-            (geneVolcanoPoint) => geneVolcanoPoint.point.geneId,
-        );
-        if (append) {
-            appendSelectedGenes(selectedVolcanoPointsGenesIds);
-        } else {
-            setSelectedGenes(selectedVolcanoPointsGenesIds);
-        }
-    };
-
-    const handleSelectAllOnClick = (): void => {
-        const allGeneIds = volcanoPoints.map((volcanoPoint) => volcanoPoint.geneId);
-        if (append) {
-            appendSelectedGenes(allGeneIds);
-        } else {
-            setSelectedGenes(allGeneIds);
-        }
-    };
 
     const columnDefs = useRef([
         {
@@ -201,32 +142,13 @@ const VolcanoPointSelectionModal = ({
                         />
                     </GeneVolcanoPointsGridWrapper>
                 </ModalBody>
-                <ModalFooter>
-                    <FooterControlsContainer>
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={append}
-                                    onChange={handleAppendCheckboxChange}
-                                    name="append"
-                                />
-                            }
-                            label="Append selected genes to Genes module"
-                        />
-                        <div>
-                            <Button
-                                onClick={handleSelectOnClick}
-                                disabled={selectedGeneVolcanoPoints.length === 0}
-                            >
-                                Select
-                            </Button>
-                            <Button onClick={handleSelectAllOnClick}>
-                                Select all {volcanoPoints.length}
-                            </Button>
-                            <Button onClick={handleOnClose}>Close</Button>
-                        </div>
-                    </FooterControlsContainer>
-                </ModalFooter>
+                <GeneSelectorModalControls
+                    allGenesIds={genes.map((gene) => gene.feature_id)}
+                    selectedGenesIds={selectedGeneVolcanoPoints.map(
+                        (volcanoPoint) => volcanoPoint.point.geneId,
+                    )}
+                    onClose={handleOnClose}
+                />
             </ModalContainer>
         </CenteredModal>
     );

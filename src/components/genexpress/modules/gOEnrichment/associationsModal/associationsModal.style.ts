@@ -1,12 +1,7 @@
-import { FooterControlsContainer } from 'components/genexpress/common/dictyModal/dictyModal.styles';
 import styled from 'styled-components';
 
 export const AssociationsGridWrapper = styled.div`
     height: 400px;
-`;
-
-export const GOEnrichmentFooterControlsContainer = styled(FooterControlsContainer)`
-    justify-content: flex-end;
 `;
 
 export const TermInfo = styled.h2`

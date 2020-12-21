@@ -1,13 +1,12 @@
 import React, { ReactElement, useEffect, useRef, useState } from 'react';
-import Button from '@material-ui/core/Button';
 import {
-    ModalFooter,
     ModalBody,
     ModalHeader,
     ModalContainer,
     CenteredModal,
 } from 'components/genexpress/common/dictyModal/dictyModal.styles';
 import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
+import GeneSelectorModalControls from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/geneSelectorModalControls/geneSelectorModalControls';
 import { Gene, GenesById, GOEnrichmentRow } from 'redux/models/internal';
 import { connect, ConnectedProps } from 'react-redux';
 import amigoLogo from 'images/amigo_logo.png';
@@ -25,7 +24,6 @@ import {
     TermInfo,
     TermName,
     AssociationsGridWrapper,
-    GOEnrichmentFooterControlsContainer,
     AmigoLink,
     AmigoLinkImage,
 } from './associationsModal.style';
@@ -61,7 +59,6 @@ const GOEnrichmentAssociationsModal = ({
     genesById,
     selectedGenesIds,
     handleOnClose,
-    connectedGenesSelected,
     connectedFetchAssociationsGenes,
     isFetchingAssociationsGenes,
 }: GOEnrichmentAssociationsModalProps): ReactElement => {
@@ -95,14 +92,6 @@ const GOEnrichmentAssociationsModal = ({
             associatedGenes.filter((gene) => selectedGenesIds.includes(gene.feature_id)),
         );
     }, [associatedGenes, selectedGenesIds]);
-
-    const handleSelectOnClick = (): void => {
-        connectedGenesSelected(selectedAssociatedGenes.map((gene) => gene.feature_id));
-    };
-
-    const handleSelectAllOnClick = (): void => {
-        connectedGenesSelected(associatedGenes.map((gene) => gene.feature_id));
-    };
 
     const columnDefs = useRef([
         {
@@ -170,23 +159,11 @@ const GOEnrichmentAssociationsModal = ({
                         )}
                     </AssociationsGridWrapper>
                 </ModalBody>
-                <ModalFooter>
-                    <GOEnrichmentFooterControlsContainer>
-                        <Button
-                            onClick={handleSelectOnClick}
-                            disabled={selectedAssociatedGenes.length === 0}
-                        >
-                            Select
-                        </Button>
-                        <Button
-                            onClick={handleSelectAllOnClick}
-                            disabled={selectedAssociatedGenes.length === 0}
-                        >
-                            Select all {associatedGenes.length}
-                        </Button>
-                        <Button onClick={handleOnClose}>Close</Button>
-                    </GOEnrichmentFooterControlsContainer>
-                </ModalFooter>
+                <GeneSelectorModalControls
+                    allGenesIds={associatedGenes.map((gene) => gene.feature_id)}
+                    selectedGenesIds={selectedAssociatedGenes.map((gene) => gene.feature_id)}
+                    onClose={handleOnClose}
+                />
             </ModalContainer>
         </CenteredModal>
     );
