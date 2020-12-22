@@ -1,27 +1,27 @@
-import React, { ReactElement, useRef } from 'react';
+import React, { ReactElement, useRef, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { getSelectedGenesExpressions, RootState } from 'redux/rootReducer';
 import { getSelectedGenes, getHighlightedGenesIds, genesHighlighted } from 'redux/stores/genes';
-import { Relation } from '@genialis/resolwe/dist/api/types/rest';
 import { Gene, GeneExpression } from 'redux/models/internal';
-import { getSelectedTimeSeries, getSelectedTimeSeriesLabels } from 'redux/stores/timeSeries';
 import { ChartHandle } from 'components/genexpress/common/chart/chart';
 import useReport from 'components/genexpress/common/reportBuilder/useReport';
+import { Button } from '@material-ui/core';
 import GenesExpressionsLineChart from './genesExpressionsLineChart';
+import {
+    GenesExpressionsContainer,
+    GenesExpressionsLineChartContainer,
+} from './genesExpressions.style';
+import FindSimilarGenesModal from './findSimilarGenesModal/findSimilarGenesModal';
 
 const mapStateToProps = (
     state: RootState,
 ): {
-    timeSeries: Relation;
-    timeSeriesLabels: string[];
-    genes: Gene[];
+    selectedGenes: Gene[];
     genesExpressions: GeneExpression[];
     highlightedGenesIds: string[];
 } => {
     return {
-        timeSeries: getSelectedTimeSeries(state.timeSeries),
-        timeSeriesLabels: getSelectedTimeSeriesLabels(state.timeSeries),
-        genes: getSelectedGenes(state.genes),
+        selectedGenes: getSelectedGenes(state.genes),
         genesExpressions: getSelectedGenesExpressions(state),
         highlightedGenesIds: getHighlightedGenesIds(state.genes),
     };
@@ -35,9 +35,11 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 const GenesExpressionsWidget = ({
     genesExpressions,
+    selectedGenes,
     connectedGenesHighlighted,
     highlightedGenesIds,
 }: PropsFromRedux): ReactElement => {
+    const [findSimilarGenesModalOpened, setManageModalOpened] = useState(false);
     const chartRef = useRef<ChartHandle>();
 
     const handleOnHighlight = (genesNames: string[]): void => {
@@ -59,15 +61,35 @@ const GenesExpressionsWidget = ({
         }
     }, []);
 
+    const handleFindSimilarOnClick = (): void => {
+        setManageModalOpened(true);
+    };
+
     return (
         <>
-            {genesExpressions.length > 0 && (
-                <GenesExpressionsLineChart
-                    genesExpressions={genesExpressions}
-                    highlightedGenesIds={highlightedGenesIds}
-                    onHighlight={handleOnHighlight}
-                    ref={chartRef}
-                />
+            <GenesExpressionsContainer>
+                <div>
+                    <Button
+                        type="button"
+                        onClick={handleFindSimilarOnClick}
+                        disabled={selectedGenes.length === 0}
+                    >
+                        Find similar genes
+                    </Button>
+                </div>
+                {genesExpressions.length > 0 && (
+                    <GenesExpressionsLineChartContainer>
+                        <GenesExpressionsLineChart
+                            genesExpressions={genesExpressions}
+                            highlightedGenesIds={highlightedGenesIds}
+                            onHighlight={handleOnHighlight}
+                            ref={chartRef}
+                        />
+                    </GenesExpressionsLineChartContainer>
+                )}
+            </GenesExpressionsContainer>
+            {findSimilarGenesModalOpened && (
+                <FindSimilarGenesModal handleOnClose={(): void => setManageModalOpened(false)} />
             )}
         </>
     );

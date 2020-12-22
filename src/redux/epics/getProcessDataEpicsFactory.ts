@@ -33,6 +33,10 @@ export const ProcessesInfo: { [_: string]: ProcessInfo } = {
         name: 'Gene Ontology Enrichment',
         slug: ProcessSlug.goEnrichment,
     },
+    FindSimilarGenes: {
+        name: 'Find Similar Genes',
+        slug: ProcessSlug.findSimilar,
+    },
 };
 
 /* If analysis isn't cached on the server, it's data will be pushed via WebSocket. So if any of parameters

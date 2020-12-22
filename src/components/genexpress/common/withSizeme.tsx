@@ -14,7 +14,7 @@ const withSizeme = <P extends object>(
     forwardRef(
         ({ ...props }: Pick<P, Exclude<keyof P, 'size'>>, ref): ReactElement => {
             return (
-                <SizeMe refreshRate={100} refreshMode="debounce">
+                <SizeMe refreshRate={100} refreshMode="debounce" monitorHeight>
                     {({ size }): ReactElement => (
                         <Component size={size} {...(props as P)} ref={ref} />
                     )}

@@ -69,11 +69,13 @@ const GOEnrichmentAssociationsModal = ({
     useEffect(() => {
         connectedFetchAssociationsGenes({
             geneIds: gOEnrichmentRow.gene_associations,
+            source: gOEnrichmentRow.source,
             species: gOEnrichmentRow.species,
         });
     }, [
         connectedFetchAssociationsGenes,
         gOEnrichmentRow.gene_associations,
+        gOEnrichmentRow.source,
         gOEnrichmentRow.species,
     ]);
 

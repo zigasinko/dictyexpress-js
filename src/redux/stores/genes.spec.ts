@@ -30,6 +30,7 @@ describe('genes store', () => {
                 highlightedGenesIds: [],
                 isFetchingDifferentialExpressionGenes: false,
                 isFetchingAssociationsGenes: false,
+                isFetchingSimilarGenes: false,
             };
 
             genes = _.flatMap(genesById);
@@ -87,6 +88,7 @@ describe('genes store', () => {
                 highlightedGenesIds: genes.map((gene) => gene.feature_id),
                 isFetchingDifferentialExpressionGenes: false,
                 isFetchingAssociationsGenes: false,
+                isFetchingSimilarGenes: false,
             };
         });
 

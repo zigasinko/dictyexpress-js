@@ -74,6 +74,7 @@ const isFetchingDifferentialExpressionGenesSlice = createIsFetchingSlice(
     'differentialExpressionGenes',
 );
 const isFetchingAssociationsGenesSlice = createIsFetchingSlice('associationsGenes');
+const isFetchingSimilarGenesSlice = createIsFetchingSlice('similarGenes');
 
 const genesReducer = combineReducers({
     byId: genesByIdSlice.reducer,
@@ -81,6 +82,7 @@ const genesReducer = combineReducers({
     highlightedGenesIds: highlightedGenesSlice.reducer,
     isFetchingDifferentialExpressionGenes: isFetchingDifferentialExpressionGenesSlice.reducer,
     isFetchingAssociationsGenes: isFetchingAssociationsGenesSlice.reducer,
+    isFetchingSimilarGenes: isFetchingSimilarGenesSlice.reducer,
 });
 
 // Export actions.
@@ -107,6 +109,11 @@ export const {
     started: associationsGenesFetchStarted,
     ended: associationsGenesFetchEnded,
 } = isFetchingAssociationsGenesSlice.actions;
+
+export const {
+    started: similarGenesFetchStarted,
+    ended: similarGenesFetchEnded,
+} = isFetchingSimilarGenesSlice.actions;
 
 export type GenesState = ReturnType<typeof genesReducer>;
 
@@ -135,3 +142,5 @@ export const isFetchingDifferentialExpressionGenes = (state: GenesState): boolea
     state.isFetchingDifferentialExpressionGenes;
 export const getIsFetchingAssociationsGenes = (state: GenesState): boolean =>
     state.isFetchingAssociationsGenes;
+export const getIsFetchingSimilarGenes = (state: GenesState): boolean =>
+    state.isFetchingSimilarGenes;

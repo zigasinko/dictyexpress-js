@@ -1,7 +1,7 @@
 import { DataGOEnrichmentAnalysis, Storage } from '@genialis/resolwe/dist/api/types/rest';
 import { createAction } from '@reduxjs/toolkit';
 import { Gene } from 'redux/models/internal';
-import { ClusteringData } from 'redux/models/rest';
+import { ClusteringData, FindSimilarGenesData } from 'redux/models/rest';
 
 // Export all epic-specific actions to omit dependency-cycles for reactive queries.
 export const selectGenes = createAction<Gene[]>('genes/selectGenes');
@@ -30,9 +30,17 @@ export const connectionReady = createAction('connectToServer/connectionReady');
 export const fetchSelectedDifferentialExpressionGenes = createAction(
     'genes/fetchSelectedDifferentialExpressionGenes',
 );
-export const fetchAssociationsGenes = createAction<{ geneIds: string[]; species?: string }>(
-    'genes/fetchAssociationsGenes',
-);
+export const fetchAssociationsGenes = createAction<{
+    geneIds: string[];
+    source?: string;
+    species?: string;
+}>('genes/fetchAssociationsGenes');
+export const fetchSimilarGenes = createAction<{
+    geneIds: string[];
+    source?: string;
+    species?: string;
+}>('genes/fetchSimilarGenes');
+export const selectedGenesChanged = createAction<string[]>('genes/selectedGenesChanged');
 
 export const getOrCreateGOEnrichment = createAction('gOEnrichment/getOrCreateGOEnrichment');
 export const fetchGOEnrichmentData = createAction<number>('gOEnrichment/fetchGOEnrichmentData');
@@ -50,4 +58,16 @@ export const fetchClusteringDataSucceeded = createAction<ClusteringData>(
 );
 export const fetchClusteringStorageSucceeded = createAction<Storage>(
     'clustering/fetchClusteringStorageSucceeded',
+);
+
+// SimilarGenesEpics.
+export const fetchGenesSimilarities = createAction('similarGenes/fetchGenesSimilarities');
+export const fetchGenesSimilaritiesData = createAction<number>(
+    'similarGenes/fetchGenesSimilaritiesData',
+);
+export const fetchGenesSimilaritiesDataSucceeded = createAction<FindSimilarGenesData>(
+    'similarGenes/fetchGenesSimilaritiesDataSucceeded',
+);
+export const fetchGenesSimilaritiesStorageSucceeded = createAction<Storage>(
+    'similarGenes/fetchGenesSimilaritiesStorageSucceeded',
 );

@@ -23,10 +23,7 @@ import {
 } from 'redux/stores/clustering';
 import { advancedJoin } from 'utils/arrayUtils';
 import { ChartHandle } from 'components/genexpress/common/chart/chart';
-import {
-    ClusteringDistanceMeasure,
-    ClusteringLinkageFunction,
-} from 'components/genexpress/common/constants';
+import { DistanceMeasure, ClusteringLinkageFunction } from 'components/genexpress/common/constants';
 import {
     ClusteringChartContainer,
     ClusteringContainer,
@@ -39,7 +36,7 @@ const mapStateToProps = (
     state: RootState,
 ): {
     mergedData: MergedClusteringData;
-    distanceMeasure: ClusteringDistanceMeasure;
+    distanceMeasure: DistanceMeasure;
     linkageFunction: ClusteringLinkageFunction;
     highlightedGenesIds: string[];
     selectedGenes: Gene[];
@@ -63,9 +60,9 @@ const connector = connect(mapStateToProps, {
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-export const distanceMeasureOptions: Option<ClusteringDistanceMeasure>[] = [
-    { value: ClusteringDistanceMeasure.pearson, label: 'Pearson' },
-    { value: ClusteringDistanceMeasure.spearman, label: 'Spearman' },
+export const distanceMeasureOptions: Option<DistanceMeasure>[] = [
+    { value: DistanceMeasure.pearson, label: 'Pearson' },
+    { value: DistanceMeasure.spearman, label: 'Spearman' },
 ];
 
 export const linkageFunctionOptions: Option<ClusteringLinkageFunction>[] = [
@@ -183,7 +180,7 @@ const Clustering = ({
     }, [clusterNodes, highlightedGenesIds]);
 
     const handleDistanceMeasureChange = (event: ChangeEvent<{ value: unknown }>): void => {
-        connectedDistanceMeasureChanged(event.target.value as ClusteringDistanceMeasure);
+        connectedDistanceMeasureChanged(event.target.value as DistanceMeasure);
     };
 
     const handleLinkageFunctionChange = (event: ChangeEvent<{ value: unknown }>): void => {

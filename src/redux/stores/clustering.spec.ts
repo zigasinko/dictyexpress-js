@@ -1,7 +1,4 @@
-import {
-    ClusteringDistanceMeasure,
-    ClusteringLinkageFunction,
-} from 'components/genexpress/common/constants';
+import { DistanceMeasure, ClusteringLinkageFunction } from 'components/genexpress/common/constants';
 import _ from 'lodash';
 import { mergeClusteringData } from 'redux/epics/clusteringEpics';
 import { MergedClusteringData } from 'redux/models/internal';
@@ -28,7 +25,7 @@ describe('clusteringStore store', () => {
         beforeEach(() => {
             initialState = {
                 mergedData: {} as MergedClusteringData,
-                distanceMeasure: ClusteringDistanceMeasure.spearman,
+                distanceMeasure: DistanceMeasure.spearman,
                 linkageFunction: ClusteringLinkageFunction.average,
                 isFetchingClusteringData: false,
             };
@@ -50,7 +47,7 @@ describe('clusteringStore store', () => {
         it('should change distanceMeasure with distanceMeasureChanged action', () => {
             const newState = clusteringReducer(
                 initialState,
-                distanceMeasureChanged(ClusteringDistanceMeasure.pearson),
+                distanceMeasureChanged(DistanceMeasure.pearson),
             );
             const expectedState = {
                 ...initialState,
@@ -78,7 +75,7 @@ describe('clusteringStore store', () => {
         beforeEach(() => {
             initialState = {
                 mergedData: mergedClusteringData,
-                distanceMeasure: ClusteringDistanceMeasure.spearman,
+                distanceMeasure: DistanceMeasure.spearman,
                 linkageFunction: ClusteringLinkageFunction.average,
                 isFetchingClusteringData: false,
             };

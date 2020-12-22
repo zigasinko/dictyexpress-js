@@ -1,8 +1,5 @@
 import { combineReducers, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {
-    ClusteringDistanceMeasure,
-    ClusteringLinkageFunction,
-} from 'components/genexpress/common/constants';
+import { DistanceMeasure, ClusteringLinkageFunction } from 'components/genexpress/common/constants';
 import { MergedClusteringData } from 'redux/models/internal';
 import { clearStateOnActions } from './common';
 import createIsFetchingSlice from './fetch';
@@ -30,15 +27,15 @@ const mergedClusteringDataSlice = createSlice({
     },
 });
 
-const distanceMeasureInitialState = ClusteringDistanceMeasure.spearman;
+const distanceMeasureInitialState = DistanceMeasure.spearman;
 const distanceMeasureSlice = createSlice({
     name: 'clustering',
     initialState: distanceMeasureInitialState,
     reducers: {
         distanceMeasureChanged: (
             _state,
-            action: PayloadAction<ClusteringDistanceMeasure>,
-        ): ClusteringDistanceMeasure => {
+            action: PayloadAction<DistanceMeasure>,
+        ): DistanceMeasure => {
             return action.payload;
         },
     },
@@ -87,7 +84,7 @@ export const getIsFetchingClusteringData = (state: ClusteringState): boolean =>
     state.isFetchingClusteringData;
 export const getMergedClusteringData = (state: ClusteringState): MergedClusteringData =>
     state.mergedData;
-export const getDistanceMeasure = (state: ClusteringState): ClusteringDistanceMeasure =>
+export const getDistanceMeasure = (state: ClusteringState): DistanceMeasure =>
     state.distanceMeasure;
 export const getLinkageFunction = (state: ClusteringState): ClusteringLinkageFunction =>
     state.linkageFunction;

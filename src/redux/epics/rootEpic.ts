@@ -12,6 +12,7 @@ import layoutsEpics from './layoutsEpics';
 import gOEnrichmentEpics from './gOEnrichmentEpics';
 import gafEpics from './gafEpics';
 import clusteringEpics from './clusteringEpics';
+import getGOEnrichmentProcessDataEpics from './findSimilarGenesEpics';
 
 const rootEpic: Epic<Action, Action, RootState> = (
     action$,
@@ -27,6 +28,7 @@ const rootEpic: Epic<Action, Action, RootState> = (
         genesEpics,
         gOEnrichmentEpics,
         clusteringEpics,
+        getGOEnrichmentProcessDataEpics,
     )(action$, store$, dependencies).pipe(
         catchError((error, source) => {
             logError('RootEpic global error', error);

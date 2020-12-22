@@ -75,7 +75,7 @@ exports[`geneInformation should render as default snapshot 1`] = `
       <div
         class="sc-AxhUy eFBSHn"
       >
-        This is a test gene
+        This is a test gene 0
       </div>
     </div>
   </div>

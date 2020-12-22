@@ -16,6 +16,12 @@ export type ClusteringData = {
     };
 } & Omit<Data, 'output'>;
 
+export type FindSimilarGenesData = {
+    output: {
+        similar_genes: number;
+    };
+} & Omit<Data, 'output'>;
+
 export type BasketExpressionRequest = {
     basket: string;
     tags?: string[];

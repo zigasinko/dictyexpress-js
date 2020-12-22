@@ -2,7 +2,8 @@ import timeSeries, {
     getSelectedTimeSeries,
     getSelectedTimeSeriesLabels,
 } from 'redux/stores/timeSeries';
-import genes, { getSelectedGenes } from 'redux/stores/genes';
+import genes, { getGenesById, getSelectedGenes } from 'redux/stores/genes';
+import genesSimilarities, { getGenesSimilaritiesQueryGeneId } from 'redux/stores/genesSimilarities';
 import samplesExpressions, { getSamplesExpressionsById } from 'redux/stores/samplesExpressions';
 import notifications from 'redux/stores/notifications';
 import authentication from 'redux/stores/authentication';
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
     authentication,
     timeSeries,
     genes,
+    genesSimilarities,
     samplesExpressions,
     differentialExpressions,
     gOEnrichment,
@@ -65,5 +67,17 @@ export const getSelectedGenesExpressions = createSelector(
         });
 
         return newGenesExpressionsData;
+    },
+);
+
+export const getGenesSimilaritiesQueryGene = createSelector(
+    (state: RootState) => getGenesById(state.genes),
+    (state: RootState) => getGenesSimilaritiesQueryGeneId(state.genesSimilarities),
+    (genesById, genesSimilaritiesQueryGeneId) => {
+        if (_.isEmpty(genesById) || genesSimilaritiesQueryGeneId == null) {
+            return null;
+        }
+
+        return genesById[genesSimilaritiesQueryGeneId];
     },
 );

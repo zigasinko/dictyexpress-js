@@ -23,7 +23,7 @@ export enum ClusteringLinkageFunction {
     single = 'single',
 }
 
-export enum ClusteringDistanceMeasure {
+export enum DistanceMeasure {
     spearman = 'spearman',
     pearson = 'pearson',
 }
@@ -37,6 +37,7 @@ export enum AspectValue {
 export enum ProcessSlug {
     goEnrichment = 'goenrichment',
     clustering = 'clustering-hierarchical-etc',
+    findSimilar = 'find-similar',
 }
 
 export const EMPTY_ARRAY = [];

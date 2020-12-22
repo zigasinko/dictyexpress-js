@@ -22,10 +22,7 @@ import { AppDispatch } from 'redux/appStore';
 import { generateRandomString, generateRandomStrings } from 'utils/stringUtils';
 import { generateRandomNumbers } from 'utils/numberUtils';
 import { flattenGoEnrichmentTree } from 'utils/gOEnrichmentUtils';
-import {
-    ClusteringDistanceMeasure,
-    ClusteringLinkageFunction,
-} from 'components/genexpress/common/constants';
+import { DistanceMeasure, ClusteringLinkageFunction } from 'components/genexpress/common/constants';
 import {
     RelationsById,
     GenesById,
@@ -43,6 +40,7 @@ import {
     MergedClusteringData,
     GenesExpressionById,
     BasketExpression,
+    GeneSimilarity,
 } from '../redux/models/internal';
 import { RootState } from '../redux/rootReducer';
 
@@ -116,7 +114,7 @@ export const generateGene = (
     aliases: [`TestGene${id}_alias1`, `TestGene${id}_alias2`],
     name: `TestGene${id}`,
     full_name: `Test gene ${id}`,
-    description: 'This is a test gene',
+    description: `This is a test gene ${id}`,
     source,
     species,
 });
@@ -547,6 +545,11 @@ export const generateBasketExpression = (): BasketExpression => ({
     exp_type: 'polyA',
 });
 
+export const generateGeneSimilarity = (geneId: string): GeneSimilarity => ({
+    gene: geneId,
+    distance: generateRandomNumbers(1, () => Math.random() * 10)[0],
+});
+
 /**
  * Helper function that generates mock instances of objects for use in unit tests.
  *
@@ -639,6 +642,13 @@ export const testState = (): RootState => {
             highlightedGenesIds: [],
             isFetchingDifferentialExpressionGenes: false,
             isFetchingAssociationsGenes: false,
+            isFetchingSimilarGenes: false,
+        },
+        genesSimilarities: {
+            data: [],
+            queryGeneId: null,
+            distanceMeasure: DistanceMeasure.pearson,
+            isFetchingGenesSimilarities: false,
         },
         samplesExpressions: {
             byId: {},
@@ -663,7 +673,7 @@ export const testState = (): RootState => {
             isFetchingJson: false,
         },
         clustering: {
-            distanceMeasure: ClusteringDistanceMeasure.pearson,
+            distanceMeasure: DistanceMeasure.pearson,
             isFetchingClusteringData: false,
             linkageFunction: ClusteringLinkageFunction.average,
             mergedData: {} as MergedClusteringData,

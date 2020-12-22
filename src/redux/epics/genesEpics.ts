@@ -1,17 +1,9 @@
 import { Action, PayloadAction } from '@reduxjs/toolkit';
 import { ofType, Epic, combineEpics } from 'redux-observable';
-import {
-    map,
-    mergeMap,
-    startWith,
-    endWith,
-    catchError,
-    withLatestFrom,
-    filter,
-} from 'rxjs/operators';
-import { of, from, EMPTY, Observable } from 'rxjs';
+import { map, mergeMap, startWith, endWith, catchError, withLatestFrom } from 'rxjs/operators';
+import { of, from, EMPTY, Observable, merge } from 'rxjs';
 import { getBasketInfo } from 'redux/stores/timeSeries';
-import { RootState } from 'redux/rootReducer';
+import { getGenesSimilaritiesQueryGene, RootState } from 'redux/rootReducer';
 import { getSelectedDifferentialExpressionGeneIds } from 'redux/stores/differentialExpressions';
 import {
     allGenesDeselected,
@@ -21,17 +13,29 @@ import {
     differentialExpressionGenesFetchStarted,
     geneDeselected,
     genesFetchSucceeded,
+    genesSelected,
     getGenesIdsInStore,
-    getSelectedGenes,
+    getSelectedGenesIds,
+    similarGenesFetchEnded,
+    similarGenesFetchStarted,
 } from 'redux/stores/genes';
 import { handleError } from 'utils/errorUtils';
 import { Gene } from 'redux/models/internal';
 import { listByIds } from 'api';
-import { fetchAssociationsGenes, fetchSelectedDifferentialExpressionGenes } from './epicsActions';
+import {
+    genesSimilaritiesFetchSucceeded,
+    getGenesSimilarities,
+} from 'redux/stores/genesSimilarities';
+import {
+    fetchAssociationsGenes,
+    fetchSelectedDifferentialExpressionGenes,
+    selectedGenesChanged,
+} from './epicsActions';
 
 const fetchGenesActionObservable = (
     geneIds: string[],
     state: RootState,
+    source?: string,
     species?: string,
 ): Observable<PayloadAction<Gene[]>> => {
     const geneIdsInStore = getGenesIdsInStore(state.genes);
@@ -44,7 +48,9 @@ const fetchGenesActionObservable = (
     }
 
     const basketInfo = getBasketInfo(state.timeSeries);
-    return from(listByIds(basketInfo.source, geneIdsToFetch, species ?? basketInfo.species)).pipe(
+    return from(
+        listByIds(source ?? basketInfo.source, geneIdsToFetch, species ?? basketInfo.species),
+    ).pipe(
         map((response) => {
             return genesFetchSucceeded(response);
         }),
@@ -86,6 +92,7 @@ const fetchAssociationsGenesEpic: Epic<Action, Action, RootState> = (action$, st
             return fetchGenesActionObservable(
                 action.payload.geneIds,
                 state,
+                action.payload.source ?? '',
                 action.payload.species ?? '',
             ).pipe(
                 catchError((error) => of(handleError('Error retrieving associated genes.', error))),
@@ -96,20 +103,55 @@ const fetchAssociationsGenesEpic: Epic<Action, Action, RootState> = (action$, st
     );
 };
 
-const geneDeselectedEpic: Epic<Action, Action, RootState> = (action$, state$) => {
+/**
+ * Sets query gene if query gene is not among selected ones anymore.
+ */
+const fetchSimilarGenesEpic: Epic<Action, Action, RootState> = (action$, state$) => {
     return action$.pipe(
-        ofType(geneDeselected),
+        ofType(genesSimilaritiesFetchSucceeded),
         withLatestFrom(state$),
-        map(([, state]) => {
-            return getSelectedGenes(state.genes);
+        mergeMap(([, state]) => {
+            const similarGenesIds = getGenesSimilarities(state.genesSimilarities).map(
+                (geneSimilarity) => geneSimilarity.gene,
+            );
+
+            const queryGene = getGenesSimilaritiesQueryGene(state);
+            return fetchGenesActionObservable(
+                similarGenesIds,
+                state,
+                queryGene?.source,
+                queryGene?.species,
+            ).pipe(
+                catchError((error) => of(handleError('Error retrieving similar genes.', error))),
+                startWith(similarGenesFetchStarted()),
+                endWith(similarGenesFetchEnded()),
+            );
         }),
-        filter((selectedGenes) => selectedGenes.length === 0),
-        map(allGenesDeselected),
+    );
+};
+
+/**
+ * Emits an action to indicate that selectedGenes store slice has changed.
+ */
+const selectedGenesChangedEpic: Epic<Action, Action, RootState> = (action$, state$) => {
+    return action$.pipe(
+        ofType(geneDeselected.toString(), genesSelected.toString()),
+        withLatestFrom(state$),
+        mergeMap(([, state]) => {
+            const selectedGenesIds = getSelectedGenesIds(state.genes);
+
+            if (selectedGenesIds.length === 0) {
+                return merge(of(allGenesDeselected()), of(selectedGenesChanged(selectedGenesIds)));
+            }
+
+            return of(selectedGenesChanged(selectedGenesIds));
+        }),
     );
 };
 
 export default combineEpics(
     fetchSelectedDifferentialExpressionGenesEpic,
     fetchAssociationsGenesEpic,
-    geneDeselectedEpic,
+    fetchSimilarGenesEpic,
+    selectedGenesChangedEpic,
 );

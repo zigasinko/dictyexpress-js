@@ -159,3 +159,4 @@ export type DictyRenderers = Exclude<Renderers, 'none'>;
 
 export type BreakpointsCols = { [key in keyof typeof LayoutBreakpoint]: number };
 export type ProcessInfo = { name: string; slug: ProcessSlug };
+export type GeneSimilarity = { gene: string; distance: number };

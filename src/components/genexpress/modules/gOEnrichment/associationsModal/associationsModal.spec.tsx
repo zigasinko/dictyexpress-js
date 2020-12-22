@@ -122,6 +122,7 @@ describe('associationsModal', () => {
                 expect(mockedStore.getActions()).toEqual([
                     fetchAssociationsGenes({
                         geneIds: gOEnrichmentRow.gene_associations,
+                        source: genes[0].source,
                         species: genes[0].species,
                     }),
                     genesSelected([genes[0].feature_id]),
@@ -143,6 +144,7 @@ describe('associationsModal', () => {
                 expect(mockedStore.getActions()).toEqual([
                     fetchAssociationsGenes({
                         geneIds: gOEnrichmentRow.gene_associations,
+                        source: genes[0].source,
                         species: genes[0].species,
                     }),
                     genesSelected(genes.map((gene) => gene.feature_id)),
