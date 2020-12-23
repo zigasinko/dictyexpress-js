@@ -160,3 +160,4 @@ export type SnackbarNotifications = SnackbarNotification[];
 export type DictyRenderers = Exclude<Renderers, 'none'>;
 
 export type BreakpointsCols = { [key in keyof typeof LayoutBreakpoint]: number };
+export type ProcessInfo = { name: string; slug: 'goenrichment' | 'clustering-hierarchical-etc' };

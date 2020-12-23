@@ -4,7 +4,7 @@ export { addToBasket } from './basketApi';
 export { unsubscribe } from './queryObserverApi';
 export { getCSRFCookie } from './csrfApi';
 export { getDifferentialExpressions } from './differentialExpressionApi';
-export { getOrCreateGOEnrichmentData, getOrCreateClusteringData } from './getOrCreateApi';
+export { getOrCreateData } from './getOrCreateApi';
 export { getStorage } from './storageApi';
 export { listByIds } from './geneListApi';
 export { getTimeSeriesRelations } from './relationApi';

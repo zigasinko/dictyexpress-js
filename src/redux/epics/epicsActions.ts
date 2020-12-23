@@ -1,6 +1,7 @@
 import { DataGOEnrichmentAnalysis, Storage } from '@genialis/resolwe/dist/api/types/rest';
 import { createAction } from '@reduxjs/toolkit';
 import { Gene } from 'redux/models/internal';
+import { ClusteringData } from 'redux/models/rest';
 
 // Export all epic-specific actions to omit dependency-cycles for reactive queries.
 // TimeSeriesEpics.
@@ -50,7 +51,9 @@ export const gOEnrichmentDataFetchSucceeded = createAction<DataGOEnrichmentAnaly
 
 // ClusteringEpics.
 export const fetchClusteringData = createAction<number>('clustering/fetchClusteringData');
-export const fetchClusteringStorage = createAction<number>('clustering/fetchClusteringStorage');
+export const fetchClusteringDataSucceeded = createAction<ClusteringData>(
+    'clustering/fetchClusteringDataSucceeded',
+);
 export const fetchClusteringStorageSucceeded = createAction<Storage>(
     'clustering/fetchClusteringStorageSucceeded',
 );
