@@ -25,7 +25,11 @@ describe('reportBuilder integration', () => {
 
         await waitFor(() => expect(screen.getByLabelText('Export')).toBeEnabled());
 
+        // Export button in app bar.
         fireEvent.click(screen.getByLabelText('Export'));
+
+        // Export button in prefix modal.
+        fireEvent.click(await screen.findByRole('button', { name: 'Export' }));
 
         await waitFor(() => {
             expect(saveAsSpy).toBeCalled();

@@ -61,7 +61,6 @@ describe('manageGeneSets', () => {
     });
 
     it('should call onClose when user clicks close button', () => {
-        // Simulate click on first gene set.
         fireEvent.click(screen.getByText('Close'));
 
         expect(mockedOnClose.mock.calls.length).toBe(1);

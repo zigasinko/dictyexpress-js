@@ -28,6 +28,7 @@ import Login from '../login/login';
 import { LoadingBar } from '../common/dictyModule/dictyModule.styles';
 import * as reportBuilder from '../common/reportBuilder/reportBuilder';
 import IconButtonWithTooltip from '../common/iconButtonWithTooltip/iconButtonWithTooltip';
+import TextInputModal from '../common/textInputModal/textInputModal';
 
 const mapStateToProps = (
     state: RootState,
@@ -82,6 +83,7 @@ const GenexpressAppBar = ({
     isFetchingGOEnrichmentJson,
 }: GenexpressAppBarProps): ReactElement => {
     const [loginModalOpened, setLoginModalOpened] = useState(false);
+    const [exportPrefixModalOpened, setExportPrefixModalOpened] = useState(false);
 
     useEffect(() => {
         if (isLoggedIn) {
@@ -101,8 +103,18 @@ const GenexpressAppBar = ({
         connectedLayoutsReset();
     };
 
+    /**
+     * Open export prefix modal so user can enter an optional export .zip prefix.
+     */
     const handleExportClick = (): void => {
-        reportBuilder.exportToZip();
+        setExportPrefixModalOpened(true);
+    };
+
+    /**
+     * Execute export once user clicks on Export button in export prefix modal.
+     */
+    const handleExportPrefix = (prefix: string): void => {
+        reportBuilder.exportToZip(prefix);
     };
 
     const areExportingModulesLoading =
@@ -152,6 +164,16 @@ const GenexpressAppBar = ({
                 <DictyAppBar desktopSection={desktopSection} />
             </GenexpressAppBarWrapper>
             {loginModalOpened && <Login closeModal={(): void => setLoginModalOpened(false)} />}
+            {exportPrefixModalOpened && (
+                <TextInputModal
+                    title="Export"
+                    placeholder="Optional prefix of exported files"
+                    confirmButtonLabel="Export"
+                    validationRegex={/^[A-Za-z0-9 .\-_()[\]]*$/}
+                    onClose={(): void => setExportPrefixModalOpened(false)}
+                    onConfirm={handleExportPrefix}
+                />
+            )}
         </>
     );
 };

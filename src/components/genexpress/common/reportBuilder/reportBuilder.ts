@@ -80,5 +80,5 @@ export const exportToZip = async (prefix: string): Promise<void> => {
         logError(errorMessage, new Error(errorMessage));
     }
 
-    saveJsZip(createJsZip(uniqueFiles));
+    saveJsZip(createJsZip(uniqueFiles), prefix);
 };
