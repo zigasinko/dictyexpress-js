@@ -16,6 +16,7 @@ import {
 } from 'tests/mock';
 import { RootState } from 'redux/rootReducer';
 import _ from 'lodash';
+import { highlightedLineStrokeWidth, lineStrokeWidth } from './genesExpressionsLineChart';
 
 const genesById = generateGenesById(2);
 const genes = _.flatMap(genesById);
@@ -186,7 +187,7 @@ describe('genesExpressions integration', () => {
         it('should increase line graph stroke width after gene is highlighted', async () => {
             expect(
                 container.querySelector("g[role='graphics-symbol'].genesExpressionsLines path"),
-            ).toHaveAttribute('stroke-width', '2');
+            ).toHaveAttribute('stroke-width', lineStrokeWidth.toString());
 
             fireEvent.click(screen.getByRole('button', { name: genes[0].name }));
             fireEvent.click(await screen.findByText('Highlight'));
@@ -194,7 +195,7 @@ describe('genesExpressions integration', () => {
             await waitFor(() =>
                 expect(
                     container.querySelector("g[role='graphics-symbol'].genesExpressionsLines path"),
-                ).toHaveAttribute('stroke-width', '4'),
+                ).toHaveAttribute('stroke-width', highlightedLineStrokeWidth.toString()),
             );
         });
 
@@ -206,6 +207,21 @@ describe('genesExpressions integration', () => {
             );
 
             await screen.findByText('Gene:');
+        });
+
+        it('should display the legend after user clicks on "Legend" button', async () => {
+            // Should be hidden by default.
+            expect(
+                container.querySelector('g[role="graphics-object"] g.legendLabel text'),
+            ).not.toBeInTheDocument();
+
+            fireEvent.click(screen.getByText('Legend'));
+
+            await waitFor(() =>
+                expect(
+                    container.querySelector('g[role="graphics-object"] g.legendLabel text'),
+                ).toBeInTheDocument(),
+            );
         });
 
         it('should export visualization Expression Time Courses/expression_time_courses.png file', async () => {

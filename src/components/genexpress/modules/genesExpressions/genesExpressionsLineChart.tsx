@@ -1,19 +1,31 @@
-import React, { ReactElement, useRef, forwardRef } from 'react';
+import React, { ReactElement, forwardRef } from 'react';
 import _ from 'lodash';
 import { Spec } from 'vega';
 import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
 import { GeneExpression } from 'redux/models/internal';
+import { GEN_GREY } from 'components/genexpress/common/theming/theming';
+import { useTheme } from '@material-ui/core';
 import Chart, { DataDefinition, DataHandler } from '../../common/chart/chart';
 
 type GeneExpressionsLineChartProps = {
     genesExpressions: GeneExpression[];
     highlightedGenesIds: string[];
+    selectedGenesIds: string[];
     onHighlight: (genesIds: string[]) => void;
+    showLegend?: boolean;
 };
 
+const colorScaleLimit = 10;
+const color = GEN_GREY['500'];
+export const lineStrokeWidth = 1;
+export const highlightedLineStrokeWidth = 4;
+
 const getVegaSpecification = (
-    genesExpressions: GeneExpressionsLineChartProps['genesExpressions'],
-    highlightedGenesIds: GeneExpressionsLineChartProps['highlightedGenesIds'],
+    genesExpressions: GeneExpression[],
+    highlightedGenesIds: string[],
+    selectedGenesIds: string[],
+    highlightedColor: string,
+    showLegend?: boolean,
 ): Spec => ({
     signals: [
         {
@@ -32,7 +44,8 @@ const getVegaSpecification = (
             value: false,
             on: [
                 {
-                    events: '@genesExpressionsLines:click, @legendSymbol:click, @legendLabel:click',
+                    events:
+                        '@genesExpressionsLinesArea:click, @genesExpressionsPoints:click, @legendSymbol:click, @legendLabel:click',
                     update: 'event.ctrlKey',
                     force: true,
                 },
@@ -43,7 +56,8 @@ const getVegaSpecification = (
             value: null,
             on: [
                 {
-                    events: '@genesExpressionsLines:click, @legendSymbol:click, @legendLabel:click',
+                    events:
+                        '@genesExpressionsLinesArea:click, @genesExpressionsPoints:click, @legendSymbol:click, @legendLabel:click',
                     update: 'datum.geneId == null ? datum.value : datum.geneId',
                     force: true,
                 },
@@ -55,7 +69,7 @@ const getVegaSpecification = (
             on: [
                 {
                     events:
-                        '@legendSymbol:mouseover, @legendLabel:mouseover, @genesExpressionsLines:mouseover, @genesExpressionsPoints:mouseover',
+                        '@legendSymbol:mouseover, @legendLabel:mouseover, @genesExpressionsLinesArea:mouseover, @genesExpressionsPoints:mouseover',
                     update: 'datum.geneId == null ? datum.value : datum.geneId',
                     force: true,
                 },
@@ -67,7 +81,7 @@ const getVegaSpecification = (
             on: [
                 {
                     events:
-                        '@legendSymbol:mouseout, @legendLabel:mouseout, @genesExpressionsLines:mouseout, @genesExpressionsPoints:mouseout',
+                        '@legendSymbol:mouseout, @legendLabel:mouseout, @genesExpressionsLinesArea:mouseout, @genesExpressionsPoints:mouseout',
                     update: '{}',
                     force: true,
                 },
@@ -77,7 +91,6 @@ const getVegaSpecification = (
     data: [
         {
             name: 'table',
-            transform: [],
             values: genesExpressions,
         },
         {
@@ -103,36 +116,53 @@ const getVegaSpecification = (
                 },
             ],
         },
-    ],
-    legends: [
         {
-            title: 'Genes',
-            stroke: 'colorscale',
-            orient: 'right',
-            legendX: 0,
-            encode: {
-                symbols: {
-                    name: 'legendSymbol',
-                    interactive: true,
-                },
-                labels: {
-                    name: 'legendLabel',
-                    interactive: true,
-                    update: {
-                        text: { scale: 'geneLookup', field: 'value' },
-                        fontWeight: [
-                            {
-                                test:
-                                    "indata('highlighted', 'data', datum.value) || indata('hovered', 'data', datum.value)",
-                                value: 'bold',
-                            },
-                            { value: 'normal' },
-                        ],
-                    },
-                },
-            },
+            name: 'selectedGenesIds',
+            values: selectedGenesIds,
         },
     ],
+    legends: showLegend
+        ? [
+              {
+                  title: 'Genes',
+                  stroke: 'colorscale',
+                  orient: 'right',
+                  encode: {
+                      symbols: {
+                          name: 'legendSymbol',
+                          interactive: true,
+                          update: {
+                              stroke: [
+                                  {
+                                      test: `length(data('selectedGenesIds')) < ${colorScaleLimit}`,
+                                      scale: 'colorscale',
+                                      field: 'value',
+                                  },
+                                  {
+                                      value: color,
+                                  },
+                              ],
+                          },
+                      },
+                      labels: {
+                          name: 'legendLabel',
+                          interactive: true,
+                          update: {
+                              text: { scale: 'geneLookup', field: 'value' },
+                              fontWeight: [
+                                  {
+                                      test:
+                                          "indata('highlighted', 'data', datum.value) || indata('hovered', 'data', datum.value)",
+                                      value: 'bold',
+                                  },
+                                  { value: 'normal' },
+                              ],
+                          },
+                      },
+                  },
+              },
+          ]
+        : undefined,
     marks: [
         {
             type: 'group',
@@ -152,18 +182,48 @@ const getVegaSpecification = (
                         enter: {
                             x: { scale: 'xscale', field: 'label' },
                             y: { scale: 'yscale', field: 'value' },
-                            stroke: { scale: 'colorscale', field: 'geneId' },
-                            strokeWidth: { value: 2 },
+                            strokeWidth: { value: lineStrokeWidth },
                         },
                         update: {
+                            stroke: [
+                                {
+                                    test: `length(data('selectedGenesIds')) < ${colorScaleLimit}`,
+                                    scale: 'colorscale',
+                                    field: 'geneId',
+                                },
+                                {
+                                    test: "indata('highlighted', 'data', datum.geneId)",
+                                    value: highlightedColor,
+                                },
+                                {
+                                    value: color,
+                                },
+                            ],
                             strokeWidth: [
                                 {
                                     test:
                                         "indata('highlighted', 'data', datum.geneId) || indata('hovered', 'data', datum.geneId)",
-                                    value: 4,
+                                    value: highlightedLineStrokeWidth,
                                 },
-                                { value: 2 },
+                                { value: lineStrokeWidth },
                             ],
+                        },
+                    },
+                },
+                {
+                    // Line click/hover area with transparent stroke.
+                    type: 'line',
+                    name: 'genesExpressionsLinesArea',
+                    from: { data: 'series' },
+                    encode: {
+                        enter: {
+                            x: { scale: 'xscale', field: 'label' },
+                            y: { scale: 'yscale', field: 'value' },
+                            strokeWidth: { value: 5 },
+                            stroke: {
+                                value: '#FFFFFF',
+                            },
+                            strokeOpacity: { value: 0.0001 },
                             cursor: { value: 'pointer' },
                         },
                     },
@@ -176,13 +236,35 @@ const getVegaSpecification = (
                         enter: {
                             x: { scale: 'xscale', field: 'label' },
                             y: { scale: 'yscale', field: 'value' },
-                            fill: { scale: 'colorscale', field: 'geneId' },
-                            stroke: { scale: 'colorscale', field: 'geneId' },
-                            strokeWidth: { value: 1 },
                             tooltip: {
                                 signal:
                                     "{'Gene': datum.geneName, 'Time': datum.label, 'Score': datum.value}",
                             },
+                            cursor: { value: 'pointer' },
+                        },
+                        update: {
+                            fill: [
+                                {
+                                    test: `length(data('selectedGenesIds')) < ${colorScaleLimit}`,
+                                    scale: 'colorscale',
+                                    field: 'geneId',
+                                },
+                                {
+                                    test: "indata('highlighted', 'data', datum.geneId)",
+                                    value: highlightedColor,
+                                },
+                                {
+                                    value: color,
+                                },
+                            ],
+                            size: [
+                                {
+                                    test:
+                                        "indata('highlighted', 'data', datum.geneId) || indata('hovered', 'data', datum.geneId)",
+                                    value: 8 ** 2,
+                                },
+                                { value: 5 ** 2 },
+                            ],
                         },
                     },
                 },
@@ -235,9 +317,17 @@ const getVegaSpecification = (
 
 const GeneExpressionsLineChart = forwardRef(
     (
-        { genesExpressions, highlightedGenesIds, onHighlight }: GeneExpressionsLineChartProps,
+        {
+            genesExpressions,
+            selectedGenesIds,
+            highlightedGenesIds,
+            onHighlight,
+            showLegend,
+        }: GeneExpressionsLineChartProps,
         ref,
     ): ReactElement => {
+        const theme = useTheme();
+
         const updatableDataDefinitions: DataDefinition[] = useStateWithEffect<DataDefinition[]>(
             () => [
                 {
@@ -245,8 +335,9 @@ const GeneExpressionsLineChart = forwardRef(
                     data: highlightedGenesIds,
                 },
                 { name: 'table', data: genesExpressions },
+                { name: 'selectedGenesIds', data: selectedGenesIds },
             ],
-            [genesExpressions, highlightedGenesIds],
+            [genesExpressions, highlightedGenesIds, selectedGenesIds],
         );
 
         // Data handlers that is updated (and reattached) only if highlighted variable changes.
@@ -273,15 +364,24 @@ const GeneExpressionsLineChart = forwardRef(
             [highlightedGenesIds, onHighlight],
         );
 
-        const renderSpecification = useRef<Spec>(
-            getVegaSpecification(genesExpressions, highlightedGenesIds),
+        const renderSpecification = useStateWithEffect<Spec>(
+            () =>
+                getVegaSpecification(
+                    genesExpressions,
+                    highlightedGenesIds,
+                    selectedGenesIds,
+                    theme.palette.secondary.main,
+                    showLegend,
+                ),
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            [showLegend],
         );
 
         return (
             <Chart
                 updatableDataDefinitions={updatableDataDefinitions}
                 dataHandlers={dataHandlers}
-                vegaSpecification={renderSpecification.current}
+                vegaSpecification={renderSpecification}
                 ref={ref}
             />
         );

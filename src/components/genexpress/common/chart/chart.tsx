@@ -15,6 +15,7 @@ import { SignalValue, Spec } from 'vega';
 import { useDispatch } from 'react-redux';
 import { handleError } from 'utils/errorUtils';
 import { RendererContext } from 'components/common/rendererContext';
+import { useTheme } from '@material-ui/core';
 import { vegaTheme } from '../theming/vegaTheme';
 import useUpdateEffect from '../useUpdateEffect';
 import withSizeme from '../withSizeme';
@@ -85,6 +86,8 @@ const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
     const dispatch = useDispatch();
     const renderer = useContext(RendererContext);
 
+    const theme = useTheme();
+
     const addedDataHandlers = useRef<Array<DataHandler>>([]);
     const addedSignalHandlers = useRef<Array<DataHandler>>([]);
 
@@ -152,7 +155,7 @@ const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
         const defaultSpecification: vega.Spec = {
             width: getChartElementWidth(),
             height: getChartElementHeight(),
-            background: 'white',
+            background: theme.palette.background.default,
             padding: chartPadding,
             autosize: {
                 type: 'fit',
@@ -193,6 +196,7 @@ const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
         getChartElementWidth,
         renderer,
         runChart,
+        theme.palette.background.default,
         vegaSpecification,
     ]);
 

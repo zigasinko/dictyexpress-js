@@ -7,6 +7,11 @@ export const GenesExpressionsContainer = styled.div`
     height: 100%;
 `;
 
+export const GenesExpressionsControls = styled.div`
+    display: flex;
+    justify-content: space-between;
+`;
+
 export const GenesExpressionsLineChartContainer = styled.div`
     flex-grow: 1;
     overflow: hidden;
