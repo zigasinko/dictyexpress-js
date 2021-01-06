@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css, FlattenSimpleInterpolation } from 'styled-components';
 import { TextField } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 
@@ -8,10 +8,27 @@ export const DictyGridContainer = styled.div`
     flex-flow: column nowrap;
 `;
 
-export const GridWrapper = styled.div`
+type GridWrapperProps = {
+    suppressHorizontalScroll?: boolean;
+};
+
+export const GridWrapper = styled.div<GridWrapperProps>`
     height: 100%;
     overflow: hidden;
-    flex-grow: 1;
+
+    // sizeColumnsToFit action should set column widths so that horizontal scroll
+    // isn't needed. Sometimes this doesn't work because of rounding pixels.
+    // That's why we remove horizontal scroll manually with this css.
+    && {
+        ${(props): FlattenSimpleInterpolation | null =>
+            props.suppressHorizontalScroll
+                ? css`
+                      .ag-center-cols-viewport {
+                          overflow-x: hidden;
+                      }
+                  `
+                : null};
+    }
 `;
 
 export const FilterTextField = styled(TextField)`

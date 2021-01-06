@@ -180,7 +180,10 @@ const DictyGrid = <T extends {}>({
                     value={filter}
                 />
             )}
-            <GridWrapper className="ag-theme-balham">
+            <GridWrapper
+                className="ag-theme-balham"
+                suppressHorizontalScroll={!disableSizeColumnsToFit}
+            >
                 <AgGridReact
                     key={gridKey}
                     onGridReady={handleOnGridReady}

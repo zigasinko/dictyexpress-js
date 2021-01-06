@@ -12,7 +12,7 @@ export const DarkSectionContainer = styled.div`
     width: 100%;
 `;
 
-export const ContentContainer = styled.div<ContainerProps>`
+export const ContentContainer = styled.div`
     margin-right: auto;
     margin-left: auto;
     height: 100%;

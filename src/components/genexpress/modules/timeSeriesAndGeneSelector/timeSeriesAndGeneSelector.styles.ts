@@ -1,6 +1,11 @@
 import styled from 'styled-components';
 
-// eslint-disable-next-line import/prefer-default-export
+export const TimeSeriesAndGeneSelectorContainer = styled.div`
+    height: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+`;
+
 export const TimeSeriesGridWrapper = styled.div`
-    height: calc(100% - 260px);
+    flex-grow: 1;
 `;

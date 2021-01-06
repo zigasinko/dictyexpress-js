@@ -13,7 +13,10 @@ import { fetchTimeSeries } from 'redux/epics/epicsActions';
 import useReport from 'components/genexpress/common/reportBuilder/useReport';
 import { objectsArrayToTsv } from 'utils/reportUtils';
 import GeneSelector from './geneSelector/geneSelector/geneSelector';
-import { TimeSeriesGridWrapper } from './timeSeriesAndGeneSelector.styles';
+import {
+    TimeSeriesAndGeneSelectorContainer,
+    TimeSeriesGridWrapper,
+} from './timeSeriesAndGeneSelector.styles';
 
 export const moduleKey = 'timeSeriesAndGeneSelector';
 
@@ -76,24 +79,26 @@ const TimeSeriesAndGeneSelector = ({
 
     const columnDefs = useRef([
         { field: 'id', headerName: 'Id', width: 20 },
-        { field: 'collection.name', headerName: 'Name', width: 50 },
+        { field: 'collection.name', headerName: 'Name' },
     ]);
 
     return (
-        <TimeSeriesGridWrapper>
-            <DictyGrid
-                onReady={onGridReady}
-                isFetching={isFetching}
-                data={timeSeries}
-                selectionMode="single"
-                filterLabel="Filter time series"
-                columnDefs={columnDefs.current}
-                getRowId={(data): string => data.id.toString()}
-                onRowSelected={onRowSelectedHandler}
-                selectedData={selectedTimeSeries != null ? [selectedTimeSeries] : undefined}
-            />
+        <TimeSeriesAndGeneSelectorContainer>
+            <TimeSeriesGridWrapper>
+                <DictyGrid
+                    onReady={onGridReady}
+                    isFetching={isFetching}
+                    data={timeSeries}
+                    selectionMode="single"
+                    filterLabel="Filter time series"
+                    columnDefs={columnDefs.current}
+                    getRowId={(data): string => data.id.toString()}
+                    onRowSelected={onRowSelectedHandler}
+                    selectedData={selectedTimeSeries != null ? [selectedTimeSeries] : undefined}
+                />
+            </TimeSeriesGridWrapper>
             <GeneSelector />
-        </TimeSeriesGridWrapper>
+        </TimeSeriesAndGeneSelectorContainer>
     );
 };
 
