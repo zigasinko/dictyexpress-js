@@ -11,7 +11,7 @@ export const layoutsChangedEpic: Epic<Action, Action, RootState> = (action$) =>
     action$.pipe(
         ofType<Action, ReturnType<typeof layoutsChanged>>(layoutsChanged.toString()),
         map((action) => {
-            writeToLocalStorage(LocalStorageKey.LAYOUTS, action.payload);
+            writeToLocalStorage(LocalStorageKey.layouts, action.payload);
         }),
         ignoreElements(),
     );

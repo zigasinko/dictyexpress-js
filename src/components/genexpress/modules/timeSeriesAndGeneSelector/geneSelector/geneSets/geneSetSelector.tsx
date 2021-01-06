@@ -20,7 +20,7 @@ const GeneSetSelector = ({
 }: SelectGeneSetProps): ReactElement => {
     const [manageModalOpened, setManageModalOpened] = useState(false);
     const [localStorageGeneSets, localStorageSetGeneSets] = useLocalStorage<GeneSet[]>(
-        LocalStorageKey.GENE_SETS,
+        LocalStorageKey.geneSets,
         [],
     );
 

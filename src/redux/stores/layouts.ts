@@ -104,7 +104,7 @@ export const layoutsInitialState: Layouts = {
     ),
 };
 
-const savedLayouts = readFromLocalStorage(LocalStorageKey.LAYOUTS);
+const savedLayouts = readFromLocalStorage(LocalStorageKey.layouts);
 
 const layoutsSlice = createSlice({
     name: 'layouts',

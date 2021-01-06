@@ -1,18 +1,13 @@
-export const LocalStorageKey = {
-    GENE_SETS: 'geneSets',
-    LAYOUTS: 'layouts',
-};
+export enum LocalStorageKey {
+    geneSets = 'geneSets',
+    layouts = 'layouts',
+}
 
-export const ModulesKeys = {
-    timeSeriesAndGeneSelector: 'timeSeriesAndGeneSelector',
-    expressionTimeCourses: 'expressionTimeCourses',
-    differentialExpressions: 'differentialExpressions',
-};
-
-export const BasketInfoData = {
-    SOURCE: 'DICTYBASE',
-    SPECIES: 'Dictyostelium purpureum',
-};
+export enum ModulesKeys {
+    timeSeriesAndGeneSelector = 'timeSeriesAndGeneSelector',
+    expressionTimeCourses = 'expressionTimeCourses',
+    differentialExpressions = 'differentialExpressions',
+}
 
 export enum LayoutBreakpoint {
     large = 'large',
