@@ -6,6 +6,6 @@ export const TimeSeriesAndGeneSelectorContainer = styled.div`
     flex-flow: column nowrap;
 `;
 
-export const TimeSeriesGridWrapper = styled.div`
+export const TimeSeriesSelectorWrapper = styled.div`
     flex-grow: 1;
 `;

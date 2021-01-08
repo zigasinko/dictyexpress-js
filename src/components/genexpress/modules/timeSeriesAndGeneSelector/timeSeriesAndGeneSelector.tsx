@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from 'redux/rootReducer';
 import {
@@ -7,15 +7,15 @@ import {
     getSelectedTimeSeries,
     timeSeriesSelected,
 } from 'redux/stores/timeSeries';
-import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
 import { Relation } from '@genialis/resolwe/dist/api/types/rest';
 import { fetchTimeSeries } from 'redux/epics/epicsActions';
 import useReport from 'components/genexpress/common/reportBuilder/useReport';
 import { objectsArrayToTsv } from 'utils/reportUtils';
 import GeneSelector from './geneSelector/geneSelector/geneSelector';
+import TimeSeriesSelector from './timeSeriesSelector/timeSeriesSelector';
 import {
     TimeSeriesAndGeneSelectorContainer,
-    TimeSeriesGridWrapper,
+    TimeSeriesSelectorWrapper,
 } from './timeSeriesAndGeneSelector.styles';
 
 export const moduleKey = 'timeSeriesAndGeneSelector';
@@ -35,11 +35,6 @@ const connector = connect(mapStateToProps, {
 });
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
-
-const columnDefs = [
-    { field: 'id', headerName: 'Id', width: 20 },
-    { field: 'collection.name', headerName: 'Name' },
-];
 
 const TimeSeriesAndGeneSelector = ({
     connectedFetchTimeSeries,
@@ -75,27 +70,22 @@ const TimeSeriesAndGeneSelector = ({
         }
     };
 
-    const onGridReady = (): void => {
+    useEffect(() => {
         if (timeSeries.length === 0) {
             connectedFetchTimeSeries();
         }
-    };
+    }, [connectedFetchTimeSeries, timeSeries.length]);
 
     return (
         <TimeSeriesAndGeneSelectorContainer>
-            <TimeSeriesGridWrapper>
-                <DictyGrid
-                    onReady={onGridReady}
-                    isFetching={isFetching}
-                    data={timeSeries}
-                    selectionMode="single"
-                    filterLabel="Filter time series"
-                    columnDefs={columnDefs}
-                    getRowId={(data): string => data.id.toString()}
+            <TimeSeriesSelectorWrapper>
+                <TimeSeriesSelector
+                    timeSeries={timeSeries}
+                    selectedTimeSeries={selectedTimeSeries != null ? [selectedTimeSeries] : []}
                     onRowSelected={onRowSelectedHandler}
-                    selectedData={selectedTimeSeries != null ? [selectedTimeSeries] : undefined}
+                    isFetching={isFetching}
                 />
-            </TimeSeriesGridWrapper>
+            </TimeSeriesSelectorWrapper>
             <GeneSelector />
         </TimeSeriesAndGeneSelectorContainer>
     );
