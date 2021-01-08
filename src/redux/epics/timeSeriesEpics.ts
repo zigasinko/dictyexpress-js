@@ -22,11 +22,6 @@ import {
     samplesExpressionsFetchEnded,
 } from 'redux/stores/samplesExpressions';
 import { handleError } from 'utils/errorUtils';
-import relationApi from 'api/relationApi';
-import storageApi from 'api/storageApi';
-import basketApi from 'api/basketApi';
-import dataApi from 'api/dataApi';
-import differentialExpressionApi from 'api/differentialExpressionApi';
 import {
     differentialExpressionsDataFetchEnded,
     differentialExpressionsDataFetchStarted,
@@ -37,6 +32,13 @@ import {
     differentialExpressionStorageFetchSucceeded,
     getDifferentialExpression,
 } from 'redux/stores/differentialExpressions';
+import {
+    addToBasket,
+    getDataBySamplesIds,
+    getDifferentialExpressions,
+    getStorageJson,
+    getTimeSeriesRelations,
+} from 'api';
 import {
     fetchTimeSeriesSamplesExpressions,
     fetchDifferentialExpressionsData,
@@ -53,7 +55,7 @@ const timeSeriesSelectedEpic: Epic<Action, Action, RootState> = (action$, state$
             // Add samples to (visualization) basket so that genes can be searched via autocomplete (/kb/feature/autocomplete api).
             const samplesIds = getSelectedTimeSeriesSamplesIds(state.timeSeries);
 
-            return from(basketApi.addToBasket(samplesIds)).pipe(
+            return from(addToBasket(samplesIds)).pipe(
                 mergeMap((response) => {
                     return concat(
                         of(addSamplesToBasketSucceeded(response)),
@@ -80,7 +82,7 @@ const fetchTimeSeriesEpic: Epic<Action, Action, RootState> = (action$) => {
     return action$.pipe(
         ofType(fetchTimeSeries.toString(), loginSucceeded.toString()),
         mergeMap(() => {
-            return from(relationApi.getTimeSeriesRelations()).pipe(
+            return from(getTimeSeriesRelations()).pipe(
                 map((response) => timeSeriesFetchSucceeded(response)),
                 catchError((error) => of(handleError(`Error retrieving time series.`, error))),
                 startWith(timeSeriesFetchStarted()),
@@ -97,7 +99,7 @@ const fetchTimeSeriesEpic: Epic<Action, Action, RootState> = (action$) => {
 const getSampleStorage = async (
     sampleData: Data,
 ): Promise<{ sampleId: number; storage: Storage }> => {
-    const storage = await storageApi.getStorageJson(sampleData.output.exp_json);
+    const storage = await getStorageJson(sampleData.output.exp_json);
 
     return {
         sampleId: sampleData.entity != null ? sampleData.entity.id : 0,
@@ -117,7 +119,7 @@ const fetchTimeSeriesSamplesExpressionsEpic: Epic<Action, Action, RootState> = (
 
             const timeSeriesSamplesIds = getSelectedTimeSeriesSamplesIds(state.timeSeries);
 
-            return from(dataApi.getDataBySamplesIds(timeSeriesSamplesIds)).pipe(
+            return from(getDataBySamplesIds(timeSeriesSamplesIds)).pipe(
                 mergeMap((sampleData) => {
                     // Once samples data is retrieved use it's output.exp_json to retrieve genes expressions.
                     return forkJoin(sampleData.map(getSampleStorage)).pipe(
@@ -150,7 +152,7 @@ const fetchDifferentialExpressionsEpic: Epic<Action, Action, RootState> = (actio
         mergeMap(([, state]) => {
             const basketId = getBasketId(state.timeSeries);
 
-            return from(differentialExpressionApi.getDifferentialExpressions(basketId)).pipe(
+            return from(getDifferentialExpressions(basketId)).pipe(
                 map((differentialExpressions) => {
                     return differentialExpressionsFetchSucceeded(differentialExpressions);
                 }),
@@ -181,9 +183,7 @@ const fetchDifferentialExpressionsDataEpic: Epic<Action, Action, RootState> = (a
                 return EMPTY;
             }
 
-            return from(
-                storageApi.getStorageJson(selectedDifferentialExpression.output.de_json),
-            ).pipe(
+            return from(getStorageJson(selectedDifferentialExpression.output.de_json)).pipe(
                 mergeMap((storage) => {
                     // Save differentialExpression module response json in redux store. Data will be extracted and displayed in
                     // differentialExpressions visualization component.

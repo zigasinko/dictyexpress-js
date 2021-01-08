@@ -12,7 +12,6 @@ import {
 import { of, from, EMPTY, Observable } from 'rxjs';
 import { getBasketInfo } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
-import geneListApi from 'api/geneListApi';
 import { getSelectedDifferentialExpressionGeneIds } from 'redux/stores/differentialExpressions';
 import {
     allGenesDeselected,
@@ -27,6 +26,7 @@ import {
 } from 'redux/stores/genes';
 import { handleError } from 'utils/errorUtils';
 import { Gene } from 'redux/models/internal';
+import { listByIds } from 'api';
 import { fetchAssociationsGenes, fetchSelectedDifferentialExpressionGenes } from './epicsActions';
 
 const fetchGenesActionObservable = (
@@ -44,9 +44,7 @@ const fetchGenesActionObservable = (
     }
 
     const basketInfo = getBasketInfo(state.timeSeries);
-    return from(
-        geneListApi.listByIds(basketInfo.source, geneIdsToFetch, species ?? basketInfo.species),
-    ).pipe(
+    return from(listByIds(basketInfo.source, geneIdsToFetch, species ?? basketInfo.species)).pipe(
         map((response) => {
             return genesFetchSucceeded(response);
         }),

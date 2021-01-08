@@ -1,14 +1,13 @@
-import fetch from './fetch';
+import { post } from './fetch';
 import { apiUrl } from './base';
 
 const baseUrl = `${apiUrl}/queryobserver/unsubscribe`;
 
-const unsubscribe = async (observer: string, subscriber: string): Promise<unknown> => {
+// eslint-disable-next-line import/prefer-default-export
+export const unsubscribe = async (observer: string, subscriber: string): Promise<unknown> => {
     const queryUrl = new URL(baseUrl);
     queryUrl.searchParams.append('observer', observer);
     queryUrl.searchParams.append('subscriber', subscriber);
 
-    return fetch.post(queryUrl.toString());
+    return post(queryUrl.toString());
 };
-
-export default { unsubscribe };

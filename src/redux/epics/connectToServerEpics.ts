@@ -13,10 +13,10 @@ import {
 import { concat, of, throwError } from 'rxjs';
 import { RootState } from 'redux/rootReducer';
 import { webSocket } from 'rxjs/webSocket';
-import queryObserverManager from 'api/queryObserverManager';
 import { Message } from '@genialis/resolwe/dist/api/connection';
 import { handleError } from 'utils/errorUtils';
 import { sessionId, webSocketUrl } from 'api/base';
+import { handleWebSocketMessage } from 'api/queryObserverManager';
 import { filterNullAndUndefined } from './rxjsCustomFilters';
 import {
     appStarted,
@@ -65,7 +65,7 @@ const connectToServerEpic: Epic<Action, Action, RootState> = (action$) =>
                             ),
                         ),
                         map((message) => {
-                            return queryObserverManager.handleWebSocketMessage(message as Message);
+                            return handleWebSocketMessage(message as Message);
                         }),
                         filterNullAndUndefined(),
                         retryWhen((errors) =>

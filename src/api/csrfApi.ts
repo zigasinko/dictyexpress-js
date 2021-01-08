@@ -1,10 +1,9 @@
-import fetch from './fetch';
 import { apiUrl } from './base';
+import { get } from './fetch';
 
 const baseUrl = `${apiUrl}/base/csrf`;
 
-const getCSRFCookie = (): Promise<unknown> => {
-    return fetch.get(baseUrl);
+// eslint-disable-next-line import/prefer-default-export
+export const getCSRFCookie = (): Promise<unknown> => {
+    return get(baseUrl);
 };
-
-export default { getCSRFCookie };

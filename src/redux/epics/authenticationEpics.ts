@@ -12,19 +12,18 @@ import {
     logoutStarted,
     logoutEnded,
 } from 'redux/stores/authentication';
-import authApi from 'api/authApi';
-import userApi from 'api/userApi';
-import queryObserverManager from 'api/queryObserverManager';
 import { handleError } from 'utils/errorUtils';
 import _ from 'lodash';
 import { addErrorSnackbar } from 'redux/stores/notifications';
+import { getCurrentUser, login as loginRequest, logout as logoutRequest } from 'api';
+import { clearObservers } from 'api/queryObserverManager';
 import { appStarted, login, loginSucceeded, logout, logoutSucceeded } from './epicsActions';
 
 const loginEpic: Epic<Action, Action, RootState> = (action$) =>
     action$.pipe(
         ofType<Action, ReturnType<typeof login>>(login.toString()),
         mergeMap((action) => {
-            return from(authApi.login(action.payload.username, action.payload.password)).pipe(
+            return from(loginRequest(action.payload.username, action.payload.password)).pipe(
                 mergeMap((response) => {
                     if (!response.ok) {
                         return from(response.json()).pipe(
@@ -34,7 +33,7 @@ const loginEpic: Epic<Action, Action, RootState> = (action$) =>
                             }),
                         );
                     }
-                    return from(queryObserverManager.clearObservers()).pipe(map(loginSucceeded));
+                    return from(clearObservers()).pipe(map(loginSucceeded));
                 }),
                 catchError((error) => {
                     return of(handleError(`Error logging in.`, error));
@@ -49,9 +48,9 @@ const logoutEpic: Epic<Action, Action, RootState> = (action$) =>
     action$.pipe(
         ofType(logout),
         mergeMap(() => {
-            return from(authApi.logout()).pipe(
+            return from(logoutRequest()).pipe(
                 mergeMap(() => {
-                    return from(queryObserverManager.clearObservers()).pipe(map(logoutSucceeded));
+                    return from(clearObservers()).pipe(map(logoutSucceeded));
                 }),
                 catchError((error) => of(handleError(`Error logging out.`, error))),
                 startWith(logoutStarted()),
@@ -64,7 +63,7 @@ const getCurrentUserEpic: Epic<Action, Action, RootState> = (action$) =>
     action$.pipe(
         ofType(appStarted.toString(), loginSucceeded.toString(), logoutSucceeded.toString()),
         mergeMap(() => {
-            return from(userApi.getCurrentUser()).pipe(
+            return from(getCurrentUser()).pipe(
                 map(userFetchSucceeded),
                 catchError((error) => of(handleError(`Error fetching user profile`, error))),
                 startWith(userFetchStarted()),

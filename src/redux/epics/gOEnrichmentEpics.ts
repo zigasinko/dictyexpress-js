@@ -2,9 +2,6 @@ import { ofType, Epic, combineEpics } from 'redux-observable';
 import { map, mergeMap, startWith, endWith, catchError, withLatestFrom } from 'rxjs/operators';
 import { of, from } from 'rxjs';
 import { RootState } from 'redux/rootReducer';
-import getOrCreateApi from 'api/getOrCreateApi';
-import dataApi from 'api/dataApi';
-import storageApi from 'api/storageApi';
 import { geneDeselected, getSelectedGenes } from 'redux/stores/genes';
 import {
     gafFetchSucceeded,
@@ -20,6 +17,12 @@ import {
 import { handleError } from 'utils/errorUtils';
 import { Action } from '@reduxjs/toolkit';
 import { appendMissingAttributesToJson } from 'utils/gOEnrichmentUtils';
+import {
+    getDataFetchSucceededActionIfDone,
+    getGOEnrichmentData,
+    getOrCreateGOEnrichmentData,
+    getStorageJson,
+} from 'api';
 import {
     fetchGOEnrichmentData,
     gafAlreadyFetched,
@@ -47,7 +50,7 @@ const getOrCreateGOEnrichmentEpic: Epic<Action, Action, RootState> = (action$, s
             const gaf = getGaf(state.gOEnrichment);
 
             return from(
-                getOrCreateApi.getOrCreateGOEnrichmentData({
+                getOrCreateGOEnrichmentData({
                     genes: selectedGenes.map((gene) => gene.feature_id),
                     pval_threshold: pValueThreshold,
                     source: selectedGenes[0].source,
@@ -70,9 +73,9 @@ const fetchGOEnrichmentDataEpic: Epic<Action, Action, RootState> = (action$) => 
     return action$.pipe(
         ofType<Action, ReturnType<typeof fetchGOEnrichmentData>>(fetchGOEnrichmentData.toString()),
         mergeMap((action) => {
-            return from(dataApi.getGOEnrichmentData(action.payload)).pipe(
+            return from(getGOEnrichmentData(action.payload)).pipe(
                 map((response) => {
-                    return dataApi.handleGOEnrichmentAnalysisDataResponse(response);
+                    return getDataFetchSucceededActionIfDone(response);
                 }),
                 filterNullAndUndefined(),
                 catchError((error) => {
@@ -95,7 +98,7 @@ const fetchGOEnrichmentStorageEpic: Epic<Action, Action, RootState> = (action$, 
         ),
         withLatestFrom(state$),
         mergeMap(([action, state]) => {
-            return from(storageApi.getStorageJson(action.payload.output.terms)).pipe(
+            return from(getStorageJson(action.payload.output.terms)).pipe(
                 // Save gene ontology enrichment json to redux store. Data will be extracted and displayed in
                 // gOEnrichment visualization component (table).
                 map((storage) => {

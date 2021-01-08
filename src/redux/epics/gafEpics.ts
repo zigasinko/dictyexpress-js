@@ -2,13 +2,13 @@ import { ofType, Epic, combineEpics } from 'redux-observable';
 import { map, mergeMap, catchError, withLatestFrom } from 'rxjs/operators';
 import { of, from } from 'rxjs';
 import { RootState } from 'redux/rootReducer';
-import dataApi from 'api/dataApi';
 import { DataGafAnnotation } from '@genialis/resolwe/dist/api/types/rest';
 import _ from 'lodash';
 import { gafFetchSucceeded, getGaf } from 'redux/stores/gOEnrichment';
 import { genesSelected, getSelectedGenes } from 'redux/stores/genes';
 import { Action } from '@reduxjs/toolkit';
 import { handleError } from 'utils/errorUtils';
+import { getGafs } from 'api';
 import { gafAlreadyFetched } from './epicsActions';
 import { filterNullAndUndefined } from './rxjsCustomFilters';
 
@@ -41,7 +41,7 @@ const fetchGafEpic: Epic<Action, Action, RootState> = (action$, state$) => {
                 return of(gafAlreadyFetched());
             }
 
-            return from(dataApi.getGafs()).pipe(
+            return from(getGafs()).pipe(
                 map((gafs) => (gafs.length === 0 ? null : gafs)),
                 filterNullAndUndefined(),
                 map((gafs) => {

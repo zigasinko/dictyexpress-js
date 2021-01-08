@@ -1,14 +1,13 @@
 import { Relation } from '@genialis/resolwe/dist/api/types/rest';
 import { deserializeResponse } from '../utils/apiUtils';
-import fetch from './fetch';
 import { apiUrl } from './base';
+import { get } from './fetch';
 
 const baseUrl = `${apiUrl}/relation`;
 
-const getTimeSeriesRelations = async (): Promise<Relation[]> => {
-    const getRelationsResponse = await fetch.get(baseUrl, { category: 'Time series' });
+// eslint-disable-next-line import/prefer-default-export
+export const getTimeSeriesRelations = async (): Promise<Relation[]> => {
+    const getRelationsResponse = await get(baseUrl, { category: 'Time series' });
 
     return deserializeResponse<Relation[]>(getRelationsResponse);
 };
-
-export default { getTimeSeriesRelations };

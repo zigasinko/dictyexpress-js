@@ -1,16 +1,17 @@
 import { DifferentialExpression } from '../redux/models/internal';
 import { deserializeResponse } from '../utils/apiUtils';
-import fetch from './fetch';
 import { apiUrl } from './base';
+import { get } from './fetch';
 
 const baseUrl = `${apiUrl}/_modules/differential_expression/list`;
 
-const getDifferentialExpressions = async (basketId: string): Promise<DifferentialExpression[]> => {
-    const getDifferentialExpressionsDataResponse = await fetch.get(baseUrl, {
+// eslint-disable-next-line import/prefer-default-export
+export const getDifferentialExpressions = async (
+    basketId: string,
+): Promise<DifferentialExpression[]> => {
+    const getDifferentialExpressionsDataResponse = await get(baseUrl, {
         basket: basketId,
     });
 
     return deserializeResponse<DifferentialExpression[]>(getDifferentialExpressionsDataResponse);
 };
-
-export default { getDifferentialExpressions };

@@ -1,33 +1,33 @@
 import {
     Data,
     DataGOEnrichmentAnalysis,
+    DONE_DATA_STATUS,
     ERROR_DATA_STATUS,
 } from '@genialis/resolwe/dist/api/types/rest';
 import { PayloadAction } from '@reduxjs/toolkit';
-import { STATUS } from 'redux/models/rest';
 import { gOEnrichmentDataFetchSucceeded } from 'redux/epics/epicsActions';
 import { deserializeResponse } from '../utils/apiUtils';
-import fetch from './fetch';
 import { apiUrl } from './base';
-import queryObserverManager from './queryObserverManager';
+import { get, getReactive } from './fetch';
+import { reactiveRequest } from './queryObserverManager';
 
 const baseUrl = `${apiUrl}/data`;
 
-const getGafs = async (): Promise<Data[]> => {
-    const getGafsResponse = await fetch.get(baseUrl, {
+export const getGafs = async (): Promise<Data[]> => {
+    const getGafsResponse = await get(baseUrl, {
         type: 'data:gaf',
-        status: STATUS.DONE,
+        status: DONE_DATA_STATUS,
     });
 
     return deserializeResponse<Data[]>(getGafsResponse);
 };
 
-const getDataBySamplesIds = async (samplesIds: number[]): Promise<Data[]> => {
+export const getDataBySamplesIds = async (samplesIds: number[]): Promise<Data[]> => {
     if (samplesIds.length === 0) {
         return [] as Data[];
     }
 
-    const getSamplesDataResponse = await fetch.get(baseUrl, {
+    const getSamplesDataResponse = await get(baseUrl, {
         type: 'data:expression',
         entity__in: samplesIds.join(','),
     });
@@ -40,7 +40,7 @@ const getDataBySamplesIds = async (samplesIds: number[]): Promise<Data[]> => {
  * action, if output terms (storageId) is not empty.
  * @param response
  */
-const getDataFetchSucceededActionIfDone = (
+export const getDataFetchSucceededActionIfDone = (
     response: DataGOEnrichmentAnalysis,
 ): PayloadAction<DataGOEnrichmentAnalysis> | null => {
     if (response.status === ERROR_DATA_STATUS) {
@@ -59,9 +59,9 @@ const getDataFetchSucceededActionIfDone = (
     return null;
 };
 
-const getGOEnrichmentData = async (dataId: number): Promise<DataGOEnrichmentAnalysis> => {
+export const getGOEnrichmentData = async (dataId: number): Promise<DataGOEnrichmentAnalysis> => {
     const getGOEnrichmentDataRequest = (): Promise<Response> =>
-        fetch.getReactive(baseUrl, { id: dataId });
+        getReactive(baseUrl, { id: dataId });
 
     const webSocketMessageOutputReduxAction = (
         items: unknown[],
@@ -70,16 +70,9 @@ const getGOEnrichmentData = async (dataId: number): Promise<DataGOEnrichmentAnal
     };
 
     return (
-        await queryObserverManager.reactiveRequest<DataGOEnrichmentAnalysis>(
+        await reactiveRequest<DataGOEnrichmentAnalysis>(
             getGOEnrichmentDataRequest,
             webSocketMessageOutputReduxAction,
         )
     )[0];
-};
-
-export default {
-    getGafs,
-    getDataBySamplesIds,
-    getDataFetchSucceededActionIfDone,
-    getGOEnrichmentData,
 };

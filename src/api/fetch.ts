@@ -72,11 +72,15 @@ const request = async (
     );
 };
 
-const get = (url: string, params?: QueryParams, ignoreErrors?: boolean): Promise<Response> => {
+export const get = (
+    url: string,
+    params?: QueryParams,
+    ignoreErrors?: boolean,
+): Promise<Response> => {
     return request(url, params, 'GET', ignoreErrors);
 };
 
-const getReactive = (
+export const getReactive = (
     url: string,
     params?: QueryParams,
     ignoreErrors?: boolean,
@@ -84,22 +88,26 @@ const getReactive = (
     return request(url, { ...params, observe: sessionId }, 'GET', ignoreErrors);
 };
 
-const post = (url: string, params?: BodyParams, ignoreErrors?: boolean): Promise<Response> => {
+export const post = (
+    url: string,
+    params?: BodyParams,
+    ignoreErrors?: boolean,
+): Promise<Response> => {
     return request(url, params, 'POST', ignoreErrors);
 };
 
-const put = (url: string, params?: BodyParams, ignoreErrors?: boolean): Promise<Response> => {
+export const put = (
+    url: string,
+    params?: BodyParams,
+    ignoreErrors?: boolean,
+): Promise<Response> => {
     return request(url, params, 'PUT', ignoreErrors);
 };
 
-const remove = (url: string, params?: BodyParams, ignoreErrors?: boolean): Promise<Response> => {
+export const remove = (
+    url: string,
+    params?: BodyParams,
+    ignoreErrors?: boolean,
+): Promise<Response> => {
     return request(url, params, 'DELETE', ignoreErrors);
-};
-
-export default {
-    get,
-    getReactive,
-    post,
-    put,
-    remove,
 };

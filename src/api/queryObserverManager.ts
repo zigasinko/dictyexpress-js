@@ -2,9 +2,9 @@ import { QueryObserverResponse, Message } from '@genialis/resolwe/dist/api/conne
 import _ from 'lodash';
 import { Action } from '@reduxjs/toolkit';
 import { deserializeResponse } from 'utils/apiUtils';
-import queryObserverApi from 'api/queryObserverApi';
 import { logError } from 'utils/errorUtils';
 import { sessionId } from './base';
+import { unsubscribe } from './queryObserverApi';
 
 const MESSAGE_ADDED = 'added';
 const MESSAGE_CHANGED = 'changed';
@@ -21,9 +21,9 @@ let observers: QueryObserver[] = [];
 /**
  * Unsubscribes all existing observers from WebSocket and clears observers array.
  */
-const clearObservers = async (): Promise<void> => {
+export const clearObservers = async (): Promise<void> => {
     const unsubscribePromises = observers.map((observer) =>
-        queryObserverApi.unsubscribe(observer.observerId, sessionId),
+        unsubscribe(observer.observerId, sessionId),
     );
 
     try {
@@ -35,16 +35,7 @@ const clearObservers = async (): Promise<void> => {
     observers = [];
 };
 
-/**
- * Performs a query and pushes it's parameters to list of observers that will be used (dispatched)
- * for incoming WebSocket messages. For query to be reactive it needs to have "observe" parameter
- * filled with GUID (sessionId).
- *
- * @param query - Query with parameter observe=guid.
- * @param webSocketMessageOutputReduxAction - Redux action that will be called after WebSocket emits
- * a new message with the same observe guid.
- */
-const reactiveRequest = async <T>(
+export const reactiveRequest = async <T>(
     query: () => Promise<Response>,
     webSocketMessageOutputReduxAction: QueryObserver['webSocketMessageOutputReduxAction'],
 ): Promise<T[]> => {
@@ -102,7 +93,7 @@ const update = (message: Message, currentItems: unknown[]): unknown[] => {
  * payload).
  * @param message - Incoming WebSocket message.
  */
-const handleWebSocketMessage = (message: Message): Action | null => {
+export const handleWebSocketMessage = (message: Message): Action | null => {
     const observer = getObserver(message.observer);
     if (observer == null) {
         return null;
@@ -110,5 +101,3 @@ const handleWebSocketMessage = (message: Message): Action | null => {
     observer.items = update(message, observer.items);
     return observer.webSocketMessageOutputReduxAction(observer.items);
 };
-
-export default { clearObservers, reactiveRequest, handleWebSocketMessage };

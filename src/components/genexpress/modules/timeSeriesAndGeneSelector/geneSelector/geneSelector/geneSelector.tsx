@@ -14,13 +14,13 @@ import {
     allGenesDeselected,
 } from 'redux/stores/genes';
 import { Gene, BasketInfo } from 'redux/models/internal';
-import featureApi from 'api/featureApi';
 import SelectedGenes from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/selectedGenes/selectedGenes';
 import { getBasketInfo } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
 import { splitAndCleanGenesString } from 'utils/stringUtils';
 import GeneSetSelector from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/geneSets/geneSetSelector';
 import { handleError } from 'utils/errorUtils';
+import { getGenes, getGenesByNames } from 'api';
 import { AutoCompleteItemSpan, TitleSection } from './geneSelector.styles';
 
 const itemRender = (option: Gene): ReactElement => {
@@ -82,7 +82,7 @@ const GeneSelector = ({
 
     const fetchGenes = useCallback(
         debounce(async (queryValue: string): Promise<void> => {
-            const genesResults = await featureApi.getGenes(
+            const genesResults = await getGenes(
                 autocompleteSource,
                 autocompleteType,
                 queryValue,
@@ -163,7 +163,7 @@ const GeneSelector = ({
         setIsFetchingPastedGenes(true);
 
         try {
-            const pastedGenes = await featureApi.getGenesByNames(
+            const pastedGenes = await getGenesByNames(
                 basketInfo.source,
                 basketInfo.type,
                 genesNames,

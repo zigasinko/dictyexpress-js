@@ -1,12 +1,12 @@
 import { Gene } from '../redux/models/internal';
 import { deserializeResponse } from '../utils/apiUtils';
-import fetch from './fetch';
 import { apiUrl } from './base';
+import { post } from './fetch';
 
 const autocompleteUrl = `${apiUrl}/kb/feature/autocomplete`;
 const searchUrl = `${apiUrl}/kb/feature/search`;
 
-const getGenes = async (
+export const getGenes = async (
     source: string,
     type: string,
     value: string,
@@ -17,7 +17,6 @@ const getGenes = async (
         return null;
     }
 
-    // Species property won't be included if it's null.
     const payload = {
         source: [source],
         type,
@@ -26,11 +25,11 @@ const getGenes = async (
         ...(species != null && { species: [species] }),
     };
 
-    const getGenesResponse = await fetch.post(autocompleteUrl, payload);
+    const getGenesResponse = await post(autocompleteUrl, payload);
     return deserializeResponse<Gene[]>(getGenesResponse);
 };
 
-const getGenesByNames = async (
+export const getGenesByNames = async (
     source: string,
     type: string,
     genesNames: string[],
@@ -47,8 +46,6 @@ const getGenesByNames = async (
         ...(species != null && { species: [species] }),
     };
 
-    const getGenesResponse = await fetch.post(searchUrl, payload);
+    const getGenesResponse = await post(searchUrl, payload);
     return deserializeResponse<Gene[]>(getGenesResponse);
 };
-
-export default { getGenes, getGenesByNames };
