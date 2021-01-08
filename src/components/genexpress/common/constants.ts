@@ -40,4 +40,9 @@ export enum ProcessSlug {
     findSimilar = 'find-similar',
 }
 
+export enum ColorGroup {
+    timeSeries = 'timeSeries',
+    gene = 'gene',
+}
+
 export const EMPTY_ARRAY = [];

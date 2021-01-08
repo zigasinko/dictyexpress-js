@@ -151,10 +151,6 @@ const FindSimilarGenesModal = ({
         document.body.focus();
     };
 
-    const handleDistanceMeasureChange = (event: ChangeEvent<{ value: unknown }>): void => {
-        connectedGenesSimilaritiesDistanceMeasureChanged(event.target.value as DistanceMeasure);
-    };
-
     return (
         <CenteredModal
             open
@@ -184,7 +180,11 @@ const FindSimilarGenesModal = ({
                             disabled={selectedGenes.length === 0}
                             label="Distance Measure"
                             value={distanceMeasure}
-                            handleOnChange={handleDistanceMeasureChange}
+                            handleOnChange={(event: ChangeEvent<{ value: unknown }>): void => {
+                                connectedGenesSimilaritiesDistanceMeasureChanged(
+                                    event.target.value as DistanceMeasure,
+                                );
+                            }}
                         >
                             {distanceMeasureOptions.map((distanceMeasureOption) => (
                                 <MenuItem

@@ -14,6 +14,8 @@ import {
     timeSeriesFetchSucceeded,
     getBasketId,
     fetchBasketExpressionsIdsSucceeded,
+    comparisonTimeSeriesChanged,
+    getComparisonTimeSeriesSamplesIds,
 } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
 import { SamplesGenesExpressionsById } from 'redux/models/internal';
@@ -21,6 +23,8 @@ import {
     samplesExpressionsFetchSucceeded,
     samplesExpressionsFetchStarted,
     samplesExpressionsFetchEnded,
+    samplesExpressionsComparisonFetchSucceeded,
+    getSamplesExpressionsSamplesIds,
 } from 'redux/stores/samplesExpressions';
 import { handleError } from 'utils/errorUtils';
 import {
@@ -165,6 +169,71 @@ const fetchTimeSeriesSamplesExpressionsEpic: Epic<Action, Action, RootState> = (
     );
 };
 
+const fetchComparisonTimeSeriesSamplesExpressionsEpic: Epic<Action, Action, RootState> = (
+    action$,
+    state$,
+) => {
+    return action$.pipe(
+        ofType(comparisonTimeSeriesChanged.toString()),
+        withLatestFrom(state$),
+        mergeMap(([, state]) => {
+            const comparisonTimeSeriesSamplesExpressions = {} as SamplesGenesExpressionsById;
+            const samplesExpressionsInStore = getSamplesExpressionsSamplesIds(
+                state.samplesExpressions,
+            );
+            let comparisonTimeSeriesSamplesIds = getComparisonTimeSeriesSamplesIds(
+                state.timeSeries,
+            );
+
+            // Fetch only samples expressions that aren't in redux store yet.
+            comparisonTimeSeriesSamplesIds = comparisonTimeSeriesSamplesIds.filter(
+                (sampleId) => !samplesExpressionsInStore.includes(sampleId),
+            );
+
+            // If all samples expressions in question are already in store, there's no need to fetch them again!
+            if (comparisonTimeSeriesSamplesIds.length === 0) {
+                return EMPTY;
+            }
+
+            return from(getDataBySamplesIds(comparisonTimeSeriesSamplesIds)).pipe(
+                mergeMap((sampleData) => {
+                    // Once samples data is retrieved use it's output.exp_json to retrieve genes expressions.
+                    return forkJoin(sampleData.map(getSampleStorage)).pipe(
+                        map((sampleStorages) => {
+                            sampleStorages.forEach(({ sampleId, storage }) => {
+                                comparisonTimeSeriesSamplesExpressions[sampleId] =
+                                    storage.json.genes;
+                            });
+
+                            return samplesExpressionsComparisonFetchSucceeded(
+                                comparisonTimeSeriesSamplesExpressions,
+                            );
+                        }),
+                        catchError((error) =>
+                            of(
+                                handleError(
+                                    `Error retrieving comparison time series samples storage data.`,
+                                    error,
+                                ),
+                            ),
+                        ),
+                    );
+                }),
+                catchError((error) =>
+                    of(
+                        handleError(
+                            `Error retrieving comparison time series samples storage data.`,
+                            error,
+                        ),
+                    ),
+                ),
+                startWith(samplesExpressionsFetchStarted()),
+                endWith(samplesExpressionsFetchEnded()),
+            );
+        }),
+    );
+};
+
 const fetchDifferentialExpressionsEpic: Epic<Action, Action, RootState> = (action$, state$) => {
     return action$.pipe(
         ofType(fetchDifferentialExpressionsData),
@@ -231,6 +300,7 @@ export default combineEpics(
     timeSeriesSelectedEpic,
     fetchTimeSeriesEpic,
     fetchTimeSeriesSamplesExpressionsEpic,
+    fetchComparisonTimeSeriesSamplesExpressionsEpic,
     fetchDifferentialExpressionsEpic,
     fetchDifferentialExpressionsDataEpic,
     fetchBasketExpressionsEpic,

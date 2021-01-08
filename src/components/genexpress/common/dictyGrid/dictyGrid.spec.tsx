@@ -11,6 +11,7 @@ const timeSeries = getTimeSeries({
     byId: timeSeriesById,
     isFetching: false,
     selectedId: 1,
+    comparisonIds: [],
     isAddingToBasket: false,
     basketInfo: {} as BasketInfo,
     basketExpressionsIds: [],

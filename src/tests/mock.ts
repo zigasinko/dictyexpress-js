@@ -631,6 +631,7 @@ export const testState = (): RootState => {
         timeSeries: {
             byId: timeSeriesById,
             selectedId: _.flatMap(timeSeriesById)[0].id,
+            comparisonIds: [],
             isFetching: false,
             isAddingToBasket: false,
             basketInfo: {} as BasketInfo,

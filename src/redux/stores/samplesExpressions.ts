@@ -15,6 +15,12 @@ const samplesExpressionsByIdSlice = createSlice({
         ): SamplesGenesExpressionsById => {
             return action.payload;
         },
+        comparisonFetchSucceeded: (
+            state,
+            action: PayloadAction<SamplesGenesExpressionsById>,
+        ): SamplesGenesExpressionsById => {
+            return { ...state, ...action.payload };
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(
@@ -41,6 +47,7 @@ export const {
 
 export const {
     fetchSucceeded: samplesExpressionsFetchSucceeded,
+    comparisonFetchSucceeded: samplesExpressionsComparisonFetchSucceeded,
 } = samplesExpressionsByIdSlice.actions;
 
 export type SamplesExpressionsState = ReturnType<typeof samplesExpressionsReducer>;
@@ -58,6 +65,6 @@ export const getSamplesExpressionsById = (
 export const getSamplesExpressionsSamplesIds = createSelector(
     getSamplesExpressionsById,
     (samplesExpressionsById) => {
-        return Object.keys(samplesExpressionsById);
+        return Object.keys(samplesExpressionsById).map((stringId) => parseInt(stringId, 10));
     },
 );

@@ -1,10 +1,14 @@
 import timeSeries, {
+    getComparisonTimeSeries,
     getSelectedTimeSeries,
     getSelectedTimeSeriesLabels,
 } from 'redux/stores/timeSeries';
 import genes, { getGenesById, getSelectedGenes } from 'redux/stores/genes';
 import genesSimilarities, { getGenesSimilaritiesQueryGeneId } from 'redux/stores/genesSimilarities';
-import samplesExpressions, { getSamplesExpressionsById } from 'redux/stores/samplesExpressions';
+import samplesExpressions, {
+    getSamplesExpressionsById,
+    getSamplesExpressionsSamplesIds,
+} from 'redux/stores/samplesExpressions';
 import notifications from 'redux/stores/notifications';
 import authentication from 'redux/stores/authentication';
 import differentialExpressions from 'redux/stores/differentialExpressions';
@@ -46,7 +50,7 @@ export const getSelectedGenesExpressions = createSelector(
         const newGenesExpressionsData = [] as GeneExpression[];
 
         timeSeriesLabels.forEach((label) => {
-            const timePointPartitions = selectedTimeSeries?.partitions?.filter(
+            const timePointPartitions = selectedTimeSeries.partitions.filter(
                 (partition) => partition.label === label,
             );
 
@@ -58,10 +62,71 @@ export const getSelectedGenesExpressions = createSelector(
                 });
 
                 newGenesExpressionsData.push({
+                    timeSeriesName: selectedTimeSeries.collection.name,
                     label,
                     value: _.mean(values),
                     geneId: gene.feature_id,
                     geneName: gene.name,
+                });
+            });
+        });
+
+        return newGenesExpressionsData;
+    },
+);
+
+export const getSelectedGenesComparisonExpressions = createSelector(
+    (state: RootState) => getComparisonTimeSeries(state.timeSeries),
+    (state: RootState) => getSelectedTimeSeriesLabels(state.timeSeries),
+    (state: RootState) => getSelectedGenes(state.genes),
+    (state: RootState) => getSamplesExpressionsById(state.samplesExpressions),
+    (state: RootState) => getSamplesExpressionsSamplesIds(state.samplesExpressions),
+    (
+        comparisonTimeSeries,
+        timeSeriesLabels,
+        selectedGenes,
+        samplesExpressionsById,
+        samplesExpressionsSamplesIds,
+    ) => {
+        if (_.isEmpty(samplesExpressionsById) || _.isEmpty(selectedGenes)) {
+            return [];
+        }
+
+        const newGenesExpressionsData = [] as GeneExpression[];
+
+        timeSeriesLabels.forEach((label) => {
+            comparisonTimeSeries.forEach((singleTimeSeries) => {
+                const timePointPartitions = _.flatten(
+                    singleTimeSeries.partitions.filter((partition) => partition.label === label),
+                );
+
+                // If any of samplesExpressions isn't in store
+                if (
+                    timePointPartitions.some(
+                        (partition) => !samplesExpressionsSamplesIds.includes(partition.entity),
+                    )
+                ) {
+                    return;
+                }
+
+                selectedGenes.forEach((gene) => {
+                    const values: number[] = [];
+                    // Gene expressions in different samples must be averaged out (mean).
+                    timePointPartitions.forEach((partition) => {
+                        if (samplesExpressionsById[partition.entity][gene.feature_id] != null) {
+                            values.push(samplesExpressionsById[partition.entity][gene.feature_id]);
+                        }
+                    });
+
+                    if (values.length > 0) {
+                        newGenesExpressionsData.push({
+                            timeSeriesName: singleTimeSeries.collection.name,
+                            label,
+                            value: _.mean(values),
+                            geneId: gene.feature_id,
+                            geneName: gene.name,
+                        });
+                    }
                 });
             });
         });

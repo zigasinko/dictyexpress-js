@@ -109,7 +109,6 @@ describe('associationsModal', () => {
         });
 
         it('should call genesSelected with only selected gene when user clicks Select', async () => {
-            // Simulate select first row (gene set).
             fireEvent.click(
                 screen.getAllByLabelText('Press Space to toggle row selection (unchecked)')[0],
             );
@@ -131,7 +130,6 @@ describe('associationsModal', () => {
         });
 
         it('should call genesSelected with all genes when user clicks Select all', async () => {
-            // Simulate select first row (gene set).
             fireEvent.click(
                 screen.getAllByLabelText('Press Space to toggle row selection (unchecked)')[0],
             );

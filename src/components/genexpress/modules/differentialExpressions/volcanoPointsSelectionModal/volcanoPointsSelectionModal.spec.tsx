@@ -23,7 +23,7 @@ describe('volcanoPointsSelectionModal', () => {
     let mockedStore: MockStoreEnhanced<RootState, AppDispatch>;
     const mockedOnClose = jest.fn();
 
-    describe.only('genes selected', () => {
+    describe('genes selected', () => {
         beforeEach(() => {
             initialState = testState();
             initialState.genes.byId = genesById;

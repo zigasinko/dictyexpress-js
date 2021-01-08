@@ -26,6 +26,15 @@ const selectedIdSlice = createSlice({
     },
 });
 
+const comparisonIdsIdInitialState = null;
+const comparisonIdsSlice = createSlice({
+    name: 'comparisonTimeSeries',
+    initialState: comparisonIdsIdInitialState as number[] | null,
+    reducers: {
+        changed: (_state, action: PayloadAction<number[]>): number[] => action.payload,
+    },
+});
+
 const basketInfoInitialState = {} as BasketInfo;
 const basketInfoSlice = createSlice({
     name: 'timeSeries',
@@ -75,6 +84,7 @@ const isAddingToBasketSlice = createIsFetchingSlice('basket');
 const timeSeriesReducer = combineReducers({
     byId: timeSeriesByIdSlice.reducer,
     selectedId: selectedIdSlice.reducer,
+    comparisonIds: comparisonIdsSlice.reducer,
     isFetching: isFetchingSlice.reducer,
     isAddingToBasket: isAddingToBasketSlice.reducer,
     basketInfo: basketInfoSlice.reducer,
@@ -83,6 +93,7 @@ const timeSeriesReducer = combineReducers({
 
 // Export actions.
 export const { selected: timeSeriesSelected } = selectedIdSlice.actions;
+export const { changed: comparisonTimeSeriesChanged } = comparisonIdsSlice.actions;
 export const { fetchSucceeded: timeSeriesFetchSucceeded } = timeSeriesByIdSlice.actions;
 export const { addSamplesToBasketSucceeded } = basketInfoSlice.actions;
 export const { fetchBasketExpressionsIdsSucceeded } = basketExpressionsIdsSlice.actions;
@@ -102,6 +113,7 @@ export default timeSeriesReducer;
 // Selectors (expose the store to containers).
 const getTimeSeriesById = (state: TimeSeriesState): RelationsById => state.byId;
 const getSelectedTimeSeriesId = (state: TimeSeriesState): number => state.selectedId ?? 0;
+const getComparisonTimeSeriesIds = (state: TimeSeriesState): number[] => state.comparisonIds ?? [];
 
 export const getTimeSeriesIsFetching = (state: TimeSeriesState): boolean => state.isFetching;
 export const getIsAddingToBasket = (state: TimeSeriesState): boolean => state.isAddingToBasket;
@@ -123,6 +135,14 @@ export const getSelectedTimeSeries = createSelector(
     },
 );
 
+export const getComparisonTimeSeries = createSelector(
+    getTimeSeriesById,
+    getComparisonTimeSeriesIds,
+    (timeSeriesById, comparisonTimeSeriesIds) => {
+        return comparisonTimeSeriesIds.map((timeSeriesId) => timeSeriesById[timeSeriesId]);
+    },
+);
+
 export const getBasketInfo = (state: TimeSeriesState): BasketInfo => state.basketInfo;
 export const getBasketId = (state: TimeSeriesState): string => state.basketInfo.id;
 
@@ -139,5 +159,16 @@ export const getSelectedTimeSeriesSamplesIds = createSelector(
     getSelectedTimeSeries,
     (selectedTimeSeries) => {
         return selectedTimeSeries.partitions.map((partition) => partition.entity);
+    },
+);
+
+export const getComparisonTimeSeriesSamplesIds = createSelector(
+    getComparisonTimeSeries,
+    (comparisonTimeSeries) => {
+        return _.flatten(
+            comparisonTimeSeries.map((timeSeries) =>
+                timeSeries.partitions.map((partition) => partition.entity),
+            ),
+        );
     },
 );

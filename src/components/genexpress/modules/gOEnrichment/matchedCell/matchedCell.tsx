@@ -9,20 +9,18 @@ const MatchedCell = ({
     onMatchedGenesClick,
 }: Pick<ICellRendererParams, 'value' | 'data'> & {
     onMatchedGenesClick: (row: GOEnrichmentRow) => void;
-}): ReactElement => {
-    const handleOnClick = (): void => {
-        onMatchedGenesClick(data);
-    };
-
-    return (
-        <>
-            <MatchedCellContainer>
-                <MatchedButton fullWidth type="button" color="secondary" onClick={handleOnClick}>
-                    {`${value}/${data.total}`}
-                </MatchedButton>
-            </MatchedCellContainer>
-        </>
-    );
-};
+}): ReactElement => (
+    <MatchedCellContainer>
+        <MatchedButton
+            fullWidth
+            color="secondary"
+            onClick={(): void => {
+                onMatchedGenesClick(data);
+            }}
+        >
+            {`${value}/${data.total}`}
+        </MatchedButton>
+    </MatchedCellContainer>
+);
 
 export default MatchedCell;

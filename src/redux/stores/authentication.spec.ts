@@ -30,7 +30,7 @@ describe('authentication store', () => {
         });
     });
 
-    describe.only('logged in', () => {
+    describe('logged in', () => {
         beforeEach(() => {
             initialState = {
                 isFetchingUser: false,

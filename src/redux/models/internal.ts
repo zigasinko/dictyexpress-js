@@ -31,6 +31,7 @@ export type BasketInfo = {
 };
 
 export type GeneExpression = {
+    timeSeriesName: string;
     geneId: string;
     geneName: string;
     label: string;

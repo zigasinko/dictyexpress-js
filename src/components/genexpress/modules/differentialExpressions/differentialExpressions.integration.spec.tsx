@@ -136,7 +136,7 @@ describe('differentialExpressions integration', () => {
             );
 
             await waitFor(() => {
-                expect(screen.getByText('Gene:')).toBeInTheDocument();
+                expect(screen.queryByText('Gene:')).toBeInTheDocument();
             });
         });
 

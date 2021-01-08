@@ -12,11 +12,12 @@ type GeneExpressionsLineChartProps = {
     highlightedGenesIds: string[];
     selectedGenesIds: string[];
     onHighlight: (genesIds: string[]) => void;
-    showLegend?: boolean;
+    showLegend: boolean;
+    colorByTimeSeries: boolean;
 };
 
-const colorScaleLimit = 10;
 const color = GEN_GREY['500'];
+export const colorScaleLimit = 10;
 export const lineStrokeWidth = 1;
 export const highlightedLineStrokeWidth = 4;
 
@@ -25,7 +26,8 @@ const getVegaSpecification = (
     highlightedGenesIds: string[],
     selectedGenesIds: string[],
     highlightedColor: string,
-    showLegend?: boolean,
+    showLegend: boolean,
+    colorByTimeSeries: boolean,
 ): Spec => ({
     signals: [
         {
@@ -70,7 +72,8 @@ const getVegaSpecification = (
                 {
                     events:
                         '@legendSymbol:mouseover, @legendLabel:mouseover, @genesExpressionsLinesArea:mouseover, @genesExpressionsPoints:mouseover',
-                    update: 'datum.geneId == null ? datum.value : datum.geneId',
+                    update:
+                        '{geneId: datum.geneId == null ? datum.value : datum.geneId, timeSeriesName: datum.timeSeriesName}',
                     force: true,
                 },
             ],
@@ -148,15 +151,19 @@ const getVegaSpecification = (
                           name: 'legendLabel',
                           interactive: true,
                           update: {
-                              text: { scale: 'geneLookup', field: 'value' },
-                              fontWeight: [
-                                  {
-                                      test:
-                                          "indata('highlighted', 'data', datum.value) || indata('hovered', 'data', datum.value)",
-                                      value: 'bold',
-                                  },
-                                  { value: 'normal' },
-                              ],
+                              ...(!colorByTimeSeries && {
+                                  text: { scale: 'geneLookup', field: 'value' },
+                              }),
+                              fontWeight: colorByTimeSeries
+                                  ? { value: 'normal' }
+                                  : [
+                                        {
+                                            test:
+                                                "indata('highlighted', 'data', datum.value) || indata('hovered', 'geneId', datum.value)",
+                                            value: 'bold',
+                                        },
+                                        { value: 'normal' },
+                                    ],
                           },
                       },
                   },
@@ -170,7 +177,7 @@ const getVegaSpecification = (
                 facet: {
                     name: 'series',
                     data: 'table',
-                    groupby: 'geneId',
+                    groupby: ['timeSeriesName', 'geneId'],
                 },
             },
             marks: [
@@ -189,7 +196,7 @@ const getVegaSpecification = (
                                 {
                                     test: `length(data('selectedGenesIds')) < ${colorScaleLimit}`,
                                     scale: 'colorscale',
-                                    field: 'geneId',
+                                    field: colorByTimeSeries ? 'timeSeriesName' : 'geneId',
                                 },
                                 {
                                     test: "indata('highlighted', 'data', datum.geneId)",
@@ -202,7 +209,7 @@ const getVegaSpecification = (
                             strokeWidth: [
                                 {
                                     test:
-                                        "indata('highlighted', 'data', datum.geneId) || indata('hovered', 'data', datum.geneId)",
+                                        "indata('highlighted', 'data', datum.geneId) || (indata('hovered', 'geneId', datum.geneId) && (data('hovered')[0].timeSeriesName == null || indata('hovered', 'timeSeriesName', datum.timeSeriesName)))",
                                     value: highlightedLineStrokeWidth,
                                 },
                                 { value: lineStrokeWidth },
@@ -238,7 +245,7 @@ const getVegaSpecification = (
                             y: { scale: 'yscale', field: 'value' },
                             tooltip: {
                                 signal:
-                                    "{'Gene': datum.geneName, 'Time': datum.label, 'Score': datum.value}",
+                                    "{'Time series': datum.timeSeriesName, 'Gene': datum.geneName, 'Time': datum.label, 'Score': datum.value}",
                             },
                             cursor: { value: 'pointer' },
                         },
@@ -247,7 +254,7 @@ const getVegaSpecification = (
                                 {
                                     test: `length(data('selectedGenesIds')) < ${colorScaleLimit}`,
                                     scale: 'colorscale',
-                                    field: 'geneId',
+                                    field: colorByTimeSeries ? 'timeSeriesName' : 'geneId',
                                 },
                                 {
                                     test: "indata('highlighted', 'data', datum.geneId)",
@@ -260,7 +267,7 @@ const getVegaSpecification = (
                             size: [
                                 {
                                     test:
-                                        "indata('highlighted', 'data', datum.geneId) || indata('hovered', 'data', datum.geneId)",
+                                        "indata('highlighted', 'data', datum.geneId) || (indata('hovered', 'geneId', datum.geneId) && (data('hovered')[0].timeSeriesName == null || indata('hovered', 'timeSeriesName', datum.timeSeriesName)))",
                                     value: 8 ** 2,
                                 },
                                 { value: 5 ** 2 },
@@ -290,7 +297,7 @@ const getVegaSpecification = (
             name: 'colorscale',
             type: 'ordinal',
             range: 'category',
-            domain: { data: 'table', field: 'geneId' },
+            domain: { data: 'table', field: colorByTimeSeries ? 'timeSeriesName' : 'geneId' },
         },
         {
             name: 'geneLookup',
@@ -323,6 +330,7 @@ const GeneExpressionsLineChart = forwardRef(
             highlightedGenesIds,
             onHighlight,
             showLegend,
+            colorByTimeSeries,
         }: GeneExpressionsLineChartProps,
         ref,
     ): ReactElement => {
@@ -372,9 +380,10 @@ const GeneExpressionsLineChart = forwardRef(
                     selectedGenesIds,
                     theme.palette.secondary.main,
                     showLegend,
+                    colorByTimeSeries,
                 ),
             // eslint-disable-next-line react-hooks/exhaustive-deps
-            [showLegend],
+            [showLegend, colorByTimeSeries],
         );
 
         return (

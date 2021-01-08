@@ -49,7 +49,7 @@ const validateSimilarGenesGrid = async (
         });
         screen.getByText(formatNumber(genesSimilaritiesToValidate[i].distance, 'long'));
         await screen.findAllByAltText('Open in dictyBase.');
-        screen.findAllByAltText('Open in SACGB.');
+        await screen.findAllByAltText('Open in SACGB.');
     }
 };
 
@@ -61,7 +61,7 @@ describe('findSimilarGenesModal', () => {
         initialState = testState();
     });
 
-    describe.only('process data exists', () => {
+    describe('process data exists', () => {
         beforeAll(() => {
             fetchMock.resetMocks();
 
@@ -144,7 +144,6 @@ describe('findSimilarGenesModal', () => {
             });
 
             it('should call onClose when user clicks close button', () => {
-                // Simulate click on first gene set.
                 fireEvent.click(screen.getByText('Close'));
 
                 expect(mockedOnClose.mock.calls.length).toBe(1);
@@ -173,7 +172,7 @@ describe('findSimilarGenesModal', () => {
             });
         });
 
-        describe.only('similar genes in mocked store', () => {
+        describe('similar genes in mocked store', () => {
             let mockedStore: MockStoreEnhanced<RootState, AppDispatch>;
 
             beforeEach(() => {
@@ -192,7 +191,7 @@ describe('findSimilarGenesModal', () => {
                 });
             });
 
-            it.only('should call genesSelected with only selected gene when user clicks Select', async () => {
+            it('should call genesSelected with only selected gene when user clicks Select', async () => {
                 fireEvent.click(screen.getByText(genes[3].name));
 
                 await waitFor(() => {
@@ -234,36 +233,30 @@ describe('findSimilarGenesModal', () => {
 
             fetchMock.mockResponse(async (req) => {
                 if (req.url.includes('get_or_create')) {
-                    return Promise.resolve(
-                        JSON.stringify({
-                            id: dataId,
-                        }),
-                    );
+                    return resolveStringifiedObjectPromise({
+                        id: dataId,
+                    });
                 }
 
                 if (req.url.includes('data') && req.url.includes(dataId.toString())) {
-                    return Promise.resolve(
-                        JSON.stringify({
-                            items: [
-                                {
-                                    ...generateData(1),
-                                    ...{
-                                        status: WAITING_DATA_STATUS,
-                                        output: {},
-                                    },
+                    return resolveStringifiedObjectPromise({
+                        items: [
+                            {
+                                ...generateData(1),
+                                ...{
+                                    status: WAITING_DATA_STATUS,
+                                    output: {},
                                 },
-                            ],
-                            observer: observerId,
-                        }),
-                    );
+                            },
+                        ],
+                        observer: observerId,
+                    });
                 }
 
                 if (req.url.includes('storage')) {
-                    return Promise.resolve(
-                        JSON.stringify({
-                            json: { 'similar genes': genesSimilarities },
-                        }),
-                    );
+                    return resolveStringifiedObjectPromise({
+                        json: { 'similar genes': genesSimilarities },
+                    });
                 }
 
                 return (

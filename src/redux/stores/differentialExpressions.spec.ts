@@ -10,6 +10,7 @@ import differentialExpressionsReducer, {
     DifferentialExpressionsState,
     differentialExpressionStorageFetchSucceeded,
 } from './differentialExpressions';
+import { timeSeriesSelected } from './timeSeries';
 
 const differentialExpressionsById = generateDifferentialExpressionsById(2);
 const differentialExpressions = _.flatMap(differentialExpressionsById);
@@ -84,6 +85,16 @@ describe('differentialExpressions store', () => {
                     },
                     [differentialExpressions[1].id]: differentialExpressions[1],
                 },
+            };
+
+            expect(newState).toEqual(expectedState);
+        });
+
+        it('should clear differentialExpressions on timeSeriesSelected action', () => {
+            const newState = differentialExpressionsReducer(initialState, timeSeriesSelected(1));
+            const expectedState = {
+                ...initialState,
+                byId: {},
             };
 
             expect(newState).toEqual(expectedState);

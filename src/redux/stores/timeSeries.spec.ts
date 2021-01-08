@@ -34,6 +34,7 @@ describe('timeSeries store', () => {
             initialState = {
                 byId: {},
                 selectedId: 0,
+                comparisonIds: [],
                 isFetching: false,
                 isAddingToBasket: false,
                 basketInfo: {} as BasketInfo,
@@ -90,6 +91,7 @@ describe('timeSeries store', () => {
             initialState = {
                 byId: timeSeriesById,
                 selectedId: 2,
+                comparisonIds: [],
                 isFetching: false,
                 isAddingToBasket: false,
                 basketInfo,

@@ -22,13 +22,11 @@ import withSizeme from '../withSizeme';
 
 export type DataHandler = {
     name: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    handler: (name: string, value: any) => void;
+    handler: (name: string, value: unknown) => void;
 };
 
 export type SignalHandler = {
     name: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     handler: (name: string, value: SignalValue) => void;
 };
 
@@ -44,10 +42,10 @@ export type SignalDefinition = {
 };
 
 type ChartProps = {
-    updatableDataDefinitions?: Array<DataDefinition>;
-    updatableSignalDefinitions?: Array<SignalDefinition>;
-    dataHandlers?: Array<DataHandler>;
-    signalHandlers?: Array<SignalHandler>;
+    updatableDataDefinitions?: DataDefinition[];
+    updatableSignalDefinitions?: SignalDefinition[];
+    dataHandlers?: DataHandler[];
+    signalHandlers?: SignalHandler[];
     vegaSpecification: Spec;
 };
 
@@ -88,8 +86,8 @@ const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
 
     const theme = useTheme();
 
-    const addedDataHandlers = useRef<Array<DataHandler>>([]);
-    const addedSignalHandlers = useRef<Array<DataHandler>>([]);
+    const addedDataHandlers = useRef<DataHandler[]>([]);
+    const addedSignalHandlers = useRef<DataHandler[]>([]);
 
     const chartElement = useRef<HTMLDivElement>(null);
     const chartView = useRef<vega.View | null>(null);

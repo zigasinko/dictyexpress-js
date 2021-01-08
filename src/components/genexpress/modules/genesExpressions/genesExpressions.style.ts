@@ -10,6 +10,7 @@ export const GenesExpressionsContainer = styled.div`
 export const GenesExpressionsControls = styled.div`
     display: flex;
     justify-content: space-between;
+    flex-flow: row wrap;
 `;
 
 export const GenesExpressionsLineChartContainer = styled.div`

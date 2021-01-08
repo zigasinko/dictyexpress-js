@@ -14,7 +14,7 @@ import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { DictyGridContainer, FilterTextField, GridWrapper } from './dictyGrid.styles';
 
-type DictyGridProps<T> = {
+export type DictyGridProps<T> = {
     hideFilter?: boolean;
     filterLabel?: string;
     data: T[];

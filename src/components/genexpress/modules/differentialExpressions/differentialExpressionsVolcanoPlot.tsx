@@ -451,7 +451,7 @@ const DifferentialExpressionsVolcanoPlot = forwardRef(
             };
         }, [data, displayOutliers, getLogProbLimit, logFcOutliersLimit]);
 
-        const updatableDataDefinitions: Array<DataDefinition> = useStateWithEffect(
+        const updatableDataDefinitions: DataDefinition[] = useStateWithEffect(
             () => [
                 {
                     name: 'highlighted',
@@ -474,7 +474,7 @@ const DifferentialExpressionsVolcanoPlot = forwardRef(
             ],
         );
 
-        const updatableSignalDefinitions: Array<SignalDefinition> = useStateWithEffect(
+        const updatableSignalDefinitions: SignalDefinition[] = useStateWithEffect(
             () => [
                 {
                     name: 'range',

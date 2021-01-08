@@ -364,7 +364,7 @@ const ClusteringChart = forwardRef<ChartHandle, ClusteringChartProps>(
             );
         }, [genesExpressions]);
 
-        const updatableDataDefinitions: Array<DataDefinition> = useStateWithEffect(
+        const updatableDataDefinitions: DataDefinition[] = useStateWithEffect(
             () => [
                 {
                     name: 'highlightedClusterNodesIds',

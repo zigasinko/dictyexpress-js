@@ -85,7 +85,7 @@ describe('clusteringStore store', () => {
             const newState = clusteringReducer(initialState, timeSeriesSelected(1));
             const expectedState = {
                 ...initialState,
-                mergedData: {} as MergedClusteringData,
+                mergedData: {},
             };
 
             expect(newState).toEqual(expectedState);
@@ -95,7 +95,7 @@ describe('clusteringStore store', () => {
             const newState = clusteringReducer(initialState, allGenesDeselected());
             const expectedState = {
                 ...initialState,
-                mergedData: {} as MergedClusteringData,
+                mergedData: {},
             };
 
             expect(newState).toEqual(expectedState);
@@ -105,7 +105,7 @@ describe('clusteringStore store', () => {
             const newState = clusteringReducer(initialState, geneDeselected('1'));
             const expectedState = {
                 ...initialState,
-                mergedData: {} as MergedClusteringData,
+                mergedData: {},
             };
 
             expect(newState).toEqual(expectedState);
