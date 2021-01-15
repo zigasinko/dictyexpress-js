@@ -4,7 +4,6 @@ import { Gene } from 'redux/models/internal';
 import { ClusteringData } from 'redux/models/rest';
 
 // Export all epic-specific actions to omit dependency-cycles for reactive queries.
-// TimeSeriesEpics.
 export const selectGenes = createAction<Gene[]>('genes/selectGenes');
 export const pasteGenesNames = createAction<string[]>('genes/pasteGenesNames');
 export const fetchTimeSeries = createAction('timeSeries/fetchTimeSeries');
@@ -15,13 +14,11 @@ export const fetchDifferentialExpressionsData = createAction(
     'timeSeries/fetchDifferentialExpressionsData',
 );
 
-// AuthenticationEpics.
 export const login = createAction<{ username: string; password: string }>('authentication/login');
 export const loginSucceeded = createAction('authentication/loginSucceeded');
 export const logout = createAction('authentication/logout');
 export const logoutSucceeded = createAction('authentication/logoutSucceeded');
 
-// ConnectToServerEpic.
 export const appStarted = createAction('appStarted');
 export const connectToServer = createAction<{
     url: string;
@@ -30,7 +27,6 @@ export const reconnectToServer = createAction('connectToServer/reconnect');
 export const disconnectFromServer = createAction('connectToServer/disconnect');
 export const connectionReady = createAction('connectToServer/connectionReady');
 
-// GenesEpics.
 export const fetchSelectedDifferentialExpressionGenes = createAction(
     'genes/fetchSelectedDifferentialExpressionGenes',
 );
@@ -38,7 +34,6 @@ export const fetchAssociationsGenes = createAction<{ geneIds: string[]; species?
     'genes/fetchAssociationsGenes',
 );
 
-// GOEnrichmentEpics.
 export const getOrCreateGOEnrichment = createAction('gOEnrichment/getOrCreateGOEnrichment');
 export const fetchGOEnrichmentData = createAction<number>('gOEnrichment/fetchGOEnrichmentData');
 export const fetchGOEnrichmentStorage = createAction<number>(
@@ -49,7 +44,6 @@ export const gOEnrichmentDataFetchSucceeded = createAction<DataGOEnrichmentAnaly
     'gOEnrichment/dataFetchSucceeded',
 );
 
-// ClusteringEpics.
 export const fetchClusteringData = createAction<number>('clustering/fetchClusteringData');
 export const fetchClusteringDataSucceeded = createAction<ClusteringData>(
     'clustering/fetchClusteringDataSucceeded',

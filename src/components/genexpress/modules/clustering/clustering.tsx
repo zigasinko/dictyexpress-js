@@ -21,9 +21,12 @@ import {
     getMergedClusteringData,
     linkageFunctionChanged,
 } from 'redux/stores/clustering';
-import { ClusteringDistanceMeasure, ClusteringLinkageFunction } from 'redux/models/rest';
 import { advancedJoin } from 'utils/arrayUtils';
 import { ChartHandle } from 'components/genexpress/common/chart/chart';
+import {
+    ClusteringDistanceMeasure,
+    ClusteringLinkageFunction,
+} from 'components/genexpress/common/constants';
 import {
     ClusteringChartContainer,
     ClusteringContainer,
@@ -61,14 +64,14 @@ const connector = connect(mapStateToProps, {
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 export const distanceMeasureOptions: Option<ClusteringDistanceMeasure>[] = [
-    { value: 'pearson', label: 'Pearson' },
-    { value: 'spearman', label: 'Spearman' },
+    { value: ClusteringDistanceMeasure.pearson, label: 'Pearson' },
+    { value: ClusteringDistanceMeasure.spearman, label: 'Spearman' },
 ];
 
 export const linkageFunctionOptions: Option<ClusteringLinkageFunction>[] = [
-    { value: 'single', label: 'Single' },
-    { value: 'average', label: 'Average' },
-    { value: 'complete', label: 'Complete' },
+    { value: ClusteringLinkageFunction.single, label: 'Single' },
+    { value: ClusteringLinkageFunction.average, label: 'Average' },
+    { value: ClusteringLinkageFunction.complete, label: 'Complete' },
 ];
 
 const Clustering = ({
@@ -87,14 +90,13 @@ const Clustering = ({
     const [clusterNodes, setClusterNodes] = useState<ClusterNode[]>([]);
     const [highlightedClusterNodesIds, setHighlightedClusterNodesIds] = useState<number[]>([]);
 
-    // Each time data changes, visualization data must be refreshed.
     useEffect(() => {
         if (_.isEmpty(mergedData.linkage)) {
             setClusterNodes([]);
             return;
         }
 
-        const intermediateTable: _.NumericDictionary<ClusterNode> = {}; // {[node: number]: {x, y, parent}}
+        const intermediateTable: { [nodeIndex: number]: ClusterNode } = {};
         const max = (_.max(mergedData.linkage.map((linkage) => linkage.distance)) as number) * 100;
 
         // Leaf nodes (with genes).
@@ -113,7 +115,7 @@ const Clustering = ({
         });
 
         _.each(mergedData.linkage, ({ nodeIndex, node1, node2, distance }) => {
-            const middle = (intermediateTable[node1]?.y + intermediateTable[node2]?.y) / 2;
+            const middle = (intermediateTable[node1].y + intermediateTable[node2].y) / 2;
             intermediateTable[nodeIndex] = {
                 nodeIndex,
                 x: max - distance * 100,
@@ -136,12 +138,6 @@ const Clustering = ({
          * - it's gene is among highlighted genes (if node has a gene, it's a leaf node).
          */
         if (!_.isEmpty(clusterNodes)) {
-            /**
-             * Traverse the hierarchical tree from leafs up and add all nodes whose every child
-             * is highlighted.
-             * @param highlightedNodes - Highlighted on current level (starting with leaf nodes).
-             * @param allHighlightedNodes - All highlighted nodes (on first call, only leaf nodes).
-             */
             const getAllHighlighted = (
                 highlightedNodes: ClusterNode[],
                 allHighlightedNodes = [...highlightedNodes],
@@ -194,10 +190,6 @@ const Clustering = ({
         connectedLinkageFunctionChanged(event.target.value as ClusteringLinkageFunction);
     };
 
-    /**
-     * Get all descending cluster nodes (recursive).
-     * @param parentClusterNode - Parent cluster node whose children we want.
-     */
     const getClusterNodeChildren = (parentClusterNode: ClusterNode): ClusterNode[] => {
         const childrenNodes = clusterNodes.filter(
             (clusterNode) => clusterNode.parent === parentClusterNode,
@@ -209,21 +201,12 @@ const Clustering = ({
         ];
     };
 
-    /**
-     * Get all descending cluster nodes (recursive).
-     * @param parentClusterNodes - Array of parent cluster nodes whose children we want.
-     */
     const getClusterNodesChildren = (parentClusterNodes: ClusterNode[]): ClusterNode[] => {
         return parentClusterNodes.reduce((childNodes, clusterNode) => {
             return [...childNodes, ...getClusterNodeChildren(clusterNode)];
         }, [] as ClusterNode[]);
     };
 
-    /**
-     * Handles user click on any of the cluster nodes. It and all it's children must
-     * be highlighted.
-     * @param highlightedClusterNodes - Clicked cluster node.
-     */
     const handleOnHighlightedChanged = (chartHighlightedClusterNodesIds: number[]): void => {
         const chartHighlightedClusterNodes = clusterNodes.filter((clusterNode) =>
             chartHighlightedClusterNodesIds.includes(clusterNode.nodeIndex),
@@ -244,14 +227,6 @@ const Clustering = ({
         );
     };
 
-    /**
-     * When user clicks on empty canvas, unhighlight all genes.
-     * @param genesIds - IDs of genes that were selected on differential expressions volcano plot.
-     */
-    /* const handleOnClearClick = (): void => {
-        connectedGenesHighlighted([]);
-    }; */
-
     const getCaption = useCallback((): string => {
         const distanceNames = {
             spearman: "Spearman's rank correlation coefficient",
@@ -271,11 +246,8 @@ Clustering was done on ${selectedGenes.length === 0 ? 'all genes' : `selected ge
     `.trim();
     }, [distanceMeasure, linkageFunction, selectedGenes]);
 
-    // Register reportBuilder getComponentReport function.
     useReport(
         async (processFile) => {
-            // Do not include any clustering data (table or visualization) if
-            // clusteringNodes array is empty.
             if (clusterNodes.length === 0) {
                 return;
             }

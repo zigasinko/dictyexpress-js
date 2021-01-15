@@ -1,3 +1,7 @@
+import {
+    ClusteringDistanceMeasure,
+    ClusteringLinkageFunction,
+} from 'components/genexpress/common/constants';
 import _ from 'lodash';
 import { mergeClusteringData } from 'redux/epics/clusteringEpics';
 import { MergedClusteringData } from 'redux/models/internal';
@@ -8,7 +12,7 @@ import clusteringReducer, {
     linkageFunctionChanged,
     mergedClusteringDataFetchSucceeded,
 } from './clustering';
-import { allGenesDeselected, geneDeselected } from './genes';
+import { allGenesDeselected, geneDeselected, genesSelected } from './genes';
 import { timeSeriesSelected } from './timeSeries';
 
 const clusteringJson = generateHierarchicalClusteringJson();
@@ -24,8 +28,8 @@ describe('clusteringStore store', () => {
         beforeEach(() => {
             initialState = {
                 mergedData: {} as MergedClusteringData,
-                distanceMeasure: 'spearman',
-                linkageFunction: 'average',
+                distanceMeasure: ClusteringDistanceMeasure.spearman,
+                linkageFunction: ClusteringLinkageFunction.average,
                 isFetchingClusteringData: false,
             };
         });
@@ -44,7 +48,10 @@ describe('clusteringStore store', () => {
         });
 
         it('should change distanceMeasure with distanceMeasureChanged action', () => {
-            const newState = clusteringReducer(initialState, distanceMeasureChanged('pearson'));
+            const newState = clusteringReducer(
+                initialState,
+                distanceMeasureChanged(ClusteringDistanceMeasure.pearson),
+            );
             const expectedState = {
                 ...initialState,
                 distanceMeasure: 'pearson',
@@ -54,7 +61,10 @@ describe('clusteringStore store', () => {
         });
 
         it('should change distanceMeasure with linkageFunctionChanged action', () => {
-            const newState = clusteringReducer(initialState, linkageFunctionChanged('single'));
+            const newState = clusteringReducer(
+                initialState,
+                linkageFunctionChanged(ClusteringLinkageFunction.single),
+            );
             const expectedState = {
                 ...initialState,
                 linkageFunction: 'single',
@@ -68,8 +78,8 @@ describe('clusteringStore store', () => {
         beforeEach(() => {
             initialState = {
                 mergedData: mergedClusteringData,
-                distanceMeasure: 'spearman',
-                linkageFunction: 'average',
+                distanceMeasure: ClusteringDistanceMeasure.spearman,
+                linkageFunction: ClusteringLinkageFunction.average,
                 isFetchingClusteringData: false,
             };
         });
@@ -96,6 +106,16 @@ describe('clusteringStore store', () => {
 
         it('should clear mergedData on geneDeselected action', () => {
             const newState = clusteringReducer(initialState, geneDeselected('1'));
+            const expectedState = {
+                ...initialState,
+                mergedData: {} as MergedClusteringData,
+            };
+
+            expect(newState).toEqual(expectedState);
+        });
+
+        it('should clear mergedData on genesSelected action', () => {
+            const newState = clusteringReducer(initialState, genesSelected(['1']));
             const expectedState = {
                 ...initialState,
                 mergedData: {} as MergedClusteringData,

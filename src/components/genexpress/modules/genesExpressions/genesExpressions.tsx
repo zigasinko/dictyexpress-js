@@ -19,15 +19,10 @@ const mapStateToProps = (
     highlightedGenesIds: string[];
 } => {
     return {
-        // Time series to be visualized.
         timeSeries: getSelectedTimeSeries(state.timeSeries),
-        // Time series labels (time points).
         timeSeriesLabels: getSelectedTimeSeriesLabels(state.timeSeries),
-        // Genes to be visualized.
         genes: getSelectedGenes(state.genes),
-        // Gene expressions data.
         genesExpressions: getSelectedGenesExpressions(state),
-        // Highlighted genes IDs.
         highlightedGenesIds: getHighlightedGenesIds(state.genes),
     };
 };
@@ -49,7 +44,6 @@ const GenesExpressionsWidget = ({
         connectedGenesHighlighted(genesNames);
     };
 
-    // Register reportBuilder getComponentReport function.
     useReport(async (processFile) => {
         if (chartRef.current != null) {
             processFile(

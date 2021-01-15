@@ -428,9 +428,9 @@ const DifferentialExpressionsVolcanoPlot = forwardRef(
                 ),
             );
 
-            return !highestValueInData
-                ? 0
-                : Math.min(HIGHEST_CALCULABLE_LOG_PROB, highestValueInData * 1.1);
+            return highestValueInData
+                ? Math.min(HIGHEST_CALCULABLE_LOG_PROB, highestValueInData * 1.1)
+                : 0;
         }, [data]);
 
         const getRange = useCallback((): Range => {

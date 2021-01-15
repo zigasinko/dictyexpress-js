@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { Gene, GenesById } from 'redux/models/internal';
 import { timeSeriesSelected } from './timeSeries';
 import createIsFetchingSlice from './fetch';
+import { clearStateOnActions } from './common';
 
 // State slices.
 const genesByIdInitialState = {} as GenesById;
@@ -61,12 +62,11 @@ const highlightedGenesSlice = createSlice({
                 return state.filter((highlightedGeneId) => action.payload !== highlightedGeneId);
             },
         );
-        builder.addCase(timeSeriesSelected, (): string[] => {
-            return highlightedGenesInitialState;
-        });
-        builder.addCase(selectedGenesIdsSlice.actions.deselectedAll, (): string[] => {
-            return highlightedGenesInitialState;
-        });
+        clearStateOnActions(
+            builder,
+            [timeSeriesSelected, selectedGenesIdsSlice.actions.deselectedAll],
+            highlightedGenesInitialState,
+        );
     },
 });
 

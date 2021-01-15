@@ -38,7 +38,6 @@ const mapStateToProps = (
     isFetchingAssociationsGenes: boolean;
 } => {
     return {
-        // Genes to be visualized.
         genesById: getGenesById(state.genes),
         selectedGenesIds: getSelectedGenesIds(state.genes),
         isFetchingAssociationsGenes: getIsFetchingAssociationsGenes(state.genes),

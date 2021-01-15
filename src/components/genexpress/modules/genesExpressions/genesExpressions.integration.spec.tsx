@@ -1,7 +1,12 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
-import { customRender, handleCommonRequests, validateExportFile } from 'tests/test-utils';
+import {
+    customRender,
+    handleCommonRequests,
+    resolveStringifiedObjectPromise,
+    validateExportFile,
+} from 'tests/test-utils';
 import {
     testState,
     generateSamplesExpressionsById,
@@ -32,51 +37,43 @@ describe('genesExpressions integration', () => {
 
         fetchMock.mockResponse((req) => {
             if (req.url.includes('add_samples')) {
-                return Promise.resolve(
-                    JSON.stringify({
-                        id: 1,
-                        permitted_organisms: ['Organism'],
-                        permitted_sources: ['Source'],
-                    }),
-                );
+                return resolveStringifiedObjectPromise({
+                    id: 1,
+                    permitted_organisms: ['Organism'],
+                    permitted_sources: ['Source'],
+                });
             }
             if (req.url.includes('data')) {
-                return Promise.resolve(
-                    JSON.stringify(
-                        samplesExpressionsIds.map((sampleExpressionId) => ({
+                return resolveStringifiedObjectPromise(
+                    samplesExpressionsIds.map((sampleExpressionId) => ({
+                        id: sampleExpressionId,
+                        output: {
+                            exp_json: 123,
+                        },
+                        entity: {
                             id: sampleExpressionId,
-                            output: {
-                                exp_json: 123,
-                            },
-                            entity: {
-                                id: sampleExpressionId,
-                            },
-                        })),
-                    ),
+                        },
+                    })),
                 );
             }
             if (req.url.includes('storage')) {
-                return Promise.resolve(
-                    JSON.stringify({
-                        json: {
-                            genes: {
-                                [genes[0].feature_id]: Math.random() * 10,
-                                [genes[1].feature_id]: Math.random() * 10,
-                            },
+                return resolveStringifiedObjectPromise({
+                    json: {
+                        genes: {
+                            [genes[0].feature_id]: Math.random() * 10,
+                            [genes[1].feature_id]: Math.random() * 10,
                         },
-                    }),
-                );
+                    },
+                });
             }
             if (req.url.includes('autocomplete')) {
-                return Promise.resolve(
-                    JSON.stringify({
-                        results: [genes[0], genes[1]],
-                    }),
-                );
+                return resolveStringifiedObjectPromise({
+                    results: [genes[0], genes[1]],
+                });
             }
 
             if (req.url.includes('search')) {
-                return Promise.resolve(JSON.stringify([genes[0]]));
+                return resolveStringifiedObjectPromise([genes[0]]);
             }
 
             return handleCommonRequests(req) ?? Promise.reject(new Error(`bad url: ${req.url}`));

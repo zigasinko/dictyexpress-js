@@ -31,14 +31,8 @@ import { Feature } from '@genialis/resolwe/dist/api/types/modules';
 import { GeneClustering, Storage } from '@genialis/resolwe/dist/api/types/rest';
 import { ClusteringData } from 'redux/models/rest';
 import { fetchClusteringData, fetchClusteringDataSucceeded } from './epicsActions';
-import getOrCreateProcessDataEpics, { ProcessesInfo } from './processEpics';
+import getProcessDataEpicsFactory, { ProcessesInfo } from './getProcessDataEpicsFactory';
 
-/**
- * Transforms hierarchical clustering response with gene data and linkage nodes
- * indexes.
- * @param clustering - GeneClustering returned from backend (in storage.json).
- * @param genesById - GenesById (from redux store).
- */
 export const mergeClusteringData = (
     clustering: GeneClustering,
     genesById: GenesById,
@@ -54,7 +48,7 @@ export const mergeClusteringData = (
     };
 };
 
-const getOrCreateClusteringEpic = getOrCreateProcessDataEpics<ClusteringData>({
+const getClusteringProcessDataEpics = getProcessDataEpicsFactory<ClusteringData>({
     processInfo: ProcessesInfo.HierarchicalClustering,
     inputActions: [
         fetchBasketExpressionsIdsSucceeded.toString(),
@@ -121,4 +115,4 @@ const getOrCreateClusteringEpic = getOrCreateProcessDataEpics<ClusteringData>({
         ),
 });
 
-export default getOrCreateClusteringEpic;
+export default getClusteringProcessDataEpics;

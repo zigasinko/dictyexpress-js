@@ -2,7 +2,11 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
-import { customRender, handleCommonRequests } from 'tests/test-utils';
+import {
+    customRender,
+    handleCommonRequests,
+    resolveStringifiedObjectPromise,
+} from 'tests/test-utils';
 import {
     testState,
     generateGenesById,
@@ -43,51 +47,43 @@ describe('goEnrichment integration', () => {
 
             fetchMock.mockResponse((req) => {
                 if (req.url.includes('get_or_create')) {
-                    return Promise.resolve(
-                        JSON.stringify({
-                            id: dataObjectId,
-                        }),
-                    );
+                    return resolveStringifiedObjectPromise({
+                        id: dataObjectId,
+                    });
                 }
 
                 if (decodeURIComponent(req.url).includes('data:gaf')) {
-                    return Promise.resolve(JSON.stringify([humanGaf, mouseMGIGaf, mouseUCSCGaf]));
+                    return resolveStringifiedObjectPromise([humanGaf, mouseMGIGaf, mouseUCSCGaf]);
                 }
 
                 if (req.url.includes('data') && req.url.includes(dataObjectId.toString())) {
-                    return Promise.resolve(
-                        JSON.stringify({
-                            items: [
-                                {
-                                    ...generateData(1),
-                                    ...{
-                                        status: DONE_DATA_STATUS,
-                                        output: {
-                                            terms: 1,
-                                            species: genes[0].species,
-                                            source: genes[0].source,
-                                        },
+                    return resolveStringifiedObjectPromise({
+                        items: [
+                            {
+                                ...generateData(1),
+                                ...{
+                                    status: DONE_DATA_STATUS,
+                                    output: {
+                                        terms: 1,
+                                        species: genes[0].species,
+                                        source: genes[0].source,
                                     },
                                 },
-                            ],
-                        }),
-                    );
+                            },
+                        ],
+                    });
                 }
 
                 if (req.url.includes('storage')) {
-                    return Promise.resolve(
-                        JSON.stringify({
-                            json: gOEnrichmentJson,
-                        }),
-                    );
+                    return resolveStringifiedObjectPromise({
+                        json: gOEnrichmentJson,
+                    });
                 }
 
                 if (req.url.includes('autocomplete')) {
-                    return Promise.resolve(
-                        JSON.stringify({
-                            results: [genes[0], genes[1]],
-                        }),
-                    );
+                    return resolveStringifiedObjectPromise({
+                        results: [genes[0], genes[1]],
+                    });
                 }
 
                 return (
@@ -192,48 +188,40 @@ describe('goEnrichment integration', () => {
 
             fetchMock.mockResponse((req) => {
                 if (req.url.includes('get_or_create')) {
-                    return Promise.resolve(
-                        JSON.stringify({
-                            id: dataObjectId,
-                        }),
-                    );
+                    return resolveStringifiedObjectPromise({
+                        id: dataObjectId,
+                    });
                 }
 
                 if (req.url.includes('data:gaf')) {
-                    return Promise.resolve(JSON.stringify([humanGaf, mouseMGIGaf, mouseUCSCGaf]));
+                    return resolveStringifiedObjectPromise([humanGaf, mouseMGIGaf, mouseUCSCGaf]);
                 }
 
                 if (req.url.includes('data') && req.url.includes(dataObjectId.toString())) {
-                    return Promise.resolve(
-                        JSON.stringify({
-                            items: [
-                                {
-                                    ...generateData(1),
-                                    ...{
-                                        status: WAITING_DATA_STATUS,
-                                        output: {},
-                                    },
+                    return resolveStringifiedObjectPromise({
+                        items: [
+                            {
+                                ...generateData(1),
+                                ...{
+                                    status: WAITING_DATA_STATUS,
+                                    output: {},
                                 },
-                            ],
-                            observer: observerId,
-                        }),
-                    );
+                            },
+                        ],
+                        observer: observerId,
+                    });
                 }
 
                 if (req.url.includes('storage')) {
-                    return Promise.resolve(
-                        JSON.stringify({
-                            json: gOEnrichmentJson,
-                        }),
-                    );
+                    return resolveStringifiedObjectPromise({
+                        json: gOEnrichmentJson,
+                    });
                 }
 
                 if (req.url.includes('autocomplete')) {
-                    return Promise.resolve(
-                        JSON.stringify({
-                            results: [genes[0], genes[1]],
-                        }),
-                    );
+                    return resolveStringifiedObjectPromise({
+                        results: [genes[0], genes[1]],
+                    });
                 }
 
                 return (

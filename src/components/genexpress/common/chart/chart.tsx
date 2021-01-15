@@ -88,13 +88,9 @@ const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
     const addedDataHandlers = useRef<Array<DataHandler>>([]);
     const addedSignalHandlers = useRef<Array<DataHandler>>([]);
 
-    // Element with the chart.
     const chartElement = useRef<HTMLDivElement>(null);
     const chartView = useRef<vega.View | null>(null);
 
-    /* Customize instance value that is exposed to parent components (ref).
-     * Used to expose chartView, chart images (svg / png).
-     */
     useImperativeHandle(ref, () => ({
         getChartView: (): vega.View | null => {
             return chartView.current;
@@ -117,9 +113,6 @@ const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
         getChartDivElement: (): HTMLDivElement | null => chartElement.current,
     }));
 
-    /**
-     * Retrieve width of chart element (chart container div).
-     */
     const getChartElementWidth = useCallback((): number => {
         if (!chartElement.current) {
             return 0;
@@ -128,9 +121,6 @@ const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
         return chartElement.current.clientWidth;
     }, []);
 
-    /**
-     * Retrieve height of chart element (chart container div).
-     */
     const getChartElementHeight = useCallback((): number => {
         if (!chartElement.current) {
             return 0;
@@ -139,10 +129,6 @@ const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
         return chartElement.current.clientHeight;
     }, []);
 
-    /**
-     * Vega runAsync evaluates the underlying dataflow graph and returns a Promise that
-     * resolves upon completion of dataflow processing and scenegraph rendering.
-     */
     const runChart = useCallback((): void => {
         try {
             chartView.current?.runAsync();
@@ -151,9 +137,6 @@ const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
         }
     }, [chartView, dispatch]);
 
-    /**
-     * Set chart width and height via Vega API.
-     */
     const resizeChart = useCallback((): void => {
         chartView.current?.width(getChartElementWidth());
         chartView.current?.height(getChartElementHeight());
@@ -161,16 +144,10 @@ const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
         runChart();
     }, [chartView, getChartElementHeight, getChartElementWidth, runChart]);
 
-    /**
-     * Resize on parent element width / height change.
-     */
     useUpdateEffect(() => {
         resizeChart();
     }, [width, height, resizeChart]);
 
-    /**
-     * Initialize the actual chart via Vega JS API.
-     */
     useEffect((): undefined | (() => void) => {
         const defaultSpecification: vega.Spec = {
             width: getChartElementWidth(),
@@ -219,9 +196,6 @@ const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
         vegaSpecification,
     ]);
 
-    /**
-     * Manage data handlers.
-     */
     useEffect(() => {
         if (dataHandlers != null && chartView.current != null) {
             // If any handlers are already attached, first remove them all.
@@ -243,9 +217,6 @@ const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
         }
     }, [chartView, dataHandlers]);
 
-    /**
-     * Manage signal handlers.
-     */
     useEffect(() => {
         if (signalHandlers != null && chartView.current != null) {
             // If any handlers are already attached, first remove them all.
@@ -270,9 +241,6 @@ const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
         }
     }, [chartView, signalHandlers]);
 
-    /**
-     * Update chart data when updatableDataDefinitions (data) changes.
-     */
     useEffect(() => {
         if (updatableDataDefinitions != null) {
             updatableDataDefinitions.forEach((dataDefinition) => {
@@ -283,9 +251,6 @@ const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
         }
     }, [updatableDataDefinitions, runChart, chartView]);
 
-    /**
-     * Update chart data when updatableSignalDefinitions (value) changes.
-     */
     useEffect(() => {
         if (updatableSignalDefinitions != null) {
             updatableSignalDefinitions.forEach((signalDefinition) => {

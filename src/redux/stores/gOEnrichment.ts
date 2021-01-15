@@ -6,6 +6,7 @@ import {
 import { combineReducers, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { gOEnrichmentDataFetchSucceeded } from 'redux/epics/epicsActions';
 import { EnhancedGOEnrichmentJson } from 'redux/models/internal';
+import { clearStateOnActions } from './common';
 import createIsFetchingSlice from './fetch';
 import { allGenesDeselected, geneDeselected, genesSelected } from './genes';
 import { timeSeriesSelected } from './timeSeries';
@@ -24,29 +25,10 @@ const gOEnrichmentJsonSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(
-            timeSeriesSelected,
-            (): EnhancedGOEnrichmentJson => {
-                return gOEnrichmentJsonInitialState;
-            },
-        );
-        builder.addCase(
-            allGenesDeselected,
-            (): EnhancedGOEnrichmentJson => {
-                return gOEnrichmentJsonInitialState;
-            },
-        );
-        builder.addCase(
-            geneDeselected,
-            (): EnhancedGOEnrichmentJson => {
-                return gOEnrichmentJsonInitialState;
-            },
-        );
-        builder.addCase(
-            genesSelected,
-            (): EnhancedGOEnrichmentJson => {
-                return gOEnrichmentJsonInitialState;
-            },
+        clearStateOnActions(
+            builder,
+            [timeSeriesSelected, allGenesDeselected, geneDeselected, genesSelected],
+            gOEnrichmentJsonInitialState,
         );
     },
 });
@@ -75,12 +57,7 @@ const speciesSlice = createSlice({
                 return action.payload.output.species;
             },
         );
-        builder.addCase(timeSeriesSelected, (): string => {
-            return speciesInitialState;
-        });
-        builder.addCase(allGenesDeselected, (): string => {
-            return speciesInitialState;
-        });
+        clearStateOnActions(builder, [timeSeriesSelected, allGenesDeselected], speciesInitialState);
     },
 });
 
@@ -96,12 +73,7 @@ const sourceSlice = createSlice({
                 return action.payload.output.source;
             },
         );
-        builder.addCase(timeSeriesSelected, (): string => {
-            return sourceInitialState;
-        });
-        builder.addCase(allGenesDeselected, (): string => {
-            return sourceInitialState;
-        });
+        clearStateOnActions(builder, [timeSeriesSelected, allGenesDeselected], sourceInitialState);
     },
 });
 
@@ -118,18 +90,7 @@ const gafSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(
-            timeSeriesSelected,
-            (): DataGafAnnotation => {
-                return gafInitialState;
-            },
-        );
-        builder.addCase(
-            allGenesDeselected,
-            (): DataGafAnnotation => {
-                return gafInitialState;
-            },
-        );
+        clearStateOnActions(builder, [timeSeriesSelected, allGenesDeselected], gafInitialState);
     },
 });
 

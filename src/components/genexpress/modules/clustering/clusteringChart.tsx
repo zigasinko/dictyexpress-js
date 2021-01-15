@@ -1,9 +1,10 @@
-import React, { ReactElement, useRef, useMemo, forwardRef, useState, useEffect } from 'react';
+import React, { ReactElement, useRef, forwardRef, useState, useEffect } from 'react';
 import { Spec } from 'vega';
 import { GEN_CYAN, GEN_GREY } from 'components/genexpress/common/theming/theming';
 import { ClusterNode, GeneExpression } from 'redux/models/internal';
 import useForwardedRef from 'components/genexpress/common/useForwardedRef';
 import _ from 'lodash';
+import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
 import Chart, { ChartHandle, DataDefinition, SignalDefinition } from '../../common/chart/chart';
 
 type ClusteringChartProps = {
@@ -345,8 +346,6 @@ const ClusteringChart = forwardRef<ChartHandle, ClusteringChartProps>(
         /**
          * Because Vega ignores value 0, we must wrap cluster node indexes to an object.
          * Use this type of notation for all data that can include "empty" values (e.g. 0, '').
-         * @param ids - Array of numbers that will be wrapped into an object with
-         * property "nodeIndex".
          */
         useEffect(() => {
             setWrappedHighlightedClusterNodesIds(
@@ -365,7 +364,7 @@ const ClusteringChart = forwardRef<ChartHandle, ClusteringChartProps>(
             );
         }, [genesExpressions]);
 
-        const updatableDataDefinitions: Array<DataDefinition> = useMemo(
+        const updatableDataDefinitions: Array<DataDefinition> = useStateWithEffect(
             () => [
                 {
                     name: 'highlightedClusterNodesIds',
@@ -377,7 +376,7 @@ const ClusteringChart = forwardRef<ChartHandle, ClusteringChartProps>(
             [clusterNodes, genesExpressions, wrappedHighlightedClusterNodesIds],
         );
 
-        const updatableSignalDefinitions: Array<SignalDefinition> = useMemo(
+        const updatableSignalDefinitions: Array<SignalDefinition> = useStateWithEffect(
             () => [
                 {
                     name: 'heatmapWidth',
@@ -387,8 +386,7 @@ const ClusteringChart = forwardRef<ChartHandle, ClusteringChartProps>(
             [heatmapWidth],
         );
 
-        // Data handlers that is updated (and reattached) only if highlighted variable changes.
-        const dataHandlers = useMemo(
+        const dataHandlers = useStateWithEffect(
             () => [
                 {
                     name: 'highlightedClusterNodesIds',

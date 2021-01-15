@@ -81,3 +81,7 @@ export const handleCommonRequests = (request: Request): Promise<string> | null =
 
     return null;
 };
+
+export const resolveStringifiedObjectPromise = (object: unknown): Promise<string> => {
+    return Promise.resolve(JSON.stringify(object));
+};

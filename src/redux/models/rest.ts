@@ -16,9 +16,6 @@ export type ClusteringData = {
     };
 } & Omit<Data, 'output'>;
 
-export type ClusteringDistanceMeasure = 'spearman' | 'pearson';
-export type ClusteringLinkageFunction = 'average' | 'complete' | 'single';
-
 export type BasketExpressionRequest = {
     basket: string;
     tags?: string[];

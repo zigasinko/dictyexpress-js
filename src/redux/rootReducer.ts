@@ -12,6 +12,7 @@ import gOEnrichment from 'redux/stores/gOEnrichment';
 import clustering from 'redux/stores/clustering';
 import { combineReducers, createSelector } from '@reduxjs/toolkit';
 import _ from 'lodash';
+import { EMPTY_ARRAY } from 'components/genexpress/common/constants';
 import { GeneExpression } from './models/internal';
 
 const rootReducer = combineReducers({
@@ -30,7 +31,6 @@ export type RootState = ReturnType<typeof rootReducer>;
 
 export default rootReducer;
 
-// RootState selectors (expose root state to containers).
 export const getSelectedGenesExpressions = createSelector(
     (state: RootState) => getSelectedTimeSeries(state.timeSeries),
     (state: RootState) => getSelectedTimeSeriesLabels(state.timeSeries),
@@ -38,7 +38,7 @@ export const getSelectedGenesExpressions = createSelector(
     (state: RootState) => getSamplesExpressionsById(state.samplesExpressions),
     (selectedTimeSeries, timeSeriesLabels, selectedGenes, samplesExpressionsById) => {
         if (_.isEmpty(samplesExpressionsById) || _.isEmpty(selectedGenes)) {
-            return [];
+            return EMPTY_ARRAY;
         }
 
         const newGenesExpressionsData = [] as GeneExpression[];

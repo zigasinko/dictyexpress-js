@@ -44,9 +44,7 @@ const mapStateToProps = (
 } => {
     return {
         selectedTimeSeries: getSelectedTimeSeries(state.timeSeries),
-        // All available differential expressions.
         differentialExpressions: getDifferentialExpressions(state.differentialExpressions),
-        // DifferentialExpressions data to be visualized.
         selectedDifferentialExpression: getSelectedDifferentialExpression(
             state.differentialExpressions,
         ),

@@ -74,12 +74,6 @@ const TimeSeriesAndGeneSelector = ({
         }
     };
 
-    /* debugger;
-    const [updatableDataDefinitions, setUpdatableDataDefinitions] = useState<string>(() => {
-        debugger;
-        return 'asdf';
-    }); */
-
     const columnDefs = useRef([
         { field: 'id', headerName: 'Id', width: 20 },
         { field: 'collection.name', headerName: 'Name', width: 50 },

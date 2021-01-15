@@ -1,6 +1,8 @@
+import { AspectValue } from 'components/genexpress/common/constants';
 import _ from 'lodash';
 import { GOEnrichmentTerm } from 'redux/models/internal';
 import { generateGeneOntologyStorageJson, generateGenes } from 'tests/mock';
+import { resolveStringifiedObjectPromise } from 'tests/test-utils';
 import {
     appendMissingAttributesToJson,
     ontologyJsonToOntologyRows,
@@ -35,13 +37,13 @@ describe('gOEnrichmentUtils', () => {
             const requestJson = await req.json();
             if (req.url.includes('list_by_ids')) {
                 if (requestJson.source === 'A' && requestJson.species === 'A') {
-                    return Promise.resolve(JSON.stringify({ results: genesAA }));
+                    return resolveStringifiedObjectPromise({ results: genesAA });
                 }
                 if (requestJson.source === 'A' && requestJson.species === 'B') {
-                    return Promise.resolve(JSON.stringify({ results: genesAB }));
+                    return resolveStringifiedObjectPromise({ results: genesAB });
                 }
                 if (requestJson.source === 'B' && requestJson.species === 'B') {
-                    return Promise.resolve(JSON.stringify({ results: genesBB }));
+                    return resolveStringifiedObjectPromise({ results: genesBB });
                 }
             }
 
@@ -50,7 +52,7 @@ describe('gOEnrichmentUtils', () => {
     });
 
     it('should make one request for all genes of same source/species', async () => {
-        await ontologyJsonToTermsTable(gOEnrichmentJson, 'BP');
+        await ontologyJsonToTermsTable(gOEnrichmentJson, AspectValue.bp);
 
         // One request per unique source/species combination.
         expect(fetchMock.mock.calls.length).toEqual(3);
@@ -73,10 +75,10 @@ describe('gOEnrichmentUtils', () => {
     });
 
     it('should append names', async () => {
-        const result = await ontologyJsonToTermsTable(gOEnrichmentJson, 'BP');
+        const result = await ontologyJsonToTermsTable(gOEnrichmentJson, AspectValue.bp);
 
         const expected: GOEnrichmentTerm[] = _.sortBy(
-            _.map(ontologyJsonToOntologyRows(gOEnrichmentJson, 'BP'), (row) => {
+            _.map(ontologyJsonToOntologyRows(gOEnrichmentJson, AspectValue.bp), (row) => {
                 return {
                     p_value: row.pval,
                     score: row.score,

@@ -8,7 +8,7 @@ import {
 import { Feature } from '@genialis/resolwe/dist/api/types/modules';
 import { VariantType, SnackbarKey } from 'notistack';
 import { Renderers } from 'vega';
-import { LayoutBreakpoint } from 'components/genexpress/common/constants';
+import { LayoutBreakpoint, ProcessSlug } from 'components/genexpress/common/constants';
 
 export type Gene = Pick<
     Feature,
@@ -51,17 +51,17 @@ export type BasketExpression = {
 };
 
 export type MergedClusteringData = {
-    order: {
+    order: Array<{
         nodeIndex: number;
         order: number;
         gene: Gene;
-    }[];
-    linkage: {
+    }>;
+    linkage: Array<{
         nodeIndex: number;
         node1: number;
         node2: number;
         distance: number;
-    }[];
+    }>;
 };
 
 export type Coordinates = {
@@ -108,8 +108,6 @@ export type DifferentialExpression = {
 export type DifferentialExpressionsById = {
     [differentialExpressionId: number]: DifferentialExpression;
 };
-
-export type AspectValue = 'BP' | 'CC' | 'MF';
 
 export type Option<T> = {
     value: T;
@@ -160,4 +158,4 @@ export type SnackbarNotifications = SnackbarNotification[];
 export type DictyRenderers = Exclude<Renderers, 'none'>;
 
 export type BreakpointsCols = { [key in keyof typeof LayoutBreakpoint]: number };
-export type ProcessInfo = { name: string; slug: 'goenrichment' | 'clustering-hierarchical-etc' };
+export type ProcessInfo = { name: string; slug: ProcessSlug };

@@ -22,15 +22,16 @@ import {
 import { ProcessInfo } from 'redux/models/internal';
 import _ from 'lodash';
 import { getDataReactive, getStorage, getOrCreateData } from 'api';
+import { ProcessSlug } from 'components/genexpress/common/constants';
 
 export const ProcessesInfo: { [_: string]: ProcessInfo } = {
     HierarchicalClustering: {
         name: 'Hierarchical clustering',
-        slug: 'clustering-hierarchical-etc',
+        slug: ProcessSlug.clustering,
     },
     GOEnrichment: {
         name: 'Gene Ontology Enrichment',
-        slug: 'goenrichment',
+        slug: ProcessSlug.goEnrichment,
     },
 };
 
@@ -39,7 +40,7 @@ export const ProcessesInfo: { [_: string]: ProcessInfo } = {
  */
 const activeQueryObserverDisposeFunction: { [_: string]: QueryObserverDisposeFunction } = {};
 
-export type GetGetOrCreateEpicsProps<DataType> = {
+export type ProcessDataEpicsFactoryProps<DataType> = {
     processInfo: ProcessInfo;
     inputActions: string[];
     getGetOrCreateInput: (state: RootState) => object | Observable<ReturnType<typeof handleError>>;
@@ -51,13 +52,7 @@ export type GetGetOrCreateEpicsProps<DataType> = {
     actionFromStorageResponse: (storage: Storage, state: RootState) => Action;
 };
 
-/**
- * Creates needed epics to handle everything process related:
- * - initiate process (getOrCreateEpic),
- * - fetch it's data (fetchDataEpic),
- * - fetch data storage (fetchStorageEpic).
- */
-const GetGetOrCreateEpics = <DataType extends Data>({
+const getProcessDataEpicsFactory = <DataType extends Data>({
     processInfo,
     inputActions,
     getGetOrCreateInput,
@@ -67,12 +62,7 @@ const GetGetOrCreateEpics = <DataType extends Data>({
     fetchDataSucceededActionCreator,
     getStorageIdFromData,
     actionFromStorageResponse,
-}: GetGetOrCreateEpicsProps<DataType>): Epic<Action, Action, RootState> => {
-    /**
-     * Determines if analysis was successful (throws error if not) and returns Observable
-     * with "fetchDataSucceededActionCreator" action, if process ended successfully.
-     * @param response - Process data response.
-     */
+}: ProcessDataEpicsFactoryProps<DataType>): Epic<Action, Action, RootState> => {
     const handleAnalysisDataResponse = (response: DataType): Observable<Action | never> => {
         if (response.status === ERROR_DATA_STATUS) {
             const errorMessage = `${processInfo.name} analysis ended with an error ${
@@ -91,9 +81,6 @@ const GetGetOrCreateEpics = <DataType extends Data>({
         return EMPTY;
     };
 
-    /**
-     * Call get or create (and get the data after process is done via WebSocket) process.
-     */
     const getOrCreateEpic: Epic<Action, Action, RootState> = (action$, state$) => {
         return action$.pipe(
             ofType(...inputActions),
@@ -130,13 +117,6 @@ const GetGetOrCreateEpics = <DataType extends Data>({
         );
     };
 
-    /**
-     * Fetch process data. The response has to be handled the same way coming from
-     * the request or via WebSocket:
-     *  - wait till data status is DONE,
-     *  - issue an fetchDataSucceededActionCreator with output data that will be used to fetch
-     *  it's storage.
-     */
     const fetchDataEpic: Epic<Action, Action, RootState> = (action$) => {
         return action$.pipe(
             ofType<Action, ReturnType<typeof fetchDataActionCreator>>(
@@ -159,10 +139,6 @@ const GetGetOrCreateEpics = <DataType extends Data>({
         );
     };
 
-    /**
-     * Once data object has a DONE status (fetchDataSucceededActionCreator), fetch it's storage
-     * and save it to store.
-     */
     const fetchStorageEpic: Epic<Action, Action, RootState> = (action$, state$) => {
         return action$.pipe(
             ofType<Action, ReturnType<typeof fetchDataSucceededActionCreator>>(
@@ -191,4 +167,4 @@ const GetGetOrCreateEpics = <DataType extends Data>({
     return combineEpics(getOrCreateEpic, fetchDataEpic, fetchStorageEpic);
 };
 
-export default GetGetOrCreateEpics;
+export default getProcessDataEpicsFactory;

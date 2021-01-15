@@ -1,11 +1,14 @@
 import { combineReducers, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {
+    ClusteringDistanceMeasure,
+    ClusteringLinkageFunction,
+} from 'components/genexpress/common/constants';
 import { MergedClusteringData } from 'redux/models/internal';
-import { ClusteringDistanceMeasure, ClusteringLinkageFunction } from 'redux/models/rest';
+import { clearStateOnActions } from './common';
 import createIsFetchingSlice from './fetch';
 import { allGenesDeselected, geneDeselected, genesSelected } from './genes';
 import { timeSeriesSelected } from './timeSeries';
 
-// State slices.
 const mergedClusteringDataInitialState = {} as MergedClusteringData;
 const mergedClusteringDataSlice = createSlice({
     name: 'clustering',
@@ -19,34 +22,15 @@ const mergedClusteringDataSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(
-            timeSeriesSelected,
-            (): MergedClusteringData => {
-                return mergedClusteringDataInitialState;
-            },
-        );
-        builder.addCase(
-            allGenesDeselected,
-            (): MergedClusteringData => {
-                return mergedClusteringDataInitialState;
-            },
-        );
-        builder.addCase(
-            geneDeselected,
-            (): MergedClusteringData => {
-                return mergedClusteringDataInitialState;
-            },
-        );
-        builder.addCase(
-            genesSelected,
-            (): MergedClusteringData => {
-                return mergedClusteringDataInitialState;
-            },
+        clearStateOnActions(
+            builder,
+            [timeSeriesSelected, allGenesDeselected, geneDeselected, genesSelected],
+            mergedClusteringDataInitialState,
         );
     },
 });
 
-const distanceMeasureInitialState = 'spearman' as ClusteringDistanceMeasure;
+const distanceMeasureInitialState = ClusteringDistanceMeasure.spearman;
 const distanceMeasureSlice = createSlice({
     name: 'clustering',
     initialState: distanceMeasureInitialState,
@@ -60,7 +44,7 @@ const distanceMeasureSlice = createSlice({
     },
 });
 
-const linkageFunctionInitialState = 'average' as ClusteringLinkageFunction;
+const linkageFunctionInitialState = ClusteringLinkageFunction.average;
 const linkageFunctionSlice = createSlice({
     name: 'clustering',
     initialState: linkageFunctionInitialState,
@@ -83,7 +67,6 @@ const clusteringReducer = combineReducers({
     isFetchingClusteringData: isFetchingClusteringDataSlice.reducer,
 });
 
-// Export actions.
 export const {
     started: clusteringDataFetchStarted,
     ended: clusteringDataFetchEnded,
@@ -100,7 +83,6 @@ export type ClusteringState = ReturnType<typeof clusteringReducer>;
 
 export default clusteringReducer;
 
-// Selectors (exposes the store to containers).
 export const getIsFetchingClusteringData = (state: ClusteringState): boolean =>
     state.isFetchingClusteringData;
 export const getMergedClusteringData = (state: ClusteringState): MergedClusteringData =>

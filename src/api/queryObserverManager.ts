@@ -25,19 +25,11 @@ export type ItemsAndDisposeFunction<T> = {
 
 let observers: QueryObserver[] = [];
 
-/**
- * Removes observer from list of observers (it's WebSocket messages won't be handled)
- * and returns a promise for unsubscribe from queryObserverApi.
- * @param observerId - Observer ID.
- */
 const unsubscribeObserver = (observerId: string): Promise<void> => {
     observers = _.remove(observers, { observerId });
     return unsubscribe(observerId, sessionId);
 };
 
-/**
- * Unsubscribes all existing observers from WebSocket and clears observers array.
- */
 export const clearObservers = async (): Promise<void> => {
     const unsubscribePromises = observers.map((observer) =>
         unsubscribeObserver(observer.observerId),
@@ -105,12 +97,6 @@ const update = (message: Message, currentItems: unknown[]): unknown[] => {
     return items;
 };
 
-/**
- * Gets the correct observer based on observerId, updates it's items (based on WebSocket
- * message) and returns Observable with redux Action that should be dispatched to redux
- * (usually fetchSucceeded with payload).
- * @param message - Incoming WebSocket message.
- */
 export const handleWebSocketMessage = (message: Message): Observable<Action | never> => {
     const observer = getObserver(message.observer);
     if (observer == null) {

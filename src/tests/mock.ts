@@ -23,6 +23,10 @@ import { generateRandomString, generateRandomStrings } from 'utils/stringUtils';
 import { generateRandomNumbers } from 'utils/numberUtils';
 import { flattenGoEnrichmentTree } from 'utils/gOEnrichmentUtils';
 import {
+    ClusteringDistanceMeasure,
+    ClusteringLinkageFunction,
+} from 'components/genexpress/common/constants';
+import {
     RelationsById,
     GenesById,
     BasketInfo,
@@ -447,10 +451,6 @@ export const generateGeneOntologyStorageJson = (genesIds: string[]): EnhancedGOE
     return json;
 };
 
-/**
- * Generates a random hierarchical clustering json.
- * @param genesIds Ids of genes.
- */
 export const generateHierarchicalClusteringJson = (): GeneClustering => ({
     gene_symbols: {
         0: { gene: '0' },
@@ -663,9 +663,9 @@ export const testState = (): RootState => {
             isFetchingJson: false,
         },
         clustering: {
-            distanceMeasure: 'pearson',
+            distanceMeasure: ClusteringDistanceMeasure.pearson,
             isFetchingClusteringData: false,
-            linkageFunction: 'average',
+            linkageFunction: ClusteringLinkageFunction.average,
             mergedData: {} as MergedClusteringData,
         },
         notifications: { notifications: [] as SnackbarNotifications },

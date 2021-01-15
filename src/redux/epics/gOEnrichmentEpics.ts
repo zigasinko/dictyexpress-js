@@ -19,9 +19,9 @@ import {
     gafAlreadyFetched,
     gOEnrichmentDataFetchSucceeded,
 } from './epicsActions';
-import getOrCreateProcessDataEpics, { ProcessesInfo } from './processEpics';
+import getOrCreateProcessDataEpics, { ProcessesInfo } from './getProcessDataEpicsFactory';
 
-const getOrCreateGOEnrichmentEpic = getOrCreateProcessDataEpics<DataGOEnrichmentAnalysis>({
+const getGOEnrichmentProcessDataEpics = getOrCreateProcessDataEpics<DataGOEnrichmentAnalysis>({
     processInfo: ProcessesInfo.GOEnrichment,
     inputActions: [
         gafFetchSucceeded.toString(),
@@ -65,4 +65,4 @@ const getOrCreateGOEnrichmentEpic = getOrCreateProcessDataEpics<DataGOEnrichment
     },
 });
 
-export default getOrCreateGOEnrichmentEpic;
+export default getGOEnrichmentProcessDataEpics;

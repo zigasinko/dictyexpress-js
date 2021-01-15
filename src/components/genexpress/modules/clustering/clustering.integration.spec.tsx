@@ -2,7 +2,11 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
-import { customRender, handleCommonRequests } from 'tests/test-utils';
+import {
+    customRender,
+    handleCommonRequests,
+    resolveStringifiedObjectPromise,
+} from 'tests/test-utils';
 import {
     testState,
     generateData,
@@ -76,94 +80,80 @@ describe('clustering integration', () => {
 
             fetchMock.mockResponse((req) => {
                 if (req.url.includes('get_or_create')) {
-                    return Promise.resolve(
-                        JSON.stringify({
-                            id: dataId,
-                        }),
-                    );
+                    return resolveStringifiedObjectPromise({
+                        id: dataId,
+                    });
                 }
 
                 if (req.url.includes('data') && req.url.includes(dataId.toString())) {
-                    return Promise.resolve(
-                        JSON.stringify({
-                            items: [
-                                {
-                                    ...generateData(1),
-                                    ...{
-                                        status: DONE_DATA_STATUS,
-                                        output: {
-                                            cluster: storageId,
-                                        },
+                    return resolveStringifiedObjectPromise({
+                        items: [
+                            {
+                                ...generateData(1),
+                                ...{
+                                    status: DONE_DATA_STATUS,
+                                    output: {
+                                        cluster: storageId,
                                     },
                                 },
-                            ],
-                        }),
-                    );
+                            },
+                        ],
+                    });
                 }
 
                 if (
                     req.url.includes('data') &&
                     decodeURIComponent(req.url).includes('data:expression')
                 ) {
-                    return Promise.resolve(
-                        JSON.stringify(
-                            samplesExpressionsIds.map((sampleExpressionId) => ({
+                    return resolveStringifiedObjectPromise(
+                        samplesExpressionsIds.map((sampleExpressionId) => ({
+                            id: sampleExpressionId,
+                            output: {
+                                exp_json: 123,
+                            },
+                            entity: {
                                 id: sampleExpressionId,
-                                output: {
-                                    exp_json: 123,
-                                },
-                                entity: {
-                                    id: sampleExpressionId,
-                                },
-                            })),
-                        ),
+                            },
+                        })),
                     );
                 }
 
                 if (req.url.includes('add_samples')) {
-                    return Promise.resolve(
-                        JSON.stringify({
-                            id: 1,
-                            permitted_organisms: ['Organism'],
-                            permitted_sources: ['Source'],
-                        }),
-                    );
+                    return resolveStringifiedObjectPromise({
+                        id: 1,
+                        permitted_organisms: ['Organism'],
+                        permitted_sources: ['Source'],
+                    });
                 }
 
                 if (req.url.includes('basket_expressions')) {
-                    return Promise.resolve(JSON.stringify(basketExpressions));
+                    return resolveStringifiedObjectPromise(basketExpressions);
                 }
 
                 if (req.url.includes('storage') && req.url.includes(storageId.toString())) {
-                    return Promise.resolve(
-                        JSON.stringify({
-                            json: clusteringJson,
-                        }),
-                    );
+                    return resolveStringifiedObjectPromise({
+                        json: clusteringJson,
+                    });
                 }
 
                 if (req.url.includes('storage')) {
-                    return Promise.resolve(
-                        JSON.stringify({
-                            json: {
-                                genes: genes.reduce(
-                                    (byId, gene) => ({
-                                        ...byId,
-                                        [gene.feature_id]: Math.random() * 10,
-                                    }),
-                                    {},
-                                ),
-                            },
-                        }),
-                    );
+                    return resolveStringifiedObjectPromise({
+                        json: {
+                            genes: genes.reduce(
+                                (byId, gene) => ({
+                                    ...byId,
+                                    [gene.feature_id]: Math.random() * 10,
+                                }),
+                                {},
+                            ),
+                        },
+                    });
                 }
 
                 if (req.url.includes('autocomplete')) {
-                    return Promise.resolve(
-                        JSON.stringify({
-                            results: [genes[0], genes[1]],
-                        }),
-                    );
+                    return resolveStringifiedObjectPromise({
+                        results: [genes[0], genes[1]],
+                    });
                 }
 
                 return (
@@ -463,48 +453,40 @@ describe('clustering integration', () => {
                     req.url.includes('get_or_create') &&
                     (await req.json()).process.slug === 'clustering-hierarchical-etc'
                 ) {
-                    return Promise.resolve(
-                        JSON.stringify({
-                            id: dataId,
-                        }),
-                    );
+                    return resolveStringifiedObjectPromise({
+                        id: dataId,
+                    });
                 }
 
                 if (req.url.includes('data') && req.url.includes(dataId.toString())) {
-                    return Promise.resolve(
-                        JSON.stringify({
-                            items: [
-                                {
-                                    ...generateData(1),
-                                    ...{
-                                        status: WAITING_DATA_STATUS,
-                                        output: {},
-                                    },
+                    return resolveStringifiedObjectPromise({
+                        items: [
+                            {
+                                ...generateData(1),
+                                ...{
+                                    status: WAITING_DATA_STATUS,
+                                    output: {},
                                 },
-                            ],
-                            observer: observerId,
-                        }),
-                    );
+                            },
+                        ],
+                        observer: observerId,
+                    });
                 }
 
                 if (req.url.includes('basket_expressions')) {
-                    return Promise.resolve(JSON.stringify(basketExpressions));
+                    return resolveStringifiedObjectPromise(basketExpressions);
                 }
 
                 if (req.url.includes('storage')) {
-                    return Promise.resolve(
-                        JSON.stringify({
-                            json: clusteringJson,
-                        }),
-                    );
+                    return resolveStringifiedObjectPromise({
+                        json: clusteringJson,
+                    });
                 }
 
                 if (req.url.includes('autocomplete')) {
-                    return Promise.resolve(
-                        JSON.stringify({
-                            results: [genes[0], genes[1]],
-                        }),
-                    );
+                    return resolveStringifiedObjectPromise({
+                        results: [genes[0], genes[1]],
+                    });
                 }
 
                 return (

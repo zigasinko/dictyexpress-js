@@ -5,7 +5,6 @@ import { DifferentialExpression, DifferentialExpressionsById } from '../models/i
 import createIsFetchingSlice from './fetch';
 import { timeSeriesSelected } from './timeSeries';
 
-// State slices.
 const differentialExpressionsByIdInitialState = {} as DifferentialExpressionsById;
 const differentialExpressionsByIdSlice = createSlice({
     name: 'differentialExpressions',
@@ -69,7 +68,6 @@ const differentialExpressionsReducer = combineReducers({
     isFetchingDifferentialExpressionsData: isFetchingDifferentialExpressionsDataSlice.reducer,
 });
 
-// Export actions.
 export const {
     started: differentialExpressionsFetchStarted,
     ended: differentialExpressionsFetchEnded,

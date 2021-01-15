@@ -16,3 +16,27 @@ export enum LayoutBreakpoint {
     mid = 'mid',
     small = 'small',
 }
+
+export enum ClusteringLinkageFunction {
+    average = 'average',
+    complete = 'complete',
+    single = 'single',
+}
+
+export enum ClusteringDistanceMeasure {
+    spearman = 'spearman',
+    pearson = 'pearson',
+}
+
+export enum AspectValue {
+    bp = 'BP',
+    cc = 'CC',
+    mf = 'MF',
+}
+
+export enum ProcessSlug {
+    goEnrichment = 'goenrichment',
+    clustering = 'clustering-hierarchical-etc',
+}
+
+export const EMPTY_ARRAY = [];

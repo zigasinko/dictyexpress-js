@@ -3,7 +3,6 @@ import { User } from '@genialis/resolwe/dist/api/types/rest';
 import _ from 'lodash';
 import createIsFetchingSlice from './fetch';
 
-// State slices.
 const userInitialState = {} as User;
 const userSlice = createSlice({
     name: 'authentication',
@@ -39,7 +38,6 @@ const authenticationReducer = combineReducers({
     isFetchingUser: isFetchingUserSlice.reducer,
 });
 
-// Export actions.
 export const { fetchSucceeded: userFetchSucceeded } = userSlice.actions;
 export const { started: loginStarted, ended: loginEnded } = isLoggingInSlice.actions;
 export const { started: logoutStarted, ended: logoutEnded } = isLoggingOutSlice.actions;
@@ -49,7 +47,6 @@ export type AuthenticationState = ReturnType<typeof authenticationReducer>;
 
 export default authenticationReducer;
 
-// Selectors (exposes the store to containers).
 export const getUser = (state: AuthenticationState): User => state.user;
 export const getIsLoggedIn = (state: AuthenticationState): boolean => state.isLoggedIn;
 export const getIsLoggingIn = (state: AuthenticationState): boolean => state.isLoggingIn;

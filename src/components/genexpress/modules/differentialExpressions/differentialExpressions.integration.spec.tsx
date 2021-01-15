@@ -1,7 +1,12 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
-import { customRender, handleCommonRequests, validateExportFile } from 'tests/test-utils';
+import {
+    customRender,
+    handleCommonRequests,
+    resolveStringifiedObjectPromise,
+    validateExportFile,
+} from 'tests/test-utils';
 import {
     testState,
     generateDifferentialExpressionsById,
@@ -26,12 +31,10 @@ describe('differentialExpressions integration', () => {
 
         fetchMock.mockResponse((req) => {
             if (req.url.includes('storage')) {
-                return Promise.resolve(
-                    JSON.stringify({
-                        id: differentialExpressions[0].output.de_json,
-                        json: generateDifferentialExpressionJson(numberOfGenes),
-                    }),
-                );
+                return resolveStringifiedObjectPromise({
+                    id: differentialExpressions[0].output.de_json,
+                    json: generateDifferentialExpressionJson(numberOfGenes),
+                });
             }
 
             return handleCommonRequests(req) ?? Promise.reject(new Error(`bad url: ${req.url}`));

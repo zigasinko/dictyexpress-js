@@ -2,13 +2,13 @@
 import { GOEnrichmentJson } from '@genialis/resolwe/dist/api/types/rest';
 import _ from 'lodash';
 import {
-    AspectValue,
     EnhancedGOEnrichmentJson,
     Gene,
     GOEnrichmentRow,
     GOEnrichmentTerm,
 } from 'redux/models/internal';
 import { listByIds } from 'api';
+import { AspectValue } from 'components/genexpress/common/constants';
 
 export const appendMissingAttributesToJson = (
     gOEnrichmentJson: EnhancedGOEnrichmentJson,
