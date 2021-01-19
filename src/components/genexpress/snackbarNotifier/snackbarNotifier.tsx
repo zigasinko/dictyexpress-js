@@ -2,16 +2,12 @@ import { useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { useSnackbar, SnackbarKey } from 'notistack';
 import { RootState } from 'redux/rootReducer';
-import { SnackbarNotification } from 'redux/models/internal';
 import { getNotifications, removeSnackbar } from 'redux/stores/notifications';
 
 let displayedKeys: SnackbarKey[] = [];
 
-const mapStateToProps = (
-    state: RootState,
-): {
-    notifications: SnackbarNotification[];
-} => {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const mapStateToProps = (state: RootState) => {
     return {
         notifications: getNotifications(state.notifications),
     };

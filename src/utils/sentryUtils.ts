@@ -6,10 +6,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { ResponseError } from 'redux/models/internal';
 import { getUsername } from './user';
 
-/**
- * Configure sentry for sending future events.
- * @param sentryUrl - aka DSN. Destination of events.
- */
 export const initializeSentry = (sentryUrl: string): void => {
     Sentry.init({
         dsn: sentryUrl,
@@ -18,10 +14,6 @@ export const initializeSentry = (sentryUrl: string): void => {
     });
 };
 
-/**
- * Append user info to future error messages.
- * @param user - Logged in user data (null if user is not logged in).
- */
 export const setSentryUser = (user: User | void): void => {
     if (user != null) {
         Sentry.setUser({
@@ -34,12 +26,6 @@ export const setSentryUser = (user: User | void): void => {
     }
 };
 
-/**
- * Send event to sentry (almost always it's an error).
- * @param message - Text message.
- * @param associatedObject - Data to be appended to sentry event as an associated object.
- * @param severity - Event severity.
- */
 export const sentryCapture = (
     message: string,
     associatedObject: {} | Error | ResponseError = '',

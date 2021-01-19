@@ -3,7 +3,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import _ from 'lodash';
 import { RootState } from 'redux/rootReducer';
 import { getGenesById, getHighlightedGenesIds, getSelectedGenesIds } from 'redux/stores/genes';
-import { DifferentialExpression, GenesById, Thresholds, VolcanoPoint } from 'redux/models/internal';
+import { Thresholds, VolcanoPoint } from 'redux/models/internal';
 import { getMinMax, logOfBase } from 'utils/math';
 import {
     differentialExpressionSelected,
@@ -14,7 +14,6 @@ import { FormControlLabel, MenuItem, Switch, TextField, Tooltip } from '@materia
 import { SwapHoriz } from '@material-ui/icons';
 import { withSize, SizeMeProps } from 'react-sizeme';
 import { logError } from 'utils/errorUtils';
-import { Relation } from '@genialis/resolwe/dist/api/types/rest';
 import { getSelectedTimeSeries } from 'redux/stores/timeSeries';
 import DictySelect from 'components/genexpress/common/dictySelect/dictySelect';
 import { objectsArrayToTsv } from 'utils/reportUtils';
@@ -32,16 +31,8 @@ import {
 } from './differentialExpressions.styles';
 import VolcanoPointSelectionModal from './volcanoPointsSelectionModal/volcanoPointsSelectionModal';
 
-const mapStateToProps = (
-    state: RootState,
-): {
-    selectedTimeSeries: Relation;
-    differentialExpressions: DifferentialExpression[];
-    selectedDifferentialExpression: DifferentialExpression;
-    highlightedGenesIds: string[];
-    selectedGenesIds: string[];
-    genesById: GenesById;
-} => {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const mapStateToProps = (state: RootState) => {
     return {
         selectedTimeSeries: getSelectedTimeSeries(state.timeSeries),
         differentialExpressions: getDifferentialExpressions(state.differentialExpressions),

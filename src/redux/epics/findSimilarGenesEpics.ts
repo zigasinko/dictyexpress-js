@@ -35,9 +35,6 @@ const getGOEnrichmentProcessDataEpics = getOrCreateProcessDataEpics<FindSimilarG
         genesSimilaritiesDistanceMeasureChanged.toString(),
     ],
     getGetOrCreateInput: (state: RootState) => {
-        // If similar genes are already in store, do not fetch them again.
-        // ExtraReducers take care of clearing state when queryGene or distanceMeasure changes.
-
         if (getGenesSimilarities(state.genesSimilarities).length > 0) {
             return {};
         }
@@ -46,7 +43,6 @@ const getGOEnrichmentProcessDataEpics = getOrCreateProcessDataEpics<FindSimilarG
         const queryGeneId = getGenesSimilaritiesQueryGeneId(state.genesSimilarities);
         const distanceMeasure = getGenesSimilaritiesDistanceMeasure(state.genesSimilarities);
 
-        // Query gene is mandatory to find it's similar genes.
         if (queryGeneId == null) {
             return {};
         }
@@ -68,9 +64,6 @@ const getGOEnrichmentProcessDataEpics = getOrCreateProcessDataEpics<FindSimilarG
         genesSimilaritiesFetchSucceeded(storage.json['similar genes']),
 });
 
-/**
- * Sets query gene if query gene is not among selected ones anymore.
- */
 const handleSelectedGenesChangedEpic: Epic<Action, Action, RootState> = (action$, state$) => {
     return action$.pipe(
         ofType(selectedGenesChanged),
@@ -79,7 +72,6 @@ const handleSelectedGenesChangedEpic: Epic<Action, Action, RootState> = (action$
             const selectedGenesIds = getSelectedGenesIds(state.genes);
             const queryGeneId = getGenesSimilaritiesQueryGeneId(state.genesSimilarities);
 
-            // similarGenesQueryGeneSelected
             if (queryGeneId == null || !selectedGenesIds.includes(queryGeneId)) {
                 return of(genesSimilaritiesQueryGeneSet(selectedGenesIds[0] ?? null));
             }

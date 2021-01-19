@@ -10,8 +10,7 @@ import {
     pValueThresholdChanged,
     pValueThresholdsOptions,
 } from 'redux/stores/gOEnrichment';
-import { Option, Gene, GOEnrichmentRow } from 'redux/models/internal';
-import { GOEnrichmentJson } from '@genialis/resolwe/dist/api/types/rest';
+import { Option, GOEnrichmentRow } from 'redux/models/internal';
 import _ from 'lodash';
 import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
 import DictySelect from 'components/genexpress/common/dictySelect/dictySelect';
@@ -34,14 +33,8 @@ import GOEnrichmentMatchedCell from './matchedCell/matchedCell';
 import TermCell from './termCell/termCell';
 import GOEnrichmentAssociationsModal from './associationsModal/associationsModal';
 
-const mapStateToProps = (
-    state: RootState,
-): {
-    pValueThreshold: number;
-    selectedGenes: Gene[];
-    isFetchingGOEnrichmentJson: boolean;
-    gOEnrichmentJson: GOEnrichmentJson;
-} => {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const mapStateToProps = (state: RootState) => {
     return {
         pValueThreshold: getPValueThreshold(state.gOEnrichment),
         selectedGenes: getSelectedGenes(state.genes),

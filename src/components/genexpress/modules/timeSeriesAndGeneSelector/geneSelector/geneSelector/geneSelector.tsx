@@ -13,7 +13,7 @@ import {
     genesFetchSucceeded,
     allGenesDeselected,
 } from 'redux/stores/genes';
-import { Gene, BasketInfo } from 'redux/models/internal';
+import { Gene } from 'redux/models/internal';
 import SelectedGenes from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/selectedGenes/selectedGenes';
 import { getBasketInfo } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
@@ -36,13 +36,8 @@ const itemRender = (option: Gene): ReactElement => {
     );
 };
 
-const mapStateToProps = (
-    state: RootState,
-): {
-    selectedGenes: Gene[];
-    basketInfo: BasketInfo;
-    highlightedGenesIds: string[];
-} => {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const mapStateToProps = (state: RootState) => {
     return {
         selectedGenes: getSelectedGenes(state.genes),
         basketInfo: getBasketInfo(state.timeSeries),

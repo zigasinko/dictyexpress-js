@@ -34,20 +34,12 @@ const GeneSelectorModalControls = ({
         setAppend(event.target.checked);
     };
 
-    /**
-     * Sets redux store with selected genes (already selected are cleared first).
-     * @param genesIds - Genes IDs.
-     */
     const setSelectedGenes = (genesIds: string[]): void => {
         connectedAllGenesDeselected();
         connectedGenesSelected(genesIds);
         onClose();
     };
 
-    /**
-     * Updates (appends) redux store with selected genes.
-     * @param genesIds - Genes IDs.
-     */
     const appendSelectedGenes = (genesIds: string[]): void => {
         connectedGenesSelected(genesIds);
         onClose();

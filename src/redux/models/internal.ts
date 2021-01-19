@@ -161,10 +161,6 @@ export type BreakpointsCols = { [key in keyof typeof LayoutBreakpoint]: number }
 export type ProcessInfo = { name: string; slug: ProcessSlug };
 export type GeneSimilarity = { gene: string; distance: number };
 
-/**
- * Error throw from fetch handler if response is not ok (response.ok === false).
- * It includes failed response.
- */
 export class ResponseError extends Error {
     response: Response;
 

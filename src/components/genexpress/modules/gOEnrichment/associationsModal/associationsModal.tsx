@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import {
     ModalBody,
     ModalHeader,
@@ -6,8 +6,8 @@ import {
     CenteredModal,
 } from 'components/genexpress/common/dictyModal/dictyModal.styles';
 import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
-import GeneSelectorModalControls from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/geneSelectorModalControls/geneSelectorModalControls';
-import { Gene, GenesById, GOEnrichmentRow } from 'redux/models/internal';
+import GeneSelectorModalControls from 'components/genexpress/common/geneSelectorModalControls/geneSelectorModalControls';
+import { Gene, GOEnrichmentRow } from 'redux/models/internal';
 import { connect, ConnectedProps } from 'react-redux';
 import amigoLogo from 'images/amigo_logo.png';
 import {
@@ -28,13 +28,8 @@ import {
     AmigoLinkImage,
 } from './associationsModal.style';
 
-const mapStateToProps = (
-    state: RootState,
-): {
-    genesById: GenesById;
-    selectedGenesIds: string[];
-    isFetchingAssociationsGenes: boolean;
-} => {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const mapStateToProps = (state: RootState) => {
     return {
         genesById: getGenesById(state.genes),
         selectedGenesIds: getSelectedGenesIds(state.genes),
@@ -53,6 +48,29 @@ type GOEnrichmentAssociationsModalProps = {
     gOEnrichmentRow: GOEnrichmentRow;
     handleOnClose: () => void;
 } & PropsFromRedux;
+
+const columnDefs = [
+    {
+        headerCheckboxSelection: true,
+        checkboxSelection: true,
+        width: 25,
+    },
+    {
+        valueGetter: (params: ValueGetterParams): string => {
+            return params.data.name;
+        },
+        headerName: 'Gene symbol',
+        sort: 'asc',
+        width: 150,
+    },
+    {
+        valueGetter: (params: ValueGetterParams): string => {
+            return params.data.full_name;
+        },
+        headerName: 'Gene Full Name',
+        flex: 1,
+    },
+];
 
 const GOEnrichmentAssociationsModal = ({
     gOEnrichmentRow,
@@ -95,29 +113,6 @@ const GOEnrichmentAssociationsModal = ({
         );
     }, [associatedGenes, selectedGenesIds]);
 
-    const columnDefs = useRef([
-        {
-            headerCheckboxSelection: true,
-            checkboxSelection: true,
-            width: 25,
-        },
-        {
-            valueGetter: (params: ValueGetterParams): string => {
-                return params.data.name;
-            },
-            headerName: 'Gene symbol',
-            sort: 'asc',
-            width: 150,
-        },
-        {
-            valueGetter: (params: ValueGetterParams): string => {
-                return params.data.full_name;
-            },
-            headerName: 'Gene Full Name',
-            flex: 1,
-        },
-    ]);
-
     return (
         <CenteredModal
             open
@@ -154,7 +149,7 @@ const GOEnrichmentAssociationsModal = ({
                                 getRowId={(data): string => data.feature_id}
                                 filterLabel="Filter"
                                 selectedData={selectedAssociatedGenes}
-                                columnDefs={columnDefs.current}
+                                columnDefs={columnDefs}
                                 selectionMode="multiple"
                                 onSelectionChanged={setSelectedAssociatedGenes}
                             />

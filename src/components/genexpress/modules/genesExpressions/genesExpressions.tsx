@@ -2,7 +2,6 @@ import React, { ChangeEvent, ReactElement, useRef, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { getSelectedGenesExpressions, RootState } from 'redux/rootReducer';
 import { getHighlightedGenesIds, genesHighlighted, getSelectedGenesIds } from 'redux/stores/genes';
-import { GeneExpression } from 'redux/models/internal';
 import { ChartHandle } from 'components/genexpress/common/chart/chart';
 import useReport from 'components/genexpress/common/reportBuilder/useReport';
 import { Button, FormControlLabel, Switch } from '@material-ui/core';
@@ -14,13 +13,8 @@ import {
 } from './genesExpressions.style';
 import FindSimilarGenesModal from './findSimilarGenesModal/findSimilarGenesModal';
 
-const mapStateToProps = (
-    state: RootState,
-): {
-    selectedGenesIds: string[];
-    genesExpressions: GeneExpression[];
-    highlightedGenesIds: string[];
-} => {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const mapStateToProps = (state: RootState) => {
     return {
         selectedGenesIds: getSelectedGenesIds(state.genes),
         genesExpressions: getSelectedGenesExpressions(state),
@@ -63,21 +57,14 @@ const GenesExpressionsWidget = ({
         }
     }, []);
 
-    const handleFindSimilarOnClick = (): void => {
-        setManageModalOpened(true);
-    };
-
-    const handleDisplayLegendOnChange = (event: ChangeEvent<HTMLInputElement>): void => {
-        setShowLegend(event.target.checked);
-    };
-
     return (
         <>
             <GenesExpressionsContainer>
                 <GenesExpressionsControls>
                     <Button
-                        type="button"
-                        onClick={handleFindSimilarOnClick}
+                        onClick={(): void => {
+                            setManageModalOpened(true);
+                        }}
                         disabled={selectedGenesIds.length === 0}
                     >
                         Find similar genes
@@ -87,7 +74,9 @@ const GenesExpressionsWidget = ({
                         control={
                             <Switch
                                 checked={showLegend}
-                                onChange={handleDisplayLegendOnChange}
+                                onChange={(event: ChangeEvent<HTMLInputElement>): void => {
+                                    setShowLegend(event.target.checked);
+                                }}
                                 size="small"
                             />
                         }

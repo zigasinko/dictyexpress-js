@@ -28,19 +28,8 @@ import { ResponsiveGridLayoutContainer } from './geneExpressGrid.styles';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-const mapStateToProps = (
-    state: RootState,
-): {
-    layouts: Layouts;
-    isFetchingTimeSeries: boolean;
-    isAddingToBasket: boolean;
-    isFetchingSamplesExpressions: boolean;
-    isFetchingDifferentialExpressions: boolean;
-    isFetchingDifferentialExpressionsData: boolean;
-    isLoggingOut: boolean;
-    isFetchingGOEnrichmentJson: boolean;
-    isFetchingClusteringData: boolean;
-} => {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const mapStateToProps = (state: RootState) => {
     return {
         layouts: getLayouts(state.layouts),
         isFetchingTimeSeries: getTimeSeriesIsFetching(state.timeSeries),

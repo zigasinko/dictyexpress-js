@@ -3,7 +3,6 @@ import { Button, Tooltip } from '@material-ui/core';
 import dictyLogo from 'images/favicon.ico';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from 'redux/rootReducer';
-import { User } from '@genialis/resolwe/dist/api/types/rest';
 import { getUser, getIsLoggedIn } from 'redux/stores/authentication';
 import DictyAppBar from 'components/common/dictyAppBar/dictyAppBar';
 import { layoutsReset } from 'redux/stores/layouts';
@@ -30,18 +29,8 @@ import * as reportBuilder from '../common/reportBuilder/reportBuilder';
 import IconButtonWithTooltip from '../common/iconButtonWithTooltip/iconButtonWithTooltip';
 import TextInputModal from '../common/textInputModal/textInputModal';
 
-const mapStateToProps = (
-    state: RootState,
-): {
-    user: User;
-    isLoggedIn: boolean;
-    isFetchingDifferentialExpressions: boolean;
-    isFetchingDifferentialExpressionsData: boolean;
-    isFetchingTimeSeries: boolean;
-    isAddingToBasket: boolean;
-    isFetchingSamplesExpressions: boolean;
-    isFetchingGOEnrichmentJson: boolean;
-} => {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const mapStateToProps = (state: RootState) => {
     return {
         user: getUser(state.authentication),
         isLoggedIn: getIsLoggedIn(state.authentication),

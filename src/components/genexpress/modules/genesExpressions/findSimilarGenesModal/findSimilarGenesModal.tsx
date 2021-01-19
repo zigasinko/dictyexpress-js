@@ -1,4 +1,4 @@
-import React, { ChangeEvent, ReactElement, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
 import {
     ModalBody,
     ModalHeader,
@@ -6,8 +6,8 @@ import {
     CenteredModal,
 } from 'components/genexpress/common/dictyModal/dictyModal.styles';
 import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
-import GeneSelectorModalControls from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/geneSelectorModalControls/geneSelectorModalControls';
-import { Gene, GenesById, GeneSimilarity, Option } from 'redux/models/internal';
+import GeneSelectorModalControls from 'components/genexpress/common/geneSelectorModalControls/geneSelectorModalControls';
+import { Gene, Option } from 'redux/models/internal';
 import { connect, ConnectedProps } from 'react-redux';
 import { getGenesById, getIsFetchingSimilarGenes, getSelectedGenes } from 'redux/stores/genes';
 import { RootState } from 'redux/rootReducer';
@@ -37,17 +37,8 @@ export const distanceMeasureOptions: Option<DistanceMeasure>[] = [
     { value: DistanceMeasure.spearman, label: 'Spearman' },
 ];
 
-const mapStateToProps = (
-    state: RootState,
-): {
-    genesById: GenesById;
-    selectedGenes: Gene[];
-    queryGeneId: string | null;
-    distanceMeasure: DistanceMeasure;
-    genesSimilarities: GeneSimilarity[];
-    isFetchingGenesSimilarities: boolean;
-    isFetchingSimilarGenes: boolean;
-} => {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const mapStateToProps = (state: RootState) => {
     return {
         genesById: getGenesById(state.genes),
         selectedGenes: getSelectedGenes(state.genes),
@@ -73,6 +64,40 @@ type FindSimilarGenesModalProps = {
 
 type SimilarGene = { distance: number } & Pick<Gene, 'feature_id' | 'name' | 'description'>;
 
+const columnDefs = [
+    {
+        headerCheckboxSelection: true,
+        checkboxSelection: true,
+        width: 25,
+    },
+    {
+        valueGetter: (params: ValueGetterParams): string => {
+            return formatNumber(params.data.distance, 'long');
+        },
+        headerName: 'Score',
+        width: 90,
+        sort: 'desc',
+    },
+    {
+        valueGetter: (params: ValueGetterParams): string => {
+            return params.data.name;
+        },
+        headerName: 'Name',
+        width: 90,
+    },
+    {
+        valueGetter: (params: ValueGetterParams): string => {
+            return params.data.description;
+        },
+        headerName: 'Description',
+    },
+    {
+        field: 'feature_id',
+        headerName: 'Gene ID',
+        cellRendererFramework: ToDictybaseCell,
+    },
+];
+
 const FindSimilarGenesModal = ({
     genesById,
     selectedGenes,
@@ -91,7 +116,6 @@ const FindSimilarGenesModal = ({
     const [queryGene, setQueryGene] = useState<Gene>();
     const [selectedSimilarGenes, setSelectedSimilarGenes] = useState<SimilarGene[]>([]);
 
-    // Prepare data -> attach Gene to each similar gene distance.
     useEffect(() => {
         setSimilarGenes(
             genesSimilarities.flatMap((geneSimilarity) => ({
@@ -103,7 +127,6 @@ const FindSimilarGenesModal = ({
         );
     }, [genesById, genesSimilarities]);
 
-    // Propagate already selected genes to selected volcano points.
     useEffect(() => {
         setSelectedSimilarGenes(
             similarGenes.filter((similarGene) =>
@@ -118,68 +141,19 @@ const FindSimilarGenesModal = ({
         setQueryGene(selectedGenes.find((gene) => gene.feature_id === queryGeneId));
     }, [queryGeneId, selectedGenes]);
 
-    // When modal opens, fetch all genes that are associated with clicked gene ontology enrichment row.
     useEffect(() => {
         connectedFetchGenesSimilarities();
     }, [connectedFetchGenesSimilarities]);
 
     const handleGeneOnChange = (event: ChangeEvent<{ value: unknown }>): void => {
         connectedGenesSimilaritiesQueryGeneSelected(event.target.value as string);
-        // Unfocus select element.
+
         document.body.focus();
     };
 
     const handleDistanceMeasureChange = (event: ChangeEvent<{ value: unknown }>): void => {
         connectedGenesSimilaritiesDistanceMeasureChanged(event.target.value as DistanceMeasure);
     };
-
-    const columnDefs = useRef([
-        {
-            headerCheckboxSelection: true,
-            checkboxSelection: true,
-            width: 25,
-        },
-        {
-            valueGetter: (params: ValueGetterParams): string => {
-                return formatNumber(params.data.distance, 'long');
-            },
-            headerName: 'Score',
-            width: 90,
-            sort: 'desc',
-        },
-        {
-            valueGetter: (params: ValueGetterParams): string => {
-                return params.data.name;
-            },
-            headerName: 'Name',
-            width: 90,
-        },
-        {
-            valueGetter: (params: ValueGetterParams): string => {
-                return params.data.description;
-            },
-            headerName: 'Description',
-        },
-        {
-            field: 'feature_id',
-            headerName: 'Gene ID',
-            cellRendererFramework: ToDictybaseCell,
-        },
-        /* {
-            valueGetter: (params: ValueGetterParams): number => {
-                return params.data.point.logFcValue;
-            },
-            headerName: 'log2(Fold Change)',
-            width: 90,
-        },
-        {
-            valueGetter: (params: ValueGetterParams): number => {
-                return params.data.point.logProbValue;
-            },
-            headerName: probFieldLabel,
-            width: 90,
-        }, */
-    ]);
 
     return (
         <CenteredModal
@@ -229,7 +203,7 @@ const FindSimilarGenesModal = ({
                             getRowId={(data): string => data.feature_id}
                             filterLabel="Filter"
                             selectedData={selectedSimilarGenes}
-                            columnDefs={columnDefs.current}
+                            columnDefs={columnDefs}
                             selectionMode="multiple"
                             onSelectionChanged={setSelectedSimilarGenes}
                         />

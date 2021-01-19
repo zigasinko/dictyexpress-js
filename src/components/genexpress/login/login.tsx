@@ -13,7 +13,8 @@ import {
 } from '../common/dictyModal/dictyModal.styles';
 import { LoadingBar } from '../common/dictyModule/dictyModule.styles';
 
-const mapStateToProps = (state: RootState): { isLoggingIn: boolean } => {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const mapStateToProps = (state: RootState) => {
     return {
         isLoggingIn: getIsLoggingIn(state.authentication),
     };

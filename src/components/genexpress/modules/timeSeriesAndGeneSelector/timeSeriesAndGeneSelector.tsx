@@ -1,4 +1,4 @@
-import React, { ReactElement, useRef } from 'react';
+import React, { ReactElement } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from 'redux/rootReducer';
 import {
@@ -20,9 +20,8 @@ import {
 
 export const moduleKey = 'timeSeriesAndGeneSelector';
 
-const mapStateToProps = (
-    state: RootState,
-): { timeSeries: Relation[]; selectedTimeSeries: Relation; isFetching: boolean } => {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const mapStateToProps = (state: RootState) => {
     return {
         timeSeries: getTimeSeries(state.timeSeries),
         selectedTimeSeries: getSelectedTimeSeries(state.timeSeries),
@@ -36,6 +35,11 @@ const connector = connect(mapStateToProps, {
 });
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
+
+const columnDefs = [
+    { field: 'id', headerName: 'Id', width: 20 },
+    { field: 'collection.name', headerName: 'Name' },
+];
 
 const TimeSeriesAndGeneSelector = ({
     connectedFetchTimeSeries,
@@ -77,11 +81,6 @@ const TimeSeriesAndGeneSelector = ({
         }
     };
 
-    const columnDefs = useRef([
-        { field: 'id', headerName: 'Id', width: 20 },
-        { field: 'collection.name', headerName: 'Name' },
-    ]);
-
     return (
         <TimeSeriesAndGeneSelectorContainer>
             <TimeSeriesGridWrapper>
@@ -91,7 +90,7 @@ const TimeSeriesAndGeneSelector = ({
                     data={timeSeries}
                     selectionMode="single"
                     filterLabel="Filter time series"
-                    columnDefs={columnDefs.current}
+                    columnDefs={columnDefs}
                     getRowId={(data): string => data.id.toString()}
                     onRowSelected={onRowSelectedHandler}
                     selectedData={selectedTimeSeries != null ? [selectedTimeSeries] : undefined}

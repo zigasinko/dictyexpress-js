@@ -3,13 +3,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import _ from 'lodash';
 import { getSelectedGenesExpressions, RootState } from 'redux/rootReducer';
 import { genesHighlighted, getHighlightedGenesIds, getSelectedGenes } from 'redux/stores/genes';
-import {
-    ClusterNode,
-    Gene,
-    GeneExpression,
-    MergedClusteringData,
-    Option,
-} from 'redux/models/internal';
+import { ClusterNode, Option } from 'redux/models/internal';
 import { MenuItem, Tooltip } from '@material-ui/core';
 import DictySelect from 'components/genexpress/common/dictySelect/dictySelect';
 import { objectsArrayToTsv } from 'utils/reportUtils';
@@ -32,16 +26,8 @@ import {
 } from './clustering.styles';
 import ClusteringChart from './clusteringChart';
 
-const mapStateToProps = (
-    state: RootState,
-): {
-    mergedData: MergedClusteringData;
-    distanceMeasure: DistanceMeasure;
-    linkageFunction: ClusteringLinkageFunction;
-    highlightedGenesIds: string[];
-    selectedGenes: Gene[];
-    genesExpressions: GeneExpression[];
-} => {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const mapStateToProps = (state: RootState) => {
     return {
         mergedData: getMergedClusteringData(state.clustering),
         distanceMeasure: getDistanceMeasure(state.clustering),

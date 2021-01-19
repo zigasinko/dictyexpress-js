@@ -1,7 +1,11 @@
 /* eslint-disable no-await-in-loop */
 import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
-import { customRender, handleCommonRequests } from 'tests/test-utils';
+import {
+    customRender,
+    handleCommonRequests,
+    resolveStringifiedObjectPromise,
+} from 'tests/test-utils';
 import {
     testState,
     generateGenesById,
@@ -63,41 +67,35 @@ describe('findSimilarGenesModal', () => {
 
             fetchMock.mockResponse((req) => {
                 if (req.url.includes('get_or_create')) {
-                    return Promise.resolve(
-                        JSON.stringify({
-                            id: dataId,
-                        }),
-                    );
+                    return resolveStringifiedObjectPromise({
+                        id: dataId,
+                    });
                 }
 
                 if (req.url.includes('data') && req.url.includes(dataId.toString())) {
-                    return Promise.resolve(
-                        JSON.stringify({
-                            items: [
-                                {
-                                    ...generateData(1),
-                                    ...{
-                                        status: DONE_DATA_STATUS,
-                                        output: {
-                                            similar_genes: storageId,
-                                        },
+                    return resolveStringifiedObjectPromise({
+                        items: [
+                            {
+                                ...generateData(1),
+                                ...{
+                                    status: DONE_DATA_STATUS,
+                                    output: {
+                                        similar_genes: storageId,
                                     },
                                 },
-                            ],
-                        }),
-                    );
+                            },
+                        ],
+                    });
                 }
 
                 if (req.url.includes('storage') && req.url.includes(storageId.toString())) {
-                    return Promise.resolve(
-                        JSON.stringify({
-                            json: { 'similar genes': genesSimilarities },
-                        }),
-                    );
+                    return resolveStringifiedObjectPromise({
+                        json: { 'similar genes': genesSimilarities },
+                    });
                 }
 
                 if (req.url.includes('list_by_ids')) {
-                    return Promise.resolve(JSON.stringify({ results: genes }));
+                    return resolveStringifiedObjectPromise({ results: genes });
                 }
 
                 return (

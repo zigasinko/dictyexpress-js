@@ -6,7 +6,7 @@ import {
     CenteredModal,
 } from 'components/genexpress/common/dictyModal/dictyModal.styles';
 import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
-import GeneSelectorModalControls from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/geneSelectorModalControls/geneSelectorModalControls';
+import GeneSelectorModalControls from 'components/genexpress/common/geneSelectorModalControls/geneSelectorModalControls';
 import { Gene, VolcanoPoint } from 'redux/models/internal';
 import { connect, ConnectedProps } from 'react-redux';
 import { getGenes, getSelectedGenesIds } from 'redux/stores/genes';
@@ -17,12 +17,8 @@ import {
     GeneVolcanoPointsGridWrapper,
 } from './volcanoPointsSelectionModal.styles';
 
-const mapStateToProps = (
-    state: RootState,
-): {
-    genes: Gene[];
-    selectedGenesIds: string[];
-} => {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const mapStateToProps = (state: RootState) => {
     return {
         genes: getGenes(state.genes),
         selectedGenesIds: getSelectedGenesIds(state.genes),
