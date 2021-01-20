@@ -163,6 +163,7 @@ const GenexpressAppBar = ({
                     </Tooltip>
                 ) : (
                     <Button
+                        data-testid="open-login-modal"
                         onClick={(): void => {
                             setLoginModalOpened(true);
                         }}

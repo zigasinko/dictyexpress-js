@@ -23,7 +23,7 @@ const Home = (): ReactElement => (
                         Medicine.
                     </p>
                     <p>
-                        <HomeRunDictyButton variant="outlined">
+                        <HomeRunDictyButton variant="outlined" data-testid="enter-app">
                             <a href="/bcm/">Run dictyExpress</a>
                         </HomeRunDictyButton>
                     </p>

@@ -30,9 +30,9 @@ module.exports = {
         'plugin:prettier/recommended',
     ],
     parserOptions: {
-        project: './tsconfig.json',
+        project: ['./tsconfig.json'],
         // Allows for the parsing of modern ECMAScript features.
-        ecmaVersion: 2018,
+        ecmaVersion: 2020,
         // Allows for the use of imports.
         sourceType: 'module',
         ecmaFeatures: {
@@ -78,7 +78,7 @@ module.exports = {
     settings: {
         'import/resolver': {
             node: {
-                extensions: ['.js', '.jsx', '.ts', '.tsx'],
+                extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
                 moduleDirectory: ['node_modules', 'src'],
                 paths: ['src'],
             },

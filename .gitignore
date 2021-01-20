@@ -1,5 +1,6 @@
 .test
 /coverage
+__diff_output__/
 node_modules
 jspm_packages
 

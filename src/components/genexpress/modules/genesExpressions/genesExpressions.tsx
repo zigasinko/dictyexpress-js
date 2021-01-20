@@ -142,7 +142,7 @@ const GenesExpressionsWidget = ({
                     </div>
                 </GenesExpressionsControls>
                 {genesExpressions.length > 0 && (
-                    <GenesExpressionsLineChartContainer>
+                    <GenesExpressionsLineChartContainer data-testid="genes-expressions-line-chart">
                         <GenesExpressionsLineChart
                             genesExpressions={allGenesExpressions}
                             selectedGenesIds={selectedGenesIds}

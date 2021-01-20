@@ -275,6 +275,7 @@ const GeneSelector = ({
                     disabled={isDisabled}
                     renderInput={(params): ReactElement => (
                         <TextField
+                            data-testid="genes-multiselect-input"
                             // eslint-disable-next-line react/jsx-props-no-spreading
                             {...params}
                             variant="outlined"

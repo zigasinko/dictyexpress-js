@@ -8,44 +8,54 @@ In the project directory, you can run:
 
 ### `npm start`
 
-Runs the app in the development mode and proxy for https://qa2.genialis.com (used as an API endpoint).<br />
+Runs the app in the development mode with proxy for https://qa2.genialis.com (used as an API endpoint).<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-If timeSeries don't load (csrf error in Network tab), navigate to "https://localhost:8001/api/base/csrf" to get the csrf cookie.
 
 The page will reload if you make edits.<br />
 You will also see any lint errors in the console.
 
-https://qa2.genialis.com proxy is bound to https://localhost:8001.
+### `npm run lint`
 
-### `npm run prettier:check`
+Runs ESLint with Prettier check.
 
-Runs prettier check.
+### `npm run lint:fix`
 
-### `npm run prettier:fix`
+Runs ESLint with Prettier combined to apply automatic fixes.
 
-Runs prettier check with automatic formatting.
+### `npm run check`
 
-### `npm run eslint:check`
-
-Runs ESLint check.
-
-### `npm run eslint:fix`
-
-Runs ESLint check with automatic fix enabled.
-
-### 'npm run check'
-
-Prettier and ESLint checks combined.
-
-### 'npm run fix'
-
-Prettier and ESLint checks with enabled automatic fix combined.
+Typescript compiler, Prettier and ESLint checks combined.
 
 ### `npm test`
 
 Launches the test runner in the interactive watch mode.<br />
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+### `npm run test:e2e`
+
+`npm run test:e2e` script is meant for CI integration as it runs both headless test runner and site server.
+
+For development use UI variant (assuming locally running web site and macOS):
+
+```
+LOGIN_USERNAME=myuser LOGIN_PASSWORD=mysecret npm run e2e:debug
+```
+
+or for headless run:
+
+```
+LOGIN_USERNAME=myuser LOGIN_PASSWORD=mysecret CI=true npm run e2e:debug
+```
+
+on Windows (assuming locally running web site):
+
+```
+npx cross-env LOGIN_USERNAME=myuser LOGIN_PASSWORD=mysecret npm run e2e:debug
+```
+
+Opens UI for e2e tests overview with custom user account.
+
+
 
 ### `npm run build`
 

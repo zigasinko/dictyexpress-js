@@ -130,7 +130,10 @@ const GeneExpressGrid = ({
                     cols={defaultBreakpointCols}
                     onLayoutChange={handleOnLayoutChange}
                 >
-                    <div key={ModulesKeys.timeSeriesAndGeneSelector}>
+                    <div
+                        key={ModulesKeys.timeSeriesAndGeneSelector}
+                        data-testid="time-series-and-gene-selection-box"
+                    >
                         <DictyModule
                             title="Time series and Gene Selection"
                             isLoading={isFetchingTimeSeries || isAddingToBasket}
