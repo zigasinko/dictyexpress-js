@@ -10,10 +10,10 @@ const samplesExpressionsByIdSlice = createSlice({
     initialState: samplesExpressionsByIdInitialState,
     reducers: {
         fetchSucceeded: (
-            _state,
+            state,
             action: PayloadAction<SamplesGenesExpressionsById>,
         ): SamplesGenesExpressionsById => {
-            return action.payload;
+            return { ...state, ...action.payload };
         },
         comparisonFetchSucceeded: (
             state,

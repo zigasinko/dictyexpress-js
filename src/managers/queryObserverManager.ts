@@ -4,8 +4,8 @@ import { Action } from '@reduxjs/toolkit';
 import { deserializeResponse } from 'utils/apiUtils';
 import { logError } from 'utils/errorUtils';
 import { EMPTY, Observable } from 'rxjs';
-import { sessionId } from './base';
-import { unsubscribe } from './queryObserverApi';
+import { sessionId } from '../api/base';
+import { unsubscribe } from '../api/queryObserverApi';
 
 const MESSAGE_ADDED = 'added';
 const MESSAGE_CHANGED = 'changed';

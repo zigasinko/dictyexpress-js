@@ -167,7 +167,7 @@ describe('differentialExpressions integration', () => {
                 (exportFile) => {
                     expect(exportFile?.content).toContain(
                         getSelectedDifferentialExpression(initialState.differentialExpressions)
-                            .name,
+                            ?.name,
                     );
                 },
             );
@@ -189,7 +189,7 @@ describe('differentialExpressions integration', () => {
             await validateExportFile('Differential Expressions/caption.txt', (exportFile) => {
                 expect(exportFile?.content).toContain('Differential expression');
                 expect(exportFile?.content).toContain(
-                    getSelectedDifferentialExpression(initialState.differentialExpressions).name,
+                    getSelectedDifferentialExpression(initialState.differentialExpressions)?.name,
                 );
             });
         });

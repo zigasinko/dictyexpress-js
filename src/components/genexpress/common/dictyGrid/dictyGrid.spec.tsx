@@ -1,21 +1,12 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { generateTimeSeriesById } from 'tests/mock';
-import { getTimeSeries } from 'redux/stores/timeSeries';
-import { BasketInfo } from 'redux/models/internal';
 import { customRender } from 'tests/test-utils';
+import _ from 'lodash';
 import DictyGrid from './dictyGrid';
 
 const timeSeriesById = generateTimeSeriesById(2);
-const timeSeries = getTimeSeries({
-    byId: timeSeriesById,
-    isFetching: false,
-    selectedId: 1,
-    comparisonIds: [],
-    isAddingToBasket: false,
-    basketInfo: {} as BasketInfo,
-    basketExpressionsIds: [],
-});
+const timeSeries = _.flatMap(timeSeriesById);
 
 describe('dictyGrid', () => {
     let container: HTMLElement;

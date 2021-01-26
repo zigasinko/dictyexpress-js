@@ -12,7 +12,7 @@ import { of, from, EMPTY, Observable, merge, isObservable } from 'rxjs';
 import { RootState } from 'redux/rootReducer';
 import { handleError } from 'utils/errorUtils';
 import { Action, ActionCreatorWithoutPayload, ActionCreatorWithPayload } from '@reduxjs/toolkit';
-import { DisposeFunction as QueryObserverDisposeFunction } from 'api/queryObserverManager';
+import { DisposeFunction as QueryObserverDisposeFunction } from 'managers/queryObserverManager';
 import {
     Data,
     DONE_DATA_STATUS,

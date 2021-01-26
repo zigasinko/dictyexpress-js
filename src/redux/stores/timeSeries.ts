@@ -22,20 +22,22 @@ const selectedIdSlice = createSlice({
     name: 'timeSeries',
     initialState: selectedIdInitialState as number | null,
     reducers: {
-        selected: (_state, action: PayloadAction<number>): number => action.payload,
+        selected: (_state, action: PayloadAction<number>): number => {
+            return action.payload;
+        },
     },
 });
 
-const comparisonIdsIdInitialState = null;
+const comparisonIdsIdInitialState = [] as number[];
 const comparisonIdsSlice = createSlice({
     name: 'comparisonTimeSeries',
-    initialState: comparisonIdsIdInitialState as number[] | null,
+    initialState: comparisonIdsIdInitialState,
     reducers: {
         changed: (_state, action: PayloadAction<number[]>): number[] => action.payload,
     },
 });
 
-const basketInfoInitialState = {} as BasketInfo;
+const basketInfoInitialState = {} as BasketInfo | null;
 const basketInfoSlice = createSlice({
     name: 'timeSeries',
     initialState: basketInfoInitialState,
@@ -53,12 +55,9 @@ const basketInfoSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(
-            selectedIdSlice.actions.selected,
-            (): BasketInfo => {
-                return basketInfoInitialState;
-            },
-        );
+        builder.addCase(selectedIdSlice.actions.selected, (): BasketInfo | null => {
+            return basketInfoInitialState;
+        });
     },
 });
 
@@ -112,7 +111,7 @@ export default timeSeriesReducer;
 
 // Selectors (expose the store to containers).
 const getTimeSeriesById = (state: TimeSeriesState): RelationsById => state.byId;
-const getSelectedTimeSeriesId = (state: TimeSeriesState): number => state.selectedId ?? 0;
+const getSelectedTimeSeriesId = (state: TimeSeriesState): number | null => state.selectedId;
 const getComparisonTimeSeriesIds = (state: TimeSeriesState): number[] => state.comparisonIds ?? [];
 
 export const getTimeSeriesIsFetching = (state: TimeSeriesState): boolean => state.isFetching;
@@ -130,8 +129,8 @@ export const getTimeSeries = createSelector(getTimeSeriesById, (timeSeriesById):
 export const getSelectedTimeSeries = createSelector(
     getTimeSeriesById,
     getSelectedTimeSeriesId,
-    (timeSeriesById, selectedId) => {
-        return timeSeriesById[selectedId];
+    (timeSeriesById, selectedId): Relation | null => {
+        return selectedId != null ? timeSeriesById[selectedId] ?? null : null;
     },
 );
 
@@ -139,12 +138,14 @@ export const getComparisonTimeSeries = createSelector(
     getTimeSeriesById,
     getComparisonTimeSeriesIds,
     (timeSeriesById, comparisonTimeSeriesIds) => {
-        return comparisonTimeSeriesIds.map((timeSeriesId) => timeSeriesById[timeSeriesId]);
+        return comparisonTimeSeriesIds
+            .map((timeSeriesId) => timeSeriesById[timeSeriesId] ?? null)
+            .filter((timeSeries) => timeSeries != null);
     },
 );
 
-export const getBasketInfo = (state: TimeSeriesState): BasketInfo => state.basketInfo;
-export const getBasketId = (state: TimeSeriesState): string => state.basketInfo.id;
+export const getBasketInfo = (state: TimeSeriesState): BasketInfo | null => state.basketInfo;
+export const getBasketId = (state: TimeSeriesState): string | null => state.basketInfo?.id ?? null;
 
 export const getSelectedTimeSeriesLabels = createSelector(
     getSelectedTimeSeries,
@@ -158,17 +159,15 @@ export const getSelectedTimeSeriesLabels = createSelector(
 export const getSelectedTimeSeriesSamplesIds = createSelector(
     getSelectedTimeSeries,
     (selectedTimeSeries) => {
-        return selectedTimeSeries.partitions.map((partition) => partition.entity);
+        return selectedTimeSeries?.partitions.map((partition) => partition.entity) ?? [];
     },
 );
 
 export const getComparisonTimeSeriesSamplesIds = createSelector(
     getComparisonTimeSeries,
     (comparisonTimeSeries) => {
-        return _.flatten(
-            comparisonTimeSeries.map((timeSeries) =>
-                timeSeries.partitions.map((partition) => partition.entity),
-            ),
+        return comparisonTimeSeries.flatMap((timeSeries) =>
+            timeSeries.partitions.map((partition) => partition.entity),
         );
     },
 );

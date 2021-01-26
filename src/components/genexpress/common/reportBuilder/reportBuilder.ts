@@ -17,7 +17,7 @@ export type ProcessExportFile = (
 
 export type GetComponentReport = (processExportFile: ProcessExportFile) => Promise<void> | void;
 
-export const registeredComponents: {
+const registeredComponents: {
     [id: string]: GetComponentReport;
 } = {};
 

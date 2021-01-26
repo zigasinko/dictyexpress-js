@@ -18,7 +18,8 @@ import clustering from 'redux/stores/clustering';
 import { combineReducers, createSelector } from '@reduxjs/toolkit';
 import _ from 'lodash';
 import { EMPTY_ARRAY } from 'components/genexpress/common/constants';
-import { GeneExpression } from './models/internal';
+import { Relation } from '@genialis/resolwe/dist/api/types/rest';
+import { Gene, GeneExpression, SamplesGenesExpressionsById } from './models/internal';
 
 const rootReducer = combineReducers({
     layouts,
@@ -37,42 +38,64 @@ export type RootState = ReturnType<typeof rootReducer>;
 
 export default rootReducer;
 
-export const getSelectedGenesExpressions = createSelector(
-    (state: RootState) => getSelectedTimeSeries(state.timeSeries),
-    (state: RootState) => getSelectedTimeSeriesLabels(state.timeSeries),
-    (state: RootState) => getSelectedGenes(state.genes),
-    (state: RootState) => getSamplesExpressionsById(state.samplesExpressions),
-    (selectedTimeSeries, timeSeriesLabels, selectedGenes, samplesExpressionsById) => {
-        if (_.isEmpty(samplesExpressionsById) || _.isEmpty(selectedGenes)) {
-            return EMPTY_ARRAY;
+const getTimeSeriesGenesExpressions = (
+    singleTimeSeries: Relation | null,
+    labels: string[],
+    selectedGenes: Gene[],
+    samplesExpressionsById: SamplesGenesExpressionsById,
+    samplesExpressionsSamplesIds: number[],
+): GeneExpression[] => {
+    if (singleTimeSeries == null || _.isEmpty(samplesExpressionsById) || _.isEmpty(selectedGenes)) {
+        return EMPTY_ARRAY;
+    }
+
+    const newGenesExpressionsData = [] as GeneExpression[];
+
+    labels.forEach((label) => {
+        const timePointPartitions = _.flatten(
+            singleTimeSeries.partitions.filter((partition) => partition.label === label),
+        );
+
+        // If any of samplesExpressions isn't in store
+        if (
+            timePointPartitions.some(
+                (partition) => !samplesExpressionsSamplesIds.includes(partition.entity),
+            )
+        ) {
+            return;
         }
 
-        const newGenesExpressionsData = [] as GeneExpression[];
-
-        timeSeriesLabels.forEach((label) => {
-            const timePointPartitions = selectedTimeSeries.partitions.filter(
-                (partition) => partition.label === label,
-            );
-
-            selectedGenes.forEach((gene) => {
-                const values: number[] = [];
-                // Gene expressions in different samples must be averaged out (mean).
-                timePointPartitions.forEach((partition) => {
+        selectedGenes.forEach((gene) => {
+            const values: number[] = [];
+            // Gene expressions in different samples must be averaged out (mean).
+            timePointPartitions.forEach((partition) => {
+                if (samplesExpressionsById[partition.entity][gene.feature_id] != null) {
                     values.push(samplesExpressionsById[partition.entity][gene.feature_id]);
-                });
+                }
+            });
 
+            if (values.length > 0) {
                 newGenesExpressionsData.push({
-                    timeSeriesName: selectedTimeSeries.collection.name,
+                    timeSeriesName: singleTimeSeries.collection.name,
                     label,
                     value: _.mean(values),
                     geneId: gene.feature_id,
                     geneName: gene.name,
                 });
-            });
+            }
         });
+    });
 
-        return newGenesExpressionsData;
-    },
+    return newGenesExpressionsData;
+};
+
+export const getSelectedGenesExpressions = createSelector(
+    (state: RootState) => getSelectedTimeSeries(state.timeSeries),
+    (state: RootState) => getSelectedTimeSeriesLabels(state.timeSeries),
+    (state: RootState) => getSelectedGenes(state.genes),
+    (state: RootState) => getSamplesExpressionsById(state.samplesExpressions),
+    (state: RootState) => getSamplesExpressionsSamplesIds(state.samplesExpressions),
+    getTimeSeriesGenesExpressions,
 );
 
 export const getSelectedGenesComparisonExpressions = createSelector(
@@ -88,50 +111,19 @@ export const getSelectedGenesComparisonExpressions = createSelector(
         samplesExpressionsById,
         samplesExpressionsSamplesIds,
     ) => {
-        if (_.isEmpty(samplesExpressionsById) || _.isEmpty(selectedGenes)) {
+        if (comparisonTimeSeries.length === 0) {
             return [];
         }
 
-        const newGenesExpressionsData = [] as GeneExpression[];
-
-        timeSeriesLabels.forEach((label) => {
-            comparisonTimeSeries.forEach((singleTimeSeries) => {
-                const timePointPartitions = _.flatten(
-                    singleTimeSeries.partitions.filter((partition) => partition.label === label),
-                );
-
-                // If any of samplesExpressions isn't in store
-                if (
-                    timePointPartitions.some(
-                        (partition) => !samplesExpressionsSamplesIds.includes(partition.entity),
-                    )
-                ) {
-                    return;
-                }
-
-                selectedGenes.forEach((gene) => {
-                    const values: number[] = [];
-                    // Gene expressions in different samples must be averaged out (mean).
-                    timePointPartitions.forEach((partition) => {
-                        if (samplesExpressionsById[partition.entity][gene.feature_id] != null) {
-                            values.push(samplesExpressionsById[partition.entity][gene.feature_id]);
-                        }
-                    });
-
-                    if (values.length > 0) {
-                        newGenesExpressionsData.push({
-                            timeSeriesName: singleTimeSeries.collection.name,
-                            label,
-                            value: _.mean(values),
-                            geneId: gene.feature_id,
-                            geneName: gene.name,
-                        });
-                    }
-                });
-            });
-        });
-
-        return newGenesExpressionsData;
+        return comparisonTimeSeries.flatMap((comparisonSingleTimeSeries) =>
+            getTimeSeriesGenesExpressions(
+                comparisonSingleTimeSeries,
+                timeSeriesLabels,
+                selectedGenes,
+                samplesExpressionsById,
+                samplesExpressionsSamplesIds,
+            ),
+        );
     },
 );
 

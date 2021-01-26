@@ -22,9 +22,9 @@ describe('timeSeriesAndGeneSelector', () => {
     });
 
     it('should export Collection/selectedCollection.tsv file', async () => {
-        const selectedCollection = getSelectedTimeSeries(initialState.timeSeries);
+        const selectedTimeSeries = getSelectedTimeSeries(initialState.timeSeries);
         await validateExportFile('Collection/selectedCollection.tsv', (exportFile) => {
-            expect(exportFile?.content).toContain(selectedCollection.collection.name);
+            expect(exportFile?.content).toContain(selectedTimeSeries?.collection.name);
         });
     });
 });

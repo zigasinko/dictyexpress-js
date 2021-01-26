@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { customRender, validateExportFile } from 'tests/test-utils';
-import { testState, mockStore, generateGenesById } from 'tests/mock';
+import { testState, mockStore, generateGenesById, generateBasketInfo } from 'tests/mock';
 import { allGenesDeselected, genesFetchSucceeded, genesSelected } from 'redux/stores/genes';
 import { MockStoreEnhanced } from 'redux-mock-store';
 import { RootState } from 'redux/rootReducer';
@@ -18,12 +18,7 @@ describe('geneSelector', () => {
 
     beforeEach(() => {
         initialState = testState();
-        initialState.timeSeries.basketInfo = {
-            id: '1',
-            source: 'DICTYBASE',
-            species: 'Dictyostelium purpureum',
-            type: 'gene',
-        };
+        initialState.timeSeries.basketInfo = generateBasketInfo('1');
     });
 
     it('should be disabled if basketInfo is empty', () => {

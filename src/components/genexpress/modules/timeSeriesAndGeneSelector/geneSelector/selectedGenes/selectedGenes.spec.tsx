@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen, fireEvent } from '@testing-library/react';
 import { customRender } from 'tests/test-utils';
-import { generateGene, mockStore, testState } from 'tests/mock';
+import { generateBasketInfo, generateGene, mockStore, testState } from 'tests/mock';
 import { allGenesDeselected } from 'redux/stores/genes';
 import { MockStoreEnhanced } from 'redux-mock-store';
 import { RootState } from 'redux/rootReducer';
@@ -11,12 +11,7 @@ import SelectedGenes from './selectedGenes';
 const initialState = testState();
 const genes = [generateGene(0), generateGene(1)];
 
-initialState.timeSeries.basketInfo = {
-    id: '1',
-    source: 'DICTYBASE',
-    species: 'Dictyostelium purpureum',
-    type: 'gene',
-};
+initialState.timeSeries.basketInfo = generateBasketInfo('1');
 initialState.genes.byId = {
     [genes[0].name]: genes[0],
     [genes[1].name]: genes[1],

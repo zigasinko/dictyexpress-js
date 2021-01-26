@@ -116,6 +116,7 @@ describe('genesExpressions integration', () => {
     describe('time series not selected', () => {
         beforeEach(() => {
             initialState.timeSeries.selectedId = null;
+            initialState.timeSeries.basketInfo = null;
 
             ({ container } = customRender(<GeneExpressGrid />, {
                 initialState,

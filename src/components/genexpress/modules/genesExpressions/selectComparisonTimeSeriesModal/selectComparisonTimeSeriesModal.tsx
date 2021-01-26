@@ -48,8 +48,8 @@ const SelectComparisonTimeSeriesModal = ({
 }: SelectComparisonTimeSeriesModalProps): ReactElement => {
     const filteredSimeSeries = useStateWithEffect(
         () =>
-            timeSeries.filter((singleTimeSeries) => singleTimeSeries.id !== selectedTimeSeries.id),
-        [selectedTimeSeries.id, timeSeries],
+            timeSeries.filter((singleTimeSeries) => singleTimeSeries.id !== selectedTimeSeries?.id),
+        [selectedTimeSeries, timeSeries],
     );
     return (
         <CenteredModal

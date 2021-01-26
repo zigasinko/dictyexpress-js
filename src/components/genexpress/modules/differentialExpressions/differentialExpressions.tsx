@@ -3,7 +3,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import _ from 'lodash';
 import { RootState } from 'redux/rootReducer';
 import { getGenesById, getHighlightedGenesIds, getSelectedGenesIds } from 'redux/stores/genes';
-import { Thresholds, VolcanoPoint } from 'redux/models/internal';
+import { DifferentialExpression, Thresholds, VolcanoPoint } from 'redux/models/internal';
 import { getMinMax, logOfBase } from 'utils/math';
 import {
     differentialExpressionSelected,
@@ -409,7 +409,9 @@ positives.
             </DifferentialExpressionsContainer>
             {volcanoPointSelectionModalOpened && (
                 <VolcanoPointSelectionModal
-                    differentialExpressionName={selectedDifferentialExpression.name}
+                    differentialExpressionName={
+                        (selectedDifferentialExpression as DifferentialExpression).name
+                    }
                     probFieldLabel={probFieldLabel}
                     handleOnClose={(): void => setVolcanoPointSelectionModalOpened(false)}
                     volcanoPoints={selectedVolcanoPoints}

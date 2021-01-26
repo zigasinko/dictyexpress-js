@@ -128,7 +128,7 @@ export const getSelectedGenes = createSelector(
     getGenesById,
     getSelectedGenesIds,
     (genesById, selectedGenesIds) => {
-        return selectedGenesIds.map((geneId) => genesById[geneId]);
+        return selectedGenesIds.map((geneId) => genesById[geneId]).filter((gene) => gene != null);
     },
 );
 

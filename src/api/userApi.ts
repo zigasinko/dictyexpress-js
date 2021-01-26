@@ -4,7 +4,7 @@ import { PayloadAction } from '@reduxjs/toolkit';
 import { Observable, of } from 'rxjs';
 import { apiUrl } from './base';
 import { getReactive } from './fetch';
-import { reactiveRequest } from './queryObserverManager';
+import { reactiveRequest } from '../managers/queryObserverManager';
 
 const baseUrl = `${apiUrl}/user`;
 

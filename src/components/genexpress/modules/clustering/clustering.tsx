@@ -180,7 +180,7 @@ const Clustering = ({
 
         return [
             ...childrenNodes,
-            ..._.flatten(childrenNodes.map((childNode) => getClusterNodeChildren(childNode))),
+            ...childrenNodes.flatMap((childNode) => getClusterNodeChildren(childNode)),
         ];
     };
 

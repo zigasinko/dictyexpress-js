@@ -47,7 +47,8 @@ const fetchGenesActionObservable = (
         return EMPTY;
     }
 
-    const basketInfo = getBasketInfo(state.timeSeries);
+    const basketInfo = getBasketInfo(state.timeSeries) as BasketInfo;
+
     return from(
         listByIds(source ?? basketInfo.source, geneIdsToFetch, species ?? basketInfo.species),
     ).pipe(

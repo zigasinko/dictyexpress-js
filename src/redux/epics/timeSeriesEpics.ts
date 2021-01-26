@@ -241,6 +241,10 @@ const fetchDifferentialExpressionsEpic: Epic<Action, Action, RootState> = (actio
         mergeMap(([, state]) => {
             const basketId = getBasketId(state.timeSeries);
 
+            if (basketId == null) {
+                return EMPTY;
+            }
+
             return from(getDifferentialExpressions(basketId)).pipe(
                 map((differentialExpressions) => {
                     return differentialExpressionsFetchSucceeded(differentialExpressions);
@@ -268,7 +272,10 @@ const fetchDifferentialExpressionsDataEpic: Epic<Action, Action, RootState> = (a
             );
 
             // If we already fetched differentialExpression storage json, there's no need to fetch it again!
-            if (selectedDifferentialExpression.json != null) {
+            if (
+                selectedDifferentialExpression == null ||
+                selectedDifferentialExpression.json != null
+            ) {
                 return EMPTY;
             }
 

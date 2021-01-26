@@ -1,6 +1,6 @@
 import {
     generateTimeSeriesById,
-    generateBasket,
+    generateBasketAddSamplesResponse,
     generateSingleTimeSeries,
     generateBasketExpression,
 } from 'tests/mock';
@@ -16,13 +16,13 @@ import timeSeriesReducer, {
 
 const timeSeriesById = generateTimeSeriesById(2);
 const timeSeries = _.flatMap(timeSeriesById);
-const basket = generateBasket('123');
-const basketInfo = {
+const basket = generateBasketAddSamplesResponse('123');
+const basketInfo: BasketInfo = {
     id: basket.id,
     source: basket.permitted_sources[0],
     species: basket.permitted_organisms[0],
     type: 'gene',
-} as BasketInfo;
+};
 const basketExpressions = [generateBasketExpression(), generateBasketExpression()];
 const basketExpressionsIds = basketExpressions.map((basketExpression) => basketExpression.id);
 
@@ -118,7 +118,7 @@ describe('timeSeries store', () => {
             const expectedState = {
                 ...initialState,
                 selectedId: 1,
-                basketInfo: {} as BasketInfo,
+                basketInfo: {},
                 basketExpressionsIds: [],
             };
 

@@ -7,8 +7,11 @@ const baseUrl = `${apiUrl}/_modules/differential_expression/list`;
 
 // eslint-disable-next-line import/prefer-default-export
 export const getDifferentialExpressions = async (
-    basketId: string,
+    basketId: string | undefined,
 ): Promise<DifferentialExpression[]> => {
+    if (basketId == null) {
+        return [];
+    }
     const getDifferentialExpressionsDataResponse = await get(baseUrl, {
         basket: basketId,
     });

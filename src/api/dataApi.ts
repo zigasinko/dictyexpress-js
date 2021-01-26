@@ -3,7 +3,7 @@ import { handleError } from 'utils/errorUtils';
 import {
     DisposeFunction as QueryObserverDisposeFunction,
     reactiveRequest,
-} from 'api/queryObserverManager';
+} from 'managers/queryObserverManager';
 import { Action } from '@reduxjs/toolkit';
 import { Observable } from 'rxjs';
 import { deserializeResponse } from '../utils/apiUtils';

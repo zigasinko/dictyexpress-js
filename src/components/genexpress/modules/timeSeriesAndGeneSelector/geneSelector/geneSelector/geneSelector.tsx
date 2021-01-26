@@ -61,11 +61,8 @@ const GeneSelector = ({
     connectedGenesSelected,
     connectedAllGenesDeselected,
 }: PropsFromRedux): ReactElement => {
-    const {
-        source: autocompleteSource,
-        species: autocompleteSpecies,
-        type: autocompleteType,
-    } = basketInfo;
+    const { source: autocompleteSource, species: autocompleteSpecies, type: autocompleteType } =
+        basketInfo ?? {};
     const [autocompleteOpen, setAutocompleteOpen] = useState(false);
     const [value, setValue] = useState<Gene[]>([]);
     const [inputValue, setInputValue] = useState('');
@@ -79,6 +76,9 @@ const GeneSelector = ({
 
     const fetchGenes = useCallback(
         debounce(async (queryValue: string): Promise<void> => {
+            if (autocompleteSource == null || autocompleteType == null) {
+                return;
+            }
             const genesResults = await getGenes(
                 autocompleteSource,
                 autocompleteType,
@@ -174,11 +174,15 @@ const GeneSelector = ({
         setIsFetchingPastedGenes(true);
 
         try {
+            if (autocompleteSource == null || autocompleteType == null) {
+                return;
+            }
+
             const pastedGenes = await getGenesByNames(
-                basketInfo.source,
-                basketInfo.type,
+                autocompleteSource,
+                autocompleteType,
                 genesNames,
-                basketInfo.species,
+                autocompleteSpecies,
             );
 
             connectedGenesFetchSucceeded(pastedGenes);

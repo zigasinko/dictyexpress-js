@@ -17,7 +17,7 @@ import { webSocket } from 'rxjs/webSocket';
 import { Message } from '@genialis/resolwe/dist/api/connection';
 import { handleError } from 'utils/errorUtils';
 import { sessionId, webSocketUrl } from 'api/base';
-import { handleWebSocketMessage } from 'api/queryObserverManager';
+import { handleWebSocketMessage } from 'managers/queryObserverManager';
 import { filterNullAndUndefined } from './rxjsCustomFilters';
 import {
     appStarted,

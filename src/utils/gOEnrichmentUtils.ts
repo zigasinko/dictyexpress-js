@@ -48,8 +48,8 @@ export const flattenGoEnrichmentTree = (
     path: string[],
     disableCollapseCheck = false,
 ): GOEnrichmentRow[] => {
-    return _.flatten(
-        _.map(items, (item) => {
+    return (
+        items?.flatMap((item) => {
             const itemPath = [...path, item.term_name];
             return [
                 { ...item, path: itemPath },
@@ -59,7 +59,7 @@ export const flattenGoEnrichmentTree = (
                     disableCollapseCheck,
                 ),
             ];
-        }),
+        }) ?? []
     );
 };
 
@@ -103,7 +103,7 @@ export const ontologyJsonToTermsTable = async (
     const rowsBySourceSpecies = _.groupBy(table, (row) => getSourceSpeciesKey(row));
 
     const sourceSpeciesGenesPromises = _.map(rowsBySourceSpecies, async (rows, key) => {
-        const geneIds = _.uniq(_.flatten(_.map(rows, (row) => row.selected_gene_associations)));
+        const geneIds = _.uniq(rows.flatMap((row) => row.selected_gene_associations));
         const { source, species } = rows[0];
 
         const genes = await listByIds(source ?? '', geneIds, species);

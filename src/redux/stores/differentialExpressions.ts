@@ -50,7 +50,7 @@ const differentialExpressionsByIdSlice = createSlice({
 
 const selectedIdSlice = createSlice({
     name: 'differentialExpressions',
-    initialState: 0,
+    initialState: null as number | null,
     reducers: {
         selected: (_state, action: PayloadAction<number>): number => action.payload,
     },
@@ -90,7 +90,7 @@ export type DifferentialExpressionsState = ReturnType<typeof differentialExpress
 export default differentialExpressionsReducer;
 
 // Selectors (exposes the store to containers).
-const getSelectedDifferentialExpressionId = (state: DifferentialExpressionsState): number =>
+const getSelectedDifferentialExpressionId = (state: DifferentialExpressionsState): number | null =>
     state.selectedId;
 
 export const getIsFetchingDifferentialExpressions = (
@@ -115,17 +115,17 @@ export const getDifferentialExpressions = createSelector(
 export const getDifferentialExpression = (
     differentialExpressionId: number,
     state: DifferentialExpressionsState,
-): DifferentialExpression => state.byId[differentialExpressionId];
+): DifferentialExpression | null => state.byId[differentialExpressionId];
 
 export const getSelectedDifferentialExpression = createSelector(
     getDifferentialExpressionsById,
     getSelectedDifferentialExpressionId,
-    (differentialExpressionsById, selectedId) => {
-        return differentialExpressionsById[selectedId];
+    (differentialExpressionsById, selectedId): DifferentialExpression | null => {
+        return selectedId != null ? differentialExpressionsById[selectedId] : null;
     },
 );
 
 export const getSelectedDifferentialExpressionGeneIds = createSelector(
     getSelectedDifferentialExpression,
-    (selectedDifferentialExpression) => selectedDifferentialExpression.json.gene_id as string[],
+    (selectedDifferentialExpression) => selectedDifferentialExpression?.json.gene_id as string[],
 );

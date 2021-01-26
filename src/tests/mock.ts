@@ -129,7 +129,7 @@ export const generateNotification = (key: string | number): SnackbarNotification
     variant: 'info',
 });
 
-export const generateBasket = (id: string): BasketAddSamplesResponse => ({
+export const generateBasketAddSamplesResponse = (id: string): BasketAddSamplesResponse => ({
     id,
     modified: getDateISOString(),
     conflict_organisms: [],
@@ -137,6 +137,13 @@ export const generateBasket = (id: string): BasketAddSamplesResponse => ({
     ignored: [],
     permitted_organisms: ['Homo sapiens'],
     permitted_sources: ['UCSC'],
+});
+
+export const generateBasketInfo = (id: string): BasketInfo => ({
+    id,
+    source: 'DICTYBASE',
+    species: 'Dictyostelium purpureum',
+    type: 'gene',
 });
 
 export const generateGenesExpressionsById = (genesIds: string[]): GenesExpressionById => {
@@ -634,7 +641,7 @@ export const testState = (): RootState => {
             comparisonIds: [],
             isFetching: false,
             isAddingToBasket: false,
-            basketInfo: {} as BasketInfo,
+            basketInfo: generateBasketInfo('1'),
             basketExpressionsIds: [],
         },
         genes: {

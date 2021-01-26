@@ -16,7 +16,7 @@ import { handleError } from 'utils/errorUtils';
 import _ from 'lodash';
 import { addErrorSnackbar } from 'redux/stores/notifications';
 import { getCurrentUser, login as loginRequest, logout as logoutRequest } from 'api';
-import { clearObservers } from 'api/queryObserverManager';
+import { clearObservers } from 'managers/queryObserverManager';
 import { setSentryUser } from 'utils/sentryUtils';
 import { ResponseError } from 'redux/models/internal';
 import { appStarted, login, loginSucceeded, logout, logoutSucceeded } from './epicsActions';
