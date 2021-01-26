@@ -1,7 +1,6 @@
-import { DataGafAnnotation, DONE_DATA_STATUS } from '@genialis/resolwe/dist/api/types/rest';
+import { DONE_DATA_STATUS } from '@genialis/resolwe/dist/api/types/rest';
 import _ from 'lodash';
 import { gOEnrichmentDataFetchSucceeded } from 'redux/epics/epicsActions';
-import { EnhancedGOEnrichmentJson } from 'redux/models/internal';
 import {
     generateGenesById,
     generateGeneOntologyStorageJson,
@@ -40,12 +39,8 @@ describe('gOEnrichmentStore store', () => {
     describe('empty initial state', () => {
         beforeEach(() => {
             initialState = {
-                json: {
-                    gene_associations: {},
-                    total_genes: 0,
-                    tree: {},
-                },
-                gaf: {} as DataGafAnnotation,
+                json: null,
+                gaf: null,
                 source: '',
                 species: '',
                 pValueThreshold: pValueThresholdsOptions[0],
@@ -120,8 +115,8 @@ describe('gOEnrichmentStore store', () => {
             const newState = gOEnrichmentReducer(initialState, timeSeriesSelected(1));
             const expectedState = {
                 ...initialState,
-                json: {} as EnhancedGOEnrichmentJson,
-                gaf: {} as DataGafAnnotation,
+                json: null,
+                gaf: null,
                 source: '',
                 species: '',
             };
@@ -133,8 +128,8 @@ describe('gOEnrichmentStore store', () => {
             const newState = gOEnrichmentReducer(initialState, timeSeriesSelected(1));
             const expectedState = {
                 ...initialState,
-                json: {} as EnhancedGOEnrichmentJson,
-                gaf: {} as DataGafAnnotation,
+                json: null,
+                gaf: null,
                 source: '',
                 species: '',
             };
@@ -146,7 +141,7 @@ describe('gOEnrichmentStore store', () => {
             const newState = gOEnrichmentReducer(initialState, geneDeselected('1'));
             const expectedState = {
                 ...initialState,
-                json: {} as EnhancedGOEnrichmentJson,
+                json: null,
             };
 
             expect(newState).toEqual(expectedState);
@@ -156,7 +151,7 @@ describe('gOEnrichmentStore store', () => {
             const newState = gOEnrichmentReducer(initialState, genesSelected(['1']));
             const expectedState = {
                 ...initialState,
-                json: {} as EnhancedGOEnrichmentJson,
+                json: null,
             };
 
             expect(newState).toEqual(expectedState);

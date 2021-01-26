@@ -75,7 +75,7 @@ const GOEnrichment = ({
     );
 
     useEffect(() => {
-        if (_.isEmpty(gOEnrichmentJson)) {
+        if (gOEnrichmentJson == null) {
             setGOEnrichmentRows([]);
             return;
         }
@@ -88,11 +88,12 @@ const GOEnrichment = ({
         }
 
         setGOEnrichmentRows(rows);
-    }, [gOEnrichmentJson, selectedAspect.value, treeView]);
+    }, [gOEnrichmentJson, selectedAspect, treeView]);
 
     useEffect(() => {
-        if (_.isEmpty(gOEnrichmentJson)) {
+        if (gOEnrichmentJson == null) {
             setAllAspectsEmpty(true);
+            return;
         }
 
         const valuesInAllAspects = _.flatten(_.values(gOEnrichmentJson.tree));
@@ -114,9 +115,10 @@ A list of all gene associations for each term is available in a separate file - 
 
     useReport(
         async (processFile) => {
-            if (_.isEmpty(gOEnrichmentJson)) {
+            if (gOEnrichmentJson == null) {
                 return;
             }
+
             const associationsTable = _.flatten(
                 _.map(gOEnrichmentJson.gene_associations, (allAssociations, term) => {
                     return _.map(allAssociations, (association) => {
@@ -252,7 +254,7 @@ A list of all gene associations for each term is available in a separate file - 
                             <DictySelect
                                 disabled={allAspectsEmpty}
                                 label="Aspect"
-                                value={selectedAspect.value}
+                                value={selectedAspect?.value}
                                 handleOnChange={handleAspectsOnChange}
                             >
                                 {aspectOptions.map((aspectOption) => (

@@ -1,4 +1,4 @@
-import { ofType, Epic, combineEpics } from 'redux-observable';
+import { ofType, Epic, combineEpics, StateObservable, ActionsObservable } from 'redux-observable';
 import {
     map,
     startWith,
@@ -46,8 +46,10 @@ const activeQueryObserverDisposeFunction: { [_: string]: QueryObserverDisposeFun
 
 export type ProcessDataEpicsFactoryProps<DataType> = {
     processInfo: ProcessInfo;
-    inputActions: string[];
-    getGetOrCreateInput: (state: RootState) => object | Observable<ReturnType<typeof handleError>>;
+    processParametersObservable: (
+        action: ActionsObservable<Action>,
+        state: StateObservable<RootState>,
+    ) => Observable<object | Observable<ReturnType<typeof handleError>>>;
     fetchDataActionCreator: ActionCreatorWithPayload<number>;
     processStartedActionCreator: ActionCreatorWithoutPayload;
     processEndedActionCreator: ActionCreatorWithoutPayload;
@@ -58,8 +60,7 @@ export type ProcessDataEpicsFactoryProps<DataType> = {
 
 const getProcessDataEpicsFactory = <DataType extends Data>({
     processInfo,
-    inputActions,
-    getGetOrCreateInput,
+    processParametersObservable,
     fetchDataActionCreator,
     processStartedActionCreator,
     processEndedActionCreator,
@@ -67,17 +68,16 @@ const getProcessDataEpicsFactory = <DataType extends Data>({
     getStorageIdFromData,
     actionFromStorageResponse,
 }: ProcessDataEpicsFactoryProps<DataType>): Epic<Action, Action, RootState> => {
+    const handleProcessEndedWithError = (message: string, error?: Error): Observable<Action> => {
+        return merge(of(handleError(message, error)), of(processEndedActionCreator()));
+    };
+
     const handleAnalysisDataResponse = (response: DataType): Observable<Action | never> => {
         if (response.status === ERROR_DATA_STATUS) {
-            return merge(
-                of(
-                    handleError(
-                        `${processInfo.name} analysis ended with an error ${
-                            response.process_error.length > 0 ? response.process_error[0] : ''
-                        }`,
-                    ),
-                ),
-                of(processEndedActionCreator()),
+            return handleProcessEndedWithError(
+                `${processInfo.name} analysis ended with an error ${
+                    response.process_error.length > 0 ? response.process_error[0] : ''
+                }`,
             );
         }
 
@@ -89,17 +89,14 @@ const getProcessDataEpicsFactory = <DataType extends Data>({
     };
 
     const getOrCreateEpic: Epic<Action, Action, RootState> = (action$, state$) => {
-        return action$.pipe(
-            ofType(...inputActions),
-            withLatestFrom(state$),
-            switchMap(([, state]) => {
+        return processParametersObservable(action$, state$).pipe(
+            switchMap((input) => {
                 // Cleanup queryObserverManager existing observer waiting to receive process
                 // data via WebSocket.
                 if (activeQueryObserverDisposeFunction[processInfo.name] != null) {
                     activeQueryObserverDisposeFunction[processInfo.name]();
                 }
 
-                const input = getGetOrCreateInput(state);
                 if (_.isEmpty(input)) {
                     return of(processEndedActionCreator());
                 }
@@ -111,11 +108,9 @@ const getProcessDataEpicsFactory = <DataType extends Data>({
                 return from(getOrCreateData(input, processInfo.slug)).pipe(
                     map((response) => fetchDataActionCreator(response.id)),
                     catchError((error) =>
-                        of(
-                            handleError(
-                                `Error creating ${processInfo.name.toLowerCase()} process.`,
-                                error,
-                            ),
+                        handleProcessEndedWithError(
+                            `Error creating ${processInfo.name.toLowerCase()} process.`,
+                            error,
                         ),
                     ),
                     startWith(processStartedActionCreator()),
@@ -136,11 +131,12 @@ const getProcessDataEpicsFactory = <DataType extends Data>({
                             response.disposeFunction;
                         return handleAnalysisDataResponse(response.item);
                     }),
-                    catchError((error) => {
-                        return of(
-                            handleError(`${processInfo.name} analysis ended with an error.`, error),
-                        );
-                    }),
+                    catchError((error) =>
+                        handleProcessEndedWithError(
+                            `${processInfo.name} analysis ended with an error.`,
+                            error,
+                        ),
+                    ),
                 );
             }),
         );
@@ -157,14 +153,12 @@ const getProcessDataEpicsFactory = <DataType extends Data>({
                     map((storage) => {
                         return actionFromStorageResponse(storage, state);
                     }),
-                    catchError((error) => {
-                        return of(
-                            handleError(
-                                `Error retrieving ${processInfo.name.toLowerCase()} storage.`,
-                                error,
-                            ),
-                        );
-                    }),
+                    catchError((error) =>
+                        handleProcessEndedWithError(
+                            `Error retrieving ${processInfo.name.toLowerCase()} storage.`,
+                            error,
+                        ),
+                    ),
                     endWith(processEndedActionCreator()),
                 );
             }),

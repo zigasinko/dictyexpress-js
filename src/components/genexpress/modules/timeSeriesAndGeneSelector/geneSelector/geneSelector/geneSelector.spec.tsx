@@ -1,6 +1,11 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
-import { customRender, validateExportFile } from 'tests/test-utils';
+import {
+    customRender,
+    handleCommonRequests,
+    resolveStringifiedObjectPromise,
+    validateExportFile,
+} from 'tests/test-utils';
 import { testState, mockStore, generateGenesById, generateBasketInfo } from 'tests/mock';
 import { allGenesDeselected, genesFetchSucceeded, genesSelected } from 'redux/stores/genes';
 import { MockStoreEnhanced } from 'redux-mock-store';
@@ -15,6 +20,20 @@ const testGenesNames = genes.map((gene) => gene.name);
 
 describe('geneSelector', () => {
     let initialState: RootState;
+
+    beforeAll(() => {
+        fetchMock.resetMocks();
+
+        fetchMock.mockResponse((req) => {
+            if (req.url.includes('autocomplete') || req.url.includes('search')) {
+                return resolveStringifiedObjectPromise({
+                    results: genes,
+                });
+            }
+
+            return handleCommonRequests(req) ?? Promise.reject(new Error(`bad url: ${req.url}`));
+        });
+    });
 
     beforeEach(() => {
         initialState = testState();
@@ -43,8 +62,6 @@ describe('geneSelector', () => {
         });
 
         it('should dispatch genesSelected action after user pastes genes names to "Search for a gene" input', async () => {
-            fetchMock.mockResponse(JSON.stringify({ results: genes }));
-
             // Paste genes names to "Search for a gene" input.
             fireEvent.paste(screen.getByPlaceholderText('Search for a gene'), {
                 clipboardData: { getData: jest.fn().mockReturnValueOnce(testGenesNames.join(',')) },
@@ -60,8 +77,6 @@ describe('geneSelector', () => {
         });
 
         it('should dispatch genesSelected action after user drops a file wih genes names to "Search for a gene" input', async () => {
-            fetchMock.mockResponse(JSON.stringify({ results: genes }));
-
             const genesNamesFile = new File([testGenesNames.join()], 'file.txt', {
                 type: 'text/plain',
             });
@@ -123,9 +138,6 @@ describe('geneSelector', () => {
         });
 
         it('should exclude already selected genes in autocomplete', async () => {
-            fetchMock.resetMocks();
-            fetchMock.mockResponse(JSON.stringify({ results: genes }));
-
             fireEvent.change(screen.getByPlaceholderText('Search for a gene'), {
                 target: { value: genes[1].name.slice(0, 1) },
             });

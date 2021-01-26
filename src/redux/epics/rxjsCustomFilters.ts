@@ -1,5 +1,6 @@
+import { RootState } from 'redux/rootReducer';
 import { Observable } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map } from 'rxjs/operators';
 
 const inputIsNotNullOrUndefined = <T>(input: null | undefined | T): input is T => {
     return input !== null && input !== undefined;
@@ -12,8 +13,21 @@ const inputIsNotNullOrUndefined = <T>(input: null | undefined | T): input is T =
  *
  * That's why this custom operator is used instead.
  */
-// eslint-disable-next-line import/prefer-default-export
 export const filterNullAndUndefined = <T>() => {
     return (source$: Observable<null | undefined | T>): Observable<T> =>
         source$.pipe(filter(inputIsNotNullOrUndefined));
+};
+
+export const mapStateSlice = <T>(
+    selector: (state: RootState) => T | null,
+    // Filter if target state is already set (e.g. unit tests initialState).
+    existenceFilter?: (value: T) => boolean,
+) => {
+    return (state$: Observable<RootState>): Observable<T> =>
+        state$.pipe(
+            map((state) => selector(state)),
+            distinctUntilChanged(),
+            filterNullAndUndefined(),
+            filter((value) => existenceFilter?.(value) ?? true),
+        );
 };

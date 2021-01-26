@@ -1,5 +1,7 @@
 import { configureStore, getDefaultMiddleware, EnhancedStore, Action } from '@reduxjs/toolkit';
-import { createEpicMiddleware } from 'redux-observable';
+import { createEpicMiddleware, Epic } from 'redux-observable';
+import { switchMap } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
 import rootReducer, { RootState } from './rootReducer';
 import rootEpic from './epics/rootEpic';
 
@@ -29,11 +31,23 @@ const getStore = (
         preloadedState: initialState,
     });
 
-    epicMiddleware.run(rootEpic);
+    const epic$ = new BehaviorSubject(rootEpic);
+    // Every time a new epic is given to epic$ it
+    // will unsubscribe from the previous one then
+    // call and subscribe to the new one because of
+    // how switchMap works
+    const hotReloadingEpic: Epic<Action, Action, RootState> = (actionIn, actionOut, state) =>
+        epic$.pipe(switchMap((epic) => epic(actionIn, actionOut, state)));
+
+    epicMiddleware.run(hotReloadingEpic);
 
     if (module.hot) {
         module.hot.accept('./rootReducer', () => {
             store.replaceReducer(rootReducer);
+        });
+
+        module.hot.accept('./epics/rootEpic', () => {
+            epic$.next(rootEpic);
         });
     }
 

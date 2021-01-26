@@ -45,7 +45,11 @@ const getTimeSeriesGenesExpressions = (
     samplesExpressionsById: SamplesGenesExpressionsById,
     samplesExpressionsSamplesIds: number[],
 ): GeneExpression[] => {
-    if (singleTimeSeries == null || _.isEmpty(samplesExpressionsById) || _.isEmpty(selectedGenes)) {
+    if (
+        singleTimeSeries == null ||
+        _.isEmpty(samplesExpressionsById) ||
+        selectedGenes.length === 0
+    ) {
         return EMPTY_ARRAY;
     }
 

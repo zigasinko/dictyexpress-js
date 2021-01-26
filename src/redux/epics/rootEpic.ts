@@ -12,14 +12,16 @@ import layoutsEpics from './layoutsEpics';
 import gOEnrichmentEpics from './gOEnrichmentEpics';
 import gafEpics from './gafEpics';
 import clusteringEpics from './clusteringEpics';
-import getGOEnrichmentProcessDataEpics from './findSimilarGenesEpics';
+import findSimilarGenesEpics from './findSimilarGenesEpics';
+import samplesExpressionsEpics from './samplesExpressionsEpics';
+import differentialExpressionsEpics from './differentialExpressionsEpics';
 
 const rootEpic: Epic<Action, Action, RootState> = (
     action$,
     store$,
     dependencies,
-): Observable<Action> =>
-    combineEpics(
+): Observable<Action> => {
+    return combineEpics(
         authenticationEpics,
         connectToServerEpics,
         layoutsEpics,
@@ -28,12 +30,15 @@ const rootEpic: Epic<Action, Action, RootState> = (
         genesEpics,
         gOEnrichmentEpics,
         clusteringEpics,
-        getGOEnrichmentProcessDataEpics,
+        findSimilarGenesEpics,
+        samplesExpressionsEpics,
+        differentialExpressionsEpics,
     )(action$, store$, dependencies).pipe(
         catchError((error, source) => {
             logError('RootEpic global error', error);
             return source;
         }),
     );
+};
 
 export default rootEpic;

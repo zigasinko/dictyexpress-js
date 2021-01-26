@@ -13,6 +13,7 @@ import {
     generateData,
     generateGeneSimilarity,
     mockStore,
+    generateBasketExpression,
 } from 'tests/mock';
 import { RootState } from 'redux/rootReducer';
 import _ from 'lodash';
@@ -36,6 +37,8 @@ const genesSimilarities = genes.slice(0, 2).map((gene) => generateGeneSimilarity
 const differentGenesSimilarities = genes
     .slice(2)
     .map((gene) => generateGeneSimilarity(gene.feature_id));
+
+const basketExpressions = [generateBasketExpression(), generateBasketExpression()];
 
 const dataId = 123;
 const storageId = 456;
@@ -70,7 +73,7 @@ describe('findSimilarGenesModal', () => {
         initialState = testState();
     });
 
-    describe('process data exists', () => {
+    describe.only('process data exists', () => {
         beforeAll(() => {
             fetchMock.resetMocks();
 
@@ -101,6 +104,10 @@ describe('findSimilarGenesModal', () => {
                     return resolveStringifiedObjectPromise({
                         json: { 'similar genes': genesSimilarities },
                     });
+                }
+
+                if (req.url.includes('basket_expressions')) {
+                    return resolveStringifiedObjectPromise(basketExpressions);
                 }
 
                 if (req.url.includes('list_by_ids')) {

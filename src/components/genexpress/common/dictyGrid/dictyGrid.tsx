@@ -74,7 +74,7 @@ const DictyGrid = <T extends {}>({
         } else {
             gridApi.current?.hideOverlay();
         }
-    }, [data.length, isFetching]);
+    }, [data, isFetching]);
 
     useEffect(() => {
         setOverlay();

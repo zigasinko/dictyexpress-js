@@ -12,7 +12,19 @@ import { allGenesDeselected, geneDeselected, genesSelected } from './genes';
 import { timeSeriesSelected } from './timeSeries';
 
 // State slices.
-const gOEnrichmentJsonInitialState = {} as EnhancedGOEnrichmentJson;
+export const pValueThresholdsOptions = [0.1, 0.05, 0.01, 0.001, 0.0001];
+const pValueThresholdInitialState = pValueThresholdsOptions[0];
+const pValueThresholdSlice = createSlice({
+    name: 'gOEnrichment',
+    initialState: pValueThresholdInitialState,
+    reducers: {
+        pValueThresholdChanged: (_state, action: PayloadAction<number>): number => {
+            return action.payload;
+        },
+    },
+});
+
+const gOEnrichmentJsonInitialState = null as EnhancedGOEnrichmentJson | null;
 const gOEnrichmentJsonSlice = createSlice({
     name: 'gOEnrichment',
     initialState: gOEnrichmentJsonInitialState,
@@ -27,21 +39,15 @@ const gOEnrichmentJsonSlice = createSlice({
     extraReducers: (builder) => {
         clearStateOnActions(
             builder,
-            [timeSeriesSelected, allGenesDeselected, geneDeselected, genesSelected],
+            [
+                timeSeriesSelected,
+                allGenesDeselected,
+                geneDeselected,
+                genesSelected,
+                pValueThresholdSlice.actions.pValueThresholdChanged,
+            ],
             gOEnrichmentJsonInitialState,
         );
-    },
-});
-
-export const pValueThresholdsOptions = [0.1, 0.05, 0.01, 0.001, 0.0001];
-const pValueThresholdInitialState = pValueThresholdsOptions[0];
-const pValueThresholdSlice = createSlice({
-    name: 'gOEnrichment',
-    initialState: pValueThresholdInitialState,
-    reducers: {
-        pValueThresholdChanged: (_state, action: PayloadAction<number>): number => {
-            return action.payload;
-        },
     },
 });
 
@@ -77,7 +83,7 @@ const sourceSlice = createSlice({
     },
 });
 
-const gafInitialState = {} as DataGafAnnotation;
+const gafInitialState = null as DataGafAnnotation | null;
 const gafSlice = createSlice({
     name: 'gOEnrichment',
     initialState: gafInitialState,
@@ -124,8 +130,9 @@ export default gOEnrichmentReducer;
 // Selectors (exposes the store to containers).
 export const getIsFetchingGOEnrichmentJson = (state: GOEnrichmentState): boolean =>
     state.isFetchingJson;
-export const getGOEnrichmentJson = (state: GOEnrichmentState): GOEnrichmentJson => state.json;
+export const getGOEnrichmentJson = (state: GOEnrichmentState): GOEnrichmentJson | null =>
+    state.json;
 export const getPValueThreshold = (state: GOEnrichmentState): number => state.pValueThreshold;
-export const getGaf = (state: GOEnrichmentState): DataGafAnnotation => state.gaf;
+export const getGaf = (state: GOEnrichmentState): DataGafAnnotation | null => state.gaf;
 export const getGOEnrichmentSpecies = (state: GOEnrichmentState): string => state.species;
 export const getGOEnrichmentSource = (state: GOEnrichmentState): string => state.source;

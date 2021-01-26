@@ -1,5 +1,5 @@
 import { Action } from '@reduxjs/toolkit';
-import { ofType, Epic, combineEpics } from 'redux-observable';
+import { ofType, Epic } from 'redux-observable';
 import {
     map,
     startWith,
@@ -22,36 +22,24 @@ import { filterNullAndUndefined } from './rxjsCustomFilters';
 import {
     appStarted,
     connectionReady,
-    connectToServer,
     disconnectFromServer,
     reconnectToServer,
 } from './epicsActions';
 
-// ReconnectionTimeout = 60s.
 const reconnectionTimeout = 6000;
 const reconnectionMaxAttempts = 3;
 
-const connectToWebSocketServiceEpic: Epic<Action, Action, RootState> = (action$) =>
-    action$.pipe(
-        ofType(appStarted),
-        map(() => {
-            return connectToServer({
-                url: webSocketUrl,
-            });
-        }),
-    );
-
 const connectToServerEpic: Epic<Action, Action, RootState> = (action$) =>
     action$.pipe(
-        ofType<Action, ReturnType<typeof connectToServer>>(connectToServer.toString()),
-        switchMap(({ payload: { url } }) => {
+        ofType(appStarted),
+        mergeMap(() => {
             return action$.pipe(
                 ofType(reconnectToServer),
                 takeUntil(action$.pipe(ofType(disconnectFromServer))),
                 startWith(null),
                 map(() => {
                     return webSocket({
-                        url: `${url + sessionId}`,
+                        url: `${webSocketUrl + sessionId}`,
                         WebSocketCtor: WebSocket,
                     }).pipe(
                         retryWhen((errors) => {
@@ -92,4 +80,4 @@ const connectToServerEpic: Epic<Action, Action, RootState> = (action$) =>
         }),
     );
 
-export default combineEpics(connectToWebSocketServiceEpic, connectToServerEpic);
+export default connectToServerEpic;

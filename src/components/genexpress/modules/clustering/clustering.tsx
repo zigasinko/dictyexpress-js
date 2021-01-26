@@ -9,11 +9,11 @@ import DictySelect from 'components/genexpress/common/dictySelect/dictySelect';
 import { objectsArrayToTsv } from 'utils/reportUtils';
 import useReport from 'components/genexpress/common/reportBuilder/useReport';
 import {
-    distanceMeasureChanged,
-    getDistanceMeasure,
-    getLinkageFunction,
+    clusteringDistanceMeasureChanged,
+    getClusteringDistanceMeasure,
+    getClusteringLinkageFunction,
     getMergedClusteringData,
-    linkageFunctionChanged,
+    clusteringLinkageFunctionChanged,
 } from 'redux/stores/clustering';
 import { advancedJoin } from 'utils/arrayUtils';
 import { ChartHandle } from 'components/genexpress/common/chart/chart';
@@ -30,8 +30,8 @@ import ClusteringChart from './clusteringChart';
 const mapStateToProps = (state: RootState) => {
     return {
         mergedData: getMergedClusteringData(state.clustering),
-        distanceMeasure: getDistanceMeasure(state.clustering),
-        linkageFunction: getLinkageFunction(state.clustering),
+        distanceMeasure: getClusteringDistanceMeasure(state.clustering),
+        linkageFunction: getClusteringLinkageFunction(state.clustering),
         highlightedGenesIds: getHighlightedGenesIds(state.genes),
         selectedGenes: getSelectedGenes(state.genes),
         genesExpressions: getSelectedGenesExpressions(state),
@@ -40,8 +40,8 @@ const mapStateToProps = (state: RootState) => {
 
 const connector = connect(mapStateToProps, {
     connectedGenesHighlighted: genesHighlighted,
-    connectedDistanceMeasureChanged: distanceMeasureChanged,
-    connectedLinkageFunctionChanged: linkageFunctionChanged,
+    connectedDistanceMeasureChanged: clusteringDistanceMeasureChanged,
+    connectedLinkageFunctionChanged: clusteringLinkageFunctionChanged,
 });
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -74,7 +74,7 @@ const Clustering = ({
     const [highlightedClusterNodesIds, setHighlightedClusterNodesIds] = useState<number[]>([]);
 
     useEffect(() => {
-        if (_.isEmpty(mergedData.linkage)) {
+        if (mergedData == null) {
             setClusterNodes([]);
             return;
         }
@@ -234,16 +234,19 @@ Clustering was done on ${selectedGenes.length === 0 ? 'all genes' : `selected ge
             if (clusterNodes.length === 0) {
                 return;
             }
-            processFile(
-                'Sample Hierarchical Clustering/clustering_table/linkage.tsv',
-                objectsArrayToTsv(mergedData.linkage),
-                false,
-            );
-            processFile(
-                'Sample Hierarchical Clustering/clustering_table/order.tsv',
-                objectsArrayToTsv(mergedData.order),
-                false,
-            );
+            if (mergedData != null) {
+                processFile(
+                    'Sample Hierarchical Clustering/clustering_table/linkage.tsv',
+                    objectsArrayToTsv(mergedData.linkage),
+                    false,
+                );
+                processFile(
+                    'Sample Hierarchical Clustering/clustering_table/order.tsv',
+                    objectsArrayToTsv(mergedData.order),
+                    false,
+                );
+            }
+
             if (chartRef.current != null) {
                 processFile(
                     'Sample Hierarchical Clustering/image.png',
@@ -258,7 +261,7 @@ Clustering was done on ${selectedGenes.length === 0 ? 'all genes' : `selected ge
                 processFile('Sample Hierarchical Clustering/caption.txt', getCaption(), false);
             }
         },
-        [clusterNodes.length, getCaption, mergedData.linkage, mergedData.order],
+        [clusterNodes.length, getCaption, mergedData],
     );
 
     return (

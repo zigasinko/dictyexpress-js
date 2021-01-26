@@ -1,53 +1,66 @@
-import { of } from 'rxjs';
+import { combineLatest, of } from 'rxjs';
 import { RootState } from 'redux/rootReducer';
-import { geneDeselected, getSelectedGenes } from 'redux/stores/genes';
+import { getSelectedGenes } from 'redux/stores/genes';
+import { filter, switchMap } from 'rxjs/operators';
 import {
-    gafFetchSucceeded,
     getGaf,
+    getGOEnrichmentJson,
     getGOEnrichmentSource,
     getGOEnrichmentSpecies,
     getPValueThreshold,
     gOEnrichmentJsonFetchEnded,
     gOEnrichmentJsonFetchStarted,
     gOEnrichmentJsonFetchSucceeded,
-    pValueThresholdChanged,
 } from 'redux/stores/gOEnrichment';
 import { appendMissingAttributesToJson } from 'utils/gOEnrichmentUtils';
 import { DataGOEnrichmentAnalysis, Storage } from '@genialis/resolwe/dist/api/types/rest';
-import {
-    fetchGOEnrichmentData,
-    gafAlreadyFetched,
-    gOEnrichmentDataFetchSucceeded,
-} from './epicsActions';
-import getOrCreateProcessDataEpics, { ProcessesInfo } from './getProcessDataEpicsFactory';
+import { fetchGOEnrichmentData, gOEnrichmentDataFetchSucceeded } from './epicsActions';
+import getProcessDataEpicsFactory, {
+    ProcessDataEpicsFactoryProps,
+    ProcessesInfo,
+} from './getProcessDataEpicsFactory';
+import { mapStateSlice } from './rxjsCustomFilters';
 
-const getGOEnrichmentProcessDataEpics = getOrCreateProcessDataEpics<DataGOEnrichmentAnalysis>({
+const processParametersObservable: ProcessDataEpicsFactoryProps<
+    DataGOEnrichmentAnalysis
+>['processParametersObservable'] = (action$, state$) => {
+    return combineLatest([
+        state$.pipe(
+            mapStateSlice((state) => {
+                return getGaf(state.gOEnrichment);
+            }),
+        ),
+        state$.pipe(
+            mapStateSlice((state) => {
+                return getPValueThreshold(state.gOEnrichment);
+            }),
+        ),
+        state$.pipe(
+            mapStateSlice((state) => {
+                return getSelectedGenes(state.genes);
+            }),
+        ),
+    ]).pipe(
+        filter(() => getGOEnrichmentJson(state$.value.gOEnrichment) == null),
+        switchMap(([gaf, pValueThreshold, selectedGenes]) => {
+            if (selectedGenes.length === 0) {
+                return of({});
+            }
+            return of({
+                genes: selectedGenes.map((gene) => gene.feature_id),
+                pval_threshold: pValueThreshold,
+                source: selectedGenes[0].source,
+                species: selectedGenes[0].species,
+                ontology: 14305,
+                gaf: gaf.id,
+            });
+        }),
+    );
+};
+
+const getGOEnrichmentProcessDataEpics = getProcessDataEpicsFactory<DataGOEnrichmentAnalysis>({
     processInfo: ProcessesInfo.GOEnrichment,
-    inputActions: [
-        gafFetchSucceeded.toString(),
-        gafAlreadyFetched.toString(),
-        geneDeselected.toString(),
-        pValueThresholdChanged.toString(),
-    ],
-    getGetOrCreateInput: (state: RootState) => {
-        const selectedGenes = getSelectedGenes(state.genes);
-
-        if (selectedGenes.length === 0) {
-            return of(gOEnrichmentJsonFetchEnded());
-        }
-
-        const pValueThreshold = getPValueThreshold(state.gOEnrichment);
-        const gaf = getGaf(state.gOEnrichment);
-
-        return {
-            genes: selectedGenes.map((gene) => gene.feature_id),
-            pval_threshold: pValueThreshold,
-            source: selectedGenes[0].source,
-            species: selectedGenes[0].species,
-            ontology: 14305,
-            gaf: gaf.id,
-        };
-    },
+    processParametersObservable,
     fetchDataActionCreator: fetchGOEnrichmentData,
     processStartedActionCreator: gOEnrichmentJsonFetchStarted,
     processEndedActionCreator: gOEnrichmentJsonFetchEnded,

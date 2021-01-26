@@ -1,36 +1,34 @@
 import { Action, PayloadAction } from '@reduxjs/toolkit';
 import { ofType, Epic, combineEpics } from 'redux-observable';
-import { map, mergeMap, startWith, endWith, catchError, withLatestFrom } from 'rxjs/operators';
-import { of, from, EMPTY, Observable, merge } from 'rxjs';
+import {
+    map,
+    mergeMap,
+    startWith,
+    endWith,
+    catchError,
+    withLatestFrom,
+    filter,
+} from 'rxjs/operators';
+import { of, from, EMPTY, Observable, combineLatest } from 'rxjs';
 import { getBasketInfo } from 'redux/stores/timeSeries';
 import { getGenesSimilaritiesQueryGene, RootState } from 'redux/rootReducer';
 import { getSelectedDifferentialExpressionGeneIds } from 'redux/stores/differentialExpressions';
 import {
-    allGenesDeselected,
     associationsGenesFetchEnded,
     associationsGenesFetchStarted,
     differentialExpressionGenesFetchEnded,
     differentialExpressionGenesFetchStarted,
-    geneDeselected,
     genesFetchSucceeded,
-    genesSelected,
     getGenesIdsInStore,
-    getSelectedGenesIds,
     similarGenesFetchEnded,
     similarGenesFetchStarted,
 } from 'redux/stores/genes';
 import { handleError } from 'utils/errorUtils';
-import { Gene } from 'redux/models/internal';
+import { BasketInfo, Gene } from 'redux/models/internal';
 import { listByIds } from 'api';
-import {
-    genesSimilaritiesFetchSucceeded,
-    getGenesSimilarities,
-} from 'redux/stores/genesSimilarities';
-import {
-    fetchAssociationsGenes,
-    fetchSelectedDifferentialExpressionGenes,
-    selectedGenesChanged,
-} from './epicsActions';
+import { getGenesSimilarities } from 'redux/stores/genesSimilarities';
+import { fetchAssociationsGenes, fetchSelectedDifferentialExpressionGenes } from './epicsActions';
+import { mapStateSlice } from './rxjsCustomFilters';
 
 const fetchGenesActionObservable = (
     geneIds: string[],
@@ -104,22 +102,20 @@ const fetchAssociationsGenesEpic: Epic<Action, Action, RootState> = (action$, st
     );
 };
 
-/**
- * Sets query gene if query gene is not among selected ones anymore.
- */
 const fetchSimilarGenesEpic: Epic<Action, Action, RootState> = (action$, state$) => {
-    return action$.pipe(
-        ofType(genesSimilaritiesFetchSucceeded),
-        withLatestFrom(state$),
-        mergeMap(([, state]) => {
-            const similarGenesIds = getGenesSimilarities(state.genesSimilarities).map(
-                (geneSimilarity) => geneSimilarity.gene,
-            );
-
-            const queryGene = getGenesSimilaritiesQueryGene(state);
+    return combineLatest([
+        state$.pipe(mapStateSlice((state) => getGenesSimilarities(state.genesSimilarities))),
+        state$.pipe(
+            mapStateSlice((state) => {
+                return getGenesSimilaritiesQueryGene(state);
+            }),
+        ),
+    ]).pipe(
+        filter(([genesSimilarities]) => genesSimilarities.length > 0),
+        mergeMap(([genesSimilarities, queryGene]) => {
             return fetchGenesActionObservable(
-                similarGenesIds,
-                state,
+                genesSimilarities.map((geneSimilarity) => geneSimilarity.gene),
+                state$.value,
                 queryGene?.source,
                 queryGene?.species,
             ).pipe(
@@ -131,28 +127,8 @@ const fetchSimilarGenesEpic: Epic<Action, Action, RootState> = (action$, state$)
     );
 };
 
-/**
- * Emits an action to indicate that selectedGenes store slice has changed.
- */
-const selectedGenesChangedEpic: Epic<Action, Action, RootState> = (action$, state$) => {
-    return action$.pipe(
-        ofType(geneDeselected.toString(), genesSelected.toString()),
-        withLatestFrom(state$),
-        mergeMap(([, state]) => {
-            const selectedGenesIds = getSelectedGenesIds(state.genes);
-
-            if (selectedGenesIds.length === 0) {
-                return merge(of(allGenesDeselected()), of(selectedGenesChanged(selectedGenesIds)));
-            }
-
-            return of(selectedGenesChanged(selectedGenesIds));
-        }),
-    );
-};
-
 export default combineEpics(
     fetchSelectedDifferentialExpressionGenesEpic,
     fetchAssociationsGenesEpic,
     fetchSimilarGenesEpic,
-    selectedGenesChangedEpic,
 );

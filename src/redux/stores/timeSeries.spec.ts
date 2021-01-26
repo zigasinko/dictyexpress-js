@@ -37,7 +37,7 @@ describe('timeSeries store', () => {
                 comparisonIds: [],
                 isFetching: false,
                 isAddingToBasket: false,
-                basketInfo: {} as BasketInfo,
+                basketInfo: null,
                 basketExpressionsIds: [],
             };
         });
@@ -118,7 +118,7 @@ describe('timeSeries store', () => {
             const expectedState = {
                 ...initialState,
                 selectedId: 1,
-                basketInfo: {},
+                basketInfo: null,
                 basketExpressionsIds: [],
             };
 

@@ -6,27 +6,6 @@ import createIsFetchingSlice from './fetch';
 import { allGenesDeselected, geneDeselected, genesSelected } from './genes';
 import { timeSeriesSelected } from './timeSeries';
 
-const mergedClusteringDataInitialState = {} as MergedClusteringData;
-const mergedClusteringDataSlice = createSlice({
-    name: 'clustering',
-    initialState: mergedClusteringDataInitialState,
-    reducers: {
-        fetchSucceeded: (
-            _state,
-            action: PayloadAction<MergedClusteringData>,
-        ): MergedClusteringData => {
-            return action.payload;
-        },
-    },
-    extraReducers: (builder) => {
-        clearStateOnActions(
-            builder,
-            [timeSeriesSelected, allGenesDeselected, geneDeselected, genesSelected],
-            mergedClusteringDataInitialState,
-        );
-    },
-});
-
 const distanceMeasureInitialState = DistanceMeasure.spearman;
 const distanceMeasureSlice = createSlice({
     name: 'clustering',
@@ -55,6 +34,34 @@ const linkageFunctionSlice = createSlice({
     },
 });
 
+const mergedClusteringDataInitialState = null as MergedClusteringData | null;
+const mergedClusteringDataSlice = createSlice({
+    name: 'clustering',
+    initialState: mergedClusteringDataInitialState,
+    reducers: {
+        fetchSucceeded: (
+            _state,
+            action: PayloadAction<MergedClusteringData>,
+        ): MergedClusteringData => {
+            return action.payload;
+        },
+    },
+    extraReducers: (builder) => {
+        clearStateOnActions(
+            builder,
+            [
+                timeSeriesSelected,
+                allGenesDeselected,
+                geneDeselected,
+                genesSelected,
+                linkageFunctionSlice.actions.linkageFunctionChanged,
+                distanceMeasureSlice.actions.distanceMeasureChanged,
+            ],
+            mergedClusteringDataInitialState,
+        );
+    },
+});
+
 const isFetchingClusteringDataSlice = createIsFetchingSlice('clustering');
 
 const clusteringReducer = combineReducers({
@@ -69,8 +76,12 @@ export const {
     ended: clusteringDataFetchEnded,
 } = isFetchingClusteringDataSlice.actions;
 
-export const { distanceMeasureChanged } = distanceMeasureSlice.actions;
-export const { linkageFunctionChanged } = linkageFunctionSlice.actions;
+export const {
+    distanceMeasureChanged: clusteringDistanceMeasureChanged,
+} = distanceMeasureSlice.actions;
+export const {
+    linkageFunctionChanged: clusteringLinkageFunctionChanged,
+} = linkageFunctionSlice.actions;
 
 export const {
     fetchSucceeded: mergedClusteringDataFetchSucceeded,
@@ -82,9 +93,9 @@ export default clusteringReducer;
 
 export const getIsFetchingClusteringData = (state: ClusteringState): boolean =>
     state.isFetchingClusteringData;
-export const getMergedClusteringData = (state: ClusteringState): MergedClusteringData =>
+export const getMergedClusteringData = (state: ClusteringState): MergedClusteringData | null =>
     state.mergedData;
-export const getDistanceMeasure = (state: ClusteringState): DistanceMeasure =>
+export const getClusteringDistanceMeasure = (state: ClusteringState): DistanceMeasure =>
     state.distanceMeasure;
-export const getLinkageFunction = (state: ClusteringState): ClusteringLinkageFunction =>
+export const getClusteringLinkageFunction = (state: ClusteringState): ClusteringLinkageFunction =>
     state.linkageFunction;

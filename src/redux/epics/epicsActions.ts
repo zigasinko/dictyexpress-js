@@ -7,12 +7,6 @@ import { ClusteringData, FindSimilarGenesData } from 'redux/models/rest';
 export const selectGenes = createAction<Gene[]>('genes/selectGenes');
 export const pasteGenesNames = createAction<string[]>('genes/pasteGenesNames');
 export const fetchTimeSeries = createAction('timeSeries/fetchTimeSeries');
-export const fetchTimeSeriesSamplesExpressions = createAction(
-    'timeSeries/fetchTimeSeriesSamplesExpressions',
-);
-export const fetchDifferentialExpressionsData = createAction(
-    'timeSeries/fetchDifferentialExpressionsData',
-);
 
 export const login = createAction<{ username: string; password: string }>('authentication/login');
 export const loginSucceeded = createAction('authentication/loginSucceeded');
@@ -20,9 +14,6 @@ export const logout = createAction('authentication/logout');
 export const logoutSucceeded = createAction('authentication/logoutSucceeded');
 
 export const appStarted = createAction('appStarted');
-export const connectToServer = createAction<{
-    url: string;
-}>('connectToServer/connect');
 export const reconnectToServer = createAction('connectToServer/reconnect');
 export const disconnectFromServer = createAction('connectToServer/disconnect');
 export const connectionReady = createAction('connectToServer/connectionReady');
@@ -40,6 +31,11 @@ export const fetchSimilarGenes = createAction<{
     source?: string;
     species?: string;
 }>('genes/fetchSimilarGenes');
+export const fetchDifferentialExpressionGenes = createAction<{
+    geneIds: string[];
+    source?: string;
+    species?: string;
+}>('genes/fetchDifferentialExpressionGenes');
 export const selectedGenesChanged = createAction<string[]>('genes/selectedGenesChanged');
 
 export const getOrCreateGOEnrichment = createAction('gOEnrichment/getOrCreateGOEnrichment');
@@ -47,7 +43,6 @@ export const fetchGOEnrichmentData = createAction<number>('gOEnrichment/fetchGOE
 export const fetchGOEnrichmentStorage = createAction<number>(
     'gOEnrichment/fetchGOEnrichmentStorage',
 );
-export const gafAlreadyFetched = createAction('gOEnrichment/gafAlreadyFetched');
 export const gOEnrichmentDataFetchSucceeded = createAction<DataGOEnrichmentAnalysis>(
     'gOEnrichment/dataFetchSucceeded',
 );
@@ -60,7 +55,6 @@ export const fetchClusteringStorageSucceeded = createAction<Storage>(
     'clustering/fetchClusteringStorageSucceeded',
 );
 
-// SimilarGenesEpics.
 export const fetchGenesSimilarities = createAction('similarGenes/fetchGenesSimilarities');
 export const fetchGenesSimilaritiesData = createAction<number>(
     'similarGenes/fetchGenesSimilaritiesData',

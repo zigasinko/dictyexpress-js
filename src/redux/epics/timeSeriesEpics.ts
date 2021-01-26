@@ -1,57 +1,25 @@
 import { Action } from '@reduxjs/toolkit';
 import { ofType, Epic, combineEpics } from 'redux-observable';
-import { Storage, Data } from '@genialis/resolwe/dist/api/types/rest';
-import { map, mergeMap, startWith, endWith, catchError, withLatestFrom } from 'rxjs/operators';
-import { of, from, forkJoin, EMPTY, merge } from 'rxjs';
+import { map, mergeMap, startWith, endWith, catchError } from 'rxjs/operators';
+import { of, from } from 'rxjs';
 import {
     getSelectedTimeSeriesSamplesIds,
     addToBasketStarted,
     addToBasketEnded,
     addSamplesToBasketSucceeded,
-    timeSeriesSelected,
     timeSeriesFetchStarted,
     timeSeriesFetchEnded,
     timeSeriesFetchSucceeded,
-    getBasketId,
     fetchBasketExpressionsIdsSucceeded,
-    comparisonTimeSeriesChanged,
-    getComparisonTimeSeriesSamplesIds,
+    getBasketInfo,
+    getBasketExpressionsIds,
 } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
-import { SamplesGenesExpressionsById } from 'redux/models/internal';
-import {
-    samplesExpressionsFetchSucceeded,
-    samplesExpressionsFetchStarted,
-    samplesExpressionsFetchEnded,
-    samplesExpressionsComparisonFetchSucceeded,
-    getSamplesExpressionsSamplesIds,
-} from 'redux/stores/samplesExpressions';
+import { BasketInfo } from 'redux/models/internal';
 import { handleError } from 'utils/errorUtils';
-import {
-    differentialExpressionsDataFetchEnded,
-    differentialExpressionsDataFetchStarted,
-    differentialExpressionSelected,
-    differentialExpressionsFetchEnded,
-    differentialExpressionsFetchStarted,
-    differentialExpressionsFetchSucceeded,
-    differentialExpressionStorageFetchSucceeded,
-    getDifferentialExpression,
-} from 'redux/stores/differentialExpressions';
-import {
-    addToBasket,
-    getDataBySamplesIds,
-    getDifferentialExpressions,
-    getTimeSeriesRelations,
-    getStorage,
-    getBasketExpressions,
-} from 'api';
-import {
-    fetchTimeSeriesSamplesExpressions,
-    fetchDifferentialExpressionsData,
-    fetchTimeSeries,
-    loginSucceeded,
-    fetchSelectedDifferentialExpressionGenes,
-} from './epicsActions';
+import { addToBasket, getTimeSeriesRelations, getBasketExpressions } from 'api';
+import { fetchTimeSeries, loginSucceeded } from './epicsActions';
+import { mapStateSlice } from './rxjsCustomFilters';
 
 const fetchTimeSeriesEpic: Epic<Action, Action, RootState> = (action$) => {
     return action$.pipe(
@@ -68,21 +36,14 @@ const fetchTimeSeriesEpic: Epic<Action, Action, RootState> = (action$) => {
 };
 
 const timeSeriesSelectedEpic: Epic<Action, Action, RootState> = (action$, state$) => {
-    return action$.pipe(
-        ofType<Action, ReturnType<typeof timeSeriesSelected>>(timeSeriesSelected.toString()),
-        withLatestFrom(state$),
-        mergeMap(([, state]) => {
-            // Add samples to (visualization) basket so that genes can be searched via autocomplete (/kb/feature/autocomplete api).
-            const samplesIds = getSelectedTimeSeriesSamplesIds(state.timeSeries);
-
-            return from(addToBasket(samplesIds)).pipe(
-                mergeMap((response) => {
-                    return merge(
-                        of(addSamplesToBasketSucceeded(response)),
-                        of(fetchTimeSeriesSamplesExpressions()),
-                        of(fetchDifferentialExpressionsData()),
-                    );
-                }),
+    return state$.pipe(
+        mapStateSlice(
+            (state) => getSelectedTimeSeriesSamplesIds(state.timeSeries),
+            (timeSeriesSamplesIds) => timeSeriesSamplesIds.length > 0,
+        ),
+        mergeMap((timeSeriesSamplesIds) => {
+            return from(addToBasket(timeSeriesSamplesIds)).pipe(
+                map((response) => addSamplesToBasketSucceeded(response)),
                 catchError((error) =>
                     of(
                         handleError(
@@ -99,13 +60,13 @@ const timeSeriesSelectedEpic: Epic<Action, Action, RootState> = (action$, state$
 };
 
 const fetchBasketExpressionsEpic: Epic<Action, Action, RootState> = (action$, state$) => {
-    return action$.pipe(
-        ofType<Action, ReturnType<typeof addSamplesToBasketSucceeded>>(
-            addSamplesToBasketSucceeded.toString(),
+    return state$.pipe(
+        mapStateSlice<BasketInfo>(
+            (state) => getBasketInfo(state.timeSeries),
+            () => getBasketExpressionsIds(state$.value.timeSeries).length === 0,
         ),
-        withLatestFrom(state$),
-        mergeMap(([action]) => {
-            return from(getBasketExpressions(action.payload.id)).pipe(
+        mergeMap((basketInfo) => {
+            return from(getBasketExpressions(basketInfo.id)).pipe(
                 map((basketExpressions) => {
                     return fetchBasketExpressionsIdsSucceeded(
                         basketExpressions.map((basketExpression) => basketExpression.id),
@@ -117,198 +78,8 @@ const fetchBasketExpressionsEpic: Epic<Action, Action, RootState> = (action$, st
     );
 };
 
-/**
- * Retrieve sample storage.
- * @param sampleData - Data to retrieve storage for (storage is defined in sampleData.output.exp_json).
- */
-const getSampleStorage = async (
-    sampleData: Data,
-): Promise<{ sampleId: number; storage: Storage }> => {
-    const storage = await getStorage(sampleData.output.exp_json);
-
-    return {
-        sampleId: sampleData.entity != null ? sampleData.entity.id : 0,
-        storage,
-    };
-};
-
-const fetchTimeSeriesSamplesExpressionsEpic: Epic<Action, Action, RootState> = (
-    action$,
-    state$,
-) => {
-    return action$.pipe(
-        ofType(fetchTimeSeriesSamplesExpressions.toString()),
-        withLatestFrom(state$),
-        mergeMap(([, state]) => {
-            const timeSeriesSamplesExpressions = {} as SamplesGenesExpressionsById;
-            const timeSeriesSamplesIds = getSelectedTimeSeriesSamplesIds(state.timeSeries);
-
-            return from(getDataBySamplesIds(timeSeriesSamplesIds)).pipe(
-                mergeMap((sampleData) => {
-                    // Once samples data is retrieved use it's output.exp_json to retrieve genes expressions.
-                    return forkJoin(sampleData.map(getSampleStorage)).pipe(
-                        map((sampleStorages) => {
-                            sampleStorages.forEach(({ sampleId, storage }) => {
-                                timeSeriesSamplesExpressions[sampleId] = storage.json.genes;
-                            });
-
-                            return samplesExpressionsFetchSucceeded(timeSeriesSamplesExpressions);
-                        }),
-                        catchError((error) =>
-                            of(handleError(`Error retrieving samples storage data.`, error)),
-                        ),
-                    );
-                }),
-                catchError((error) =>
-                    of(handleError(`Error retrieving samples storage data.`, error)),
-                ),
-                startWith(samplesExpressionsFetchStarted()),
-                endWith(samplesExpressionsFetchEnded()),
-            );
-        }),
-    );
-};
-
-const fetchComparisonTimeSeriesSamplesExpressionsEpic: Epic<Action, Action, RootState> = (
-    action$,
-    state$,
-) => {
-    return action$.pipe(
-        ofType(comparisonTimeSeriesChanged.toString()),
-        withLatestFrom(state$),
-        mergeMap(([, state]) => {
-            const comparisonTimeSeriesSamplesExpressions = {} as SamplesGenesExpressionsById;
-            const samplesExpressionsInStore = getSamplesExpressionsSamplesIds(
-                state.samplesExpressions,
-            );
-            let comparisonTimeSeriesSamplesIds = getComparisonTimeSeriesSamplesIds(
-                state.timeSeries,
-            );
-
-            // Fetch only samples expressions that aren't in redux store yet.
-            comparisonTimeSeriesSamplesIds = comparisonTimeSeriesSamplesIds.filter(
-                (sampleId) => !samplesExpressionsInStore.includes(sampleId),
-            );
-
-            // If all samples expressions in question are already in store, there's no need to fetch them again!
-            if (comparisonTimeSeriesSamplesIds.length === 0) {
-                return EMPTY;
-            }
-
-            return from(getDataBySamplesIds(comparisonTimeSeriesSamplesIds)).pipe(
-                mergeMap((sampleData) => {
-                    // Once samples data is retrieved use it's output.exp_json to retrieve genes expressions.
-                    return forkJoin(sampleData.map(getSampleStorage)).pipe(
-                        map((sampleStorages) => {
-                            sampleStorages.forEach(({ sampleId, storage }) => {
-                                comparisonTimeSeriesSamplesExpressions[sampleId] =
-                                    storage.json.genes;
-                            });
-
-                            return samplesExpressionsComparisonFetchSucceeded(
-                                comparisonTimeSeriesSamplesExpressions,
-                            );
-                        }),
-                        catchError((error) =>
-                            of(
-                                handleError(
-                                    `Error retrieving comparison time series samples storage data.`,
-                                    error,
-                                ),
-                            ),
-                        ),
-                    );
-                }),
-                catchError((error) =>
-                    of(
-                        handleError(
-                            `Error retrieving comparison time series samples storage data.`,
-                            error,
-                        ),
-                    ),
-                ),
-                startWith(samplesExpressionsFetchStarted()),
-                endWith(samplesExpressionsFetchEnded()),
-            );
-        }),
-    );
-};
-
-const fetchDifferentialExpressionsEpic: Epic<Action, Action, RootState> = (action$, state$) => {
-    return action$.pipe(
-        ofType(fetchDifferentialExpressionsData),
-        withLatestFrom(state$),
-        mergeMap(([, state]) => {
-            const basketId = getBasketId(state.timeSeries);
-
-            if (basketId == null) {
-                return EMPTY;
-            }
-
-            return from(getDifferentialExpressions(basketId)).pipe(
-                map((differentialExpressions) => {
-                    return differentialExpressionsFetchSucceeded(differentialExpressions);
-                }),
-                catchError((error) =>
-                    of(handleError(`Error retrieving differential expressions.`, error)),
-                ),
-                startWith(differentialExpressionsFetchStarted()),
-                endWith(differentialExpressionsFetchEnded()),
-            );
-        }),
-    );
-};
-
-const fetchDifferentialExpressionsDataEpic: Epic<Action, Action, RootState> = (action$, state$) => {
-    return action$.pipe(
-        ofType<Action, ReturnType<typeof differentialExpressionSelected>>(
-            differentialExpressionSelected.toString(),
-        ),
-        withLatestFrom(state$),
-        mergeMap(([action, state]) => {
-            const selectedDifferentialExpression = getDifferentialExpression(
-                action.payload,
-                state.differentialExpressions,
-            );
-
-            // If we already fetched differentialExpression storage json, there's no need to fetch it again!
-            if (
-                selectedDifferentialExpression == null ||
-                selectedDifferentialExpression.json != null
-            ) {
-                return EMPTY;
-            }
-
-            return from(getStorage(selectedDifferentialExpression.output.de_json)).pipe(
-                mergeMap((storage) => {
-                    // Save differentialExpression module response json in redux store. Data will be extracted and displayed in
-                    // differentialExpressions visualization component.
-                    return merge(
-                        of(differentialExpressionStorageFetchSucceeded(storage)),
-                        of(fetchSelectedDifferentialExpressionGenes()),
-                    );
-                }),
-                catchError((error) =>
-                    of(
-                        handleError(
-                            `Error retrieving differential expressions storage data.`,
-                            error,
-                        ),
-                    ),
-                ),
-                startWith(differentialExpressionsDataFetchStarted()),
-                endWith(differentialExpressionsDataFetchEnded()),
-            );
-        }),
-    );
-};
-
 export default combineEpics(
     timeSeriesSelectedEpic,
     fetchTimeSeriesEpic,
-    fetchTimeSeriesSamplesExpressionsEpic,
-    fetchComparisonTimeSeriesSamplesExpressionsEpic,
-    fetchDifferentialExpressionsEpic,
-    fetchDifferentialExpressionsDataEpic,
     fetchBasketExpressionsEpic,
 );

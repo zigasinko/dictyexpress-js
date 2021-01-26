@@ -1,7 +1,9 @@
 import { createSlice, PayloadAction, combineReducers } from '@reduxjs/toolkit';
 import { DistanceMeasure } from 'components/genexpress/common/constants';
 import { GeneSimilarity } from 'redux/models/internal';
+import { clearStateOnActions } from './common';
 import createIsFetchingSlice from './fetch';
+import { timeSeriesSelected } from './timeSeries';
 
 // State slices.
 const queryGeneIdInitialState = null;
@@ -17,6 +19,9 @@ const queryGeneIdSlice = createSlice({
         set: (_state, action: PayloadAction<string | null>): string | null => {
             return action.payload;
         },
+    },
+    extraReducers: (builder) => {
+        clearStateOnActions(builder, [timeSeriesSelected], queryGeneIdInitialState);
     },
 });
 
@@ -44,18 +49,14 @@ const genesSimilaritiesSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        // If query gene is changed, clear all similar genes.
-        builder.addCase(queryGeneIdSlice.actions.selected, (): GeneSimilarity[] => {
-            return genesSimilaritiesInitialState;
-        });
-        builder.addCase(queryGeneIdSlice.actions.set, (): GeneSimilarity[] => {
-            return genesSimilaritiesInitialState;
-        });
-        builder.addCase(
-            distanceMeasureSlice.actions.distanceMeasureChanged,
-            (): GeneSimilarity[] => {
-                return genesSimilaritiesInitialState;
-            },
+        clearStateOnActions(
+            builder,
+            [
+                queryGeneIdSlice.actions.selected,
+                queryGeneIdSlice.actions.set,
+                distanceMeasureSlice.actions.distanceMeasureChanged,
+            ],
+            genesSimilaritiesInitialState,
         );
     },
 });

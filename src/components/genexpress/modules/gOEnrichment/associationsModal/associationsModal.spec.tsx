@@ -1,6 +1,10 @@
 import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
-import { customRender } from 'tests/test-utils';
+import {
+    customRender,
+    handleCommonRequests,
+    resolveStringifiedObjectPromise,
+} from 'tests/test-utils';
 import {
     testState,
     mockStore,
@@ -25,6 +29,20 @@ describe('associationsModal', () => {
     const mockedOnClose = jest.fn();
     let gOEnrichmentRow: GOEnrichmentRow;
 
+    beforeAll(() => {
+        fetchMock.resetMocks();
+
+        fetchMock.mockResponse((req) => {
+            if (req.url.includes('list_by_ids')) {
+                return resolveStringifiedObjectPromise({
+                    results: genes,
+                });
+            }
+
+            return handleCommonRequests(req) ?? Promise.reject(new Error(`bad url: ${req.url}`));
+        });
+    });
+
     describe('associated genes not in store', () => {
         beforeEach(() => {
             initialState = testState();
@@ -38,8 +56,6 @@ describe('associationsModal', () => {
             );
 
             [gOEnrichmentRow] = initialState.gOEnrichment.json.tree.BP;
-
-            fetchMock.mockResponse(JSON.stringify({ results: genes }));
 
             customRender(
                 <GOEnrichmentAssociationsModal
@@ -60,7 +76,6 @@ describe('associationsModal', () => {
         });
 
         it('should call onClose when user clicks close button', () => {
-            // Simulate click on first gene set.
             fireEvent.click(screen.getByText('Close'));
 
             expect(mockedOnClose.mock.calls.length).toBe(1);
@@ -86,8 +101,6 @@ describe('associationsModal', () => {
 
             mockedStore = mockStore(initialState);
             mockedStore.clearActions();
-
-            fetchMock.mockResponse(JSON.stringify({ results: genes }));
 
             customRender(
                 <GOEnrichmentAssociationsModal

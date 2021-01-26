@@ -25,6 +25,9 @@ const selectedIdSlice = createSlice({
         selected: (_state, action: PayloadAction<number>): number => {
             return action.payload;
         },
+        set: (_state, action: PayloadAction<number>): number => {
+            return action.payload;
+        },
     },
 });
 
@@ -35,9 +38,14 @@ const comparisonIdsSlice = createSlice({
     reducers: {
         changed: (_state, action: PayloadAction<number[]>): number[] => action.payload,
     },
+    extraReducers: (builder) => {
+        builder.addCase(selectedIdSlice.actions.selected, (): number[] => {
+            return comparisonIdsIdInitialState;
+        });
+    },
 });
 
-const basketInfoInitialState = {} as BasketInfo | null;
+const basketInfoInitialState = null as BasketInfo | null;
 const basketInfoSlice = createSlice({
     name: 'timeSeries',
     initialState: basketInfoInitialState,
@@ -91,7 +99,7 @@ const timeSeriesReducer = combineReducers({
 });
 
 // Export actions.
-export const { selected: timeSeriesSelected } = selectedIdSlice.actions;
+export const { selected: timeSeriesSelected, set: setTimeSeriesSelected } = selectedIdSlice.actions;
 export const { changed: comparisonTimeSeriesChanged } = comparisonIdsSlice.actions;
 export const { fetchSucceeded: timeSeriesFetchSucceeded } = timeSeriesByIdSlice.actions;
 export const { addSamplesToBasketSucceeded } = basketInfoSlice.actions;
@@ -110,7 +118,9 @@ export type TimeSeriesState = ReturnType<typeof timeSeriesReducer>;
 export default timeSeriesReducer;
 
 // Selectors (expose the store to containers).
-const getTimeSeriesById = (state: TimeSeriesState): RelationsById => state.byId;
+const getTimeSeriesById = (state: TimeSeriesState): RelationsById => {
+    return state.byId; //
+};
 const getSelectedTimeSeriesId = (state: TimeSeriesState): number | null => state.selectedId;
 const getComparisonTimeSeriesIds = (state: TimeSeriesState): number[] => state.comparisonIds ?? [];
 
@@ -169,5 +179,13 @@ export const getComparisonTimeSeriesSamplesIds = createSelector(
         return comparisonTimeSeries.flatMap((timeSeries) =>
             timeSeries.partitions.map((partition) => partition.entity),
         );
+    },
+);
+
+export const getAllTimeSeriesSamplesIds = createSelector(
+    getSelectedTimeSeriesSamplesIds,
+    getComparisonTimeSeriesSamplesIds,
+    (selectedTimeSeriesSamplesIds, comparisonTimeSeriesSamplesIds) => {
+        return [...selectedTimeSeriesSamplesIds, ...comparisonTimeSeriesSamplesIds];
     },
 );

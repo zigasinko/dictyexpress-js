@@ -37,7 +37,6 @@ import {
     DifferentialExpressionsById,
     GOEnrichmentRow,
     EnhancedGOEnrichmentJson,
-    MergedClusteringData,
     GenesExpressionById,
     BasketExpression,
     GeneSimilarity,
@@ -669,11 +668,7 @@ export const testState = (): RootState => {
             selectedId: 0,
         },
         gOEnrichment: {
-            json: {
-                gene_associations: {},
-                total_genes: 0,
-                tree: {},
-            },
+            json: null,
             gaf: generateGaf(1).humanGaf,
             source: '',
             species: '',
@@ -684,7 +679,7 @@ export const testState = (): RootState => {
             distanceMeasure: DistanceMeasure.pearson,
             isFetchingClusteringData: false,
             linkageFunction: ClusteringLinkageFunction.average,
-            mergedData: {} as MergedClusteringData,
+            mergedData: null,
         },
         notifications: { notifications: [] as SnackbarNotifications },
     };

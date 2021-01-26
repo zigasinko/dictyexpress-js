@@ -6,6 +6,7 @@ import {
 } from 'components/genexpress/common/constants';
 import { Layout, Layouts } from 'react-grid-layout';
 import { BreakpointsCols } from 'redux/models/internal';
+import { logError } from 'utils/errorUtils';
 import { readFromLocalStorage } from 'utils/localStorageUtils';
 
 export const defaultBreakpointCols: BreakpointsCols = {
@@ -124,7 +125,12 @@ export const layoutsInitialState: Layouts = {
     ),
 };
 
-const savedLayouts = readFromLocalStorage(LocalStorageKey.layouts);
+let savedLayouts;
+try {
+    savedLayouts = readFromLocalStorage(LocalStorageKey.layouts);
+} catch (error) {
+    logError(error);
+}
 
 const layoutsSlice = createSlice({
     name: 'layouts',

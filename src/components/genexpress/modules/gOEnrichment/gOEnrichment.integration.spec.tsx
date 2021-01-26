@@ -157,6 +157,7 @@ describe('goEnrichment integration', () => {
             it('should show different enrichment terms after user changes p-value', async () => {
                 // Click on dropdown. MouseDown event has to be used, because material-ui Select component
                 // listens to mouseDown event to expand options menu.
+                await waitFor(() => expect(screen.getByLabelText('p-value')).toBeEnabled());
                 fireEvent.mouseDown(screen.getByLabelText('p-value'));
                 fireEvent.click(await screen.findByText('0.001'));
 

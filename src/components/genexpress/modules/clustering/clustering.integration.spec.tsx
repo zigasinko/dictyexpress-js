@@ -22,7 +22,6 @@ import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 import { RootState } from 'redux/rootReducer';
 import { DONE_DATA_STATUS, WAITING_DATA_STATUS } from '@genialis/resolwe/dist/api/types/rest';
-import { MergedClusteringData } from 'redux/models/internal';
 import { mergeClusteringData } from 'redux/epics/clusteringEpics';
 import { generateRandomString } from 'utils/stringUtils';
 import { Server } from 'mock-socket';
@@ -166,7 +165,7 @@ describe('clustering integration', () => {
         describe('clustering data not in store, genes not selected', () => {
             beforeEach(() => {
                 initialState.timeSeries.selectedId = null;
-                initialState.clustering.mergedData = {} as MergedClusteringData;
+                initialState.clustering.mergedData = null;
                 initialState.genes.byId = genesById;
                 initialState.genes.selectedGenesIds = [];
 

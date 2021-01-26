@@ -1,6 +1,11 @@
 import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
-import { customRender, validateExportFile } from 'tests/test-utils';
+import {
+    customRender,
+    handleCommonRequests,
+    resolveStringifiedObjectPromise,
+    validateExportFile,
+} from 'tests/test-utils';
 import {
     testState,
     mockStore,
@@ -24,15 +29,13 @@ describe('gOEnrichment', () => {
     let initialState: RootState;
 
     describe('gOEnrichmentJson and genes empty', () => {
-        let unmount: () => boolean;
-
         beforeEach(() => {
             initialState = testState();
-            initialState.gOEnrichment.json = {} as EnhancedGOEnrichmentJson;
+            initialState.gOEnrichment.json = null;
 
-            ({ unmount } = customRender(<GOEnrichment />, {
+            customRender(<GOEnrichment />, {
                 initialState,
-            }));
+            });
         });
 
         it('should have aspect disabled and p-value disabled', () => {
@@ -48,50 +51,45 @@ describe('gOEnrichment', () => {
             const files = await reportBuilder.getRegisteredComponentsExportFiles();
             expect(files).toHaveLength(0);
         });
-
-        describe('gene selected', () => {
-            beforeEach(() => {
-                initialState.genes.byId = genesById;
-                initialState.genes.selectedGenesIds = [genes[0].feature_id];
-
-                unmount();
-                customRender(<GOEnrichment />, {
-                    initialState,
-                });
-            });
-
-            it('should enable p-value select if gene is selected', () => {
-                screen.getByText('Enriched terms not found.');
-            });
-        });
     });
 
     describe('gOEnrichmentJson is in store', () => {
         let mockedStore: MockStoreEnhanced<RootState, AppDispatch>;
         let container: HTMLElement;
+        let gOEnrichmentJson: EnhancedGOEnrichmentJson;
+
+        beforeAll(() => {
+            fetchMock.resetMocks();
+
+            fetchMock.mockResponse((req) => {
+                if (req.url.includes('list_by_ids')) {
+                    return resolveStringifiedObjectPromise({
+                        results: genes,
+                    });
+                }
+
+                return (
+                    handleCommonRequests(req) ?? Promise.reject(new Error(`bad url: ${req.url}`))
+                );
+            });
+        });
 
         beforeEach(async () => {
             initialState = testState();
-            initialState.gOEnrichment.json = generateGeneOntologyStorageJson(
+            gOEnrichmentJson = generateGeneOntologyStorageJson(
                 genes.map((gene) => gene.feature_id),
             );
 
-            initialState.gOEnrichment.json.tree.MF = [];
-            initialState.gOEnrichment.json.tree.BB = [
-                generateGOEnrichmentRow(10),
-                generateGOEnrichmentRow(11),
-            ];
-            appendMissingAttributesToJson(
-                initialState.gOEnrichment.json,
-                genes[0].source,
-                genes[0].species,
-            );
+            gOEnrichmentJson.tree.MF = [];
+            gOEnrichmentJson.tree.BB = [generateGOEnrichmentRow(10), generateGOEnrichmentRow(11)];
+            appendMissingAttributesToJson(gOEnrichmentJson, genes[0].source, genes[0].species);
+
+            initialState.gOEnrichment.json = gOEnrichmentJson;
 
             initialState.genes.byId = genesById;
             initialState.genes.selectedGenesIds = [genes[0].feature_id];
 
             mockedStore = mockStore(initialState);
-            fetchMock.mockResponse(JSON.stringify({ results: genes }));
 
             ({ container } = customRender(<GOEnrichment />, {
                 mockedStore,
@@ -116,7 +114,7 @@ describe('gOEnrichment', () => {
         });
 
         it('should display matched in a custom cell', () => {
-            const rowToCheck = initialState.gOEnrichment.json.tree.BB[0];
+            const rowToCheck = gOEnrichmentJson.tree.BB[0];
             screen.getAllByText(`${rowToCheck.matched}/${rowToCheck.total}`);
         });
 
@@ -164,9 +162,9 @@ describe('gOEnrichment', () => {
                 );
                 expect(exportedFile).toBeDefined();
 
-                if (initialState.gOEnrichment.json.tree[aspectOption.value][0] != null) {
+                if (gOEnrichmentJson.tree[aspectOption.value][0] != null) {
                     expect(exportedFile?.content).toContain(
-                        initialState.gOEnrichment.json.tree[aspectOption.value][0].term_name,
+                        gOEnrichmentJson.tree[aspectOption.value][0].term_name,
                     );
                 }
             });
@@ -178,7 +176,7 @@ describe('gOEnrichment', () => {
                 (exportFile) => {
                     expect(exportFile).toBeDefined();
                     expect(exportFile?.content).toContain(
-                        _.keys(initialState.gOEnrichment.json.gene_associations)[0],
+                        _.keys(gOEnrichmentJson.gene_associations)[0],
                     );
                 },
             );

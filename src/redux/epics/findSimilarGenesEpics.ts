@@ -8,51 +8,78 @@ import {
     getGenesSimilaritiesDistanceMeasure,
     getGenesSimilarities,
     getGenesSimilaritiesQueryGeneId,
-    genesSimilaritiesDistanceMeasureChanged,
     genesSimilaritiesFetchEnded,
     genesSimilaritiesFetchStarted,
-    genesSimilaritiesQueryGeneSelected,
     genesSimilaritiesFetchSucceeded,
     genesSimilaritiesQueryGeneSet,
 } from 'redux/stores/genesSimilarities';
 import { combineEpics, Epic, ofType } from 'redux-observable';
-import { mergeMap, withLatestFrom } from 'rxjs/operators';
-import { EMPTY, of } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { Action } from '@reduxjs/toolkit';
+import { combineLatest, of } from 'rxjs';
 import {
     fetchGenesSimilarities,
     fetchGenesSimilaritiesData,
     fetchGenesSimilaritiesDataSucceeded,
-    selectedGenesChanged,
 } from './epicsActions';
-import getOrCreateProcessDataEpics, { ProcessesInfo } from './getProcessDataEpicsFactory';
+import getProcessDataEpicsFactory, {
+    ProcessDataEpicsFactoryProps,
+    ProcessesInfo,
+} from './getProcessDataEpicsFactory';
+import { mapStateSlice } from './rxjsCustomFilters';
 
-const getGOEnrichmentProcessDataEpics = getOrCreateProcessDataEpics<FindSimilarGenesData>({
+const processParametersObservable: ProcessDataEpicsFactoryProps<
+    FindSimilarGenesData
+>['processParametersObservable'] = (action$, state$) => {
+    return combineLatest([
+        action$.pipe(ofType(fetchGenesSimilarities)),
+        state$.pipe(
+            mapStateSlice((state) => {
+                return getBasketExpressionsIds(state.timeSeries);
+            }),
+        ),
+        state$.pipe(
+            mapStateSlice((state) => {
+                return getGenesSimilaritiesQueryGeneId(state.genesSimilarities) ?? '';
+            }),
+        ),
+        state$.pipe(
+            mapStateSlice((state) => {
+                return getGenesSimilaritiesDistanceMeasure(state.genesSimilarities);
+            }),
+        ),
+    ]).pipe(
+        filter(() => getGenesSimilarities(state$.value.genesSimilarities).length === 0),
+        switchMap(
+            // Unused _fetchGenesSimilarities var is necessary to keep rxjs from piping before
+            // fetchGenesSimilarities action is emitted (after find similar genes modal is opened).
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            ([_fetchGenesSimilarities, expressionsIds, queryGeneId, distanceMeasure]) => {
+                // The {Pearson/Spearman} correlation between genes must be computed on at least
+                // two genes.
+                if (queryGeneId === '') {
+                    return of({});
+                }
+
+                // If basket expressions aren't in store yet, hierarchical clustering can't be
+                // computed.
+                if (expressionsIds.length === 0) {
+                    return of({});
+                }
+
+                return of({
+                    expressions: _.sortBy(expressionsIds),
+                    gene: queryGeneId,
+                    distance: distanceMeasure,
+                });
+            },
+        ),
+    );
+};
+
+const getFindSimilarGenesProcessDataEpics = getProcessDataEpicsFactory<FindSimilarGenesData>({
     processInfo: ProcessesInfo.FindSimilarGenes,
-    inputActions: [
-        fetchGenesSimilarities.toString(),
-        genesSimilaritiesQueryGeneSelected.toString(),
-        genesSimilaritiesDistanceMeasureChanged.toString(),
-    ],
-    getGetOrCreateInput: (state: RootState) => {
-        if (getGenesSimilarities(state.genesSimilarities).length > 0) {
-            return {};
-        }
-
-        const expressionsIds = getBasketExpressionsIds(state.timeSeries);
-        const queryGeneId = getGenesSimilaritiesQueryGeneId(state.genesSimilarities);
-        const distanceMeasure = getGenesSimilaritiesDistanceMeasure(state.genesSimilarities);
-
-        if (queryGeneId == null) {
-            return {};
-        }
-
-        return {
-            expressions: _.sortBy(expressionsIds),
-            gene: queryGeneId,
-            distance: distanceMeasure,
-        };
-    },
+    processParametersObservable,
     fetchDataActionCreator: fetchGenesSimilaritiesData,
     processStartedActionCreator: genesSimilaritiesFetchStarted,
     processEndedActionCreator: genesSimilaritiesFetchEnded,
@@ -65,20 +92,17 @@ const getGOEnrichmentProcessDataEpics = getOrCreateProcessDataEpics<FindSimilarG
 });
 
 const handleSelectedGenesChangedEpic: Epic<Action, Action, RootState> = (action$, state$) => {
-    return action$.pipe(
-        ofType(selectedGenesChanged),
-        withLatestFrom(state$),
-        mergeMap(([, state]) => {
-            const selectedGenesIds = getSelectedGenesIds(state.genes);
-            const queryGeneId = getGenesSimilaritiesQueryGeneId(state.genesSimilarities);
-
-            if (queryGeneId == null || !selectedGenesIds.includes(queryGeneId)) {
-                return of(genesSimilaritiesQueryGeneSet(selectedGenesIds[0] ?? null));
-            }
-
-            return EMPTY;
+    return state$.pipe(
+        mapStateSlice(
+            (state) => getSelectedGenesIds(state.genes),
+            (selectedGenesIds) => selectedGenesIds.length > 0,
+        ),
+        filter((selectedGenesIds) => {
+            const queryGeneId = getGenesSimilaritiesQueryGeneId(state$.value.genesSimilarities);
+            return queryGeneId == null || !selectedGenesIds.includes(queryGeneId);
         }),
+        map((selectedGenesIds) => genesSimilaritiesQueryGeneSet(selectedGenesIds[0] ?? null)),
     );
 };
 
-export default combineEpics(getGOEnrichmentProcessDataEpics, handleSelectedGenesChangedEpic);
+export default combineEpics(getFindSimilarGenesProcessDataEpics, handleSelectedGenesChangedEpic);
