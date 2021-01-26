@@ -3,6 +3,7 @@ import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import {
     customRender,
+    getFetchMockCallsWithUrl,
     handleCommonRequests,
     resolveStringifiedObjectPromise,
 } from 'tests/test-utils';
@@ -26,6 +27,7 @@ import { MockStoreEnhanced } from 'redux-mock-store';
 import { AppDispatch } from 'redux/appStore';
 import { fetchGenesSimilarities } from 'redux/epics/epicsActions';
 import { genesSelected } from 'redux/stores/genes';
+import { ProcessSlug } from 'components/genexpress/common/constants';
 import FindSimilarGenesModal, { distanceMeasureOptions } from './findSimilarGenesModal';
 
 const genesById = generateGenesById(4);
@@ -41,15 +43,22 @@ const storageId = 456;
 const validateSimilarGenesGrid = async (
     genesSimilaritiesToValidate: GeneSimilarity[],
 ): Promise<void> => {
+    if (genesSimilaritiesToValidate.length === 0) {
+        return;
+    }
+
+    // Custom cells take the longest to render, whole grid is considered loaded when custom
+    // cells are found.
+    await screen.findAllByAltText('Open in dictyBase.');
+    screen.getAllByAltText('Open in SACGB.');
+
     for (let i = 0; i < genesSimilaritiesToValidate.length; i += 1) {
         const geneToValidate = genesById[genesSimilaritiesToValidate[i].gene];
-        await screen.findByText(geneToValidate.description);
+        screen.getByText(geneToValidate.description);
         screen.getByRole('gridcell', {
             name: geneToValidate.name,
         });
         screen.getByText(formatNumber(genesSimilaritiesToValidate[i].distance, 'long'));
-        await screen.findAllByAltText('Open in dictyBase.');
-        await screen.findAllByAltText('Open in SACGB.');
     }
 };
 
@@ -149,7 +158,7 @@ describe('findSimilarGenesModal', () => {
                 expect(mockedOnClose.mock.calls.length).toBe(1);
             });
 
-            it('should show different hierarchical clustering after user changes distance measure', async () => {
+            it('should show different similarities data after user changes distance measure', async () => {
                 await validateSimilarGenesGrid(differentGenesSimilarities);
 
                 // Click on dropdown. MouseDown event has to be used, because material-ui Select component
@@ -160,15 +169,15 @@ describe('findSimilarGenesModal', () => {
                 await validateSimilarGenesGrid(genesSimilarities);
             });
 
-            it('should show different hierarchical clustering after user changes query gene', async () => {
-                await validateSimilarGenesGrid(differentGenesSimilarities);
+            it('should show different similarities data after user changes query gene', async () => {
+                await validateSimilarGenesGrid(differentGenesSimilarities.slice(0, 2));
 
                 // Click on dropdown. MouseDown event has to be used, because material-ui Select component
                 // listens to mouseDown event to expand options menu.
                 fireEvent.mouseDown(screen.getByLabelText('Gene'));
                 fireEvent.click(await screen.findByText(genes[1].name));
 
-                await validateSimilarGenesGrid(genesSimilarities);
+                await validateSimilarGenesGrid(genesSimilarities.slice(0, 2));
             });
         });
 
@@ -232,7 +241,10 @@ describe('findSimilarGenesModal', () => {
             fetchMock.resetMocks();
 
             fetchMock.mockResponse(async (req) => {
-                if (req.url.includes('get_or_create')) {
+                if (
+                    req.url.includes('get_or_create') &&
+                    (await req.json()).process.slug === ProcessSlug.findSimilar
+                ) {
                     return resolveStringifiedObjectPromise({
                         id: dataId,
                     });
@@ -253,6 +265,10 @@ describe('findSimilarGenesModal', () => {
                     });
                 }
 
+                if (req.url.includes('basket_expressions')) {
+                    return resolveStringifiedObjectPromise(basketExpressions);
+                }
+
                 if (req.url.includes('storage')) {
                     return resolveStringifiedObjectPromise({
                         json: { 'similar genes': genesSimilarities },
@@ -266,6 +282,8 @@ describe('findSimilarGenesModal', () => {
         });
 
         beforeEach(async () => {
+            fetchMock.mockClear();
+
             const mockServer = new Server(webSocketUrl + sessionId);
             mockServer.on('connection', (socket) => {
                 webSocketMock = socket;
@@ -274,20 +292,23 @@ describe('findSimilarGenesModal', () => {
             initialState.genes.byId = genesById;
             initialState.genes.selectedGenesIds = genes.map((gene) => gene.feature_id);
             initialState.genesSimilarities.data = [];
-            initialState.genesSimilarities.queryGeneId = genes[0].feature_id;
 
             customRender(<GeneExpressGrid />, {
                 initialState,
             });
 
             // Open Find similar genes modal.
-            fireEvent.click(await screen.findByText('Find similar genes'));
+            await waitFor(() => expect(screen.getByText('Find similar genes')).toBeEnabled());
+            fireEvent.click(screen.getByText('Find similar genes'));
         });
 
         it('should fetch genes similarities data via WebSocket', async () => {
-            // No other "React Testing Library" way to know that to determine that observer was
-            // initialized. Half second is enough time to ensure that.
-            setTimeout(() => {
+            // Wait for data object with 'waiting' status is returned.
+            await waitFor(() => {
+                expect(getFetchMockCallsWithUrl(`api/data?id=${dataId}`)).toHaveLength(1);
+            });
+
+            await waitFor(() => {
                 webSocketMock.send(
                     JSON.stringify({
                         item: {
@@ -304,7 +325,7 @@ describe('findSimilarGenesModal', () => {
                         primary_key: 'id',
                     }),
                 );
-            }, 500);
+            });
 
             await validateSimilarGenesGrid(genesSimilarities);
         });

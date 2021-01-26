@@ -223,7 +223,7 @@ A list of all gene associations for each term is available in a separate file - 
                 sort: getSort('matched'),
                 cellRendererFramework: GOEnrichmentMatchedCell,
                 cellRendererParams: {
-                    onMatchedGenesClickHandler,
+                    onMatchedGenesClick: onMatchedGenesClickHandler,
                 },
             },
             {

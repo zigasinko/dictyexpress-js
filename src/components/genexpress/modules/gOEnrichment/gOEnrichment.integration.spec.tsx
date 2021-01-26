@@ -4,6 +4,7 @@ import { screen, fireEvent, waitFor } from '@testing-library/react';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
 import {
     customRender,
+    getFetchMockCallsWithUrl,
     handleCommonRequests,
     resolveStringifiedObjectPromise,
 } from 'tests/test-utils';
@@ -25,6 +26,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Server, WebSocket } from 'mock-socket';
 import { sessionId, webSocketUrl } from 'api/base';
 import { appendMissingAttributesToJson } from 'utils/gOEnrichmentUtils';
+import { ProcessSlug } from 'components/genexpress/common/constants';
 import { aspectOptions } from './gOEnrichment';
 
 const genesById = generateGenesById(2);
@@ -186,8 +188,11 @@ describe('goEnrichment integration', () => {
         beforeAll(() => {
             fetchMock.resetMocks();
 
-            fetchMock.mockResponse((req) => {
-                if (req.url.includes('get_or_create')) {
+            fetchMock.mockResponse(async (req) => {
+                if (
+                    req.url.includes('get_or_create') &&
+                    (await req.json()).process.slug === ProcessSlug.goEnrichment
+                ) {
                     return resolveStringifiedObjectPromise({
                         id: dataObjectId,
                     });
@@ -251,9 +256,12 @@ describe('goEnrichment integration', () => {
 
             fireEvent.click(await screen.findByText(genes[0].name));
 
-            // No other "React Testing Library" way to know that to determine that observer was
-            // initialized. Half second is enough time to ensure that.
-            setTimeout(() => {
+            // Wait for data object with 'waiting' status is returned.
+            await waitFor(() => {
+                expect(getFetchMockCallsWithUrl(`api/data?id=${dataObjectId}`)).toHaveLength(1);
+            });
+
+            await waitFor(() => {
                 webSocketMock.send(
                     JSON.stringify({
                         item: {
@@ -270,7 +278,7 @@ describe('goEnrichment integration', () => {
                         primary_key: 'id',
                     }),
                 );
-            }, 500);
+            });
 
             // Mocked WebSocket needs almost a second to establish connection, that's why
             // increased timeout is used.

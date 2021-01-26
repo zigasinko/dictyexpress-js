@@ -4,6 +4,7 @@ import { screen, fireEvent, waitFor } from '@testing-library/react';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
 import {
     customRender,
+    getFetchMockCallsWithUrl,
     handleCommonRequests,
     resolveStringifiedObjectPromise,
 } from 'tests/test-utils';
@@ -451,7 +452,7 @@ describe('clustering integration', () => {
             fetchMock.mockResponse(async (req) => {
                 if (
                     req.url.includes('get_or_create') &&
-                    (await req.json()).process.slug === 'clustering-hierarchical-etc'
+                    (await req.json()).process.slug === ProcessSlug.clustering
                 ) {
                     return resolveStringifiedObjectPromise({
                         id: dataId,
@@ -524,9 +525,12 @@ describe('clustering integration', () => {
 
             fireEvent.click(await screen.findByText(genes[1].name));
 
-            // No other "React Testing Library" way to know that to determine that observer was
-            // initialized. Half second is enough time to ensure that.
-            setTimeout(() => {
+            // Wait for data object with 'waiting' status is returned.
+            await waitFor(() => {
+                expect(getFetchMockCallsWithUrl(`api/data?id=${dataId}`)).toHaveLength(1);
+            });
+
+            await waitFor(() => {
                 webSocketMock.send(
                     JSON.stringify({
                         item: {
@@ -545,7 +549,7 @@ describe('clustering integration', () => {
                         primary_key: 'id',
                     }),
                 );
-            }, 200);
+            });
 
             // Mocked WebSocket needs almost a second to establish connection, that's why
             // increased timeout is used.
@@ -567,7 +571,7 @@ describe('clustering integration', () => {
                     ).toBeInTheDocument();
                     screen.getByText(genes[3].name);
                 },
-                { timeout: 1500 },
+                { timeout: 3500 },
             );
         });
     });
