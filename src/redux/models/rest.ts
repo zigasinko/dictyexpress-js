@@ -10,6 +10,17 @@ export type BasketAddSamplesResponse = {
     conflict_sources: string[];
 };
 
+export type BackendAppState<T> = {
+    contributor: number;
+    uuid: string;
+    state: T;
+};
+
+export type BasketUpdateResponse = {
+    id: string;
+    modified: string;
+};
+
 export type ClusteringData = {
     output: {
         cluster: number;

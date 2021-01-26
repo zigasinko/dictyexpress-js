@@ -12,6 +12,8 @@ import useReport from 'components/genexpress/common/reportBuilder/useReport';
 import { Button, FormControlLabel, Switch } from '@material-ui/core';
 import { GeneExpression } from 'redux/models/internal';
 import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
+import useBookmarkableState from 'components/genexpress/common/useBookmarkableState';
+import { BookmarkStatePath } from 'components/genexpress/common/constants';
 import GenesExpressionsLineChart from './genesExpressionsLineChart';
 import {
     GenesExpressionsContainer,
@@ -48,10 +50,15 @@ const GenesExpressionsWidget = ({
 }: PropsFromRedux): ReactElement => {
     const [findSimilarGenesModalOpened, setManageModalOpened] = useState(false);
     const [selectTimeSeriesModalOpened, setSelectTimeSeriesModalOpened] = useState(false);
-    const [showLegend, setShowLegend] = useState(false);
-    const [colorByTimeSeries, setColorByTimeSeries] = useState(false);
+    const [showLegend, setShowLegend] = useBookmarkableState(
+        false,
+        BookmarkStatePath.genesExpressionsShowLegend,
+    );
+    const [colorByTimeSeries, setColorByTimeSeries] = useBookmarkableState(
+        false,
+        BookmarkStatePath.genesExpressionsColorByTimeSeries,
+    );
     const chartRef = useRef<ChartHandle>();
-
     const handleOnHighlight = (genesNames: string[]): void => {
         connectedGenesHighlighted(genesNames);
     };

@@ -170,3 +170,7 @@ export class ResponseError extends Error {
         this.response = response;
     }
 }
+
+export type BookmarkComponentsState = {
+    [componentId: string]: { [field: string]: unknown };
+};

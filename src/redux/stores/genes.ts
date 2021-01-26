@@ -75,6 +75,7 @@ const isFetchingDifferentialExpressionGenesSlice = createIsFetchingSlice(
 );
 const isFetchingAssociationsGenesSlice = createIsFetchingSlice('associationsGenes');
 const isFetchingSimilarGenesSlice = createIsFetchingSlice('similarGenes');
+const isFetchingBookmarkedGenesSlice = createIsFetchingSlice('bookmarkedGenes');
 
 const genesReducer = combineReducers({
     byId: genesByIdSlice.reducer,
@@ -83,6 +84,7 @@ const genesReducer = combineReducers({
     isFetchingDifferentialExpressionGenes: isFetchingDifferentialExpressionGenesSlice.reducer,
     isFetchingAssociationsGenes: isFetchingAssociationsGenesSlice.reducer,
     isFetchingSimilarGenes: isFetchingSimilarGenesSlice.reducer,
+    isFetchingBookmarkedGenes: isFetchingBookmarkedGenesSlice.reducer,
 });
 
 // Export actions.
@@ -113,6 +115,11 @@ export const {
 export const {
     started: similarGenesFetchStarted,
     ended: similarGenesFetchEnded,
+} = isFetchingSimilarGenesSlice.actions;
+
+export const {
+    started: bookmarkedGenesFetchStarted,
+    ended: bookmarkedGenesFetchEnded,
 } = isFetchingSimilarGenesSlice.actions;
 
 export type GenesState = ReturnType<typeof genesReducer>;

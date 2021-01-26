@@ -7,6 +7,7 @@ import {
     getFetchMockCallsWithUrl,
     handleCommonRequests,
     resolveStringifiedObjectPromise,
+    validateCreateStateRequest,
 } from 'tests/test-utils';
 import {
     testState,
@@ -14,6 +15,8 @@ import {
     generateGeneOntologyStorageJson,
     generateGaf,
     generateData,
+    generateBackendBookmark,
+    generateSearchUrl,
 } from 'tests/mock';
 import _ from 'lodash';
 import { RootState } from 'redux/rootReducer';
@@ -26,7 +29,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { Server, WebSocket } from 'mock-socket';
 import { sessionId, webSocketUrl } from 'api/base';
 import { appendMissingAttributesToJson } from 'utils/gOEnrichmentUtils';
-import { ProcessSlug } from 'components/genexpress/common/constants';
+import { ProcessSlug, BookmarkStatePath } from 'components/genexpress/common/constants';
+import { pValueThresholdsOptions } from 'redux/stores/gOEnrichment';
 import { aspectOptions } from './gOEnrichment';
 
 const genesById = generateGenesById(2);
@@ -38,6 +42,12 @@ const differentGOEnrichmentJson = generateGeneOntologyStorageJson(
 );
 appendMissingAttributesToJson(differentGOEnrichmentJson, genes[0].source, genes[0].species);
 const { humanGaf, mouseMGIGaf, mouseUCSCGaf } = generateGaf(1);
+
+const backendBookmark = generateBackendBookmark(undefined, [genes[0].feature_id]);
+// eslint-disable-next-line prefer-destructuring
+backendBookmark.state.gOEnrichment.pValueThreshold = pValueThresholdsOptions[2];
+backendBookmark.state.GOEnrichment = { selectedAspect: aspectOptions[1] };
+
 const dataObjectId = 123;
 
 describe('goEnrichment integration', () => {
@@ -88,6 +98,18 @@ describe('goEnrichment integration', () => {
                     });
                 }
 
+                if (req.url.includes('list_by_ids')) {
+                    return resolveStringifiedObjectPromise(
+                        backendBookmark.state.genes.selectedGenesIds.map(
+                            (geneId) => genesById[geneId],
+                        ),
+                    );
+                }
+
+                if (req.url.includes('app-state')) {
+                    return resolveStringifiedObjectPromise(backendBookmark);
+                }
+
                 return (
                     handleCommonRequests(req) ?? Promise.reject(new Error(`bad url: ${req.url}`))
                 );
@@ -95,13 +117,14 @@ describe('goEnrichment integration', () => {
         });
 
         describe('gaf not fetched yet', () => {
+            let unmount: () => boolean;
             beforeEach(() => {
                 initialState = testState();
                 initialState.gOEnrichment.gaf = {} as DataGafAnnotation;
 
-                customRender(<GeneExpressGrid />, {
+                ({ unmount } = customRender(<GeneExpressGrid />, {
                     initialState,
-                });
+                }));
             });
 
             it('should show enrichment terms in a data grid after genes are chosen', async () => {
@@ -118,8 +141,20 @@ describe('goEnrichment integration', () => {
                     { timeout: 1500 },
                 );
             });
-        });
 
+            it('should should enrichment terms if bookmark is loaded', async () => {
+                unmount();
+
+                customRender(<GeneExpressGrid />, {
+                    initialState,
+                    route: generateSearchUrl(),
+                });
+
+                await screen.findByText(aspectOptions[1].label);
+                await screen.findByText(pValueThresholdsOptions[2].toString());
+                await screen.findByText(gOEnrichmentJson.tree[aspectOptions[1].value][0].term_name);
+            });
+        });
         describe('gaf already in store', () => {
             beforeEach(() => {
                 initialState = testState();
@@ -143,6 +178,8 @@ describe('goEnrichment integration', () => {
 
         describe('gaf and data already in store', () => {
             beforeEach(() => {
+                fetchMock.mockClear();
+
                 initialState = testState();
                 initialState.gOEnrichment.gaf = humanGaf;
                 initialState.genes.byId = genesById;
@@ -159,7 +196,7 @@ describe('goEnrichment integration', () => {
                 // listens to mouseDown event to expand options menu.
                 await waitFor(() => expect(screen.getByLabelText('p-value')).toBeEnabled());
                 fireEvent.mouseDown(screen.getByLabelText('p-value'));
-                fireEvent.click(await screen.findByText('0.001'));
+                fireEvent.click(await screen.findByText(pValueThresholdsOptions[2].toString()));
 
                 await screen.findByText(gOEnrichmentJson.tree.BP[0].term_name);
             });
@@ -178,6 +215,19 @@ describe('goEnrichment integration', () => {
                         differentGOEnrichmentJson.tree[aspectOption.value][0].term_name,
                     );
                 }
+            });
+
+            it('should save selected time series, genes, highlighted genes and all component bookmarkable state to app-state api', async () => {
+                fireEvent.click(screen.getByLabelText('Bookmark'));
+
+                await validateCreateStateRequest((bookmarkState) => {
+                    expect(bookmarkState.gOEnrichment.pValueThreshold).toEqual(
+                        initialState.gOEnrichment.pValueThreshold,
+                    );
+                    expect(
+                        _.get(bookmarkState, BookmarkStatePath.gOEnrichmentSelectedAspect),
+                    ).toEqual(aspectOptions[0]);
+                });
             });
         });
     });

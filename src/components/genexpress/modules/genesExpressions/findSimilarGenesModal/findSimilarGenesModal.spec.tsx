@@ -73,7 +73,7 @@ describe('findSimilarGenesModal', () => {
         initialState = testState();
     });
 
-    describe.only('process data exists', () => {
+    describe('process data exists', () => {
         beforeAll(() => {
             fetchMock.resetMocks();
 

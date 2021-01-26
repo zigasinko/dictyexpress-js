@@ -118,18 +118,25 @@ const DictyGrid = <T extends {}>({
      * If any value is already selected, it needs to be manually set as selected or else grid won't show it.
      * @param dataToSelect - Data that will be marked as selected.
      */
-    const setSelectedData = (dataToSelect: T[] | undefined): void => {
-        if (_.isEmpty(dataToSelect) || dataToSelect == null) {
-            return;
-        }
-
-        const selectedDataIds = dataToSelect.map(getRowId);
-        gridApi.current?.forEachNode((node) => {
-            if (selectedDataIds?.includes(getRowId(node.data))) {
-                node.setSelected(true);
+    const setSelectedData = useCallback(
+        (dataToSelect: T[] | undefined): void => {
+            if (_.isEmpty(dataToSelect) || dataToSelect == null) {
+                return;
             }
-        });
-    };
+
+            const selectedDataIds = dataToSelect.map(getRowId);
+            gridApi.current?.forEachNode((node) => {
+                if (selectedDataIds?.includes(getRowId(node.data))) {
+                    node.setSelected(true);
+                }
+            });
+        },
+        [getRowId],
+    );
+
+    useEffect(() => {
+        setSelectedData(selectedData);
+    }, [selectedData, setSelectedData]);
 
     const handleOnGridReady = (params: GridReadyEvent): void => {
         gridApi.current = params.api;

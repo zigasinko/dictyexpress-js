@@ -56,7 +56,7 @@ describe('clusteringStore store', () => {
             expect(newState).toEqual(expectedState);
         });
 
-        it('should change distanceMeasure with linkageFunctionChanged action', () => {
+        it('should change linkageFunction with linkageFunctionChanged action', () => {
             const newState = clusteringReducer(
                 initialState,
                 clusteringLinkageFunctionChanged(ClusteringLinkageFunction.single),

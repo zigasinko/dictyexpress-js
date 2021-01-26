@@ -15,6 +15,8 @@ import _ from 'lodash';
 import { getIsFetchingGOEnrichmentJson } from 'redux/stores/gOEnrichment';
 import { appStarted } from 'redux/epics/epicsActions';
 import { getIsFetchingClusteringData } from 'redux/stores/clustering';
+import { useLocation } from 'react-router-dom';
+import { loadBookmarkedState } from 'managers/bookmarkStateManager';
 import TimeSeriesAndGeneSelector from './modules/timeSeriesAndGeneSelector/timeSeriesAndGeneSelector';
 import DictyModule from './common/dictyModule/dictyModule';
 import SnackbarNotifier from './snackbarNotifier/snackbarNotifier';
@@ -23,7 +25,7 @@ import DifferentialExpressions from './modules/differentialExpressions/different
 import GOEnrichment from './modules/gOEnrichment/gOEnrichment';
 import Clustering from './modules/clustering/clustering';
 import GenesExpressions from './modules/genesExpressions/genesExpressions';
-import { LayoutBreakpoint, ModulesKeys } from './common/constants';
+import { DictyUrlQueryParameter, LayoutBreakpoint, ModulesKeys } from './common/constants';
 import { ResponsiveGridLayoutContainer } from './geneExpressGrid.styles';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -66,12 +68,23 @@ const GeneExpressGrid = ({
     connectedLayoutsChanged,
 }: PropsFromRedux): ReactElement => {
     const dispatch = useDispatch();
+    const location = useLocation();
 
     // This page is the entry point for geneExpress. Handle app initialization here.
     useEffect(() => {
         // Indicate that the app has started -> initialize WebSocket connection and
         dispatch(appStarted());
     }, [dispatch]);
+
+    useEffect(() => {
+        const appStateId = new URLSearchParams(location.search).get(
+            DictyUrlQueryParameter.appState,
+        );
+        if (appStateId != null) {
+            loadBookmarkedState(appStateId, dispatch);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleOnLayoutChange = (
         _currentLayout: ReactGridLayout.Layout[],
