@@ -22,6 +22,7 @@ import { advancedJoin } from 'utils/arrayUtils';
 import { ontologyJsonToOntologyRows, ontologyJsonToTermsTable } from 'utils/gOEnrichmentUtils';
 import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
 import { AspectValue } from 'components/genexpress/common/constants';
+import useBookmarkableState from 'components/genexpress/common/useBookmarkableState';
 import {
     GOEnrichmentContainer,
     GOEnrichmentControl,
@@ -62,7 +63,10 @@ const GOEnrichment = ({
     connectedPValueThresholdChanged,
     isFetchingGOEnrichmentJson,
 }: PropsFromRedux): ReactElement => {
-    const [selectedAspect, setSelectedAspect] = useState(aspectOptions[0]);
+    const [selectedAspect, setSelectedAspect] = useBookmarkableState(
+        aspectOptions[0],
+        'GOEnrichment.selectedAspect',
+    );
     const [gOEnrichmentRows, setGOEnrichmentRows] = useState<GOEnrichmentRow[]>([]);
     const [allAspectsEmpty, setAllAspectsEmpty] = useState(true);
     const [treeView, setTreeView] = useState(true);

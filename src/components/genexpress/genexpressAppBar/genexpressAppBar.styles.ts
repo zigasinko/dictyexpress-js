@@ -46,3 +46,14 @@ export const ActionsContainer = styled.div`
 export const DownloadIcon = styled(GetApp)`
     font-size: 1.2rem;
 `;
+
+export const BookmarkLinkContainer = styled.div`
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    justify-content: space-between;
+`;
+
+export const BookmarkUrl = styled.a`
+    margin-right: 24px;
+`;

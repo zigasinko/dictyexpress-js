@@ -1,10 +1,12 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
+import DifferentialExpressions from 'components/genexpress/modules/differentialExpressions/differentialExpressions';
 import {
     customRender,
     handleCommonRequests,
     resolveStringifiedObjectPromise,
+    validateCreateStateRequest,
     validateExportFile,
 } from 'tests/test-utils';
 import {
@@ -12,6 +14,8 @@ import {
     generateDifferentialExpressionsById,
     generateDifferentialExpressionJson,
     generateGenesByIdPredefinedIds,
+    generateSearchUrl as generateBookmarkUrl,
+    generateBackendBookmark,
 } from 'tests/mock';
 import _ from 'lodash';
 import { RootState } from 'redux/rootReducer';
@@ -21,15 +25,37 @@ const differentialExpressionsById = generateDifferentialExpressionsById(2);
 const differentialExpressions = _.flatMap(differentialExpressionsById);
 const numberOfGenes = 5;
 const differentialExpressionJson = generateDifferentialExpressionJson(numberOfGenes);
+differentialExpressionsById[differentialExpressions[0].id].json = differentialExpressionJson;
+const genesById = generateGenesByIdPredefinedIds(differentialExpressionJson.gene_id);
+
+const backendBookmark = generateBackendBookmark(1, [
+    differentialExpressionJson.gene_id[0],
+    differentialExpressionJson.gene_id[1],
+]);
+backendBookmark.state.differentialExpressions.selectedId = differentialExpressions[0].id;
 
 describe('differentialExpressions integration', () => {
     let initialState: RootState;
     let container: HTMLElement;
 
+    it('should have differential expressions dropdown disabled without data', async () => {
+        customRender(<DifferentialExpressions />);
+
+        await waitFor(() => expect(screen.getByLabelText('Differential expression')).toBeEnabled());
+
+        await waitFor(() =>
+            expect(screen.getByLabelText('Differential expression')).toHaveClass('Mui-disabled'),
+        );
+    });
+
     beforeAll(() => {
         fetchMock.resetMocks();
 
         fetchMock.mockResponse((req) => {
+            if (req.url.includes('differential_expression/list')) {
+                return resolveStringifiedObjectPromise(differentialExpressions);
+            }
+
             if (req.url.includes('storage')) {
                 return resolveStringifiedObjectPromise({
                     id: differentialExpressions[0].output.de_json,
@@ -37,20 +63,30 @@ describe('differentialExpressions integration', () => {
                 });
             }
 
+            if (req.url.includes('app-state')) {
+                return resolveStringifiedObjectPromise(backendBookmark);
+            }
+
             return handleCommonRequests(req) ?? Promise.reject(new Error(`bad url: ${req.url}`));
         });
     });
 
+    beforeEach(() => {
+        initialState = testState();
+        initialState.genes.byId = genesById;
+
+        fetchMock.mockClear();
+    });
+
     describe('differentialExpression not selected', () => {
         beforeEach(async () => {
-            initialState = testState();
-            initialState.differentialExpressions.byId = differentialExpressionsById;
-
             ({ container } = customRender(<GeneExpressGrid />, {
                 initialState,
             }));
 
-            await screen.findByLabelText('Differential expression');
+            await waitFor(() =>
+                expect(screen.getByLabelText('Differential expression')).toBeEnabled(),
+            );
         });
 
         it('should show volcano plot after differential expression is chosen', async () => {
@@ -81,7 +117,6 @@ describe('differentialExpressions integration', () => {
             });
         });
 
-        // Export tests.
         it('should export empty Differential Expressions/selected_differential_expression.tsv file', async () => {
             await validateExportFile(
                 'Differential Expressions/selected_differential_expression.tsv',
@@ -96,21 +131,33 @@ describe('differentialExpressions integration', () => {
                 expect(exportFile).toBeUndefined();
             });
         });
+
+        it('should load selected differential expression, genes and highlighted genes from bookmark', async () => {
+            ({ container } = customRender(<GeneExpressGrid />, {
+                initialState,
+                route: generateBookmarkUrl(),
+            }));
+
+            await waitFor(() => {
+                expect(
+                    container.querySelectorAll(
+                        "g[role='graphics-symbol'].volcanoPointSelected > path",
+                    ),
+                ).toHaveLength(backendBookmark.state.genes.selectedGenesIds.length);
+                expect(
+                    container.querySelectorAll(
+                        "g[role='graphics-symbol'].volcanoPointHighlighted > path[fill='#00BCD4']",
+                    ),
+                ).toHaveLength(backendBookmark.state.genes.highlightedGenesIds.length);
+            });
+        });
     });
 
     describe('differentialExpression selected, one gene selected and one gene highlighted', () => {
         beforeEach(async () => {
-            initialState = testState();
-
             initialState.differentialExpressions.byId = differentialExpressionsById;
-            initialState.differentialExpressions.byId[
-                differentialExpressions[0].id
-            ].json = differentialExpressionJson;
-
             initialState.differentialExpressions.selectedId = differentialExpressions[0].id;
-            initialState.genes.byId = generateGenesByIdPredefinedIds(
-                differentialExpressionJson.gene_id,
-            );
+            initialState.genes.byId = genesById;
             initialState.genes.selectedGenesIds = [differentialExpressionJson.gene_id[0]];
             initialState.genes.highlightedGenesIds = [differentialExpressionJson.gene_id[1]];
 
@@ -140,7 +187,7 @@ describe('differentialExpressions integration', () => {
             });
         });
 
-        it('should display selected genes as bigger dots', async () => {
+        it('should display selected gene as a bigger dot', async () => {
             await waitFor(() => {
                 expect(
                     container.querySelectorAll(
@@ -150,7 +197,7 @@ describe('differentialExpressions integration', () => {
             });
         });
 
-        it('should display highlighted genes as bigger colored dots', async () => {
+        it('should display highlighted gene as a bigger colored dot', async () => {
             await waitFor(() => {
                 expect(
                     container.querySelectorAll(
@@ -160,7 +207,6 @@ describe('differentialExpressions integration', () => {
             });
         });
 
-        // Export tests.
         it('should export Differential Expressions/selected_differential_expression.tsv file', async () => {
             await validateExportFile(
                 'Differential Expressions/selected_differential_expression.tsv',
@@ -190,6 +236,16 @@ describe('differentialExpressions integration', () => {
                 expect(exportFile?.content).toContain('Differential expression');
                 expect(exportFile?.content).toContain(
                     getSelectedDifferentialExpression(initialState.differentialExpressions)?.name,
+                );
+            });
+        });
+
+        it('should save selected time series, genes, highlighted genes and all component bookmarkable state to app-state api', async () => {
+            fireEvent.click(screen.getByLabelText('Bookmark'));
+
+            await validateCreateStateRequest((bookmarkState) => {
+                expect(bookmarkState.differentialExpressions.selectedId).toEqual(
+                    initialState.differentialExpressions.selectedId,
                 );
             });
         });

@@ -15,14 +15,20 @@ import {
     Storage,
     GeneClustering,
 } from '@genialis/resolwe/dist/api/types/rest';
-import { BasketAddSamplesResponse } from 'redux/models/rest';
+import { BackendAppState, BasketAddSamplesResponse } from 'redux/models/rest';
+import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 import { createEpicMiddleware } from 'redux-observable';
 import { AppDispatch } from 'redux/appStore';
 import { generateRandomString, generateRandomStrings } from 'utils/stringUtils';
 import { generateRandomNumbers } from 'utils/numberUtils';
 import { flattenGoEnrichmentTree } from 'utils/gOEnrichmentUtils';
-import { DistanceMeasure, ClusteringLinkageFunction } from 'components/genexpress/common/constants';
+import {
+    DistanceMeasure,
+    ClusteringLinkageFunction,
+    DictyUrlQueryParameter,
+} from 'components/genexpress/common/constants';
+import { pValueThresholdsOptions } from 'redux/stores/gOEnrichment';
 import {
     RelationsById,
     GenesById,
@@ -40,8 +46,9 @@ import {
     GenesExpressionById,
     BasketExpression,
     GeneSimilarity,
+    BookmarkComponentsState,
 } from '../redux/models/internal';
-import { RootState } from '../redux/rootReducer';
+import { BookmarkReduxState, RootState } from '../redux/rootReducer';
 
 const getDateISOString = (): string => new Date().toISOString();
 
@@ -556,6 +563,32 @@ export const generateGeneSimilarity = (geneId: string): GeneSimilarity => ({
     distance: generateRandomNumbers(1, () => Math.random() * 10)[0],
 });
 
+export const generateBackendBookmark = (
+    selectedTimeSeriesId?: number,
+    selectedGenesIds: string[] = [],
+): BackendAppState<BookmarkReduxState & BookmarkComponentsState> => ({
+    contributor: 1,
+    uuid: uuidv4(),
+    state: {
+        timeSeries: { selectedId: selectedTimeSeriesId ?? null, comparisonIds: [] },
+        genes: {
+            selectedGenesIds,
+            highlightedGenesIds: [],
+            source: 'DICTYBASE',
+            species: 'Dictyostelium purpureum',
+        },
+        clustering: {
+            distanceMeasure: DistanceMeasure.pearson,
+            linkageFunction: ClusteringLinkageFunction.average,
+        },
+        differentialExpressions: { selectedId: null },
+        gOEnrichment: { pValueThreshold: 0.01 },
+        genesSimilarities: { queryGeneId: null, distanceMeasure: DistanceMeasure.pearson },
+    },
+});
+
+export const generateSearchUrl = (): string => `?${DictyUrlQueryParameter.appState}=${uuidv4()}`;
+
 /**
  * Helper function that generates mock instances of objects for use in unit tests.
  *
@@ -650,6 +683,7 @@ export const testState = (): RootState => {
             isFetchingDifferentialExpressionGenes: false,
             isFetchingAssociationsGenes: false,
             isFetchingSimilarGenes: false,
+            isFetchingBookmarkedGenes: false,
         },
         genesSimilarities: {
             data: [],
@@ -672,7 +706,7 @@ export const testState = (): RootState => {
             gaf: generateGaf(1).humanGaf,
             source: '',
             species: '',
-            pValueThreshold: 0.1,
+            pValueThreshold: pValueThresholdsOptions[0],
             isFetchingJson: false,
         },
         clustering: {

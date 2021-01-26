@@ -36,6 +36,18 @@ const rootReducer = combineReducers({
 
 export type RootState = ReturnType<typeof rootReducer>;
 
+export type BookmarkReduxState = {
+    timeSeries: Pick<RootState['timeSeries'], 'selectedId' | 'comparisonIds'>;
+    genes: Pick<RootState['genes'], 'selectedGenesIds' | 'highlightedGenesIds'> & {
+        source: string;
+        species: string;
+    };
+    gOEnrichment: Pick<RootState['gOEnrichment'], 'pValueThreshold'>;
+    clustering: Pick<RootState['clustering'], 'distanceMeasure' | 'linkageFunction'>;
+    genesSimilarities: Pick<RootState['genesSimilarities'], 'distanceMeasure' | 'queryGeneId'>;
+    differentialExpressions: Pick<RootState['differentialExpressions'], 'selectedId'>;
+};
+
 export default rootReducer;
 
 const getTimeSeriesGenesExpressions = (

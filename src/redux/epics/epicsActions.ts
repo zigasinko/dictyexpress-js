@@ -18,24 +18,21 @@ export const reconnectToServer = createAction('connectToServer/reconnect');
 export const disconnectFromServer = createAction('connectToServer/disconnect');
 export const connectionReady = createAction('connectToServer/connectionReady');
 
-export const fetchSelectedDifferentialExpressionGenes = createAction(
-    'genes/fetchSelectedDifferentialExpressionGenes',
+export type TFetchGenesActionPayload = {
+    geneIds: string[];
+    source?: string;
+    species?: string;
+};
+export const fetchDifferentialExpressionGenes = createAction<TFetchGenesActionPayload>(
+    'genes/fetchDifferentialExpressionGenes',
 );
-export const fetchAssociationsGenes = createAction<{
-    geneIds: string[];
-    source?: string;
-    species?: string;
-}>('genes/fetchAssociationsGenes');
-export const fetchSimilarGenes = createAction<{
-    geneIds: string[];
-    source?: string;
-    species?: string;
-}>('genes/fetchSimilarGenes');
-export const fetchDifferentialExpressionGenes = createAction<{
-    geneIds: string[];
-    source?: string;
-    species?: string;
-}>('genes/fetchDifferentialExpressionGenes');
+export const fetchBookmarkedGenes = createAction<TFetchGenesActionPayload>(
+    'genes/fetchBookmarkedGenes',
+);
+export const fetchAssociationsGenes = createAction<TFetchGenesActionPayload>(
+    'genes/fetchAssociationsGenes',
+);
+export const fetchSimilarGenes = createAction<TFetchGenesActionPayload>('genes/fetchSimilarGenes');
 export const selectedGenesChanged = createAction<string[]>('genes/selectedGenesChanged');
 
 export const getOrCreateGOEnrichment = createAction('gOEnrichment/getOrCreateGOEnrichment');

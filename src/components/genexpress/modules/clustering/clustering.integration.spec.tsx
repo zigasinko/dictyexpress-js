@@ -7,6 +7,8 @@ import {
     getFetchMockCallsWithUrl,
     handleCommonRequests,
     resolveStringifiedObjectPromise,
+    validateCreateStateRequest,
+    validateExportFile,
 } from 'tests/test-utils';
 import {
     testState,
@@ -17,7 +19,10 @@ import {
     generateRelationPartitions,
     generateGenesByIdPredefinedIds,
     generateBasketExpression,
+    generateSearchUrl,
+    generateBackendBookmark,
 } from 'tests/mock';
+import * as reportBuilder from 'components/genexpress/common/reportBuilder/reportBuilder';
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 import { RootState } from 'redux/rootReducer';
@@ -26,6 +31,9 @@ import { mergeClusteringData } from 'redux/epics/clusteringEpics';
 import { generateRandomString } from 'utils/stringUtils';
 import { Server } from 'mock-socket';
 import { sessionId, webSocketUrl } from 'api/base';
+import { Gene, MergedClusteringData } from 'redux/models/internal';
+import { objectsArrayToTsv } from 'utils/reportUtils';
+import { ProcessSlug } from 'components/genexpress/common/constants';
 import { distanceMeasureOptions, linkageFunctionOptions } from './clustering';
 import { highlightedColor } from './clusteringChart';
 
@@ -56,6 +64,13 @@ const samplesExpressionsById = generateSamplesExpressionsById(
 const samplesExpressionsIds = _.map(_.keys(samplesExpressionsById), Number);
 timeSeriesById[selectedTimeSeriesId].partitions = generateRelationPartitions(samplesExpressionsIds);
 
+const backendBookmark = generateBackendBookmark(selectedTimeSeriesId, [
+    genes[0].feature_id,
+    genes[1].feature_id,
+]);
+backendBookmark.state.clustering.distanceMeasure = distanceMeasureOptions[1].value;
+backendBookmark.state.clustering.linkageFunction = linkageFunctionOptions[2].value;
+
 const dataId = 123;
 const storageId = 456;
 
@@ -63,7 +78,30 @@ describe('clustering integration', () => {
     let initialState: RootState;
     let container: HTMLElement;
 
+    const validateChart = async (genesToValidate: Gene[]): Promise<void> =>
+        waitFor(() => {
+            expect(
+                container.querySelector("g[role='graphics-symbol'].horizontalLines > path"),
+            ).toBeInTheDocument();
+            expect(
+                container.querySelector("g[role='graphics-symbol'].verticalLines > path"),
+            ).toBeInTheDocument();
+            expect(
+                container.querySelector("g[role='graphics-object'].genesNames > text"),
+            ).toBeInTheDocument();
+
+            genesToValidate.forEach((gene) => {
+                expect(
+                    Array.from(
+                        container.querySelectorAll("g[role='graphics-object'].genesNames > text"),
+                    ).filter((element) => element.textContent === gene.name),
+                ).toHaveLength(1);
+            });
+        });
+
     beforeEach(() => {
+        fetchMock.mockClear();
+
         /* InitialState must have all the data needed for gene expressions (used in
          * clustering heatmap). Fetching / loading geneExpressions data is tested in
          * genesExpressions module.
@@ -156,6 +194,10 @@ describe('clustering integration', () => {
                     });
                 }
 
+                if (req.url.includes('app-state')) {
+                    return resolveStringifiedObjectPromise(backendBookmark);
+                }
+
                 return (
                     handleCommonRequests(req) ?? Promise.reject(new Error(`bad url: ${req.url}`))
                 );
@@ -220,24 +262,30 @@ describe('clustering integration', () => {
 
                 fireEvent.click(await screen.findByText(genes[1].name));
 
-                // Wait for lines, heatmap and names to be drawn on the plot.
-                await waitFor(() => {
-                    expect(
-                        container.querySelector("g[role='graphics-symbol'].horizontalLines > path"),
-                    ).toBeInTheDocument();
-                    expect(
-                        container.querySelector("g[role='graphics-symbol'].verticalLines > path"),
-                    ).toBeInTheDocument();
-                    expect(
-                        container.querySelector("g[role='graphics-object'].genesNames > text"),
-                    ).toBeInTheDocument();
-                    expect(
-                        container.querySelector(
-                            "g[role='graphics-symbol'].genesExpressionsHeatmap > path",
-                        ),
-                    ).toBeInTheDocument();
-                    screen.getByText(genes[3].name);
-                });
+                await validateChart([genes[0], genes[1]]);
+            });
+
+            it('should load selected time series, genes and genesExpressions controls values from bookmark', async () => {
+                ({ container } = customRender(<GeneExpressGrid />, {
+                    initialState,
+                    route: generateSearchUrl(),
+                }));
+
+                await validateChart(
+                    backendBookmark.state.genes.selectedGenesIds.map(
+                        (selectedGeneId) => genesById[selectedGeneId],
+                    ),
+                );
+
+                screen.getByText(distanceMeasureOptions[1].label);
+                screen.getByText(linkageFunctionOptions[2].label);
+            });
+
+            it('should not export anything', async () => {
+                const files = await reportBuilder.getRegisteredComponentsExportFiles();
+                expect(
+                    files.filter((file) => file.path.startsWith('Sample Hierarchical Clustering')),
+                ).toHaveLength(0);
             });
         });
 
@@ -438,6 +486,78 @@ describe('clustering integration', () => {
                     ).toBeInTheDocument(),
                 );
             });
+
+            it('should export visualization Sample Hierarchical Clustering/image.png file', async () => {
+                await validateExportFile(
+                    'Sample Hierarchical Clustering/image.png',
+                    (exportFile) => {
+                        expect(exportFile).toBeDefined();
+                    },
+                );
+            });
+
+            it('should export visualization Sample Hierarchical Clustering/image.svg file', async () => {
+                await validateExportFile(
+                    'Sample Hierarchical Clustering/image.svg',
+                    (exportFile) => {
+                        expect(exportFile).toBeDefined();
+                    },
+                );
+            });
+
+            it('should export visualization Sample Hierarchical Clustering/caption.txt file', async () => {
+                await validateExportFile(
+                    'Sample Hierarchical Clustering/caption.txt',
+                    (exportFile) => {
+                        expect(exportFile?.content).toContain(
+                            'Hierarchical Clustering plotted as a dendrogram is showing clusters of samples',
+                        );
+                    },
+                );
+            });
+
+            it('should export visualization Sample Hierarchical Clustering/clustering_table/linkage.tsv file', async () => {
+                await validateExportFile(
+                    'Sample Hierarchical Clustering/clustering_table/linkage.tsv',
+                    (exportFile) => {
+                        expect(exportFile?.content).toEqual(
+                            objectsArrayToTsv(
+                                (initialState.clustering.mergedData as MergedClusteringData)
+                                    .linkage,
+                            ),
+                        );
+                    },
+                );
+            });
+
+            it('should export visualization Sample Hierarchical Clustering/clustering_table/order.tsv file', async () => {
+                await validateExportFile(
+                    'Sample Hierarchical Clustering/clustering_table/order.tsv',
+                    (exportFile) => {
+                        expect(exportFile?.content).toEqual(
+                            objectsArrayToTsv(
+                                (initialState.clustering.mergedData as MergedClusteringData).order,
+                            ),
+                        );
+                    },
+                );
+            });
+
+            it('should save selected time series, genes, highlighted genes and all component bookmarkable state to app-state api', async () => {
+                fireEvent.click(screen.getByLabelText('Bookmark'));
+
+                await validateCreateStateRequest((bookmarkState) => {
+                    expect(bookmarkState.timeSeries.selectedId).toEqual(
+                        initialState.timeSeries.selectedId,
+                    );
+                    expect(bookmarkState.clustering.distanceMeasure).toEqual(
+                        initialState.clustering.distanceMeasure,
+                    );
+                    expect(bookmarkState.clustering.linkageFunction).toEqual(
+                        initialState.clustering.linkageFunction,
+                    );
+                });
+            });
         });
     });
 
@@ -552,26 +672,7 @@ describe('clustering integration', () => {
 
             // Mocked WebSocket needs almost a second to establish connection, that's why
             // increased timeout is used.
-            await waitFor(
-                () => {
-                    expect(
-                        container.querySelector("g[role='graphics-symbol'].horizontalLines > path"),
-                    ).toBeInTheDocument();
-                    expect(
-                        container.querySelector("g[role='graphics-symbol'].verticalLines > path"),
-                    ).toBeInTheDocument();
-                    expect(
-                        container.querySelector("g[role='graphics-object'].genesNames > text"),
-                    ).toBeInTheDocument();
-                    expect(
-                        container.querySelector(
-                            "g[role='graphics-symbol'].genesExpressionsHeatmap > path",
-                        ),
-                    ).toBeInTheDocument();
-                    screen.getByText(genes[3].name);
-                },
-                { timeout: 3500 },
-            );
+            await validateChart([genes[0], genes[1]]);
         });
     });
 });

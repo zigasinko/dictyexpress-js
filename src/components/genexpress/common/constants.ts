@@ -45,4 +45,8 @@ export enum ColorGroup {
     gene = 'gene',
 }
 
+export enum DictyUrlQueryParameter {
+    appState = '_s',
+}
+
 export const EMPTY_ARRAY = [];

@@ -5,6 +5,7 @@ import {
     customRender,
     handleCommonRequests,
     resolveStringifiedObjectPromise,
+    validateCreateStateRequest,
     validateExportFile,
 } from 'tests/test-utils';
 import {
@@ -13,6 +14,8 @@ import {
     generateTimeSeriesById,
     generateRelationPartitions,
     generateGenesById,
+    generateBackendBookmark,
+    generateSearchUrl,
 } from 'tests/mock';
 import { RootState } from 'redux/rootReducer';
 import _ from 'lodash';
@@ -37,6 +40,9 @@ const comparisonsSamplesExpressionsIds = _.map(_.keys(comparisonsSamplesExpressi
 const timeSeriesById = generateTimeSeriesById(2);
 const selectedTimeSeries = _.flatMap(timeSeriesById)[0];
 const comparisonTimeSeries = _.flatMap(timeSeriesById)[1];
+
+const backendBookmark = generateBackendBookmark(selectedTimeSeries.id, [genes[0].feature_id]);
+backendBookmark.state.genesExpressions = { showLegend: true };
 
 describe('genesExpressions integration', () => {
     let initialState: RootState;
@@ -94,9 +100,16 @@ describe('genesExpressions integration', () => {
                     results: genes,
                 });
             }
-
             if (req.url.includes('search')) {
                 return resolveStringifiedObjectPromise([genes[0]]);
+            }
+            if (req.url.includes('list_by_ids')) {
+                return resolveStringifiedObjectPromise(
+                    backendBookmark.state.genes.selectedGenesIds.map((geneId) => genesById[geneId]),
+                );
+            }
+            if (req.url.includes('app-state')) {
+                return resolveStringifiedObjectPromise(backendBookmark);
             }
 
             return handleCommonRequests(req) ?? Promise.reject(new Error(`bad url: ${req.url}`));
@@ -104,6 +117,8 @@ describe('genesExpressions integration', () => {
     });
 
     beforeEach(() => {
+        fetchMock.mockClear();
+
         initialState = testState();
         // Set timeSeries partitions so that correct samplesExpressions can be retrieved
         // via fetchMock and gene expressions can be chosen from selected time series.
@@ -163,6 +178,21 @@ describe('genesExpressions integration', () => {
                 (exportFile) => {
                     expect(exportFile).toBeUndefined();
                 },
+            );
+        });
+
+        it('should load selected time series, genes and genesExpressions controls values from bookmark', async () => {
+            ({ container } = customRender(<GeneExpressGrid />, {
+                initialState,
+                route: generateSearchUrl(),
+            }));
+
+            await validateChart(1);
+
+            await waitFor(() =>
+                expect(
+                    container.querySelector('g[role="graphics-object"] g.legendLabel text'),
+                ).toBeInTheDocument(),
             );
         });
     });
@@ -248,6 +278,23 @@ describe('genesExpressions integration', () => {
                 },
             );
         });
+
+        it('should save selected time series, genes, highlighted genes and all component bookmarkable state to app-state api', async () => {
+            fireEvent.click(screen.getByLabelText('Bookmark'));
+
+            await validateCreateStateRequest((bookmarkState) => {
+                expect(bookmarkState.timeSeries.selectedId).toEqual(
+                    initialState.timeSeries.selectedId,
+                );
+                expect(bookmarkState.genes.selectedGenesIds).toEqual(
+                    initialState.genes.selectedGenesIds,
+                );
+                expect(bookmarkState.genes.highlightedGenesIds).toEqual(
+                    initialState.genes.highlightedGenesIds,
+                );
+                expect(bookmarkState.genesExpressions.showLegend).toEqual(false);
+            });
+        });
     });
 
     describe(`time series, comparison time series and ${colorScaleLimit - 1} gene selected`, () => {
@@ -285,7 +332,7 @@ describe('genesExpressions integration', () => {
             expect(_.uniq(linesColors).length).toBe(initialState.genes.selectedGenesIds.length);
         });
 
-        it(`should disable color scale if more than ${colorScaleLimit} are selected`, async () => {
+        it(`should disable color scale if more than "colorScaleLimit" are selected`, async () => {
             fireEvent.change(screen.getByPlaceholderText('Search for a gene'), {
                 target: { value: genes[genes.length - 1].name },
             });

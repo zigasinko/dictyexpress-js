@@ -1,7 +1,8 @@
-import React, { ReactElement, useState, useEffect } from 'react';
-import { Button, Tooltip } from '@material-ui/core';
+import React, { ReactElement, useState, useEffect, useRef } from 'react';
+import { Button, Popover, Tooltip } from '@material-ui/core';
+import { Bookmark as BookmarkIcon } from '@material-ui/icons';
 import dictyLogo from 'images/favicon.ico';
-import { connect, ConnectedProps } from 'react-redux';
+import { connect, ConnectedProps, useStore } from 'react-redux';
 import { RootState } from 'redux/rootReducer';
 import { getUser, getIsLoggedIn } from 'redux/stores/authentication';
 import DictyAppBar from 'components/common/dictyAppBar/dictyAppBar';
@@ -14,6 +15,9 @@ import {
 import { getTimeSeriesIsFetching, getIsAddingToBasket } from 'redux/stores/timeSeries';
 import { getIsFetchingSamplesExpressions } from 'redux/stores/samplesExpressions';
 import { getIsFetchingGOEnrichmentJson } from 'redux/stores/gOEnrichment';
+import { saveBookmarkState } from 'managers/bookmarkStateManager';
+import { updateUrlParameter } from 'utils/url';
+import { setClipboardText } from 'utils/documentHelpers';
 import {
     GenexpressAppBarWrapper,
     DictyLogo,
@@ -22,12 +26,16 @@ import {
     DesktopSectionContainer,
     ActionsContainer,
     DownloadIcon,
+    BookmarkLinkContainer,
+    BookmarkUrl,
 } from './genexpressAppBar.styles';
 import Login from '../login/login';
 import { LoadingBar } from '../common/dictyModule/dictyModule.styles';
 import * as reportBuilder from '../common/reportBuilder/reportBuilder';
 import IconButtonWithTooltip from '../common/iconButtonWithTooltip/iconButtonWithTooltip';
 import TextInputModal from '../common/textInputModal/textInputModal';
+import { ModalHeader } from '../common/dictyModal/dictyModal.styles';
+import { DictyUrlQueryParameter } from '../common/constants';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const mapStateToProps = (state: RootState) => {
@@ -73,6 +81,10 @@ const GenexpressAppBar = ({
 }: GenexpressAppBarProps): ReactElement => {
     const [loginModalOpened, setLoginModalOpened] = useState(false);
     const [exportPrefixModalOpened, setExportPrefixModalOpened] = useState(false);
+    const [bookmarkPopoverOpened, setBookmarkPopoverOpened] = useState(false);
+    const store = useStore();
+    const bookmarkButtonElement = useRef<HTMLButtonElement>(null);
+    const [bookmark, setBookmark] = useState('');
 
     useEffect(() => {
         if (isLoggedIn) {
@@ -80,30 +92,21 @@ const GenexpressAppBar = ({
         }
     }, [isLoggedIn]);
 
-    const handleLoginClick = (): void => {
-        setLoginModalOpened((previousLoginModalOpened) => !previousLoginModalOpened);
-    };
-
-    const handleLogoutClick = (): void => {
-        connectedLogout();
-    };
-
-    const handleDefaultLayoutClick = (): void => {
-        connectedLayoutsReset();
-    };
-
-    /**
-     * Open export prefix modal so user can enter an optional export .zip prefix.
-     */
-    const handleExportClick = (): void => {
-        setExportPrefixModalOpened(true);
-    };
-
     /**
      * Execute export once user clicks on Export button in export prefix modal.
      */
     const handleExportPrefix = (prefix: string): void => {
         reportBuilder.exportToZip(prefix);
+    };
+
+    const handleBookmarkClick = async (): Promise<void> => {
+        const url = updateUrlParameter(
+            window.location.href,
+            DictyUrlQueryParameter.appState,
+            await saveBookmarkState(store.getState()),
+        );
+        setBookmark(url);
+        setBookmarkPopoverOpened(true);
     };
 
     const areExportingModulesLoading =
@@ -122,25 +125,45 @@ const GenexpressAppBar = ({
             </TitleContainer>
             <ActionsContainer>
                 <IconButtonWithTooltip
+                    title="Bookmark"
+                    onClick={handleBookmarkClick}
+                    disabled={isFetchingTimeSeries}
+                    ref={bookmarkButtonElement}
+                >
+                    <BookmarkIcon />
+                </IconButtonWithTooltip>
+                <IconButtonWithTooltip
                     title={
                         areExportingModulesLoading
                             ? 'Export will be available when all modules are loaded.'
                             : 'Export'
                     }
                     disabled={areExportingModulesLoading}
-                    onClick={handleExportClick}
+                    onClick={(): void => {
+                        setExportPrefixModalOpened(true);
+                    }}
                 >
                     <DownloadIcon />
                 </IconButtonWithTooltip>
-                <Button onClick={handleDefaultLayoutClick}>Default layout</Button>
+                <Button onClick={connectedLayoutsReset}>Default layout</Button>
                 {isLoggedIn ? (
                     <Tooltip title="Logout">
-                        <Button onClick={handleLogoutClick}>
+                        <Button
+                            onClick={(): void => {
+                                connectedLogout();
+                            }}
+                        >
                             {user.first_name} {user.last_name}
                         </Button>
                     </Tooltip>
                 ) : (
-                    <Button onClick={handleLoginClick}>Login</Button>
+                    <Button
+                        onClick={(): void => {
+                            setLoginModalOpened(true);
+                        }}
+                    >
+                        Login
+                    </Button>
                 )}
             </ActionsContainer>
             {isLoading && <LoadingBar />}
@@ -163,6 +186,37 @@ const GenexpressAppBar = ({
                     onConfirm={handleExportPrefix}
                 />
             )}
+            <Popover
+                id="bookmarkPopover"
+                open={bookmarkPopoverOpened}
+                anchorEl={bookmarkButtonElement.current}
+                onClose={(): void => {
+                    setBookmarkPopoverOpened(false);
+                }}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+            >
+                <ModalHeader>Bookmark URL</ModalHeader>
+                <BookmarkLinkContainer>
+                    <BookmarkUrl href={bookmark} rel="noopener noreferrer" target="_blank">
+                        {bookmark}
+                    </BookmarkUrl>
+                    <Button
+                        type="button"
+                        onClick={(): void => {
+                            setClipboardText(bookmark);
+                        }}
+                    >
+                        Copy
+                    </Button>
+                </BookmarkLinkContainer>
+            </Popover>
         </>
     );
 };

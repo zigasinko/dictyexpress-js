@@ -1,4 +1,4 @@
-import { BasketAddSamplesResponse } from '../redux/models/rest';
+import { BasketAddSamplesResponse, BasketUpdateResponse } from '../redux/models/rest';
 import { deserializeResponse } from '../utils/apiUtils';
 import { apiUrl } from './base';
 import { post } from './fetch';
@@ -17,4 +17,10 @@ export const addToBasket = async (samplesIds: number[]): Promise<BasketAddSample
     });
 
     return deserializeResponse<BasketAddSamplesResponse>(addSamplesResponse);
+};
+
+export const makeBasketReadOnly = async (basketId: string): Promise<BasketUpdateResponse> => {
+    const makeBasketReadOnlyResponse = await post(`${baseUrl}/${basketId}/make_read_only`);
+
+    return deserializeResponse<BasketUpdateResponse>(makeBasketReadOnlyResponse);
 };
