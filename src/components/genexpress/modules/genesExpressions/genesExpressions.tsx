@@ -6,7 +6,7 @@ import {
     RootState,
 } from 'redux/rootReducer';
 import { getHighlightedGenesIds, genesHighlighted, getSelectedGenesIds } from 'redux/stores/genes';
-import { getComparisonTimeSeries } from 'redux/stores/timeSeries';
+import { getBasketExpressionsIds, getComparisonTimeSeries } from 'redux/stores/timeSeries';
 import { ChartHandle } from 'components/genexpress/common/chart/chart';
 import useReport from 'components/genexpress/common/reportBuilder/useReport';
 import { Button, FormControlLabel, Switch } from '@material-ui/core';
@@ -27,6 +27,7 @@ import SelectComparisonTimeSeriesModal from './selectComparisonTimeSeriesModal/s
 const mapStateToProps = (state: RootState) => {
     return {
         genesExpressions: getSelectedGenesExpressions(state),
+        basketExpressionsIds: getBasketExpressionsIds(state.timeSeries),
         comparisonGenesExpressions: getSelectedGenesComparisonExpressions(state),
         selectedGenesIds: getSelectedGenesIds(state.genes),
         highlightedGenesIds: getHighlightedGenesIds(state.genes),
@@ -43,6 +44,7 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 const GenesExpressionsWidget = ({
     selectedGenesIds,
     genesExpressions,
+    basketExpressionsIds,
     comparisonGenesExpressions,
     connectedGenesHighlighted,
     highlightedGenesIds,
@@ -94,7 +96,7 @@ const GenesExpressionsWidget = ({
                             onClick={(): void => {
                                 setManageModalOpened(true);
                             }}
-                            disabled={disabledControls}
+                            disabled={disabledControls || basketExpressionsIds.length === 0}
                         >
                             Find similar genes
                         </Button>

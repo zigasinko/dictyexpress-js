@@ -688,7 +688,7 @@ export const testState = (): RootState => {
         genesSimilarities: {
             data: [],
             queryGeneId: null,
-            distanceMeasure: DistanceMeasure.pearson,
+            distanceMeasure: DistanceMeasure.spearman,
             isFetchingGenesSimilarities: false,
         },
         samplesExpressions: {
