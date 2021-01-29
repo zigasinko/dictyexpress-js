@@ -33,8 +33,8 @@ import {
 import ToDictybaseCell from './toDictybaseCell/toDictybaseCell';
 
 export const distanceMeasureOptions: Option<DistanceMeasure>[] = [
-    { value: DistanceMeasure.pearson, label: 'Pearson' },
     { value: DistanceMeasure.spearman, label: 'Spearman' },
+    { value: DistanceMeasure.pearson, label: 'Pearson' },
 ];
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
