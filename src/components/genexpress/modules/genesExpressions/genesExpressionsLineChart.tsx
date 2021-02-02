@@ -1,11 +1,12 @@
-import React, { ReactElement, forwardRef } from 'react';
+import React, { ReactElement, forwardRef, useState } from 'react';
 import _ from 'lodash';
 import { Spec } from 'vega';
 import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
 import { GeneExpression } from 'redux/models/internal';
 import { GEN_GREY } from 'components/genexpress/common/theming/theming';
 import { useTheme } from '@material-ui/core';
-import Chart, { DataDefinition, DataHandler } from '../../common/chart/chart';
+import useForwardedRef from 'components/genexpress/common/useForwardedRef';
+import Chart, { ChartHandle, DataDefinition, DataHandler } from '../../common/chart/chart';
 
 type GeneExpressionsLineChartProps = {
     genesExpressions: GeneExpression[];
@@ -28,6 +29,7 @@ const getVegaSpecification = (
     highlightedColor: string,
     showLegend: boolean,
     colorByTimeSeries: boolean,
+    chartHeight?: number,
 ): Spec => ({
     signals: [
         {
@@ -130,6 +132,12 @@ const getVegaSpecification = (
                   title: 'Genes',
                   stroke: 'colorscale',
                   orient: 'right',
+                  // 44 = offset of first gene in legend
+                  // 15.5 = gene name element height
+                  columns:
+                      chartHeight != null
+                          ? Math.ceil(selectedGenesIds.length / ((chartHeight - 44) / 15.5))
+                          : 1,
                   encode: {
                       symbols: {
                           name: 'legendSymbol',
@@ -322,7 +330,7 @@ const getVegaSpecification = (
     ],
 });
 
-const GeneExpressionsLineChart = forwardRef(
+const GeneExpressionsLineChart = forwardRef<ChartHandle, GeneExpressionsLineChartProps>(
     (
         {
             genesExpressions,
@@ -332,9 +340,11 @@ const GeneExpressionsLineChart = forwardRef(
             showLegend,
             colorByTimeSeries,
         }: GeneExpressionsLineChartProps,
-        ref,
+        forwardedRef,
     ): ReactElement => {
         const theme = useTheme();
+        const chartRef = useForwardedRef<ChartHandle>(forwardedRef);
+        const [chartHeight, setChartHeight] = useState<number>();
 
         const updatableDataDefinitions: DataDefinition[] = useStateWithEffect<DataDefinition[]>(
             () => [
@@ -381,9 +391,10 @@ const GeneExpressionsLineChart = forwardRef(
                     theme.palette.secondary.main,
                     showLegend,
                     colorByTimeSeries,
+                    chartHeight,
                 ),
             // eslint-disable-next-line react-hooks/exhaustive-deps
-            [showLegend, colorByTimeSeries],
+            [showLegend, colorByTimeSeries, chartHeight],
         );
 
         return (
@@ -391,7 +402,8 @@ const GeneExpressionsLineChart = forwardRef(
                 updatableDataDefinitions={updatableDataDefinitions}
                 dataHandlers={dataHandlers}
                 vegaSpecification={renderSpecification}
-                ref={ref}
+                onChartResized={(_width, height): void => setChartHeight(height)}
+                ref={chartRef}
             />
         );
     },

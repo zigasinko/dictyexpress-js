@@ -42,11 +42,12 @@ export type SignalDefinition = {
 };
 
 type ChartProps = {
+    vegaSpecification: Spec;
     updatableDataDefinitions?: DataDefinition[];
     updatableSignalDefinitions?: SignalDefinition[];
     dataHandlers?: DataHandler[];
     signalHandlers?: SignalHandler[];
-    vegaSpecification: Spec;
+    onChartResized?: (width: number, height: number) => void;
 };
 
 export type ChartHandle = {
@@ -72,12 +73,13 @@ const chartPadding = { top: 20, left: 15, bottom: 15, right: 15 };
  */
 const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
     {
+        vegaSpecification,
         updatableDataDefinitions,
         updatableSignalDefinitions,
         dataHandlers,
         signalHandlers,
+        onChartResized,
         size: { width, height },
-        vegaSpecification,
     }: ChartProps & SizeMeProps,
     ref,
 ): ReactElement => {
@@ -139,11 +141,15 @@ const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
     }, [chartView, dispatch]);
 
     const resizeChart = useCallback((): void => {
-        chartView.current?.width(getChartElementWidth());
-        chartView.current?.height(getChartElementHeight());
+        const newWidth = getChartElementWidth();
+        const newHeight = getChartElementHeight();
+        chartView.current?.width(newWidth);
+        chartView.current?.height(newHeight);
 
         runChart();
-    }, [chartView, getChartElementHeight, getChartElementWidth, runChart]);
+
+        onChartResized?.(newWidth, newHeight);
+    }, [getChartElementHeight, getChartElementWidth, onChartResized, runChart]);
 
     useUpdateEffect(() => {
         resizeChart();
