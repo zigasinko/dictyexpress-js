@@ -60,7 +60,7 @@ const GenesExpressionsWidget = ({
         false,
         BookmarkStatePath.genesExpressionsColorByTimeSeries,
     );
-    const chartRef = useRef<ChartHandle>();
+    const chartRef = useRef<ChartHandle>(null);
     const handleOnHighlight = (genesNames: string[]): void => {
         connectedGenesHighlighted(genesNames);
     };

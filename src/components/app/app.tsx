@@ -27,7 +27,7 @@ const appTheme = createMuiTheme(theme);
 
 const App = (): ReactElement => {
     return (
-        <RendererContext.Provider value="canvas">
+        <RendererContext.Provider value="svg">
             <StylesProvider injectFirst>
                 <ReduxProvider store={appStore}>
                     <MuiThemeProvider theme={appTheme}>
