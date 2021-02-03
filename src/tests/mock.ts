@@ -587,7 +587,10 @@ export const generateBackendBookmark = (
     },
 });
 
-export const generateSearchUrl = (): string => `?${DictyUrlQueryParameter.appState}=${uuidv4()}`;
+export const generateBookmarkQueryParameter = (): string =>
+    `?${DictyUrlQueryParameter.appState}=${uuidv4()}`;
+export const generateGenesQueryParameter = (genesIds: string[]): string =>
+    `?${DictyUrlQueryParameter.genes}=${genesIds.join(',')}`;
 
 /**
  * Helper function that generates mock instances of objects for use in unit tests.

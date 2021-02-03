@@ -19,7 +19,7 @@ import {
     generateRelationPartitions,
     generateGenesByIdPredefinedIds,
     generateBasketExpression,
-    generateSearchUrl,
+    generateBookmarkQueryParameter,
     generateBackendBookmark,
 } from 'tests/mock';
 import * as reportBuilder from 'components/genexpress/common/reportBuilder/reportBuilder';
@@ -268,7 +268,7 @@ describe('clustering integration', () => {
             it('should load selected time series, genes and genesExpressions controls values from bookmark', async () => {
                 ({ container } = customRender(<GeneExpressGrid />, {
                     initialState,
-                    route: generateSearchUrl(),
+                    route: generateBookmarkQueryParameter(),
                 }));
 
                 await validateChart(

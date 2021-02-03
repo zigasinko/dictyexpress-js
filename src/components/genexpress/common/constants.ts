@@ -47,6 +47,7 @@ export enum ColorGroup {
 
 export enum DictyUrlQueryParameter {
     appState = '_s',
+    genes = 'genes',
 }
 
 export enum BookmarkStatePath {

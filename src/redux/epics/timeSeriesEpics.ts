@@ -1,6 +1,6 @@
 import { Action } from '@reduxjs/toolkit';
 import { ofType, Epic, combineEpics } from 'redux-observable';
-import { map, mergeMap, startWith, endWith, catchError } from 'rxjs/operators';
+import { map, mergeMap, startWith, endWith, catchError, filter } from 'rxjs/operators';
 import { of, from } from 'rxjs';
 import {
     getSelectedTimeSeriesSamplesIds,
@@ -13,12 +13,14 @@ import {
     fetchBasketExpressionsIdsSucceeded,
     getBasketInfo,
     getBasketExpressionsIds,
+    timeSeriesSelected,
+    getTimeSeries,
 } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
 import { BasketInfo } from 'redux/models/internal';
 import { handleError } from 'utils/errorUtils';
 import { addToBasket, getTimeSeriesRelations, getBasketExpressions } from 'api';
-import { fetchTimeSeries, loginSucceeded } from './epicsActions';
+import { fetchTimeSeries, loginSucceeded, selectFirstTimeSeries } from './epicsActions';
 import { mapStateSlice } from './rxjsCustomFilters';
 
 const fetchTimeSeriesEpic: Epic<Action, Action, RootState> = (action$) => {
@@ -34,6 +36,20 @@ const fetchTimeSeriesEpic: Epic<Action, Action, RootState> = (action$) => {
         }),
     );
 };
+
+const selectFirstTimeSeriesEpic: Epic<Action, Action, RootState> = (action$, state$) =>
+    action$.pipe(
+        ofType(selectFirstTimeSeries),
+        mergeMap(() => {
+            return state$.pipe(
+                mapStateSlice((state) => getTimeSeries(state.timeSeries)),
+                filter((timeSeries) => timeSeries.length > 0),
+                map((timeSeries) => {
+                    return timeSeriesSelected(timeSeries[0].id);
+                }),
+            );
+        }),
+    );
 
 const timeSeriesSelectedEpic: Epic<Action, Action, RootState> = (action$, state$) => {
     return state$.pipe(
@@ -81,5 +97,6 @@ const fetchBasketExpressionsEpic: Epic<Action, Action, RootState> = (action$, st
 export default combineEpics(
     timeSeriesSelectedEpic,
     fetchTimeSeriesEpic,
+    selectFirstTimeSeriesEpic,
     fetchBasketExpressionsEpic,
 );

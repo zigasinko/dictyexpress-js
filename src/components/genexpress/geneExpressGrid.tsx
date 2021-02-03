@@ -13,10 +13,15 @@ import { breakpoints } from 'components/app/globalStyle';
 import { defaultBreakpointCols, getLayouts, layoutsChanged } from 'redux/stores/layouts';
 import _ from 'lodash';
 import { getIsFetchingGOEnrichmentJson } from 'redux/stores/gOEnrichment';
-import { appStarted } from 'redux/epics/epicsActions';
+import {
+    appStarted,
+    fetchAndSelectPredefinedGenes,
+    selectFirstTimeSeries,
+} from 'redux/epics/epicsActions';
 import { getIsFetchingClusteringData } from 'redux/stores/clustering';
 import { useLocation } from 'react-router-dom';
 import { loadBookmarkedState } from 'managers/bookmarkStateManager';
+import { getUrlQueryParameter } from 'utils/url';
 import TimeSeriesAndGeneSelector from './modules/timeSeriesAndGeneSelector/timeSeriesAndGeneSelector';
 import DictyModule from './common/dictyModule/dictyModule';
 import SnackbarNotifier from './snackbarNotifier/snackbarNotifier';
@@ -51,6 +56,8 @@ const mapStateToProps = (state: RootState) => {
 
 const connector = connect(mapStateToProps, {
     connectedLayoutsChanged: layoutsChanged,
+    connectedFetchAndSelectPredefinedGenes: fetchAndSelectPredefinedGenes,
+    connectedSelectFirstTimeSeries: selectFirstTimeSeries,
 });
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -66,6 +73,8 @@ const GeneExpressGrid = ({
     isLoggingOut,
     isFetchingGOEnrichmentJson,
     connectedLayoutsChanged,
+    connectedFetchAndSelectPredefinedGenes,
+    connectedSelectFirstTimeSeries,
 }: PropsFromRedux): ReactElement => {
     const dispatch = useDispatch();
     const location = useLocation();
@@ -77,11 +86,15 @@ const GeneExpressGrid = ({
     }, [dispatch]);
 
     useEffect(() => {
-        const appStateId = new URLSearchParams(location.search).get(
-            DictyUrlQueryParameter.appState,
-        );
+        const appStateId = getUrlQueryParameter(location.search, DictyUrlQueryParameter.appState);
         if (appStateId != null) {
             loadBookmarkedState(appStateId, dispatch);
+        }
+
+        const genes = getUrlQueryParameter(location.search, DictyUrlQueryParameter.genes);
+        if (genes != null && genes !== '') {
+            connectedSelectFirstTimeSeries();
+            connectedFetchAndSelectPredefinedGenes({ geneIds: genes.split(',') });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
