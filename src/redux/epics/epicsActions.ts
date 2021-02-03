@@ -7,6 +7,7 @@ import { ClusteringData, FindSimilarGenesData } from 'redux/models/rest';
 export const selectGenes = createAction<Gene[]>('genes/selectGenes');
 export const pasteGenesNames = createAction<string[]>('genes/pasteGenesNames');
 export const fetchTimeSeries = createAction('timeSeries/fetchTimeSeries');
+export const selectFirstTimeSeries = createAction('timeSeries/selectFirstTimeSeries');
 
 export const login = createAction<{ username: string; password: string }>('authentication/login');
 export const loginSucceeded = createAction('authentication/loginSucceeded');
@@ -26,8 +27,8 @@ export type TFetchGenesActionPayload = {
 export const fetchDifferentialExpressionGenes = createAction<TFetchGenesActionPayload>(
     'genes/fetchDifferentialExpressionGenes',
 );
-export const fetchBookmarkedGenes = createAction<TFetchGenesActionPayload>(
-    'genes/fetchBookmarkedGenes',
+export const fetchAndSelectPredefinedGenes = createAction<TFetchGenesActionPayload>(
+    'genes/fetchAndSelectPredefinedGenes',
 );
 export const fetchAssociationsGenes = createAction<TFetchGenesActionPayload>(
     'genes/fetchAssociationsGenes',

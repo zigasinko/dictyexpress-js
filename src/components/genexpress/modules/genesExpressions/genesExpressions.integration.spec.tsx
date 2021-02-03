@@ -15,7 +15,8 @@ import {
     generateRelationPartitions,
     generateGenesById,
     generateBackendBookmark,
-    generateSearchUrl,
+    generateBookmarkQueryParameter,
+    generateGenesQueryParameter,
 } from 'tests/mock';
 import { RootState } from 'redux/rootReducer';
 import _ from 'lodash';
@@ -39,10 +40,14 @@ const comparisonsSamplesExpressionsById = generateSamplesExpressionsById(
 );
 const comparisonsSamplesExpressionsIds = _.map(_.keys(comparisonsSamplesExpressionsById), Number);
 const timeSeriesById = generateTimeSeriesById(2);
-const selectedTimeSeries = _.flatMap(timeSeriesById)[0];
-const comparisonTimeSeries = _.flatMap(timeSeriesById)[1];
+const timeSeries = _.flatMap(timeSeriesById);
+const selectedTimeSeries = timeSeries[0];
+const comparisonTimeSeries = timeSeries[1];
 
-const backendBookmark = generateBackendBookmark(selectedTimeSeries.id, [genes[0].feature_id]);
+const backendBookmark = generateBackendBookmark(selectedTimeSeries.id, [
+    genes[0].feature_id,
+    genes[1].feature_id,
+]);
 _.set(backendBookmark.state, BookmarkStatePath.genesExpressionsShowLegend, true);
 
 describe('genesExpressions integration', () => {
@@ -64,6 +69,9 @@ describe('genesExpressions integration', () => {
         fetchMock.resetMocks();
 
         fetchMock.mockResponse((req) => {
+            if (req.url.includes('relation')) {
+                return resolveStringifiedObjectPromise(timeSeries);
+            }
             if (req.url.includes('add_samples')) {
                 return resolveStringifiedObjectPromise({
                     id: 1,
@@ -124,17 +132,36 @@ describe('genesExpressions integration', () => {
         // Set timeSeries partitions so that correct samplesExpressions can be retrieved
         // via fetchMock and gene expressions can be chosen from selected time series.
         initialState.timeSeries.byId = timeSeriesById;
-        initialState.timeSeries.byId[selectedTimeSeries.id].partitions = generateRelationPartitions(
-            samplesExpressionsIds,
-        );
+        selectedTimeSeries.partitions = generateRelationPartitions(samplesExpressionsIds);
+    });
+
+    describe('time series not in store, genes in query parameter', () => {
+        beforeEach(() => {
+            initialState.timeSeries.byId = {};
+            initialState.timeSeries.basketInfo = null;
+
+            ({ container } = customRender(<GeneExpressGrid />, {
+                initialState,
+                route: generateGenesQueryParameter(backendBookmark.state.genes.selectedGenesIds),
+            }));
+        });
+
+        it('should select first time series and genes from url query parameter "genes"', async () => {
+            await validateChart(backendBookmark.state.genes.selectedGenesIds.length);
+            backendBookmark.state.genes.selectedGenesIds.forEach((geneId) => {
+                expect(screen.getAllByText(genesById[geneId].name)).toHaveLength(1);
+            });
+        });
     });
 
     describe('time series not selected', () => {
+        let unmount: () => boolean;
+
         beforeEach(() => {
             initialState.timeSeries.selectedId = null;
             initialState.timeSeries.basketInfo = null;
 
-            ({ container } = customRender(<GeneExpressGrid />, {
+            ({ container, unmount } = customRender(<GeneExpressGrid />, {
                 initialState,
             }));
         });
@@ -143,13 +170,9 @@ describe('genesExpressions integration', () => {
             expect(screen.getByPlaceholderText('Search for a gene')).toBeDisabled();
         });
 
-        it('should show line graph after time series and gene is pasted', async () => {
+        it('should show line graph after time series is chosen and gene is pasted', async () => {
             // Simulate time series click.
-            fireEvent.click(
-                screen.getByText(
-                    initialState.timeSeries.byId[selectedTimeSeries.id]?.collection.name,
-                ),
-            );
+            fireEvent.click(screen.getByText(selectedTimeSeries.collection.name));
 
             // Wait for "Search for a gene" input to get enabled.
             await waitFor(() =>
@@ -173,7 +196,7 @@ describe('genesExpressions integration', () => {
             );
         });
 
-        it('should not export Expression Time Courses/expression_time_courses.png file', async () => {
+        it('should not export Expression Time Courses/expression_time_courses.svg file', async () => {
             await validateExportFile(
                 'Expression Time Courses/expression_time_courses.svg',
                 (exportFile) => {
@@ -183,12 +206,14 @@ describe('genesExpressions integration', () => {
         });
 
         it('should load selected time series, genes and genesExpressions controls values from bookmark', async () => {
+            unmount();
+
             ({ container } = customRender(<GeneExpressGrid />, {
                 initialState,
-                route: generateSearchUrl(),
+                route: generateBookmarkQueryParameter(),
             }));
 
-            await validateChart(1);
+            await validateChart(backendBookmark.state.genes.selectedGenesIds.length);
 
             await waitFor(() =>
                 expect(

@@ -14,7 +14,7 @@ import {
     generateDifferentialExpressionsById,
     generateDifferentialExpressionJson,
     generateGenesByIdPredefinedIds,
-    generateSearchUrl as generateBookmarkUrl,
+    generateBookmarkQueryParameter,
     generateBackendBookmark,
 } from 'tests/mock';
 import _ from 'lodash';
@@ -135,7 +135,7 @@ describe('differentialExpressions integration', () => {
         it('should load selected differential expression, genes and highlighted genes from bookmark', async () => {
             ({ container } = customRender(<GeneExpressGrid />, {
                 initialState,
-                route: generateBookmarkUrl(),
+                route: generateBookmarkQueryParameter(),
             }));
 
             await waitFor(() => {

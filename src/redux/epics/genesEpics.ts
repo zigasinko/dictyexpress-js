@@ -14,7 +14,7 @@ import {
     withLatestFrom,
     filter,
 } from 'rxjs/operators';
-import { of, from, EMPTY, Observable, combineLatest } from 'rxjs';
+import { of, from, EMPTY, Observable, combineLatest, merge } from 'rxjs';
 import { getBasketInfo } from 'redux/stores/timeSeries';
 import { getGenesSimilaritiesQueryGene, RootState } from 'redux/rootReducer';
 import {
@@ -25,6 +25,7 @@ import {
     differentialExpressionGenesFetchEnded,
     differentialExpressionGenesFetchStarted,
     genesFetchSucceeded,
+    genesSelected,
     getGenesIdsInStore,
     similarGenesFetchEnded,
     similarGenesFetchStarted,
@@ -36,7 +37,7 @@ import { getGenesSimilarities } from 'redux/stores/genesSimilarities';
 import { mapStateSlice } from './rxjsCustomFilters';
 import {
     fetchAssociationsGenes,
-    fetchBookmarkedGenes,
+    fetchAndSelectPredefinedGenes,
     fetchDifferentialExpressionGenes,
     TFetchGenesActionPayload,
 } from './epicsActions';
@@ -108,12 +109,34 @@ const fetchAssociationsGenesEpic = fetchGenesEpicsFactory(
     'Error retrieving associated genes.',
 );
 
-const fetchBookmarkedGenesEpic = fetchGenesEpicsFactory(
-    fetchBookmarkedGenes,
-    bookmarkedGenesFetchStarted,
-    bookmarkedGenesFetchEnded,
-    'Error retrieving bookmarked genes.',
-);
+const fetchPredefinedGenesEpic: Epic<Action, Action, RootState> = (action$, state$) =>
+    action$.pipe(
+        ofType<Action, ReturnType<typeof fetchAndSelectPredefinedGenes>>(
+            fetchAndSelectPredefinedGenes.toString(),
+        ),
+        mergeMap((action) => {
+            return state$.pipe(
+                mapStateSlice((state) => getBasketInfo(state.timeSeries)),
+                mergeMap((basketInfo) => {
+                    return merge(
+                        fetchGenesActionObservable(
+                            action.payload.geneIds,
+                            state$.value,
+                            basketInfo.source,
+                            basketInfo.species,
+                        ),
+                        of(genesSelected(action.payload.geneIds)),
+                    ).pipe(
+                        catchError((error) =>
+                            of(handleError('Error retrieving predefined genes.', error)),
+                        ),
+                        startWith(bookmarkedGenesFetchStarted()),
+                        endWith(bookmarkedGenesFetchEnded()),
+                    );
+                }),
+            );
+        }),
+    );
 
 const fetchSimilarGenesEpic: Epic<Action, Action, RootState> = (action$, state$) => {
     return combineLatest([
@@ -144,5 +167,5 @@ export default combineEpics(
     fetchSelectedDifferentialExpressionGenesEpic,
     fetchAssociationsGenesEpic,
     fetchSimilarGenesEpic,
-    fetchBookmarkedGenesEpic,
+    fetchPredefinedGenesEpic,
 );

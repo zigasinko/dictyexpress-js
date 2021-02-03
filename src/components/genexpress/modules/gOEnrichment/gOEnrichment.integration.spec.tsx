@@ -16,7 +16,7 @@ import {
     generateGaf,
     generateData,
     generateBackendBookmark,
-    generateSearchUrl,
+    generateBookmarkQueryParameter,
 } from 'tests/mock';
 import _ from 'lodash';
 import { RootState } from 'redux/rootReducer';
@@ -147,7 +147,7 @@ describe('goEnrichment integration', () => {
 
                 customRender(<GeneExpressGrid />, {
                     initialState,
-                    route: generateSearchUrl(),
+                    route: generateBookmarkQueryParameter(),
                 });
 
                 await screen.findByText(aspectOptions[1].label);

@@ -10,13 +10,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { createAppState, getAppState } from 'api/appState';
 import { makeBasketReadOnly } from 'api/basketApi';
 import { AppDispatch } from 'redux/appStore';
-import {
-    genesHighlighted,
-    genesSelected,
-    getHighlightedGenesIds,
-    getSelectedGenes,
-} from 'redux/stores/genes';
-import { fetchBookmarkedGenes } from 'redux/epics/epicsActions';
+import { genesHighlighted, getHighlightedGenesIds, getSelectedGenes } from 'redux/stores/genes';
+import { fetchAndSelectPredefinedGenes } from 'redux/epics/epicsActions';
 import _ from 'lodash';
 import { BookmarkComponentsState } from 'redux/models/internal';
 import { getPValueThreshold, pValueThresholdChanged } from 'redux/stores/gOEnrichment';
@@ -135,14 +130,13 @@ export const loadBookmarkedState = async (
 
     if (bookmarkedState.genes.selectedGenesIds.length > 0) {
         dispatch(
-            fetchBookmarkedGenes({
+            fetchAndSelectPredefinedGenes({
                 geneIds: bookmarkedState.genes.selectedGenesIds,
                 source: bookmarkedState.genes.source,
                 species: bookmarkedState.genes.species,
             }),
         );
 
-        dispatch(genesSelected(bookmarkedState.genes.selectedGenesIds));
         dispatch(genesHighlighted(bookmarkedState.genes.highlightedGenesIds));
     }
 
