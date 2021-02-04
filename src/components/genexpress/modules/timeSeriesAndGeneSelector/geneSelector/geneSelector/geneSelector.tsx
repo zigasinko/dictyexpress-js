@@ -290,6 +290,10 @@ const GeneSelector = ({
                                         {params.InputProps.endAdornment}
                                     </>
                                 ),
+                                inputProps: {
+                                    ...params.inputProps,
+                                    'aria-label': 'Search for a gene',
+                                },
                             }}
                         />
                     )}

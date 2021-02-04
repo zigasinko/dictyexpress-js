@@ -17,6 +17,7 @@ export const DesktopSectionContainer = styled.div`
 export const DictyLogo = styled.img`
     margin: 10px;
     height: 25px;
+    width: 25px;
 `;
 
 export const LoggedInInformation = styled.div`
