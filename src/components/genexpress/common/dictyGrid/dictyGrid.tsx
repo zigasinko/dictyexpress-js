@@ -42,7 +42,7 @@ const defaultColumnDef = {
     sortable: true,
 };
 
-const DictyGrid = <T extends {}>({
+const DictyGrid = <T extends unknown>({
     data,
     selectedData,
     isFetching,

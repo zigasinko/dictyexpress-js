@@ -8,7 +8,6 @@ import { reactiveRequest } from '../managers/queryObserverManager';
 
 const baseUrl = `${apiUrl}/user`;
 
-// eslint-disable-next-line import/prefer-default-export
 export const getCurrentUser = async (): Promise<User> => {
     const getUserRequest = (): Promise<Response> => getReactive(baseUrl, { current_only: '1' });
 

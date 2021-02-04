@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor, RenderResult } from '@testing-library/react';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
 import {
     customRender,
@@ -155,7 +155,7 @@ describe('genesExpressions integration', () => {
     });
 
     describe('time series not selected', () => {
-        let unmount: () => boolean;
+        let unmount: RenderResult['unmount'];
 
         beforeEach(() => {
             initialState.timeSeries.selectedId = null;

@@ -3,10 +3,10 @@
 exports[`gOEnrichmentMatchedCell should render as default snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="sc-AxjAm ivPtqg"
+    class="sc-bdfBwQ bFLuhp"
   >
     <button
-      class="MuiButtonBase-root MuiButton-root MuiButton-text sc-AxirZ jkhdTE MuiButton-textSecondary MuiButton-fullWidth"
+      class="MuiButtonBase-root MuiButton-root MuiButton-text sc-gsTCUz daHhbS MuiButton-textSecondary MuiButton-fullWidth"
       tabindex="0"
       type="button"
     >

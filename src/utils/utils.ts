@@ -29,7 +29,6 @@
 
 import { logError } from './errorUtils';
 
-// eslint-disable-next-line import/prefer-default-export
 export const assertExhaustive = (
     unexpectedValue: never | { [descriptiveKey: string]: never },
 ): void => {

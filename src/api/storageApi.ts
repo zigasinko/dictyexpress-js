@@ -5,7 +5,6 @@ import { get } from './fetch';
 
 const baseUrl = `${apiUrl}/storage`;
 
-// eslint-disable-next-line import/prefer-default-export
 export const getStorage = async (storageId: number): Promise<Storage> => {
     const url = `${baseUrl}/${storageId}`;
 

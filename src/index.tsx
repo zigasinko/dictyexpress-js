@@ -20,7 +20,7 @@ ReactDOM.render(
 
 if (module.hot) {
     module.hot.accept('./components/app/app', () => {
-        // eslint-disable-next-line import/no-unresolved
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
         const NextApp = require('./components/app/app').default;
         ReactDOM.render(<NextApp />, rootElement);
     });

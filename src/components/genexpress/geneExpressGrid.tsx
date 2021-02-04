@@ -88,7 +88,7 @@ const GeneExpressGrid = ({
     useEffect(() => {
         const appStateId = getUrlQueryParameter(location.search, DictyUrlQueryParameter.appState);
         if (appStateId != null) {
-            loadBookmarkedState(appStateId, dispatch);
+            void loadBookmarkedState(appStateId, dispatch);
         }
 
         const genes = getUrlQueryParameter(location.search, DictyUrlQueryParameter.genes);

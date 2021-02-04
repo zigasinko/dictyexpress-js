@@ -5,7 +5,6 @@ import { apiUrl } from './base';
 
 const baseUrl = `${apiUrl}/_modules/gene_list/list_by_ids?hydrate_full_feature=1`;
 
-// eslint-disable-next-line import/prefer-default-export
 export const listByIds = async (
     source: string,
     geneIds: string[],

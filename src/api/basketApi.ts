@@ -5,7 +5,6 @@ import { post } from './fetch';
 
 const baseUrl = `${apiUrl}/basket`;
 
-// eslint-disable-next-line import/prefer-default-export
 export const addToBasket = async (samplesIds: number[]): Promise<BasketAddSamplesResponse> => {
     if (samplesIds == null || samplesIds.length === 0) {
         throw new Error('No samples to add to basket.');

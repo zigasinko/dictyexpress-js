@@ -5,7 +5,6 @@ import { get } from './fetch';
 
 const baseUrl = `${apiUrl}/_modules/differential_expression/list`;
 
-// eslint-disable-next-line import/prefer-default-export
 export const getDifferentialExpressions = async (
     basketId: string | undefined,
 ): Promise<DifferentialExpression[]> => {

@@ -135,9 +135,9 @@ const getVegaSpecification = (
                   // 44 = offset of first gene in legend
                   // 15.5 = gene name element height
                   columns:
-                      chartHeight != null
-                          ? Math.ceil(selectedGenesIds.length / ((chartHeight - 44) / 15.5))
-                          : 1,
+                      chartHeight == null
+                          ? 1
+                          : Math.ceil(selectedGenesIds.length / ((chartHeight - 44) / 15.5)),
                   encode: {
                       symbols: {
                           name: 'legendSymbol',

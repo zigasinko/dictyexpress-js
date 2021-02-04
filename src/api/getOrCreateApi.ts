@@ -7,9 +7,8 @@ import { apiUrl } from './base';
 
 const baseUrl = `${apiUrl}/data/get_or_create`;
 
-// eslint-disable-next-line import/prefer-default-export
 export const getOrCreateData = async <DataType extends Data>(
-    input: object,
+    input: Record<string, unknown>,
     slug: ProcessInfo['slug'],
 ): Promise<ClusteringData> => {
     const payload = {

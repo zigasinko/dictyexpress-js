@@ -4,7 +4,6 @@ import _ from 'lodash';
  * Converts commas and newlines into spaces. Only keeps a-z A-Z 0-9 _.-().
  * @param {string} dirtyString - Original string (user input).
  */
-// eslint-disable-next-line import/prefer-default-export
 export const splitAndCleanGenesString = (dirtyString: string): string[] => {
     let str = dirtyString;
     if (!str) return [];

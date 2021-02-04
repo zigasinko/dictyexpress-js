@@ -5,7 +5,6 @@ import { apiUrl } from './base';
 
 const baseUrl = `${apiUrl}/_modules/visualizations`;
 
-// eslint-disable-next-line import/prefer-default-export
 export const getBasketExpressions = async (
     basketId: string,
 ): Promise<BasketExpressionsResponse> => {

@@ -7,7 +7,6 @@ import { get, post } from './fetch';
 
 const baseUrl = `${apiUrl}/app-state`;
 
-// eslint-disable-next-line import/prefer-default-export
 export const createAppState = async (
     appState: BackendAppState<BookmarkReduxState & BookmarkComponentsState>,
 ): Promise<BackendAppState<BookmarkReduxState & BookmarkComponentsState>> => {

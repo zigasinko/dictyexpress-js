@@ -21,7 +21,7 @@ import { GlobalStyle } from './globalStyle';
 import theme from './theme';
 import appStore from '../../redux/appStore';
 
-getCSRFCookie();
+void getCSRFCookie();
 
 const appTheme = createMuiTheme(theme);
 

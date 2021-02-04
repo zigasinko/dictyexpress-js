@@ -13,7 +13,6 @@ import {
 import { FormControlLabel, MenuItem, Switch, TextField, Tooltip } from '@material-ui/core';
 import { SwapHoriz } from '@material-ui/icons';
 import { withSize, SizeMeProps } from 'react-sizeme';
-import { logError } from 'utils/errorUtils';
 import { getSelectedTimeSeries } from 'redux/stores/timeSeries';
 import DictySelect from 'components/genexpress/common/dictySelect/dictySelect';
 import { objectsArrayToTsv } from 'utils/reportUtils';
@@ -108,11 +107,7 @@ const DifferentialExpressions = ({
         if (_.isEmpty(data)) return HIGHEST_CALCULABLE_LOG_PROB;
 
         const highestValueInData = _.max(
-            _.map(
-                data,
-                // eslint-disable-next-line no-restricted-globals
-                ({ logProbValue }) => isFinite(logProbValue) && logProbValue,
-            ),
+            _.map(data, ({ logProbValue }) => Number.isFinite(logProbValue) && logProbValue),
         );
         if (highestValueInData) {
             return Math.min(HIGHEST_CALCULABLE_LOG_PROB, highestValueInData * 1.1);
@@ -184,7 +179,7 @@ const DifferentialExpressions = ({
     const getCaption = useCallback((): string => {
         return `
 Differential expression: The x-axis indicates the log2 value of fold-change in
-differential expression ${selectedDifferentialExpression?.name}. The ${probFieldLabel} on the
+differential expression ${selectedDifferentialExpression?.name ?? ''}. The ${probFieldLabel} on the
 y-axis is the probability that the gene is differentially expressed. Higher
 -log10(${probFieldLabel}) indicates higher probability that the gene is
 differentially expressed and not a false positive, while the value of 3
@@ -288,9 +283,7 @@ positives.
                 newThresholds.pValue = roundPValue(10 ** -newThresholds.pValueLog);
                 break;
             }
-            default: {
-                logError(`Threshold field ${thresholdField} not recognized`);
-            }
+            default:
         }
 
         setThresholds(newThresholds);

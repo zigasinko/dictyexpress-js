@@ -41,7 +41,7 @@ export const getCookie = (name: string): string => {
 };
 
 export const setClipboardText = (text: string): void => {
-    navigator.clipboard.writeText(text);
+    void navigator.clipboard.writeText(text);
 };
 
 export const saveAs = (content: string | Blob, filename: string, contentType: string): void => {

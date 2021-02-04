@@ -5,7 +5,6 @@ import * as vega from 'vega';
  * Any configuration provided within the specification itself will take
  * precedence over external configurations passed to the parser.
  */
-// eslint-disable-next-line import/prefer-default-export
 export const vegaTheme: vega.Config = {
     legend: {
         padding: 10,

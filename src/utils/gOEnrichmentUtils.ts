@@ -99,7 +99,7 @@ export const ontologyJsonToTermsTable = async (
 
     // Fetch genes for all rows (grouped by source and species).
     const getSourceSpeciesKey = (row: GOEnrichmentTerm | Gene): string =>
-        `${row.species}&${row.source}`;
+        `${row.species || ''}&${row.source || ''}`;
     const rowsBySourceSpecies = _.groupBy(table, (row) => getSourceSpeciesKey(row));
 
     const sourceSpeciesGenesPromises = _.map(rowsBySourceSpecies, async (rows, key) => {

@@ -18,7 +18,7 @@ describe('dictyGrid', () => {
                     { field: 'id', headerName: 'Id', width: 20 },
                     { field: 'collection.name', headerName: 'Name', width: 50 },
                 ]}
-                getRowId={(data): string => data.id.toString()}
+                getRowId={(data): string => data.id.toString(10)}
                 filterLabel="Filter"
                 selectedData={[timeSeries[0]]}
             />,

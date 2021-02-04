@@ -421,11 +421,7 @@ const DifferentialExpressionsVolcanoPlot = forwardRef(
             if (_.isEmpty(data)) return HIGHEST_CALCULABLE_LOG_PROB;
 
             const highestValueInData = _.max(
-                _.map(
-                    data,
-                    // eslint-disable-next-line @typescript-eslint/camelcase, no-restricted-globals
-                    ({ logProbValue }) => isFinite(logProbValue) && logProbValue,
-                ),
+                _.map(data, ({ logProbValue }) => Number.isFinite(logProbValue) && logProbValue),
             );
 
             return highestValueInData

@@ -3,7 +3,6 @@ import { apiUrl } from './base';
 
 const baseUrl = `${apiUrl}/queryobserver/unsubscribe`;
 
-// eslint-disable-next-line import/prefer-default-export
 export const unsubscribe = async (observer: string, subscriber: string): Promise<void> => {
     const queryUrl = new URL(baseUrl);
     queryUrl.searchParams.append('observer', observer);

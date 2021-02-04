@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
-import { customRender } from 'tests/test-utils';
+import { customRender, waitForButtonEnabled } from 'tests/test-utils';
 import { testState } from 'tests/mock';
 import * as documentHelpers from 'utils/documentHelpers';
 
@@ -23,7 +23,7 @@ describe('reportBuilder integration', () => {
         // (documentHelpers) method.
         const saveAsSpy = jest.spyOn(documentHelpers, 'saveAs').mockImplementation(() => {});
 
-        await waitFor(() => expect(screen.getByLabelText('Export')).toBeEnabled());
+        await waitForButtonEnabled(() => screen.getByLabelText('Export'));
 
         // Export button in app bar.
         fireEvent.click(screen.getByLabelText('Export'));

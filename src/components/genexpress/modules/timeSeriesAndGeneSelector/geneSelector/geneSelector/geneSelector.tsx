@@ -1,4 +1,4 @@
-import React, { ReactElement, useState, useEffect, useCallback, ReactNode } from 'react';
+import React, { ReactElement, useState, useEffect, ReactNode, useCallback } from 'react';
 import Tooltip from '@material-ui/core/Tooltip';
 import _, { debounce } from 'lodash';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -74,6 +74,9 @@ const GeneSelector = ({
 
     const isDisabled = _.isEmpty(basketInfo);
 
+    // TODO: Latest version of eslint (7.19.0) has a problem inferring dependencies from non-wrapped
+    // functions. Enable this eslint rule once it's fixed.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const fetchGenes = useCallback(
         debounce(async (queryValue: string): Promise<void> => {
             if (autocompleteSource == null || autocompleteType == null) {
@@ -96,14 +99,14 @@ const GeneSelector = ({
             setAutocompleteOpen(true);
             setIsLoading(false);
         }, 500),
-        [autocompleteSource, autocompleteSpecies, autocompleteType],
+        [autocompleteSource, autocompleteSpecies, autocompleteType, enqueueSnackbar],
     );
 
     useEffect(() => {
         // Fetching genes is done with debounced function so that request is only sent after user is done typing.
         if (inputValue !== '') {
             setIsLoading(true);
-            fetchGenes(inputValue);
+            void fetchGenes(inputValue);
         } else {
             setAutocompleteOpen(false);
         }
@@ -210,6 +213,7 @@ const GeneSelector = ({
     const handleImportedGenesNamesString = (genesNamesString: string): void => {
         const enteredGenesNames = splitAndCleanGenesString(genesNamesString);
 
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         handleImportedGenesNames(enteredGenesNames);
     };
 

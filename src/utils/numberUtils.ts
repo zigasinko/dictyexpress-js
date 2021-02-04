@@ -6,7 +6,6 @@ import _ from 'lodash';
  * @param arrayLength - How many numbers are in generated array.
  * @param randomNumberGenerator - Number generator function.
  */
-// eslint-disable-next-line import/prefer-default-export
 export const generateRandomNumbers = (
     arrayLength: number,
     randomNumberGenerator: () => number = (): number => Math.random(),
