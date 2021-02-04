@@ -40,6 +40,7 @@ module.exports = {
             jsx: true,
         },
     },
+    ignorePatterns: ['.eslintrc.js', 'package-lock.json', 'node_modules', 'build'],
     rules: {
         // .tsx files can include JSX.
         'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
@@ -58,6 +59,13 @@ module.exports = {
         ],
         'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
         'prettier/prettier': 'error',
+        'react/require-default-props': 'off',
+        'no-void': ['error', { allowAsStatement: true }],
+        '@typescript-eslint/no-unsafe-member-access': 'off',
+        '@typescript-eslint/no-unsafe-assignment': 'off',
+        '@typescript-eslint/no-unsafe-call': 'off',
+        '@typescript-eslint/no-unsafe-return': 'off',
+        '@typescript-eslint/restrict-template-expressions': ['error', { allowAny: true }],
         'react-hooks/exhaustive-deps': [
             'warn',
             {

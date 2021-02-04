@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import * as vega from 'vega';
 
-export const objectsArrayToTsv = (rows: object[]): string => {
+export const objectsArrayToTsv = (rows: Record<string, unknown>[]): string => {
     if (_.isEmpty(rows) || _.isEmpty(rows[0])) {
         return '';
     }

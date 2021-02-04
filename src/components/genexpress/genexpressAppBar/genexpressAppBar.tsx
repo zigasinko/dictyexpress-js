@@ -95,7 +95,7 @@ const GenexpressAppBar = ({
      * Execute export once user clicks on Export button in export prefix modal.
      */
     const handleExportPrefix = (prefix: string): void => {
-        reportBuilder.exportToZip(prefix);
+        void reportBuilder.exportToZip(prefix);
     };
 
     const handleBookmarkClick = async (): Promise<void> => {

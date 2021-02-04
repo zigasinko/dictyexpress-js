@@ -21,13 +21,13 @@ import getStore from '../redux/rootStore';
 
 const appTheme = createMuiTheme(theme);
 
-export type customRenderOptions = {
+export type CustomRenderOptions = {
     initialState?: RootState;
     mockedStore?: MockStoreEnhanced<RootState, AppDispatch>;
     route?: string;
 };
 
-export const customRender = (ui: ReactElement, options?: customRenderOptions): RenderResult => {
+export const customRender = (ui: ReactElement, options?: CustomRenderOptions): RenderResult => {
     const store = getStore(options?.initialState);
     store.dispatch = jest.fn(store.dispatch);
 
@@ -133,4 +133,8 @@ export const validateCreateStateRequest = async (
 
         validateCreatedBookmarkState(createBookmarkRequest.state);
     });
+};
+
+export const waitForButtonEnabled = (getHtmlElement: () => HTMLElement): Promise<void> => {
+    return waitFor(() => expect(getHtmlElement()).toBeEnabled());
 };

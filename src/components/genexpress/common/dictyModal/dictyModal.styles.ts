@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Modal } from '@material-ui/core';
+import { Theme } from '@material-ui/core/styles/createMuiTheme';
 
 export const CenteredModal = styled(Modal)`
     display: flex;
@@ -8,7 +9,7 @@ export const CenteredModal = styled(Modal)`
 `;
 
 export const ModalContainer = styled.div`
-    background-color: ${(props): string => props.theme.palette.background.paper};
+    background-color: ${(props): string => (props.theme as Theme).palette.background.paper};
     width: 600px;
 `;
 

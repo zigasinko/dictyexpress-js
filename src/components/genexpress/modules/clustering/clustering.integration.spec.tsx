@@ -9,6 +9,7 @@ import {
     resolveStringifiedObjectPromise,
     validateCreateStateRequest,
     validateExportFile,
+    waitForButtonEnabled,
 } from 'tests/test-utils';
 import {
     testState,
@@ -221,8 +222,8 @@ describe('clustering integration', () => {
                 expect(screen.getByLabelText('Clustering Linkage')).toHaveClass('Mui-disabled');
             });
 
-            it('should show a warning that no genes are selected', () => {
-                screen.findByText('Select two or more genes.');
+            it('should show a warning that no genes are selected', async () => {
+                await screen.findByText('Select two or more genes.');
             });
 
             it('should show a warning that only one gene is selected (after it is selected)', async () => {
@@ -246,9 +247,7 @@ describe('clustering integration', () => {
                 );
 
                 // Wait for "Search for a gene" input to get enabled.
-                await waitFor(() =>
-                    expect(screen.getByPlaceholderText('Search for a gene')).toBeEnabled(),
-                );
+                await waitForButtonEnabled(() => screen.getByPlaceholderText('Search for a gene'));
 
                 fireEvent.change(screen.getByPlaceholderText('Search for a gene'), {
                     target: { value: genes[0].name.slice(0, 2) },

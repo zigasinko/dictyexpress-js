@@ -43,9 +43,10 @@ export const mergeClusteringData = (
     };
 };
 
-const processParametersObservable: ProcessDataEpicsFactoryProps<
-    ClusteringData
->['processParametersObservable'] = (_action$, state$) => {
+const processParametersObservable: ProcessDataEpicsFactoryProps<ClusteringData>['processParametersObservable'] = (
+    _action$,
+    state$,
+) => {
     return combineLatest([
         state$.pipe(
             mapStateSlice((state) => {

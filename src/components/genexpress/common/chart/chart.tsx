@@ -134,7 +134,7 @@ const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
 
     const runChart = useCallback((): void => {
         try {
-            chartView.current?.runAsync();
+            void chartView.current?.runAsync();
         } catch (error) {
             dispatch(handleError('Error generating chart.', error));
         }

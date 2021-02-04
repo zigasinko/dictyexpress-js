@@ -6,7 +6,7 @@ import { SizeMe } from 'react-sizeme';
  * react-sizeme withSize HOC doesn't forward refs. That's why we need a custom one.
  * @param Component - Component to track size is tracked (size property is injected).
  */
-const withSizeme = <P extends object>(
+const withSizeme = <P extends unknown>(
     Component: FC<P>,
 ): React.ForwardRefExoticComponent<
     React.PropsWithoutRef<Pick<P, Exclude<keyof P, 'size'>>> & React.RefAttributes<unknown>

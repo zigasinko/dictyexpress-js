@@ -49,7 +49,7 @@ export type ProcessDataEpicsFactoryProps<DataType> = {
     processParametersObservable: (
         action: ActionsObservable<Action>,
         state: StateObservable<RootState>,
-    ) => Observable<object | Observable<ReturnType<typeof handleError>>>;
+    ) => Observable<Record<string, unknown> | Observable<ReturnType<typeof handleError>>>;
     fetchDataActionCreator: ActionCreatorWithPayload<number>;
     processStartedActionCreator: ActionCreatorWithoutPayload;
     processEndedActionCreator: ActionCreatorWithoutPayload;
@@ -94,7 +94,7 @@ const getProcessDataEpicsFactory = <DataType extends Data>({
                 // Cleanup queryObserverManager existing observer waiting to receive process
                 // data via WebSocket.
                 if (activeQueryObserverDisposeFunction[processInfo.name] != null) {
-                    activeQueryObserverDisposeFunction[processInfo.name]();
+                    void activeQueryObserverDisposeFunction[processInfo.name]();
                 }
 
                 if (_.isEmpty(input)) {

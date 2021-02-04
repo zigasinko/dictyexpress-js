@@ -28,9 +28,10 @@ import getProcessDataEpicsFactory, {
 } from './getProcessDataEpicsFactory';
 import { mapStateSlice } from './rxjsCustomFilters';
 
-const processParametersObservable: ProcessDataEpicsFactoryProps<
-    FindSimilarGenesData
->['processParametersObservable'] = (action$, state$) => {
+const processParametersObservable: ProcessDataEpicsFactoryProps<FindSimilarGenesData>['processParametersObservable'] = (
+    action$,
+    state$,
+) => {
     return combineLatest([
         action$.pipe(ofType(fetchGenesSimilarities)),
         state$.pipe(

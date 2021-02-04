@@ -28,7 +28,7 @@ export const setSentryUser = (user: User | void): void => {
 
 export const sentryCapture = (
     message: string,
-    associatedObject: {} | Error | ResponseError = '',
+    associatedObject: Record<string, unknown> | Error | ResponseError = {},
     severity: Severity = Severity.Error,
 ): string => {
     // If an error is attached, log the same error twice.

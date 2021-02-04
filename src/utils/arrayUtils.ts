@@ -11,5 +11,5 @@ export const advancedJoin = (
 ): string => {
     if (_.size(values) === 0) return '';
     if (_.size(values) === 1) return values[0];
-    return _.initial(values).join(delimiter) + lastDelimiter + _.last(values);
+    return `${_.initial(values).join(delimiter)}${lastDelimiter}${_.last(values) as string}`;
 };

@@ -106,7 +106,7 @@ describe('gOEnrichment', () => {
 
             fireEvent.click(await screen.findByText('Molecular function'));
 
-            screen.findByText('Enriched terms not found within selected aspect.');
+            await screen.findByText('Enriched terms not found within selected aspect.');
         });
 
         it('should display score in a custom cell', () => {

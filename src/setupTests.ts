@@ -23,7 +23,7 @@ fetchMock.enableMocks();
  * Known issue with jsDom. Won't be needed once create-react-app updates jest to v26:
  * https://github.com/mui-org/material-ui/issues/15726
  */
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 global.document.createRange = () => ({
     setStart: jest.fn(),

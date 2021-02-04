@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { v4 as uuidv4 } from 'uuid';
 
 export const apiUrl = `${process.env.REACT_APP_API_URL}`;

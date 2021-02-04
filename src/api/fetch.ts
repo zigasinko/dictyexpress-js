@@ -3,6 +3,7 @@ import { getCookie } from '../utils/documentHelpers';
 import { sessionId } from './base';
 
 type QueryParams = { [key: string]: string | number };
+// eslint-disable-next-line @typescript-eslint/ban-types
 type BodyParams = {};
 
 /**
@@ -67,7 +68,8 @@ const request = async (
         }
     }
 
-    return fetch(fullUrl.toString(), options).then(throwErrorIfResponseNotOk);
+    const test = fetch(fullUrl.toString(), options);
+    return test.then(throwErrorIfResponseNotOk);
 };
 
 export const get = (url: string, params?: QueryParams): Promise<Response> => {

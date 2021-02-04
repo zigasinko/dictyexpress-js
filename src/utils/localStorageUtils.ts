@@ -21,7 +21,14 @@ export const getLocalStorageKey = (key: string): string => {
  * @param value - Object to save.
  */
 export const writeToLocalStorage = (key: string, value: unknown): void => {
-    const stringifiedObject = typeof value === 'object' ? JSON.stringify(value) : `${value}`;
+    let stringifiedObject = '';
+
+    if (typeof value === 'object') {
+        stringifiedObject = JSON.stringify(value);
+    } else if (typeof value === 'string') {
+        stringifiedObject = `${value}`;
+    }
+
     return localStorage.setItem(getLocalStorageKey(key), LZString.compress(stringifiedObject));
 };
 

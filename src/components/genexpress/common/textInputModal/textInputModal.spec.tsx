@@ -54,6 +54,7 @@ describe('textInputModal', () => {
         fireEvent.click(screen.getByRole('button', { name: buttonLabel }));
 
         expect(mockedOnConfirm.mock.calls.length).toBe(1);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         expect(mockedOnConfirm.mock.calls[0][0]).toEqual(testValue);
     });
 

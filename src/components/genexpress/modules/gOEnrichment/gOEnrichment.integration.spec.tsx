@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import React from 'react';
-import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor, RenderResult } from '@testing-library/react';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
 import {
     customRender,
@@ -117,7 +117,8 @@ describe('goEnrichment integration', () => {
         });
 
         describe('gaf not fetched yet', () => {
-            let unmount: () => boolean;
+            let unmount: RenderResult['unmount'];
+
             beforeEach(() => {
                 initialState = testState();
                 initialState.gOEnrichment.gaf = {} as DataGafAnnotation;

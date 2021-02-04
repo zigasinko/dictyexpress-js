@@ -21,9 +21,10 @@ import getProcessDataEpicsFactory, {
 } from './getProcessDataEpicsFactory';
 import { mapStateSlice } from './rxjsCustomFilters';
 
-const processParametersObservable: ProcessDataEpicsFactoryProps<
-    DataGOEnrichmentAnalysis
->['processParametersObservable'] = (action$, state$) => {
+const processParametersObservable: ProcessDataEpicsFactoryProps<DataGOEnrichmentAnalysis>['processParametersObservable'] = (
+    action$,
+    state$,
+) => {
     return combineLatest([
         state$.pipe(
             mapStateSlice((state) => {
