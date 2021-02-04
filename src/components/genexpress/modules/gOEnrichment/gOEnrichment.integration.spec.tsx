@@ -208,7 +208,7 @@ describe('goEnrichment integration', () => {
 
                     // Click on dropdown. MouseDown event has to be used, because material-ui Select component
                     // listens to mouseDown event to expand options menu.
-                    fireEvent.mouseDown(screen.getByLabelText('Aspect'));
+                    fireEvent.mouseDown(await screen.findByLabelText('Aspect'));
                     fireEvent.click(await screen.findByText(aspectOption.label));
 
                     await screen.findByText(

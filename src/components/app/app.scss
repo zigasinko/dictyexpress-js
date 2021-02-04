@@ -20,6 +20,7 @@ $primary: #49688d;
         url('../../fonts/FSJoeyBold.ttf') format('opentype');
     font-weight: bold;
     font-style: normal;
+    font-display: swap;
 }
 
 @font-face {
@@ -29,6 +30,7 @@ $primary: #49688d;
         url('../../fonts/FSJoeyRegular.ttf') format('opentype');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
 }
 
 @font-face {
@@ -38,4 +40,5 @@ $primary: #49688d;
         url('../../fonts/FSJoeyHeavy.ttf') format('opentype');
     font-weight: 800;
     font-style: normal;
+    font-display: swap;
 }
