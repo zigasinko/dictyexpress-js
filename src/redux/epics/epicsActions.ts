@@ -37,7 +37,6 @@ export const fetchSimilarGenes = createAction<TFetchGenesActionPayload>('genes/f
 export const selectedGenesChanged = createAction<string[]>('genes/selectedGenesChanged');
 
 export const getOrCreateGOEnrichment = createAction('gOEnrichment/getOrCreateGOEnrichment');
-export const fetchGOEnrichmentData = createAction<number>('gOEnrichment/fetchGOEnrichmentData');
 export const fetchGOEnrichmentStorage = createAction<number>(
     'gOEnrichment/fetchGOEnrichmentStorage',
 );
@@ -45,7 +44,6 @@ export const gOEnrichmentDataFetchSucceeded = createAction<DataGOEnrichmentAnaly
     'gOEnrichment/dataFetchSucceeded',
 );
 
-export const fetchClusteringData = createAction<number>('clustering/fetchClusteringData');
 export const fetchClusteringDataSucceeded = createAction<ClusteringData>(
     'clustering/fetchClusteringDataSucceeded',
 );
@@ -54,9 +52,6 @@ export const fetchClusteringStorageSucceeded = createAction<Storage>(
 );
 
 export const fetchGenesSimilarities = createAction('similarGenes/fetchGenesSimilarities');
-export const fetchGenesSimilaritiesData = createAction<number>(
-    'similarGenes/fetchGenesSimilaritiesData',
-);
 export const fetchGenesSimilaritiesDataSucceeded = createAction<FindSimilarGenesData>(
     'similarGenes/fetchGenesSimilaritiesDataSucceeded',
 );

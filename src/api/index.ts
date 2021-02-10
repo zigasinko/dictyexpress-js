@@ -8,6 +8,8 @@ export { getOrCreateData } from './getOrCreateApi';
 export { getStorage } from './storageApi';
 export { listByIds } from './geneListApi';
 export { getTimeSeriesRelations } from './relationApi';
+// eslint-disable-next-line import/no-cycle
 export { getCurrentUser } from './userApi';
+// eslint-disable-next-line import/no-cycle
 export { getGafs, getDataBySamplesIds, getDataReactive } from './dataApi';
 export { getBasketExpressions } from './visualizationsApi';

@@ -22,12 +22,15 @@ import { getIsFetchingClusteringData } from 'redux/stores/clustering';
 import { useLocation } from 'react-router-dom';
 import { loadBookmarkedState } from 'managers/bookmarkStateManager';
 import { getUrlQueryParameter } from 'utils/url';
+import { useMobxStore } from 'components/app/mobxStoreProvider';
+import { observer } from 'mobx-react-lite';
 import TimeSeriesAndGeneSelector from './modules/timeSeriesAndGeneSelector/timeSeriesAndGeneSelector';
 import DictyModule from './common/dictyModule/dictyModule';
 import SnackbarNotifier from './snackbarNotifier/snackbarNotifier';
 import GenexpressAppBar from './genexpressAppBar/genexpressAppBar';
 import DifferentialExpressions from './modules/differentialExpressions/differentialExpressions';
 import GOEnrichment from './modules/gOEnrichment/gOEnrichment';
+import GOEnrichmentMobx from './modules/gOEnrichment/gOEnrichmentMobx';
 import Clustering from './modules/clustering/clustering';
 import GenesExpressions from './modules/genesExpressions/genesExpressions';
 import { DictyUrlQueryParameter, LayoutBreakpoint, ModulesKeys } from './common/constants';
@@ -76,6 +79,8 @@ const GeneExpressGrid = ({
     connectedFetchAndSelectPredefinedGenes,
     connectedSelectFirstTimeSeries,
 }: PropsFromRedux): ReactElement => {
+    const storeMobx = useMobxStore();
+
     const dispatch = useDispatch();
     const location = useLocation();
 
@@ -157,9 +162,17 @@ const GeneExpressGrid = ({
                             <DifferentialExpressions />
                         </DictyModule>
                     </div>
+                    <div key={ModulesKeys.gOEnrichmentMobx}>
+                        <DictyModule
+                            title="Gene Ontology Enrichment MOBX"
+                            isLoading={storeMobx.gOEnrichment.isLoading}
+                        >
+                            <GOEnrichmentMobx />
+                        </DictyModule>
+                    </div>
                     <div key={ModulesKeys.gOEnrichment}>
                         <DictyModule
-                            title="Gene Ontology Enrichment"
+                            title="Gene Ontology Enrichment REDUX"
                             isLoading={isFetchingGOEnrichmentJson}
                         >
                             <GOEnrichment />
@@ -179,4 +192,4 @@ const GeneExpressGrid = ({
     );
 };
 
-export default connector(GeneExpressGrid);
+export default connector(observer(GeneExpressGrid));

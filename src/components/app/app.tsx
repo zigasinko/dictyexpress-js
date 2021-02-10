@@ -20,6 +20,7 @@ import { getCSRFCookie } from 'api';
 import { GlobalStyle } from './globalStyle';
 import theme from './theme';
 import appStore from '../../redux/appStore';
+import { MobxStoreProvider } from './mobxStoreProvider';
 
 getCSRFCookie();
 
@@ -30,22 +31,24 @@ const App = (): ReactElement => {
         <RendererContext.Provider value="svg">
             <StylesProvider injectFirst>
                 <ReduxProvider store={appStore}>
-                    <MuiThemeProvider theme={appTheme}>
-                        <CssBaseline />
-                        <StyledComponentsThemeProvider theme={appTheme}>
-                            <GlobalStyle />
-                            <SnackbarProvider maxSnack={3}>
-                                <BrowserRouter>
-                                    <Switch>
-                                        <Route exact path="/" component={LandingPage} />
-                                        <Route path="/landing" component={LandingPage} />
-                                        <Route path="/bcm" component={GeneExpressGrid} />
-                                        <Route component={PageNotFound} />
-                                    </Switch>
-                                </BrowserRouter>
-                            </SnackbarProvider>
-                        </StyledComponentsThemeProvider>
-                    </MuiThemeProvider>
+                    <MobxStoreProvider>
+                        <MuiThemeProvider theme={appTheme}>
+                            <CssBaseline />
+                            <StyledComponentsThemeProvider theme={appTheme}>
+                                <GlobalStyle />
+                                <SnackbarProvider maxSnack={3}>
+                                    <BrowserRouter>
+                                        <Switch>
+                                            <Route exact path="/" component={LandingPage} />
+                                            <Route path="/landing" component={LandingPage} />
+                                            <Route path="/bcm" component={GeneExpressGrid} />
+                                            <Route component={PageNotFound} />
+                                        </Switch>
+                                    </BrowserRouter>
+                                </SnackbarProvider>
+                            </StyledComponentsThemeProvider>
+                        </MuiThemeProvider>
+                    </MobxStoreProvider>
                 </ReduxProvider>
             </StylesProvider>
         </RendererContext.Provider>

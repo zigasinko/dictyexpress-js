@@ -8,6 +8,7 @@ export enum ModulesKeys {
     expressionTimeCourses = 'expressionTimeCourses',
     differentialExpressions = 'differentialExpressions',
     gOEnrichment = 'gOEnrichment',
+    gOEnrichmentMobx = 'gOEnrichmentMobx',
     clustering = 'clustering',
 }
 

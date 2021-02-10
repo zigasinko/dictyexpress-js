@@ -21,7 +21,7 @@ import { Feature } from '@genialis/resolwe/dist/api/types/modules';
 import { GeneClustering, Storage } from '@genialis/resolwe/dist/api/types/rest';
 import { ClusteringData } from 'redux/models/rest';
 import { filter, switchMap } from 'rxjs/operators';
-import { fetchClusteringData, fetchClusteringDataSucceeded } from './epicsActions';
+import { fetchClusteringDataSucceeded } from './epicsActions';
 import getProcessDataEpicsFactory, {
     ProcessDataEpicsFactoryProps,
     ProcessesInfo,
@@ -115,7 +115,6 @@ const processParametersObservable: ProcessDataEpicsFactoryProps<ClusteringData>[
 const getClusteringProcessDataEpics = getProcessDataEpicsFactory<ClusteringData>({
     processInfo: ProcessesInfo.HierarchicalClustering,
     processParametersObservable,
-    fetchDataActionCreator: fetchClusteringData,
     processStartedActionCreator: clusteringDataFetchStarted,
     processEndedActionCreator: clusteringDataFetchEnded,
     fetchDataSucceededActionCreator: fetchClusteringDataSucceeded,

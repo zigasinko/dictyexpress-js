@@ -3,6 +3,7 @@ import { handleError } from 'utils/errorUtils';
 import {
     DisposeFunction as QueryObserverDisposeFunction,
     reactiveRequest,
+    reactiveRequestMobx,
 } from 'managers/queryObserverManager';
 import { Action } from '@reduxjs/toolkit';
 import { Observable } from 'rxjs';
@@ -49,6 +50,23 @@ export const getDataReactive = async <T>(
     const { items, disposeFunction } = await reactiveRequest<T>(
         getClusteringDataRequest,
         webSocketMessageOutputReduxAction,
+    );
+    return { item: items[0], disposeFunction };
+};
+
+export const getDataReactiveMobx = async <T>(
+    dataId: number,
+    handleDataResponse: (items: T) => void,
+): Promise<{ item: T; disposeFunction: QueryObserverDisposeFunction }> => {
+    const getDataRequest = (): Promise<Response> => getReactive(baseUrl, { id: dataId });
+
+    const handleWebSocketMessageWithMobxStore = (items: unknown[]): void => {
+        handleDataResponse(items[0] as T);
+    };
+
+    const { items, disposeFunction } = await reactiveRequestMobx<T>(
+        getDataRequest,
+        handleWebSocketMessageWithMobxStore,
     );
     return { item: items[0], disposeFunction };
 };

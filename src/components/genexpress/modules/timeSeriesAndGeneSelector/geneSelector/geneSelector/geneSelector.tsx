@@ -23,6 +23,8 @@ import { handleError } from 'utils/errorUtils';
 import { getGenes, getGenesByNames } from 'api';
 import { objectsArrayToTsv } from 'utils/reportUtils';
 import useReport from 'components/genexpress/common/reportBuilder/useReport';
+import { useMobxStore } from 'components/app/mobxStoreProvider';
+import { runInAction } from 'mobx';
 import { AutoCompleteItemSpan, TitleSection } from './geneSelector.styles';
 
 const itemRender = (option: Gene): ReactElement => {
@@ -61,6 +63,8 @@ const GeneSelector = ({
     connectedGenesSelected,
     connectedAllGenesDeselected,
 }: PropsFromRedux): ReactElement => {
+    const storeMobx = useMobxStore();
+
     const { source: autocompleteSource, species: autocompleteSpecies, type: autocompleteType } =
         basketInfo ?? {};
     const [autocompleteOpen, setAutocompleteOpen] = useState(false);
@@ -73,6 +77,17 @@ const GeneSelector = ({
     const dispatch = useDispatch();
 
     const isDisabled = _.isEmpty(basketInfo);
+
+    // Fill mobx store with data needed to initiate gene ontology enrichment process.
+    useEffect(() => {
+        if (storeMobx.genes.selectedGenes.length !== selectedGenes.length) {
+            runInAction(() => {
+                storeMobx.genes.setGenesById({ ...selectedGenes });
+                storeMobx.genes.genesSelected(selectedGenes.map((gene) => gene.feature_id));
+            });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedGenes]);
 
     // Latest version of eslint (7.19.0) has a problem inferring dependencies from non-wrapped
     // functions. Enable this eslint rule once it's fixed.

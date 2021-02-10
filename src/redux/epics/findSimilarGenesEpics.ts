@@ -17,11 +17,7 @@ import { combineEpics, Epic, ofType } from 'redux-observable';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { Action } from '@reduxjs/toolkit';
 import { combineLatest, of } from 'rxjs';
-import {
-    fetchGenesSimilarities,
-    fetchGenesSimilaritiesData,
-    fetchGenesSimilaritiesDataSucceeded,
-} from './epicsActions';
+import { fetchGenesSimilarities, fetchGenesSimilaritiesDataSucceeded } from './epicsActions';
 import getProcessDataEpicsFactory, {
     ProcessDataEpicsFactoryProps,
     ProcessesInfo,
@@ -81,7 +77,6 @@ const processParametersObservable: ProcessDataEpicsFactoryProps<FindSimilarGenes
 const getFindSimilarGenesProcessDataEpics = getProcessDataEpicsFactory<FindSimilarGenesData>({
     processInfo: ProcessesInfo.FindSimilarGenes,
     processParametersObservable,
-    fetchDataActionCreator: fetchGenesSimilaritiesData,
     processStartedActionCreator: genesSimilaritiesFetchStarted,
     processEndedActionCreator: genesSimilaritiesFetchEnded,
     fetchDataSucceededActionCreator: fetchGenesSimilaritiesDataSucceeded,

@@ -14,7 +14,7 @@ import {
 } from 'redux/stores/gOEnrichment';
 import { appendMissingAttributesToJson } from 'utils/gOEnrichmentUtils';
 import { DataGOEnrichmentAnalysis, Storage } from '@genialis/resolwe/dist/api/types/rest';
-import { fetchGOEnrichmentData, gOEnrichmentDataFetchSucceeded } from './epicsActions';
+import { gOEnrichmentDataFetchSucceeded } from './epicsActions';
 import getProcessDataEpicsFactory, {
     ProcessDataEpicsFactoryProps,
     ProcessesInfo,
@@ -47,6 +47,7 @@ const processParametersObservable: ProcessDataEpicsFactoryProps<DataGOEnrichment
             if (selectedGenes.length === 0) {
                 return of({});
             }
+
             return of({
                 genes: selectedGenes.map((gene) => gene.feature_id),
                 pval_threshold: pValueThreshold,
@@ -62,7 +63,6 @@ const processParametersObservable: ProcessDataEpicsFactoryProps<DataGOEnrichment
 const getGOEnrichmentProcessDataEpics = getProcessDataEpicsFactory<DataGOEnrichmentAnalysis>({
     processInfo: ProcessesInfo.GOEnrichment,
     processParametersObservable,
-    fetchDataActionCreator: fetchGOEnrichmentData,
     processStartedActionCreator: gOEnrichmentJsonFetchStarted,
     processEndedActionCreator: gOEnrichmentJsonFetchEnded,
     fetchDataSucceededActionCreator: gOEnrichmentDataFetchSucceeded,

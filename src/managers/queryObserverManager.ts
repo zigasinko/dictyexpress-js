@@ -15,6 +15,7 @@ type QueryObserver = {
     items: unknown[];
     observerId: string;
     webSocketMessageOutputObservable: (items: unknown[]) => Observable<Action | never>;
+    handleWebSocketMessageWithMobxStore?: (items: unknown[]) => void;
 };
 
 export type DisposeFunction = () => Promise<void>;
@@ -53,6 +54,26 @@ export const reactiveRequest = async <T>(
         observerId: observerResponse.observer,
         items: observerResponse.items,
         webSocketMessageOutputObservable: webSocketMessageOutputReduxAction,
+    });
+
+    return {
+        items: observerResponse.items as T[],
+        disposeFunction: (): Promise<void> => unsubscribeObserver(observerResponse.observer),
+    };
+};
+
+export const reactiveRequestMobx = async <T>(
+    query: () => Promise<Response>,
+    handleWebSocketMessageWithMobxStore: QueryObserver['handleWebSocketMessageWithMobxStore'],
+): Promise<ItemsAndDisposeFunction<T>> => {
+    const response = await query();
+    const observerResponse = await deserializeResponse<QueryObserverResponse>(response);
+
+    observers.push({
+        observerId: observerResponse.observer,
+        items: observerResponse.items,
+        handleWebSocketMessageWithMobxStore,
+        webSocketMessageOutputObservable: () => EMPTY,
     });
 
     return {
@@ -103,5 +124,16 @@ export const handleWebSocketMessage = (message: Message): Observable<Action | ne
         return EMPTY;
     }
     observer.items = update(message, observer.items);
+
     return observer.webSocketMessageOutputObservable(observer.items);
+};
+
+export const handleWebSocketMessageMobx = (message: Message): void => {
+    const observer = getObserver(message.observer);
+    if (observer == null) {
+        return;
+    }
+    observer.items = update(message, observer.items);
+
+    observer.handleWebSocketMessageWithMobxStore?.(observer.items);
 };

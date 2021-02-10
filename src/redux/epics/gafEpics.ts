@@ -11,7 +11,7 @@ import { handleError } from 'utils/errorUtils';
 import { getGafs } from 'api';
 import { filterNullAndUndefined, mapStateSlice } from './rxjsCustomFilters';
 
-const findAppropriateGaf = (
+export const findAppropriateGaf = (
     source: string,
     species: string,
     annotationGafs: DataGafAnnotation[],
