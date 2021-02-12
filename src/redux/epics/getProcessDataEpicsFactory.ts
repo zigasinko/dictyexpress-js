@@ -50,7 +50,6 @@ export type ProcessDataEpicsFactoryProps<DataType> = {
         action: ActionsObservable<Action>,
         state: StateObservable<RootState>,
     ) => Observable<Record<string, unknown> | Observable<ReturnType<typeof handleError>>>;
-    fetchDataActionCreator: ActionCreatorWithPayload<number>;
     processStartedActionCreator: ActionCreatorWithoutPayload;
     processEndedActionCreator: ActionCreatorWithoutPayload;
     fetchDataSucceededActionCreator: ActionCreatorWithPayload<DataType>;
@@ -61,7 +60,6 @@ export type ProcessDataEpicsFactoryProps<DataType> = {
 const getProcessDataEpicsFactory = <DataType extends Data>({
     processInfo,
     processParametersObservable,
-    fetchDataActionCreator,
     processStartedActionCreator,
     processEndedActionCreator,
     fetchDataSucceededActionCreator,
@@ -88,7 +86,7 @@ const getProcessDataEpicsFactory = <DataType extends Data>({
         return EMPTY;
     };
 
-    const getOrCreateEpic: Epic<Action, Action, RootState> = (action$, state$) => {
+    const getOrCreateDataEpic: Epic<Action, Action, RootState> = (action$, state$) => {
         return processParametersObservable(action$, state$).pipe(
             switchMap((input) => {
                 // Cleanup queryObserverManager existing observer waiting to receive process
@@ -106,7 +104,23 @@ const getProcessDataEpicsFactory = <DataType extends Data>({
                 }
 
                 return from(getOrCreateData(input, processInfo.slug)).pipe(
-                    map((response) => fetchDataActionCreator(response.id)),
+                    mergeMap((getOrCreateResponse) => {
+                        return from(
+                            getDataReactive(getOrCreateResponse.id, handleAnalysisDataResponse),
+                        ).pipe(
+                            mergeMap((dataResponse) => {
+                                activeQueryObserverDisposeFunction[processInfo.name] =
+                                    dataResponse.disposeFunction;
+                                return handleAnalysisDataResponse(dataResponse.item);
+                            }),
+                            catchError((error) =>
+                                handleProcessEndedWithError(
+                                    `${processInfo.name} analysis ended with an error.`,
+                                    error,
+                                ),
+                            ),
+                        );
+                    }),
                     catchError((error) =>
                         handleProcessEndedWithError(
                             `Error creating ${processInfo.name.toLowerCase()} process.`,
@@ -114,29 +128,6 @@ const getProcessDataEpicsFactory = <DataType extends Data>({
                         ),
                     ),
                     startWith(processStartedActionCreator()),
-                );
-            }),
-        );
-    };
-
-    const fetchDataEpic: Epic<Action, Action, RootState> = (action$) => {
-        return action$.pipe(
-            ofType<Action, ReturnType<typeof fetchDataActionCreator>>(
-                fetchDataActionCreator.toString(),
-            ),
-            switchMap((action) => {
-                return from(getDataReactive(action.payload, handleAnalysisDataResponse)).pipe(
-                    mergeMap((response) => {
-                        activeQueryObserverDisposeFunction[processInfo.name] =
-                            response.disposeFunction;
-                        return handleAnalysisDataResponse(response.item);
-                    }),
-                    catchError((error) =>
-                        handleProcessEndedWithError(
-                            `${processInfo.name} analysis ended with an error.`,
-                            error,
-                        ),
-                    ),
                 );
             }),
         );
@@ -165,7 +156,7 @@ const getProcessDataEpicsFactory = <DataType extends Data>({
         );
     };
 
-    return combineEpics(getOrCreateEpic, fetchDataEpic, fetchStorageEpic);
+    return combineEpics(getOrCreateDataEpic, fetchStorageEpic);
 };
 
 export default getProcessDataEpicsFactory;
