@@ -72,7 +72,6 @@ const getTimeSeriesGenesExpressions = (
             singleTimeSeries.partitions.filter((partition) => partition.label === label),
         );
 
-        // If any of samplesExpressions isn't in store
         if (
             timePointPartitions.some(
                 (partition) => !samplesExpressionsSamplesIds.includes(partition.entity),

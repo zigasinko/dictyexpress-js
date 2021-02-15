@@ -16,10 +16,6 @@ import {
 import { Data, Storage } from '@genialis/resolwe/dist/api/types/rest';
 import { mapStateSlice } from './rxjsCustomFilters';
 
-/**
- * Retrieve sample storage.
- * @param sampleData - Data to retrieve storage for (storage is defined in sampleData.output.exp_json).
- */
 const getSampleStorage = async (
     sampleData: Data,
 ): Promise<{ sampleId: number; storage: Storage }> => {
@@ -42,12 +38,10 @@ const fetchSamplesExpressionsEpic: Epic<Action, Action, RootState> = (_action$, 
                 state$.value.samplesExpressions,
             );
 
-            // Fetch only samples expressions that aren't in redux store yet.
             const timeSeriesSamplesIdsToFetch = timeSeriesSamplesIds.filter(
                 (sampleId) => !samplesExpressionsInStore.includes(sampleId),
             );
 
-            // If all samples expressions in question are already in store, there's no need to fetch them again!
             if (timeSeriesSamplesIdsToFetch.length === 0) {
                 return EMPTY;
             }

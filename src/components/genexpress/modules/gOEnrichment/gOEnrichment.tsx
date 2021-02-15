@@ -21,7 +21,7 @@ import { objectsArrayToTsv } from 'utils/reportUtils';
 import { advancedJoin } from 'utils/arrayUtils';
 import { ontologyJsonToOntologyRows, ontologyJsonToTermsTable } from 'utils/gOEnrichmentUtils';
 import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
-import { AspectValue } from 'components/genexpress/common/constants';
+import { AspectValue, BookmarkStatePath } from 'components/genexpress/common/constants';
 import useBookmarkableState from 'components/genexpress/common/useBookmarkableState';
 import {
     GOEnrichmentContainer,
@@ -65,7 +65,7 @@ const GOEnrichment = ({
 }: PropsFromRedux): ReactElement => {
     const [selectedAspect, setSelectedAspect] = useBookmarkableState(
         aspectOptions[0],
-        'GOEnrichment.selectedAspect',
+        BookmarkStatePath.gOEnrichmentSelectedAspect,
     );
     const [gOEnrichmentRows, setGOEnrichmentRows] = useState<GOEnrichmentRow[]>([]);
     const [allAspectsEmpty, setAllAspectsEmpty] = useState(true);

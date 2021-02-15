@@ -19,6 +19,7 @@ import {
 } from 'tests/mock';
 import { RootState } from 'redux/rootReducer';
 import _ from 'lodash';
+import { BookmarkStatePath } from 'components/genexpress/common/constants';
 import {
     colorScaleLimit,
     highlightedLineStrokeWidth,
@@ -42,7 +43,7 @@ const selectedTimeSeries = _.flatMap(timeSeriesById)[0];
 const comparisonTimeSeries = _.flatMap(timeSeriesById)[1];
 
 const backendBookmark = generateBackendBookmark(selectedTimeSeries.id, [genes[0].feature_id]);
-backendBookmark.state.genesExpressions = { showLegend: true };
+_.set(backendBookmark.state, BookmarkStatePath.genesExpressionsShowLegend, true);
 
 describe('genesExpressions integration', () => {
     let initialState: RootState;
@@ -292,7 +293,9 @@ describe('genesExpressions integration', () => {
                 expect(bookmarkState.genes.highlightedGenesIds).toEqual(
                     initialState.genes.highlightedGenesIds,
                 );
-                expect(bookmarkState.genesExpressions.showLegend).toEqual(false);
+                expect(_.get(bookmarkState, BookmarkStatePath.genesExpressionsShowLegend)).toEqual(
+                    false,
+                );
             });
         });
     });

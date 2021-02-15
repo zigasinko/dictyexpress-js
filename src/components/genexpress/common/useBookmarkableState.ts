@@ -1,9 +1,10 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import * as bookmarkStateManager from 'managers/bookmarkStateManager';
+import { BookmarkStatePath } from './constants';
 
 const useBookmarkableState = <T>(
     initialValue: T | (() => T),
-    bookmarkStatePath: string,
+    bookmarkStatePath: BookmarkStatePath,
 ): [T, Dispatch<SetStateAction<T>>] => {
     const [value, setValue] = useState<T>(initialValue);
 

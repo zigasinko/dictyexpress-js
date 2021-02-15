@@ -49,4 +49,10 @@ export enum DictyUrlQueryParameter {
     appState = '_s',
 }
 
+export enum BookmarkStatePath {
+    genesExpressionsShowLegend = 'GenesExpressions.showLegend',
+    genesExpressionsColorByTimeSeries = 'GenesExpressions.colorByTimeSeries',
+    gOEnrichmentSelectedAspect = 'GOEnrichment.selectedAspect',
+}
+
 export const EMPTY_ARRAY = [];

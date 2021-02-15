@@ -36,9 +36,10 @@ import {
     getClusteringDistanceMeasure,
     getClusteringLinkageFunction,
 } from 'redux/stores/clustering';
+import { BookmarkStatePath } from 'components/genexpress/common/constants';
 
 type BookmarkableState<T> = {
-    bookmarkStatePath: string;
+    bookmarkStatePath: BookmarkStatePath;
     get: () => T;
     set: (value: T) => void;
 };

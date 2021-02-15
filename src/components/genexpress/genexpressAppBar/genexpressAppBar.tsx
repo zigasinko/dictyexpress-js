@@ -16,7 +16,6 @@ import { getTimeSeriesIsFetching, getIsAddingToBasket } from 'redux/stores/timeS
 import { getIsFetchingSamplesExpressions } from 'redux/stores/samplesExpressions';
 import { getIsFetchingGOEnrichmentJson } from 'redux/stores/gOEnrichment';
 import { saveBookmarkState } from 'managers/bookmarkStateManager';
-import { updateUrlParameter } from 'utils/url';
 import { setClipboardText } from 'utils/documentHelpers';
 import {
     GenexpressAppBarWrapper,
@@ -100,12 +99,18 @@ const GenexpressAppBar = ({
     };
 
     const handleBookmarkClick = async (): Promise<void> => {
-        const url = updateUrlParameter(
-            window.location.href,
+        const url = new URL(window.location.href);
+
+        url.searchParams.set(
             DictyUrlQueryParameter.appState,
             await saveBookmarkState(store.getState()),
         );
-        setBookmark(url);
+        /* const url = updateUrlParameter(
+            window.location.href,
+            DictyUrlQueryParameter.appState,
+            await saveBookmarkState(store.getState()),
+        ); */
+        setBookmark(url.toString());
         setBookmarkPopoverOpened(true);
     };
 

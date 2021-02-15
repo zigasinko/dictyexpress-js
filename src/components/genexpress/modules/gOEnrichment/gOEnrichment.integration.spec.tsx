@@ -29,7 +29,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Server, WebSocket } from 'mock-socket';
 import { sessionId, webSocketUrl } from 'api/base';
 import { appendMissingAttributesToJson } from 'utils/gOEnrichmentUtils';
-import { ProcessSlug } from 'components/genexpress/common/constants';
+import { ProcessSlug, BookmarkStatePath } from 'components/genexpress/common/constants';
 import { pValueThresholdsOptions } from 'redux/stores/gOEnrichment';
 import { aspectOptions } from './gOEnrichment';
 
@@ -224,7 +224,9 @@ describe('goEnrichment integration', () => {
                     expect(bookmarkState.gOEnrichment.pValueThreshold).toEqual(
                         initialState.gOEnrichment.pValueThreshold,
                     );
-                    expect(bookmarkState.GOEnrichment.selectedAspect).toEqual(aspectOptions[0]);
+                    expect(
+                        _.get(bookmarkState, BookmarkStatePath.gOEnrichmentSelectedAspect),
+                    ).toEqual(aspectOptions[0]);
                 });
             });
         });
