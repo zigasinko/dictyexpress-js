@@ -131,9 +131,9 @@ declare global {
     const deviceName: Nullable<string>;
     const page: Page;
     const browser: Browser;
-    const context: BrowserContext;
+    let context: BrowserContext;
     const jestPlaywright: JestPlaywright;
-    // eslint-disable-next-line no-redeclare
+    // eslint-disable-next-line @typescript-eslint/no-namespace,no-redeclare
     namespace jest {
         interface It {
             jestPlaywrightSkip: JestParams<SkipOption>;

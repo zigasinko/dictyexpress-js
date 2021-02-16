@@ -60,7 +60,12 @@ const Login = ({ connectedLogin, isLoggingIn, closeModal }: LoginProps): ReactEl
                 </ModalHeader>
 
                 <ModalBody>
-                    <form name="loginForm" id="loginForm" onSubmit={handleOnSubmit}>
+                    <form
+                        name="loginForm"
+                        id="loginForm"
+                        data-testid="loginForm"
+                        onSubmit={handleOnSubmit}
+                    >
                         <TextField
                             data-testid="username"
                             id="username"
