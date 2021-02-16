@@ -27,5 +27,7 @@ jobs:
         run: npm --cache-min 86400 install
       - name: Run Linters
         run: npm run eslint:check
+      - name: Setup Playwright for E2E tests
+        uses: microsoft/playwright-github-action@v1
       - name: Run Tests
         run: npm test
