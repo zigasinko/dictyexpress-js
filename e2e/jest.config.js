@@ -1,10 +1,14 @@
+const port = 'PORT' in process.env ? Number(process.env.PORT) : 3000;
+
 module.exports = {
     globals: {
-        baseURL: 'http://localhost:3000',
+        baseURL: 'http://localhost:'.concat(port),
+        port,
     },
     extraGlobals: [],
     preset: 'jest-playwright-preset',
-    testEnvironmentOptions: {},
+    globalSetup: '<rootDir>/jestGlobalSetup.js',
+    setupFilesAfterEnv: ['<rootDir>/jestSetupAfterEnv.js'],
     testMatch: [
         '<rootDir>/**/__tests__/**/*.{js,jsx,ts,tsx}',
         '<rootDir>/**/*.{spec,test}.{js,jsx,ts,tsx}',
@@ -14,6 +18,5 @@ module.exports = {
         '^.+\\.css$': 'react-scripts/config/jest/cssTransform.js',
         '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': 'react-scripts/config/jest/fileTransform.js',
     },
-    setupFilesAfterEnv: ['<rootDir>/jestSetup.js'],
     verbose: true,
 };

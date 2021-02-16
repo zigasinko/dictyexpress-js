@@ -62,7 +62,6 @@ const Login = ({ connectedLogin, isLoggingIn, closeModal }: LoginProps): ReactEl
                 <ModalBody>
                     <form name="loginForm" id="loginForm" onSubmit={handleOnSubmit}>
                         <TextField
-                            data-testid="username"
                             id="username"
                             name="username"
                             variant="outlined"
@@ -75,7 +74,6 @@ const Login = ({ connectedLogin, isLoggingIn, closeModal }: LoginProps): ReactEl
                             value={userData.username}
                         />
                         <TextField
-                            data-testid="password"
                             id="password"
                             name="password"
                             variant="outlined"

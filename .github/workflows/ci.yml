@@ -27,8 +27,16 @@ jobs:
       - name: Install NPM packages
         run: npm --cache-min 86400 install
       - name: Run Linters
-        run: npm run eslint:check
-      - name: Setup Playwright for E2E tests
-        uses: microsoft/playwright-github-action@v1
+        run: npm run lint
       - name: Run Tests
         run: npm test
+      - name: Run build
+        run: npm run build
+      - uses: microsoft/playwright-github-action@v1
+      - name: Run E2E tests
+        env:
+          LOGIN_USERNAME: ${{ secrets.QA2_LOGIN_USERNAME }}
+          LOGIN_PASSWORD: ${{ secrets.QA2_LOGIN_PASSWORD }}
+          CI: true
+          START_BUILD_SERVER: true
+        run: npm run e2e:debug

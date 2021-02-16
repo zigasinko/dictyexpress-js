@@ -30,6 +30,6 @@ jobs:
       - name: Install NPM packages
         run: npm --cache-min 86400 install
       - name: Build staging bundle
-        run: npm run build:staging
+        run: npm run build -- mode staging
       - name: Deploy staging build to S3 bucket
         run: aws s3 sync ./build/ s3://dictyexpress-qa-genialis-io --delete

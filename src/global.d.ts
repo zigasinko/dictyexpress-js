@@ -131,9 +131,9 @@ declare global {
     const deviceName: Nullable<string>;
     const page: Page;
     const browser: Browser;
-    const context: BrowserContext;
+    let context: BrowserContext;
     const jestPlaywright: JestPlaywright;
-    // eslint-disable-next-line no-redeclare
+    // eslint-disable-next-line @typescript-eslint/no-namespace,no-redeclare
     namespace jest {
         interface It {
             jestPlaywrightSkip: JestParams<SkipOption>;
@@ -171,7 +171,7 @@ export type DeviceType = Nullable<ConfigDeviceType>;
 export type WsEndpointType = Nullable<string>;
 
 export type SelectorType = {
-    script: string | Function | { path?: string; content?: string };
+    script: string | (() => any) | { path?: string; content?: string };
     name: string;
 };
 

@@ -9,6 +9,7 @@ jspm_packages
 
 dist
 /build
+/public
 
 # dependencies
 /node_modules

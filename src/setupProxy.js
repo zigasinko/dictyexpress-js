@@ -1,18 +1,18 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const TargetUrl = 'https://qa2.genialis.com';
-const LogLevel = 'trace';
+const targetUrl = 'https://qa2.genialis.com';
+const logLevel = 'debug';
 const secure = false;
 const headers = {
-    Referrer: TargetUrl,
+    Referrer: targetUrl,
 };
 
 const proxyConfig = {
-    target: TargetUrl,
-    changeOrigin: true,
+    target: targetUrl,
+    changeOrigin: false,
     secure,
-    clientLogLevel: LogLevel,
+    clientLogLevel: logLevel,
     headers,
 };
 
