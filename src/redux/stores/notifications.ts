@@ -17,7 +17,7 @@ const notificationsSlice = createSlice({
                 ...state,
                 {
                     ...action.payload,
-                    key: key || Math.floor(Math.random() * 1000),
+                    key: key || Math.ceil(Math.random() * 1000),
                 },
             ];
         },

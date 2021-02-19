@@ -173,7 +173,12 @@ describe('goEnrichment integration', () => {
 
                 fireEvent.click(await screen.findByText(genes[0].name));
 
-                await screen.findByText(gOEnrichmentJson.tree.BP[0].term_name);
+                await waitFor(
+                    () => {
+                        screen.getByText(gOEnrichmentJson.tree.BP[0].term_name);
+                    },
+                    { timeout: 2500 },
+                );
             });
         });
 
@@ -309,9 +314,12 @@ describe('goEnrichment integration', () => {
             fireEvent.click(await screen.findByText(genes[0].name));
 
             // Wait for data object with 'waiting' status is returned.
-            await waitFor(() => {
-                expect(getFetchMockCallsWithUrl(`api/data?id=${dataObjectId}`)).toHaveLength(1);
-            });
+            await waitFor(
+                () => {
+                    expect(getFetchMockCallsWithUrl(`api/data?id=${dataObjectId}`)).toHaveLength(1);
+                },
+                { timeout: 2500 },
+            );
 
             await waitFor(() => {
                 webSocketMock.send(

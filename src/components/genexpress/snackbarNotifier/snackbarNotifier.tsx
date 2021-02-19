@@ -33,7 +33,7 @@ const SnackbarNotifier = ({ notifications, connectedRemoveSnackbar }: PropsFromR
     useEffect(() => {
         notifications.forEach(({ key, message, variant, action }) => {
             // Do nothing if snackbar is already displayed.
-            if (key != null && displayedKeys.includes(key)) return;
+            if (displayedKeys.includes(key)) return;
 
             // Display snackbar using notistack.
             enqueueSnackbar(message, {
