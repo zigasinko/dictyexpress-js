@@ -106,10 +106,10 @@ const GenexpressAppBar = ({
             await saveBookmarkState(store.getState()),
         );
         /* const url = updateUrlParameter(
-            window.location.href,
-            DictyUrlQueryParameter.appState,
-            await saveBookmarkState(store.getState()),
-        ); */
+        window.location.href,
+        DictyUrlQueryParameter.appState,
+        await saveBookmarkState(store.getState()),
+    ); */
         setBookmark(url.toString());
         setBookmarkPopoverOpened(true);
     };
@@ -163,7 +163,6 @@ const GenexpressAppBar = ({
                     </Tooltip>
                 ) : (
                     <Button
-                        data-testid="open-login-modal"
                         onClick={(): void => {
                             setLoginModalOpened(true);
                         }}
