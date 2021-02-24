@@ -29,6 +29,14 @@ export const TitleContainer = styled.div`
     flex-flow: row nowrap;
     align-items: center;
     padding-left: 10px;
+
+    .version {
+        position: relative;
+        top: 0.2em;
+        color: #49688d;
+        font-size: 0.75em;
+        margin-left: 1em;
+    }
 `;
 
 export const GenexpressTitle = styled(Title)`
