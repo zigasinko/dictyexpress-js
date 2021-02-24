@@ -30,6 +30,9 @@ jobs:
       - name: Install NPM packages
         run: npm --cache-min 86400 install
       - name: Build staging bundle
-        run: npm run build -- mode staging
+        env: 
+          REACT_APP_DEPLOY_ENV: "staging"
+          REACT_APP_COMMIT_SHA: ${{ GITHUB_SHA }}
+        run: npm run build
       - name: Deploy staging build to S3 bucket
         run: aws s3 sync ./build/ s3://dictyexpress-qa-genialis-io --delete

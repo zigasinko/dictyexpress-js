@@ -35,6 +35,7 @@ import IconButtonWithTooltip from '../common/iconButtonWithTooltip/iconButtonWit
 import TextInputModal from '../common/textInputModal/textInputModal';
 import { ModalHeader } from '../common/dictyModal/dictyModal.styles';
 import { DictyUrlQueryParameter } from '../common/constants';
+import { Version } from '../../common/version';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const mapStateToProps = (state: RootState) => {
@@ -126,7 +127,8 @@ const GenexpressAppBar = ({
         <DesktopSectionContainer>
             <TitleContainer>
                 <DictyLogo src={dictyLogo} alt="dictyExpress logo" />
-                <GenexpressTitle>dictyExpress</GenexpressTitle>
+                <GenexpressTitle>{process.env.REACT_APP_NAME}</GenexpressTitle>
+                <Version />
             </TitleContainer>
             <ActionsContainer>
                 <IconButtonWithTooltip

@@ -33,6 +33,16 @@ export const HomeDescription = styled.div`
         margin-bottom: 50px;
     }
 
+    .title {
+        .header {
+            display: inline-block;
+            vertical-align: baseline;
+        }
+        .version {
+            margin-left: 1em;
+        }
+    }
+
     @media (min-width: ${breakpoints.small}px) {
         width: 49%;
     }
