@@ -31,11 +31,9 @@ Typescript compiler, Prettier and ESLint checks combined.
 Launches the test runner in the interactive watch mode.<br />
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run test:e2e`
+### `npm run e2e:debug`
 
-`npm run test:e2e` script is meant for CI integration as it runs both headless test runner and site server.
-
-For development use UI variant (assuming locally running web site and macOS):
+Assuming locally running web site and macOS:
 
 ```
 LOGIN_USERNAME=myuser LOGIN_PASSWORD=mysecret npm run e2e:debug
@@ -47,7 +45,7 @@ or for headless run:
 LOGIN_USERNAME=myuser LOGIN_PASSWORD=mysecret CI=true npm run e2e:debug
 ```
 
-on Windows (assuming locally running web site):
+on Windows also assuming locally running web site:
 
 ```
 npx cross-env LOGIN_USERNAME=myuser LOGIN_PASSWORD=mysecret npm run e2e:debug
