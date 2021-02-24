@@ -1,7 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 
-export const apiUrl = `${process.env.REACT_APP_API_URL as string}`;
-export const authApiUrl = `${process.env.REACT_APP_REST_AUTH_URL as string}`;
-export const webSocketUrl = `${process.env.REACT_APP_WEBSOCKET_URL as string}`;
+// eslint-disable-next-line no-restricted-globals
+export const baseUrl = location.origin;
+export const apiUrl = `${baseUrl}/api`;
+export const authApiUrl = `${baseUrl}/rest-auth`;
+export const webSocketUrl = `${baseUrl}/ws`;
 
 export const sessionId = uuidv4();
