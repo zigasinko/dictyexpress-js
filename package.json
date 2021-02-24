@@ -31,7 +31,6 @@
         "redux": "^4.0.5",
         "redux-observable": "^1.2.0",
         "rxjs": "^6.6.2",
-        "serve": "^11.3.2",
         "slick-carousel": "^1.8.1",
         "styled-components": "^5.2.1",
         "uuid": "^8.3.2",
