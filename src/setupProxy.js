@@ -16,8 +16,16 @@ const proxyConfig = {
     headers,
 };
 
+const wsProxyConfig = {
+    target: 'wss://qa2.genialis.com',
+    clientLogLevel: logLevel,
+    changeOrigin: true,
+    ws: true,
+};
+
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 module.exports = (app) => {
     app.use('/api', createProxyMiddleware(proxyConfig));
     app.use('/rest-auth', createProxyMiddleware(proxyConfig));
+    app.use('/ws/', createProxyMiddleware(wsProxyConfig));
 };
