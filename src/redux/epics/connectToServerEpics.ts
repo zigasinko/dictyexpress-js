@@ -1,16 +1,6 @@
 import { Action } from '@reduxjs/toolkit';
 import { ofType, Epic } from 'redux-observable';
-import {
-    map,
-    startWith,
-    catchError,
-    switchMap,
-    takeUntil,
-    retryWhen,
-    delay,
-    take,
-    mergeMap,
-} from 'rxjs/operators';
+import { startWith, catchError, takeUntil, retryWhen, delay, take, mergeMap } from 'rxjs/operators';
 import { merge, of, throwError } from 'rxjs';
 import { RootState } from 'redux/rootReducer';
 import { webSocket } from 'rxjs/webSocket';
@@ -31,53 +21,36 @@ const reconnectionMaxAttempts = 3;
 
 const connectToServerEpic: Epic<Action, Action, RootState> = (action$) =>
     action$.pipe(
-        ofType(appStarted),
-        mergeMap(() => {
-            return action$.pipe(
-                ofType(reconnectToServer),
-                takeUntil(action$.pipe(ofType(disconnectFromServer))),
-                startWith(null),
-                map(() => {
-                    return webSocket({
-                        url: `${webSocketUrl + sessionId}`,
-                        WebSocketCtor: WebSocket,
-                    }).pipe(
-                        retryWhen((errors) => {
-                            return errors.pipe(
-                                delay(reconnectionTimeout),
-                                take(reconnectionMaxAttempts),
-                                (o) => merge(o, throwError(o)),
-                            );
-                        }),
-                        catchError((err) => {
-                            return of(
-                                handleError(
-                                    `WebSocket connection failed after ${reconnectionMaxAttempts} tries.`,
-                                    err,
-                                ),
-                            );
-                        }),
-                    );
-                }),
-                switchMap((webSocketConnection$) =>
-                    webSocketConnection$.pipe(
-                        takeUntil(
-                            action$.pipe(
-                                ofType(
-                                    reconnectToServer.toString(),
-                                    disconnectFromServer.toString(),
-                                ),
-                            ),
+        ofType(appStarted.toString(), reconnectToServer.toString()),
+        takeUntil(action$.pipe(ofType(disconnectFromServer))),
+        mergeMap(() =>
+            webSocket({
+                url: `${webSocketUrl + sessionId}`,
+                WebSocketCtor: WebSocket,
+            }).pipe(
+                mergeMap((message) => handleWebSocketMessage(message as Message)),
+                retryWhen((errors) =>
+                    errors.pipe(delay(reconnectionTimeout), take(reconnectionMaxAttempts), (o) =>
+                        merge(o, throwError(o)),
+                    ),
+                ),
+                catchError((err) =>
+                    of(
+                        handleError(
+                            `WebSocket connection failed after ${reconnectionMaxAttempts} tries.`,
+                            err,
                         ),
-                        mergeMap((message) => {
-                            return handleWebSocketMessage(message as Message);
-                        }),
-                        filterNullAndUndefined(),
+                    ),
+                ),
+                takeUntil(
+                    action$.pipe(
+                        ofType(reconnectToServer.toString(), disconnectFromServer.toString()),
                     ),
                 ),
                 startWith(connectionReady()),
-            );
-        }),
+            ),
+        ),
+        filterNullAndUndefined(),
     );
 
 export default connectToServerEpic;

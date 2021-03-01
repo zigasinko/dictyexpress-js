@@ -42,7 +42,9 @@ const comparisonsSamplesExpressionsIds = _.map(_.keys(comparisonsSamplesExpressi
 const timeSeriesById = generateTimeSeriesById(2);
 const timeSeries = _.flatMap(timeSeriesById);
 const selectedTimeSeries = timeSeries[0];
+selectedTimeSeries.partitions = generateRelationPartitions(samplesExpressionsIds);
 const comparisonTimeSeries = timeSeries[1];
+comparisonTimeSeries.partitions = generateRelationPartitions(comparisonsSamplesExpressionsIds);
 
 const backendBookmark = generateBackendBookmark(selectedTimeSeries.id, [
     genes[0].feature_id,
@@ -129,10 +131,7 @@ describe('genesExpressions integration', () => {
         fetchMock.mockClear();
 
         initialState = testState();
-        // Set timeSeries partitions so that correct samplesExpressions can be retrieved
-        // via fetchMock and gene expressions can be chosen from selected time series.
         initialState.timeSeries.byId = timeSeriesById;
-        selectedTimeSeries.partitions = generateRelationPartitions(samplesExpressionsIds);
     });
 
     describe('time series not in store, genes in query parameter', () => {
@@ -343,11 +342,7 @@ describe('genesExpressions integration', () => {
                 ...comparisonsSamplesExpressionsById,
             };
             initialState.timeSeries.comparisonIds = [comparisonTimeSeries.id];
-
-            initialState.timeSeries.byId[
-                comparisonTimeSeries.id
-            ].partitions = generateRelationPartitions(comparisonsSamplesExpressionsIds);
-
+            
             ({ container } = customRender(<GeneExpressGrid />, {
                 initialState,
             }));
