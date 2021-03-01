@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 
-export const Version = () => (
+export const Version = (): ReactElement => (
     <span className="version">
         {process.env.REACT_APP_VERSION}
         {process.env.REACT_APP_DEPLOY_ENV === 'staging'

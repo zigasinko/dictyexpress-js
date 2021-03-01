@@ -146,7 +146,7 @@ declare global {
         }
 
         interface Matchers<R> {
-            toMatchImageSnapshot(options?: Record<string, any>): R;
+            toMatchImageSnapshot(options?: Record<string, unknown>): R;
         }
     }
 }
@@ -171,7 +171,7 @@ export type DeviceType = Nullable<ConfigDeviceType>;
 export type WsEndpointType = Nullable<string>;
 
 export type SelectorType = {
-    script: string | (() => any) | { path?: string; content?: string };
+    script: string | (() => unknown) | { path?: string; content?: string };
     name: string;
 };
 

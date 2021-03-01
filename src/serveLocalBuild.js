@@ -11,8 +11,8 @@ const options = {
 
 proxyConfig(app);
 app.use(express.static('build'));
-app.get('/*', function (req, res) {
-    res.sendFile('./build/index.html', options, function (err) {
+app.get('/*', (_req, res) => {
+    res.sendFile('./build/index.html', options, (err) => {
         if (err) {
             res.status(500).send(err);
         }

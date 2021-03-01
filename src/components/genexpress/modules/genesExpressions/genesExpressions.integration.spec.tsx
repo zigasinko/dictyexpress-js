@@ -342,7 +342,7 @@ describe('genesExpressions integration', () => {
                 ...comparisonsSamplesExpressionsById,
             };
             initialState.timeSeries.comparisonIds = [comparisonTimeSeries.id];
-            
+
             ({ container } = customRender(<GeneExpressGrid />, {
                 initialState,
             }));
