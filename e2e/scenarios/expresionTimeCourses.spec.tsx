@@ -70,6 +70,7 @@ describe('Expression time courses', () => {
             }
         }, genes);
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await page.$eval('header', (el: { remove: () => any }) => el.remove());
         const elementHandle = await page.waitForSelector(Selectors.expressionsGraph);
         const graphImg = await elementHandle.screenshot();
