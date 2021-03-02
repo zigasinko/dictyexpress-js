@@ -32,7 +32,7 @@ jobs:
       - name: Build staging bundle
         env: 
           REACT_APP_DEPLOY_ENV: "staging"
-          REACT_APP_COMMIT_SHA: ${{ GITHUB_SHA }}
+          REACT_APP_COMMIT_SHA: ${{ github.sha }}
         run: npm run build
       - name: Deploy staging build to S3 bucket
         run: aws s3 sync ./build/ s3://dictyexpress-qa-genialis-io --delete
