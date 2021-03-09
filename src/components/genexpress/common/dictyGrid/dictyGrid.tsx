@@ -205,9 +205,7 @@ const DictyGrid = <T extends unknown>({
                     disableStaticMarkup
                     rowSelection={selectionMode}
                     rowStyle={
-                        selectionMode != null || handleOnRowClicked != null
-                            ? { cursor: 'pointer' }
-                            : {}
+                        selectionMode == null && onRowClicked == null ? { cursor: 'pointer' } : {}
                     }
                     suppressRowClickSelection={suppressRowClickSelection}
                     onRowClicked={handleOnRowClicked}
