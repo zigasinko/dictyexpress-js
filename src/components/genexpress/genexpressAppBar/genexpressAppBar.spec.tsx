@@ -56,6 +56,8 @@ describe('genexpressAppBar', () => {
                 ),
             );
 
+            fireEvent.click(await screen.findByText('Logout'));
+
             await waitFor(() => expect(mockedStore.getActions()).toEqual([logout()]));
         });
     });
