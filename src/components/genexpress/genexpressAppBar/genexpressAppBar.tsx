@@ -1,5 +1,5 @@
 import React, { ReactElement, useState, useEffect, useRef } from 'react';
-import { Button, Popover, Tooltip } from '@material-ui/core';
+import { Button, Popover, Menu, MenuItem } from '@material-ui/core';
 import { Bookmark as BookmarkIcon } from '@material-ui/icons';
 import dictyLogo from 'images/favicon.ico';
 import { connect, ConnectedProps, useStore } from 'react-redux';
@@ -80,10 +80,12 @@ const GenexpressAppBar = ({
     isFetchingGOEnrichmentJson,
 }: GenexpressAppBarProps): ReactElement => {
     const [loginModalOpened, setLoginModalOpened] = useState(false);
+    const [userMenuOpened, setUserMenuOpened] = useState(false);
     const [exportPrefixModalOpened, setExportPrefixModalOpened] = useState(false);
     const [bookmarkPopoverOpened, setBookmarkPopoverOpened] = useState(false);
     const store = useStore();
     const bookmarkButtonElement = useRef<HTMLButtonElement>(null);
+    const userButtonElement = useRef<HTMLButtonElement>(null);
     const [bookmark, setBookmark] = useState('');
 
     useEffect(() => {
@@ -154,15 +156,9 @@ const GenexpressAppBar = ({
                 </IconButtonWithTooltip>
                 <Button onClick={connectedLayoutsReset}>Default layout</Button>
                 {isLoggedIn ? (
-                    <Tooltip title="Logout">
-                        <Button
-                            onClick={(): void => {
-                                connectedLogout();
-                            }}
-                        >
-                            {user.first_name} {user.last_name}
-                        </Button>
-                    </Tooltip>
+                    <Button onClick={(): void => setUserMenuOpened(true)} ref={userButtonElement}>
+                        {user.first_name} {user.last_name}
+                    </Button>
                 ) : (
                     <Button
                         onClick={(): void => {
@@ -182,6 +178,25 @@ const GenexpressAppBar = ({
             <GenexpressAppBarWrapper position="sticky">
                 <DictyAppBar desktopSection={desktopSection} />
             </GenexpressAppBarWrapper>
+            {userMenuOpened && (
+                <Menu
+                    anchorEl={userButtonElement.current}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    getContentAnchorEl={null}
+                    transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                    open
+                    disableScrollLock
+                    onClose={() => setUserMenuOpened(false)}
+                >
+                    <MenuItem
+                        onClick={(): void => {
+                            connectedLogout();
+                        }}
+                    >
+                        Logout
+                    </MenuItem>
+                </Menu>
+            )}
             {loginModalOpened && <Login closeModal={(): void => setLoginModalOpened(false)} />}
             {exportPrefixModalOpened && (
                 <TextInputModal
