@@ -30,16 +30,31 @@ export const HomeDescription = styled.div`
     & p {
         font-size: 1.75rem;
         line-height: 1.2em;
-        margin-bottom: 50px;
+        margin: 1rem 0 3rem;
     }
 
-    .title {
+    > .title {
+        display: flex;
+        align-items: baseline;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+
+        > * {
+            margin: 0 0.5rem 0.5rem 0;
+        }
+        .logo {
+            position: relative;
+            top: 1.7rem;
+            flex-wrap: nowrap;
+        }
         .header {
-            display: inline-block;
-            vertical-align: baseline;
+            margin-top: 1rem;
+            margin-bottom: 0;
         }
         .version {
-            margin-left: 1em;
+            white-space: nowrap;
+            line-height: 2rem;
         }
     }
 

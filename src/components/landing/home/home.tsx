@@ -16,8 +16,8 @@ const Home = (): ReactElement => (
         <SectionContentContainer>
             <HomeWrapper>
                 <HomeDescription>
-                    <img src={dictyLogo} alt="dictyExpress logo" />
                     <section className="title">
+                        <img src={dictyLogo} className="logo" alt="dictyExpress logo" />
                         <h1 className="header">{process.env.REACT_APP_NAME}</h1>
                         <Version />
                     </section>
