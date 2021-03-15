@@ -2,6 +2,14 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## GIT
+
+To enable custom pre-push hook, update git configuration to let it know where our hook files lie:
+
+```
+`git config core.hooksPath .githooks`
+```
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -52,8 +60,6 @@ npx cross-env LOGIN_USERNAME=myuser LOGIN_PASSWORD=mysecret npm run e2e:debug
 ```
 
 Opens UI for e2e tests overview with custom user account.
-
-
 
 ### `npm run build`
 
