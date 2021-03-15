@@ -38,20 +38,24 @@ export const HomeDescription = styled.div`
         align-items: baseline;
         justify-content: flex-start;
         flex-wrap: wrap;
+        margin-top: -1.7rem;
         margin-bottom: 2rem;
 
         > * {
             margin: 0 0.5rem 0.5rem 0;
         }
+
         .logo {
             position: relative;
             top: 1.7rem;
             flex-wrap: nowrap;
         }
+
         .header {
             margin-top: 1rem;
             margin-bottom: 0;
         }
+
         .version {
             white-space: nowrap;
             line-height: 2rem;
@@ -59,20 +63,24 @@ export const HomeDescription = styled.div`
     }
 
     @media (min-width: ${breakpoints.small}px) {
-        width: 49%;
+        width: 59%;
     }
 `;
 
 export const HomeDemo = styled.div`
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 
     & > img {
         max-width: 100%;
         height: auto;
+        padding-bottom: 1rem;
     }
 
     @media (min-width: ${breakpoints.small}px) {
-        width: 49%;
+        width: 40%;
     }
 `;
 

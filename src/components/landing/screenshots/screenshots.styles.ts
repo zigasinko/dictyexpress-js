@@ -18,7 +18,6 @@ export const SliderContainer = styled(Slider)`
 
 export const Arrow = styled.span<SliderArrowProps>`
     font-size: 3em;
-    color: white;
     color: #404040;
     cursor: pointer;
 
@@ -41,6 +40,6 @@ export const Arrow = styled.span<SliderArrowProps>`
 
 export const Screenshot = styled.img`
     max-width: 100%;
-    height: auto;
-    margin-bottom: 10px;
+    max-height: 50vh;
+    margin: 0 auto 10px auto;
 `;
