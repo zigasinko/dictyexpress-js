@@ -19,6 +19,7 @@ export const SliderContainer = styled(Slider)`
 export const Arrow = styled.span<SliderArrowProps>`
     font-size: 3em;
     color: white;
+
     color: #404040;
     cursor: pointer;
 
