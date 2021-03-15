@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react';
 import dictyLogo from 'images/logo_dicty.1.png';
-import dictyDemo from 'images/Time-Courses.gif';
+import dictyDemo1 from 'images/main-ss1.png';
+import dictyDemo2 from 'images/main-ss2.png';
 import { SectionContentContainer } from 'components/landing/common/layout.styles';
 import { Version } from 'components/common/version';
 import {
@@ -33,7 +34,8 @@ const Home = (): ReactElement => (
                     </p>
                 </HomeDescription>
                 <HomeDemo>
-                    <img src={dictyDemo} alt="Expression Time Series demo" />
+                    <img src={dictyDemo1} alt="Expression Time Series demo" />
+                    <img src={dictyDemo2} alt="Gene Ontology Enrichment" />
                 </HomeDemo>
             </HomeWrapper>
         </SectionContentContainer>
