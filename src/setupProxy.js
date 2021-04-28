@@ -19,13 +19,15 @@ const proxyConfig = {
 const wsProxyConfig = {
     target: 'wss://qa2.genialis.com',
     clientLogLevel: logLevel,
-    changeOrigin: true,
     ws: true,
+    headers: {
+        Host: 'qa2.genialis.com',
+    },
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 module.exports = (app) => {
-    app.use('/api', createProxyMiddleware(proxyConfig));
-    app.use('/rest-auth', createProxyMiddleware(proxyConfig));
-    app.use('/ws/', createProxyMiddleware(wsProxyConfig));
+    app.use(createProxyMiddleware('/api', proxyConfig));
+    app.use(createProxyMiddleware('/rest-auth', proxyConfig));
+    app.use(createProxyMiddleware('/ws', wsProxyConfig));
 };

@@ -296,7 +296,7 @@ describe('goEnrichment integration', () => {
             initialState = testState();
             initialState.gOEnrichment.gaf = humanGaf;
 
-            const mockServer = new Server(webSocketUrl + sessionId);
+            const mockServer = new Server(`${webSocketUrl}/${sessionId}`);
             mockServer.on('connection', (socket) => {
                 webSocketMock = socket;
             });

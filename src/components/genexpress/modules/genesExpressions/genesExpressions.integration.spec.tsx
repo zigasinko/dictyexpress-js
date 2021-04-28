@@ -106,14 +106,17 @@ describe('genesExpressions integration', () => {
                     },
                 });
             }
-            if (req.url.includes('autocomplete')) {
+
+            if (req.url.includes('paste')) {
+                return resolveStringifiedObjectPromise([genes[0]]);
+            }
+
+            if (req.url.includes('feature')) {
                 return resolveStringifiedObjectPromise({
                     results: genes,
                 });
             }
-            if (req.url.includes('search')) {
-                return resolveStringifiedObjectPromise([genes[0]]);
-            }
+
             if (req.url.includes('list_by_ids')) {
                 return resolveStringifiedObjectPromise(
                     backendBookmark.state.genes.selectedGenesIds.map((geneId) => genesById[geneId]),

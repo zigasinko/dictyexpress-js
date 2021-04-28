@@ -25,7 +25,7 @@ const connectToServerEpic: Epic<Action, Action, RootState> = (action$) =>
         takeUntil(action$.pipe(ofType(disconnectFromServer))),
         mergeMap(() =>
             webSocket({
-                url: `${webSocketUrl + sessionId}`,
+                url: `${webSocketUrl}/${sessionId}`,
                 WebSocketCtor: WebSocket,
             }).pipe(
                 mergeMap((message) => handleWebSocketMessage(message as Message)),

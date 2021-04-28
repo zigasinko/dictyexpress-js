@@ -291,7 +291,7 @@ describe('findSimilarGenesModal', () => {
         beforeEach(async () => {
             fetchMock.mockClear();
 
-            const mockServer = new Server(webSocketUrl + sessionId);
+            const mockServer = new Server(`${webSocketUrl}/${sessionId}`);
             mockServer.on('connection', (socket) => {
                 webSocketMock = socket;
             });

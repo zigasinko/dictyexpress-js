@@ -615,7 +615,7 @@ describe('clustering integration', () => {
         });
 
         beforeEach(() => {
-            const mockServer = new Server(webSocketUrl + sessionId);
+            const mockServer = new Server(`${webSocketUrl}/${sessionId}`);
             mockServer.on('connection', (socket) => {
                 webSocketMock = socket;
             });

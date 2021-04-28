@@ -7,5 +7,5 @@ export const authApiUrl = `${baseUrl}/rest-auth`;
 export const webSocketUrl =
     process.env.REACT_APP_TEST_WSS ??
     // eslint-disable-next-line no-restricted-globals
-    `ws${location.hostname === 'localhost' ? '' : 's'}://${location.host}/ws/`;
+    `ws${location.hostname === 'localhost' ? '' : 's'}://${location.host}/ws`;
 export const sessionId = uuidv4();
