@@ -1,4 +1,4 @@
-export { getGenes, getGenesByNames } from './featureApi';
+export { getGenes, getPastedGenes } from './featureApi';
 export { login, logout } from './authApi';
 export { addToBasket } from './basketApi';
 export { unsubscribe } from './queryObserverApi';

@@ -24,9 +24,12 @@ describe('Expression time courses', () => {
             await (await document.getByLabelText('Username')).fill(process.env.LOGIN_USERNAME);
             await (await document.getByLabelText('Password')).fill(process.env.LOGIN_PASSWORD);
             await (await document.getByRole('button', { name: 'SIGN IN' })).click();
-            await page.waitForResponse((response: { url: () => string | string[] }) => {
-                return response.url().includes('/relation?category=Time+series');
-            });
+            await page.waitForResponse(
+                (response: { url: () => string | string[] }) => {
+                    return response.url().includes('/relation?category=Time+series');
+                },
+                { timeout: 3000 },
+            );
 
             const localStorageData = await context.storageState();
             process.env.DICTY_STORAGE = JSON.stringify(localStorageData);
@@ -35,17 +38,16 @@ describe('Expression time courses', () => {
 
     it('should draw Expression Time Courses graph', async () => {
         const genes = 'eif3L fnkF_ps';
-        await page.goto(`${global.baseURL}/bcm`);
         // @ts-ignore
         const document = await page.getDocument();
-        await new Promise((resolve) => setTimeout(resolve, 500));
         await (await document.getByRole('gridcell', { name: '307' })).click();
-        await (await document.getByPlaceholderText(Selectors.genesInputLabel)).fill('a');
-        await page.click(Selectors.option);
 
         await page.waitForResponse((response: { url: () => string | string[] }) => {
             return response.url().includes('/api/storage');
         });
+
+        await (await document.getByPlaceholderText(Selectors.genesInputLabel)).fill('a');
+        await page.click(Selectors.option);
 
         await (await document.getByPlaceholderText(Selectors.genesInputLabel)).fill('');
 
@@ -72,8 +74,9 @@ describe('Expression time courses', () => {
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await page.$eval('header', (el: { remove: () => any }) => el.remove());
+
         const elementHandle = await page.waitForSelector(Selectors.expressionsGraph);
-        const graphImg = await elementHandle.screenshot();
+        const graphImg = await elementHandle.screenshot({ timeout: 3000 });
         expect(graphImg).toMatchImageSnapshot({
             capture: 'viewport',
             scale: false,

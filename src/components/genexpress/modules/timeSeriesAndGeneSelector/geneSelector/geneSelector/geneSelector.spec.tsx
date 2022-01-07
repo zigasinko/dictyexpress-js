@@ -25,7 +25,7 @@ describe('geneSelector', () => {
         fetchMock.resetMocks();
 
         fetchMock.mockResponse((req) => {
-            if (req.url.includes('autocomplete') || req.url.includes('search')) {
+            if (req.url.includes('feature')) {
                 return resolveStringifiedObjectPromise({
                     results: genes,
                 });
