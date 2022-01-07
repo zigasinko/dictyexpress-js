@@ -20,7 +20,7 @@ import { RootState } from 'redux/rootReducer';
 import { splitAndCleanGenesString } from 'utils/stringUtils';
 import GeneSetSelector from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/geneSets/geneSetSelector';
 import { handleError } from 'utils/errorUtils';
-import { getGenes, getGenesByNames } from 'api';
+import { getGenes, getPastedGenes } from 'api';
 import { objectsArrayToTsv } from 'utils/reportUtils';
 import useReport from 'components/genexpress/common/reportBuilder/useReport';
 import { AutoCompleteItemSpan, TitleSection } from './geneSelector.styles';
@@ -181,7 +181,7 @@ const GeneSelector = ({
                 return;
             }
 
-            const pastedGenes = await getGenesByNames(
+            const pastedGenes = await getPastedGenes(
                 autocompleteSource,
                 autocompleteType,
                 genesNames,

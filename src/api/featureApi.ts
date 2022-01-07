@@ -3,8 +3,8 @@ import { deserializeResponse } from '../utils/apiUtils';
 import { apiUrl } from './base';
 import { post } from './fetch';
 
-const autocompleteUrl = `${apiUrl}/kb/feature/autocomplete`;
-const searchUrl = `${apiUrl}/kb/feature/search`;
+const autocompleteUrl = `${apiUrl}/kb/feature`;
+const searchUrl = `${apiUrl}/kb/feature/paste`;
 
 export const getGenes = async (
     source: string,
@@ -29,7 +29,7 @@ export const getGenes = async (
     return deserializeResponse<Gene[]>(getGenesResponse);
 };
 
-export const getGenesByNames = async (
+export const getPastedGenes = async (
     source: string,
     type: string,
     genesNames: string[],
@@ -42,7 +42,7 @@ export const getGenesByNames = async (
     const payload = {
         source: [source],
         type,
-        query: genesNames.toString(),
+        pasted: genesNames,
         ...(species != null && { species: [species] }),
     };
 

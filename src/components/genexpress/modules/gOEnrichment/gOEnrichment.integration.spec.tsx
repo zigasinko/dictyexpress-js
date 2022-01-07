@@ -92,7 +92,7 @@ describe('goEnrichment integration', () => {
                     });
                 }
 
-                if (req.url.includes('autocomplete')) {
+                if (req.url.includes('feature')) {
                     return resolveStringifiedObjectPromise({
                         results: [genes[0], genes[1]],
                     });
@@ -280,7 +280,7 @@ describe('goEnrichment integration', () => {
                     });
                 }
 
-                if (req.url.includes('autocomplete')) {
+                if (req.url.includes('feature')) {
                     return resolveStringifiedObjectPromise({
                         results: [genes[0], genes[1]],
                     });

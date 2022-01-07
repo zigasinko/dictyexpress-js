@@ -5,6 +5,7 @@ import { customRender, waitForButtonEnabled } from 'tests/test-utils';
 import { testState } from 'tests/mock';
 import * as documentHelpers from 'utils/documentHelpers';
 
+jest.setTimeout(10000);
 describe('reportBuilder integration', () => {
     beforeEach(() => {
         // eslint-disable-next-line @typescript-eslint/unbound-method
