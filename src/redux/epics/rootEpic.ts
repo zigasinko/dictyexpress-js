@@ -15,6 +15,7 @@ import clusteringEpics from './clusteringEpics';
 import findSimilarGenesEpics from './findSimilarGenesEpics';
 import samplesExpressionsEpics from './samplesExpressionsEpics';
 import differentialExpressionsEpics from './differentialExpressionsEpics';
+import ontologyOboEpics from './ontologyOboEpics';
 
 const rootEpic: Epic<Action, Action, RootState> = (
     action$,
@@ -33,6 +34,7 @@ const rootEpic: Epic<Action, Action, RootState> = (
         findSimilarGenesEpics,
         samplesExpressionsEpics,
         differentialExpressionsEpics,
+        ontologyOboEpics,
     )(action$, store$, dependencies).pipe(
         catchError((error, source) => {
             logError('RootEpic global error', error);

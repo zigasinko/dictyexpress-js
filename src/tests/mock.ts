@@ -711,6 +711,7 @@ export const testState = (): RootState => {
             species: '',
             pValueThreshold: pValueThresholdsOptions[0],
             isFetchingJson: false,
+            ontologyObo: { id: 24330 } as Data,
         },
         clustering: {
             distanceMeasure: DistanceMeasure.pearson,

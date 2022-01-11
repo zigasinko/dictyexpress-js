@@ -21,6 +21,14 @@ export const getGafs = async (): Promise<Data[]> => {
     return deserializeResponse<Data[]>(getGafsResponse);
 };
 
+export const getOntologyObo = async () => {
+    const getDataBySlugResponse = await get(baseUrl, {
+        slug: 'gene-ontology-core',
+    });
+
+    return (await deserializeResponse<Data[]>(getDataBySlugResponse))[0];
+};
+
 export const getDataBySamplesIds = async (samplesIds: number[]): Promise<Data[]> => {
     if (samplesIds.length === 0) {
         return [] as Data[];

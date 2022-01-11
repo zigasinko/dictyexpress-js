@@ -1,4 +1,5 @@
 import {
+    Data,
     DataGafAnnotation,
     DataGOEnrichmentAnalysis,
     GOEnrichmentJson,
@@ -100,6 +101,17 @@ const gafSlice = createSlice({
     },
 });
 
+const ontologyOboInitialSlice = null as Data | null;
+const ontologyOboSlice = createSlice({
+    name: 'gOEnrichment',
+    initialState: ontologyOboInitialSlice,
+    reducers: {
+        ontologyOboFetchSucceeded: (_state, action: PayloadAction<Data>): Data => {
+            return action.payload;
+        },
+    },
+});
+
 const isFetchingGOEnrichmentJsonSlice = createIsFetchingSlice('gOEnrichment');
 
 const gOEnrichmentReducer = combineReducers({
@@ -109,6 +121,7 @@ const gOEnrichmentReducer = combineReducers({
     pValueThreshold: pValueThresholdSlice.reducer,
     species: speciesSlice.reducer,
     source: sourceSlice.reducer,
+    ontologyObo: ontologyOboSlice.reducer,
 });
 
 // Export actions.
@@ -120,6 +133,8 @@ export const {
 export const { pValueThresholdChanged } = pValueThresholdSlice.actions;
 
 export const { gafFetchSucceeded } = gafSlice.actions;
+
+export const { ontologyOboFetchSucceeded } = ontologyOboSlice.actions;
 
 export const { fetchSucceeded: gOEnrichmentJsonFetchSucceeded } = gOEnrichmentJsonSlice.actions;
 
@@ -136,3 +151,4 @@ export const getPValueThreshold = (state: GOEnrichmentState): number => state.pV
 export const getGaf = (state: GOEnrichmentState): DataGafAnnotation | null => state.gaf;
 export const getGOEnrichmentSpecies = (state: GOEnrichmentState): string => state.species;
 export const getGOEnrichmentSource = (state: GOEnrichmentState): string => state.source;
+export const getOntologyObo = (state: GOEnrichmentState): Data | null => state.ontologyObo;

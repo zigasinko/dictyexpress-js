@@ -76,7 +76,7 @@ describe('Expression time courses', () => {
         await page.$eval('header', (el: { remove: () => any }) => el.remove());
 
         const elementHandle = await page.waitForSelector(Selectors.expressionsGraph);
-        const graphImg = await elementHandle.screenshot({ timeout: 3000 });
+        const graphImg = await elementHandle.screenshot({ timeout: 20000 });
         expect(graphImg).toMatchImageSnapshot({
             capture: 'viewport',
             scale: false,
