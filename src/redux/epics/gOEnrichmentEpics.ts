@@ -7,6 +7,7 @@ import {
     getGOEnrichmentJson,
     getGOEnrichmentSource,
     getGOEnrichmentSpecies,
+    getOntologyObo,
     getPValueThreshold,
     gOEnrichmentJsonFetchEnded,
     gOEnrichmentJsonFetchStarted,
@@ -41,9 +42,14 @@ const processParametersObservable: ProcessDataEpicsFactoryProps<DataGOEnrichment
                 return getSelectedGenes(state.genes);
             }),
         ),
+        state$.pipe(
+            mapStateSlice((state) => {
+                return getOntologyObo(state.gOEnrichment);
+            }),
+        ),
     ]).pipe(
         filter(() => getGOEnrichmentJson(state$.value.gOEnrichment) == null),
-        switchMap(([gaf, pValueThreshold, selectedGenes]) => {
+        switchMap(([gaf, pValueThreshold, selectedGenes, ontologyObo]) => {
             if (selectedGenes.length === 0) {
                 return of({});
             }
@@ -52,7 +58,7 @@ const processParametersObservable: ProcessDataEpicsFactoryProps<DataGOEnrichment
                 pval_threshold: pValueThreshold,
                 source: selectedGenes[0].source,
                 species: selectedGenes[0].species,
-                ontology: 14305,
+                ontology: ontologyObo.id,
                 gaf: gaf.id,
             });
         }),

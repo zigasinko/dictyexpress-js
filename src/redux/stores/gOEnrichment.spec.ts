@@ -13,6 +13,7 @@ import gOEnrichmentReducer, {
     gafFetchSucceeded,
     gOEnrichmentJsonFetchSucceeded,
     GOEnrichmentState,
+    ontologyOboFetchSucceeded,
     pValueThresholdChanged,
     pValueThresholdsOptions,
 } from './gOEnrichment';
@@ -32,6 +33,7 @@ const gOEnrichmentAnalysisData = {
         source: genes[0].source,
     },
 };
+const ontologyObo = generateData(2);
 
 describe('gOEnrichmentStore store', () => {
     let initialState: GOEnrichmentState;
@@ -45,6 +47,7 @@ describe('gOEnrichmentStore store', () => {
                 species: '',
                 pValueThreshold: pValueThresholdsOptions[0],
                 isFetchingJson: false,
+                ontologyObo: null,
             };
         });
 
@@ -97,6 +100,19 @@ describe('gOEnrichmentStore store', () => {
 
             expect(newState).toEqual(expectedState);
         });
+
+        it('should add ontologyObo to state with ontologyOboFetchSucceeded action', () => {
+            const newState = gOEnrichmentReducer(
+                initialState,
+                ontologyOboFetchSucceeded(ontologyObo),
+            );
+            const expectedState = {
+                ...initialState,
+                ontologyObo,
+            };
+
+            expect(newState).toEqual(expectedState);
+        });
     });
 
     describe('not empty initial state', () => {
@@ -108,6 +124,7 @@ describe('gOEnrichmentStore store', () => {
                 species: 'Dictyostelium purpureum',
                 pValueThreshold: pValueThresholdsOptions[0],
                 isFetchingJson: false,
+                ontologyObo,
             };
         });
 

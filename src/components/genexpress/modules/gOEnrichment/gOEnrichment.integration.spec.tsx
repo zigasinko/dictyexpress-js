@@ -48,6 +48,8 @@ const backendBookmark = generateBackendBookmark(undefined, [genes[0].feature_id]
 backendBookmark.state.gOEnrichment.pValueThreshold = pValueThresholdsOptions[2];
 backendBookmark.state.GOEnrichment = { selectedAspect: aspectOptions[1] };
 
+const ontologyObo = generateData(123);
+
 const dataObjectId = 123;
 
 describe('goEnrichment integration', () => {
@@ -66,6 +68,10 @@ describe('goEnrichment integration', () => {
 
                 if (decodeURIComponent(req.url).includes('data:gaf')) {
                     return resolveStringifiedObjectPromise([humanGaf, mouseMGIGaf, mouseUCSCGaf]);
+                }
+
+                if (req.url.includes('data') && req.url.includes('slug')) {
+                    return resolveStringifiedObjectPromise(ontologyObo);
                 }
 
                 if (req.url.includes('data') && req.url.includes(dataObjectId.toString())) {
@@ -191,6 +197,7 @@ describe('goEnrichment integration', () => {
                 initialState.genes.byId = genesById;
                 initialState.genes.selectedGenesIds = [genes[0].feature_id];
                 initialState.gOEnrichment.json = differentGOEnrichmentJson;
+                initialState.gOEnrichment.ontologyObo = ontologyObo;
 
                 customRender(<GeneExpressGrid />, {
                     initialState,
@@ -257,6 +264,10 @@ describe('goEnrichment integration', () => {
 
                 if (req.url.includes('data:gaf')) {
                     return resolveStringifiedObjectPromise([humanGaf, mouseMGIGaf, mouseUCSCGaf]);
+                }
+
+                if (req.url.includes('data') && req.url.includes('slug')) {
+                    return resolveStringifiedObjectPromise(ontologyObo);
                 }
 
                 if (req.url.includes('data') && req.url.includes(dataObjectId.toString())) {

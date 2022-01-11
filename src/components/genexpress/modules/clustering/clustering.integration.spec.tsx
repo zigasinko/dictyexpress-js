@@ -75,6 +75,7 @@ backendBookmark.state.clustering.linkageFunction = linkageFunctionOptions[2].val
 const dataId = 123;
 const storageId = 456;
 
+jest.setTimeout(10000);
 describe('clustering integration', () => {
     let initialState: RootState;
     let container: HTMLElement;
