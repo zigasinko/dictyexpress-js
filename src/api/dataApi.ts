@@ -21,7 +21,7 @@ export const getGafs = async (): Promise<Data[]> => {
     return deserializeResponse<Data[]>(getGafsResponse);
 };
 
-export const getOntologyObo = async () => {
+export const getOntologyObo = async (): Promise<Data> => {
     const getDataBySlugResponse = await get(baseUrl, {
         slug: 'gene-ontology-core',
     });

@@ -4,6 +4,10 @@ import 'jest-canvas-mock';
 import fetchMock from 'jest-fetch-mock';
 import { JSDOM } from 'jsdom';
 
+window.API_URL = null;
+window.REST_AUTH_URL = null;
+window.WEBSOCKET_URL = null;
+
 /**
  * Fix `matchMedia` not present, legacy browsers require a polyfill.
  */

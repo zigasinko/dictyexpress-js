@@ -7,13 +7,6 @@ import App from 'components/app/app';
 
 const history = createBrowserHistory();
 
-// eslint-disable-next-line no-console
-console.info(
-    `${process.env.REACT_APP_NAME || ''} v${process.env.REACT_APP_VERSION || ''} ${
-        process.env.REACT_APP_COMMIT_SHA || ''
-    }`,
-);
-
 if (process.env.NODE_ENV === 'production') {
     if (process.env.REACT_APP_SENTRY_URL) {
         initializeSentry(process.env.REACT_APP_SENTRY_URL);

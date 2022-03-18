@@ -40,7 +40,13 @@ module.exports = {
             jsx: true,
         },
     },
-    ignorePatterns: ['.eslintrc.js', 'package-lock.json', 'node_modules', 'build'],
+    ignorePatterns: [
+        '.eslintrc.js',
+        'package-lock.json',
+        'node_modules',
+        'build',
+        'public/config.js',
+    ],
     rules: {
         // .tsx files can include JSX.
         'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
