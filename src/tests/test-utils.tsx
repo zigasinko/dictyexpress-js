@@ -2,7 +2,7 @@ import React, { ReactElement, ComponentType } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { render, RenderResult, waitFor } from '@testing-library/react';
 import { ThemeProvider as StyledComponentsThemeProvider } from 'styled-components';
-import { createMuiTheme, StylesProvider, MuiThemeProvider } from '@material-ui/core';
+import { createTheme, StylesProvider, MuiThemeProvider } from '@material-ui/core';
 import { SnackbarProvider } from 'notistack';
 import { MockStoreEnhanced } from 'redux-mock-store';
 import { AppDispatch } from 'redux/appStore';
@@ -19,7 +19,7 @@ import theme from '../components/app/theme';
 import { GlobalStyle } from '../components/app/globalStyle';
 import getStore from '../redux/rootStore';
 
-const appTheme = createMuiTheme(theme);
+const appTheme = createTheme(theme);
 
 export type CustomRenderOptions = {
     initialState?: RootState;

@@ -2,6 +2,11 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+Minimum requirements:
+
+- Node.js of version 16 LTS
+- yarn 1.22
+
 ## GIT
 
 To enable custom pre-push hook, update git configuration to let it know where our hook files lie:

@@ -1,6 +1,6 @@
 import React, { ReactElement, useState } from 'react';
 import Button from '@material-ui/core/Button';
-import { ValueFormatterParams } from 'ag-grid-community';
+import { ColDef, ValueFormatterParams } from 'ag-grid-community';
 import {
     ModalFooter,
     ModalBody,
@@ -43,7 +43,7 @@ const columnDefs = [
             return params.value.join(', ');
         },
     },
-];
+] as ColDef[];
 
 const ManageGeneSetsModal = ({
     geneSets,

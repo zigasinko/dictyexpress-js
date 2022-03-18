@@ -28,55 +28,53 @@ import getProcessDataEpicsFactory, {
 } from './getProcessDataEpicsFactory';
 import { mapStateSlice } from './rxjsCustomFilters';
 
-const processParametersObservable: ProcessDataEpicsFactoryProps<FindSimilarGenesData>['processParametersObservable'] = (
-    action$,
-    state$,
-) => {
-    return combineLatest([
-        action$.pipe(ofType(fetchGenesSimilarities)),
-        state$.pipe(
-            mapStateSlice((state) => {
-                return getBasketExpressionsIds(state.timeSeries);
-            }),
-        ),
-        state$.pipe(
-            mapStateSlice((state) => {
-                return getGenesSimilaritiesQueryGeneId(state.genesSimilarities) ?? '';
-            }),
-        ),
-        state$.pipe(
-            mapStateSlice((state) => {
-                return getGenesSimilaritiesDistanceMeasure(state.genesSimilarities);
-            }),
-        ),
-    ]).pipe(
-        filter(() => getGenesSimilarities(state$.value.genesSimilarities).length === 0),
-        switchMap(
-            // Unused _fetchGenesSimilarities var is necessary to keep rxjs from piping before
-            // fetchGenesSimilarities action is emitted (after find similar genes modal is opened).
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            ([_fetchGenesSimilarities, expressionsIds, queryGeneId, distanceMeasure]) => {
-                // The {Pearson/Spearman} correlation between genes must be computed on at least
-                // two genes.
-                if (queryGeneId === '') {
-                    return of({});
-                }
+const processParametersObservable: ProcessDataEpicsFactoryProps<FindSimilarGenesData>['processParametersObservable'] =
+    (action$, state$) => {
+        return combineLatest([
+            action$.pipe(ofType(fetchGenesSimilarities)),
+            state$.pipe(
+                mapStateSlice((state) => {
+                    return getBasketExpressionsIds(state.timeSeries);
+                }),
+            ),
+            state$.pipe(
+                mapStateSlice((state) => {
+                    return getGenesSimilaritiesQueryGeneId(state.genesSimilarities) ?? '';
+                }),
+            ),
+            state$.pipe(
+                mapStateSlice((state) => {
+                    return getGenesSimilaritiesDistanceMeasure(state.genesSimilarities);
+                }),
+            ),
+        ]).pipe(
+            filter(() => getGenesSimilarities(state$.value.genesSimilarities).length === 0),
+            switchMap(
+                // Unused _fetchGenesSimilarities var is necessary to keep rxjs from piping before
+                // fetchGenesSimilarities action is emitted (after find similar genes modal is opened).
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                ([_fetchGenesSimilarities, expressionsIds, queryGeneId, distanceMeasure]) => {
+                    // The {Pearson/Spearman} correlation between genes must be computed on at least
+                    // two genes.
+                    if (queryGeneId === '') {
+                        return of({});
+                    }
 
-                // If basket expressions aren't in store yet, hierarchical clustering can't be
-                // computed.
-                if (expressionsIds.length === 0) {
-                    return of({});
-                }
+                    // If basket expressions aren't in store yet, hierarchical clustering can't be
+                    // computed.
+                    if (expressionsIds.length === 0) {
+                        return of({});
+                    }
 
-                return of({
-                    expressions: _.sortBy(expressionsIds),
-                    gene: queryGeneId,
-                    distance: distanceMeasure,
-                });
-            },
-        ),
-    );
-};
+                    return of({
+                        expressions: _.sortBy(expressionsIds),
+                        gene: queryGeneId,
+                        distance: distanceMeasure,
+                    });
+                },
+            ),
+        );
+    };
 
 const getFindSimilarGenesProcessDataEpics = getProcessDataEpicsFactory<FindSimilarGenesData>({
     processInfo: ProcessesInfo.FindSimilarGenes,

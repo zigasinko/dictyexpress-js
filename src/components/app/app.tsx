@@ -8,7 +8,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import {
     StylesProvider,
     ThemeProvider as MuiThemeProvider,
-    createMuiTheme,
+    createTheme,
     CssBaseline,
 } from '@material-ui/core';
 import { SnackbarProvider } from 'notistack';
@@ -23,7 +23,7 @@ import appStore from '../../redux/appStore';
 
 void getCSRFCookie();
 
-const appTheme = createMuiTheme(theme);
+const appTheme = createTheme(theme);
 
 const App = (): ReactElement => {
     return (

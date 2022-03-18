@@ -22,48 +22,46 @@ import getProcessDataEpicsFactory, {
 } from './getProcessDataEpicsFactory';
 import { mapStateSlice } from './rxjsCustomFilters';
 
-const processParametersObservable: ProcessDataEpicsFactoryProps<DataGOEnrichmentAnalysis>['processParametersObservable'] = (
-    action$,
-    state$,
-) => {
-    return combineLatest([
-        state$.pipe(
-            mapStateSlice((state) => {
-                return getGaf(state.gOEnrichment);
+const processParametersObservable: ProcessDataEpicsFactoryProps<DataGOEnrichmentAnalysis>['processParametersObservable'] =
+    (action$, state$) => {
+        return combineLatest([
+            state$.pipe(
+                mapStateSlice((state) => {
+                    return getGaf(state.gOEnrichment);
+                }),
+            ),
+            state$.pipe(
+                mapStateSlice((state) => {
+                    return getPValueThreshold(state.gOEnrichment);
+                }),
+            ),
+            state$.pipe(
+                mapStateSlice((state) => {
+                    return getSelectedGenes(state.genes);
+                }),
+            ),
+            state$.pipe(
+                mapStateSlice((state) => {
+                    return getOntologyObo(state.gOEnrichment);
+                }),
+            ),
+        ]).pipe(
+            filter(() => getGOEnrichmentJson(state$.value.gOEnrichment) == null),
+            switchMap(([gaf, pValueThreshold, selectedGenes, ontologyObo]) => {
+                if (selectedGenes.length === 0) {
+                    return of({});
+                }
+                return of({
+                    genes: selectedGenes.map((gene) => gene.feature_id),
+                    pval_threshold: pValueThreshold,
+                    source: selectedGenes[0].source,
+                    species: selectedGenes[0].species,
+                    ontology: ontologyObo.id,
+                    gaf: gaf.id,
+                });
             }),
-        ),
-        state$.pipe(
-            mapStateSlice((state) => {
-                return getPValueThreshold(state.gOEnrichment);
-            }),
-        ),
-        state$.pipe(
-            mapStateSlice((state) => {
-                return getSelectedGenes(state.genes);
-            }),
-        ),
-        state$.pipe(
-            mapStateSlice((state) => {
-                return getOntologyObo(state.gOEnrichment);
-            }),
-        ),
-    ]).pipe(
-        filter(() => getGOEnrichmentJson(state$.value.gOEnrichment) == null),
-        switchMap(([gaf, pValueThreshold, selectedGenes, ontologyObo]) => {
-            if (selectedGenes.length === 0) {
-                return of({});
-            }
-            return of({
-                genes: selectedGenes.map((gene) => gene.feature_id),
-                pval_threshold: pValueThreshold,
-                source: selectedGenes[0].source,
-                species: selectedGenes[0].species,
-                ontology: ontologyObo.id,
-                gaf: gaf.id,
-            });
-        }),
-    );
-};
+        );
+    };
 
 const getGOEnrichmentProcessDataEpics = getProcessDataEpicsFactory<DataGOEnrichmentAnalysis>({
     processInfo: ProcessesInfo.GOEnrichment,

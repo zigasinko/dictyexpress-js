@@ -11,16 +11,12 @@ const withSizeme = <P extends unknown>(
 ): React.ForwardRefExoticComponent<
     React.PropsWithoutRef<Pick<P, Exclude<keyof P, 'size'>>> & React.RefAttributes<unknown>
 > =>
-    forwardRef(
-        ({ ...props }: Pick<P, Exclude<keyof P, 'size'>>, ref): ReactElement => {
-            return (
-                <SizeMe refreshRate={100} refreshMode="debounce" monitorHeight>
-                    {({ size }): ReactElement => (
-                        <Component size={size} {...(props as P)} ref={ref} />
-                    )}
-                </SizeMe>
-            );
-        },
-    );
+    forwardRef(({ ...props }: Pick<P, Exclude<keyof P, 'size'>>, ref): ReactElement => {
+        return (
+            <SizeMe refreshRate={100} refreshMode="debounce" monitorHeight>
+                {({ size }): ReactElement => <Component size={size} {...(props as P)} ref={ref} />}
+            </SizeMe>
+        );
+    });
 
 export default withSizeme;

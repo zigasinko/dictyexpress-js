@@ -23,12 +23,9 @@ const samplesExpressionsByIdSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(
-            timeSeriesSelected,
-            (): SamplesGenesExpressionsById => {
-                return samplesExpressionsByIdInitialState;
-            },
-        );
+        builder.addCase(timeSeriesSelected, (): SamplesGenesExpressionsById => {
+            return samplesExpressionsByIdInitialState;
+        });
     },
 });
 
@@ -40,10 +37,8 @@ const samplesExpressionsReducer = combineReducers({
 });
 
 // Export actions.
-export const {
-    started: samplesExpressionsFetchStarted,
-    ended: samplesExpressionsFetchEnded,
-} = isFetchingSamplesExpressionsSlice.actions;
+export const { started: samplesExpressionsFetchStarted, ended: samplesExpressionsFetchEnded } =
+    isFetchingSamplesExpressionsSlice.actions;
 
 export const {
     fetchSucceeded: samplesExpressionsFetchSucceeded,

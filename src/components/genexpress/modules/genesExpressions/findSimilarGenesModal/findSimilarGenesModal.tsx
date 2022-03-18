@@ -11,7 +11,7 @@ import { Gene, Option } from 'redux/models/internal';
 import { connect, ConnectedProps } from 'react-redux';
 import { getGenesById, getIsFetchingSimilarGenes, getSelectedGenes } from 'redux/stores/genes';
 import { RootState } from 'redux/rootReducer';
-import { ValueGetterParams } from 'ag-grid-community';
+import { ColDef, ValueGetterParams } from 'ag-grid-community';
 import { MenuItem } from '@material-ui/core';
 import DictySelect from 'components/genexpress/common/dictySelect/dictySelect';
 import { fetchGenesSimilarities } from 'redux/epics/epicsActions';
@@ -96,7 +96,7 @@ const columnDefs = [
         headerName: 'Gene ID',
         cellRendererFramework: ToDictybaseCell,
     },
-];
+] as ColDef[];
 
 const FindSimilarGenesModal = ({
     genesById,

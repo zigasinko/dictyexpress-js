@@ -107,20 +107,14 @@ export const {
     ended: differentialExpressionGenesFetchEnded,
 } = isFetchingDifferentialExpressionGenesSlice.actions;
 
-export const {
-    started: associationsGenesFetchStarted,
-    ended: associationsGenesFetchEnded,
-} = isFetchingAssociationsGenesSlice.actions;
+export const { started: associationsGenesFetchStarted, ended: associationsGenesFetchEnded } =
+    isFetchingAssociationsGenesSlice.actions;
 
-export const {
-    started: similarGenesFetchStarted,
-    ended: similarGenesFetchEnded,
-} = isFetchingSimilarGenesSlice.actions;
+export const { started: similarGenesFetchStarted, ended: similarGenesFetchEnded } =
+    isFetchingSimilarGenesSlice.actions;
 
-export const {
-    started: bookmarkedGenesFetchStarted,
-    ended: bookmarkedGenesFetchEnded,
-} = isFetchingSimilarGenesSlice.actions;
+export const { started: bookmarkedGenesFetchStarted, ended: bookmarkedGenesFetchEnded } =
+    isFetchingSimilarGenesSlice.actions;
 
 export type GenesState = ReturnType<typeof genesReducer>;
 

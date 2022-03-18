@@ -43,74 +43,72 @@ export const mergeClusteringData = (
     };
 };
 
-const processParametersObservable: ProcessDataEpicsFactoryProps<ClusteringData>['processParametersObservable'] = (
-    _action$,
-    state$,
-) => {
-    return combineLatest([
-        state$.pipe(
-            mapStateSlice((state) => {
-                return getBasketExpressionsIds(state.timeSeries);
-            }),
-        ),
-        state$.pipe(
-            mapStateSlice((state) => {
-                return getSelectedGenes(state.genes);
-            }),
-        ),
-        state$.pipe(
-            mapStateSlice((state) => {
-                return getClusteringDistanceMeasure(state.clustering);
-            }),
-        ),
-        state$.pipe(
-            mapStateSlice((state) => {
-                return getClusteringLinkageFunction(state.clustering);
-            }),
-        ),
-    ]).pipe(
-        filter(() => getMergedClusteringData(state$.value.clustering) == null),
-        switchMap(([expressionsIds, selectedGenes, distanceMeasure, linkageFunction]) => {
-            // The {Pearson/Spearman} correlation between genes must be computed on at least
-            // two genes.
-            if (selectedGenes.length < 2) {
-                return of({});
-            }
-
-            // If basket expressions aren't in store yet, hierarchical clustering can't be
-            // computed.
-            if (expressionsIds.length === 0) {
-                return of({});
-            }
-
-            let source;
-            let species;
-            try {
-                source = getSourceFromFeatures(selectedGenes as Feature[]);
-                species = getSpeciesFromFeatures(selectedGenes as Feature[]);
-            } catch (error) {
-                return of(
-                    handleError(
-                        `Error creating hierarchical clustering process: ${error.message}`,
-                        error,
-                    ),
-                );
-            }
-
-            return of({
-                expressions: _.sortBy(expressionsIds),
-                ...(!_.isEmpty(selectedGenes) && {
-                    genes: _.sortBy(_.map(selectedGenes, (gene) => gene.feature_id)),
-                    gene_source: source,
-                    gene_species: species,
+const processParametersObservable: ProcessDataEpicsFactoryProps<ClusteringData>['processParametersObservable'] =
+    (_action$, state$) => {
+        return combineLatest([
+            state$.pipe(
+                mapStateSlice((state) => {
+                    return getBasketExpressionsIds(state.timeSeries);
                 }),
-                distance: distanceMeasure,
-                linkage: linkageFunction,
-                ordering: true,
-            });
-        }),
-    );
-};
+            ),
+            state$.pipe(
+                mapStateSlice((state) => {
+                    return getSelectedGenes(state.genes);
+                }),
+            ),
+            state$.pipe(
+                mapStateSlice((state) => {
+                    return getClusteringDistanceMeasure(state.clustering);
+                }),
+            ),
+            state$.pipe(
+                mapStateSlice((state) => {
+                    return getClusteringLinkageFunction(state.clustering);
+                }),
+            ),
+        ]).pipe(
+            filter(() => getMergedClusteringData(state$.value.clustering) == null),
+            switchMap(([expressionsIds, selectedGenes, distanceMeasure, linkageFunction]) => {
+                // The {Pearson/Spearman} correlation between genes must be computed on at least
+                // two genes.
+                if (selectedGenes.length < 2) {
+                    return of({});
+                }
+
+                // If basket expressions aren't in store yet, hierarchical clustering can't be
+                // computed.
+                if (expressionsIds.length === 0) {
+                    return of({});
+                }
+
+                let source;
+                let species;
+                try {
+                    source = getSourceFromFeatures(selectedGenes as Feature[]);
+                    species = getSpeciesFromFeatures(selectedGenes as Feature[]);
+                } catch (error) {
+                    return of(
+                        handleError(
+                            `Error creating hierarchical clustering process: ${error.message}`,
+                            error,
+                        ),
+                    );
+                }
+
+                return of({
+                    expressions: _.sortBy(expressionsIds),
+                    ...(!_.isEmpty(selectedGenes) && {
+                        genes: _.sortBy(_.map(selectedGenes, (gene) => gene.feature_id)),
+                        gene_source: source,
+                        gene_species: species,
+                    }),
+                    distance: distanceMeasure,
+                    linkage: linkageFunction,
+                    ordering: true,
+                });
+            }),
+        );
+    };
 
 const getClusteringProcessDataEpics = getProcessDataEpicsFactory<ClusteringData>({
     processInfo: ProcessesInfo.HierarchicalClustering,

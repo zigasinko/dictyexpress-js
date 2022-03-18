@@ -39,12 +39,9 @@ const differentialExpressionsByIdSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(
-            timeSeriesSelected,
-            (): DifferentialExpressionsById => {
-                return differentialExpressionsByIdInitialState;
-            },
-        );
+        builder.addCase(timeSeriesSelected, (): DifferentialExpressionsById => {
+            return differentialExpressionsByIdInitialState;
+        });
     },
 });
 

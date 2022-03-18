@@ -72,17 +72,12 @@ const genesSimilaritiesReducer = combineReducers({
 
 // Export actions.
 export const { fetchSucceeded: genesSimilaritiesFetchSucceeded } = genesSimilaritiesSlice.actions;
-export const {
-    started: genesSimilaritiesFetchStarted,
-    ended: genesSimilaritiesFetchEnded,
-} = isFetchingGenesSimilaritiesSlice.actions;
-export const {
-    selected: genesSimilaritiesQueryGeneSelected,
-    set: genesSimilaritiesQueryGeneSet,
-} = queryGeneIdSlice.actions;
-export const {
-    distanceMeasureChanged: genesSimilaritiesDistanceMeasureChanged,
-} = distanceMeasureSlice.actions;
+export const { started: genesSimilaritiesFetchStarted, ended: genesSimilaritiesFetchEnded } =
+    isFetchingGenesSimilaritiesSlice.actions;
+export const { selected: genesSimilaritiesQueryGeneSelected, set: genesSimilaritiesQueryGeneSet } =
+    queryGeneIdSlice.actions;
+export const { distanceMeasureChanged: genesSimilaritiesDistanceMeasureChanged } =
+    distanceMeasureSlice.actions;
 
 export type GenesSimilaritiesState = ReturnType<typeof genesSimilaritiesReducer>;
 

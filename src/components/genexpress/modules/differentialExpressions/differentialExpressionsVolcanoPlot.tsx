@@ -79,8 +79,7 @@ const getVegaSpecification = (
             on: [
                 {
                     events: 'mousedown',
-                    update:
-                        '{x: invert("xscale", clamp(x(item()), 0, width)), y: invert("yscale", clamp(y(item()), 0, height))}',
+                    update: '{x: invert("xscale", clamp(x(item()), 0, width)), y: invert("yscale", clamp(y(item()), 0, height))}',
                 },
             ],
         },
@@ -90,8 +89,7 @@ const getVegaSpecification = (
             on: [
                 {
                     events: 'mousedown, [mousedown, window:mouseup] > window:mousemove',
-                    update:
-                        '{x: invert("xscale", clamp(x(item()), 0, width)), y: invert("yscale", clamp(y(item()), 0, height))}',
+                    update: '{x: invert("xscale", clamp(x(item()), 0, width)), y: invert("yscale", clamp(y(item()), 0, height))}',
                 },
             ],
         },

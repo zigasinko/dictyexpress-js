@@ -1,4 +1,4 @@
-import { configureStore, getDefaultMiddleware, EnhancedStore, Action } from '@reduxjs/toolkit';
+import { configureStore, getDefaultMiddleware, Action } from '@reduxjs/toolkit';
 import { createEpicMiddleware, Epic } from 'redux-observable';
 import { switchMap } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
@@ -16,10 +16,8 @@ type MiddleWareProps = {
     serializableCheck?: boolean;
 };
 
-const getStore = (
-    initialState?: RootState,
-    defaultMiddlewareOptions?: MiddleWareProps,
-): EnhancedStore => {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+const getStore = (initialState?: RootState, defaultMiddlewareOptions?: MiddleWareProps) => {
     const epicMiddleware = createEpicMiddleware<Action, Action, RootState>();
 
     const defaultMiddleware = getDefaultMiddleware(defaultMiddlewareOptions);

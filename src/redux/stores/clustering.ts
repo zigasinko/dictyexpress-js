@@ -71,21 +71,16 @@ const clusteringReducer = combineReducers({
     isFetchingClusteringData: isFetchingClusteringDataSlice.reducer,
 });
 
-export const {
-    started: clusteringDataFetchStarted,
-    ended: clusteringDataFetchEnded,
-} = isFetchingClusteringDataSlice.actions;
+export const { started: clusteringDataFetchStarted, ended: clusteringDataFetchEnded } =
+    isFetchingClusteringDataSlice.actions;
 
-export const {
-    distanceMeasureChanged: clusteringDistanceMeasureChanged,
-} = distanceMeasureSlice.actions;
-export const {
-    linkageFunctionChanged: clusteringLinkageFunctionChanged,
-} = linkageFunctionSlice.actions;
+export const { distanceMeasureChanged: clusteringDistanceMeasureChanged } =
+    distanceMeasureSlice.actions;
+export const { linkageFunctionChanged: clusteringLinkageFunctionChanged } =
+    linkageFunctionSlice.actions;
 
-export const {
-    fetchSucceeded: mergedClusteringDataFetchSucceeded,
-} = mergedClusteringDataSlice.actions;
+export const { fetchSucceeded: mergedClusteringDataFetchSucceeded } =
+    mergedClusteringDataSlice.actions;
 
 export type ClusteringState = ReturnType<typeof clusteringReducer>;
 

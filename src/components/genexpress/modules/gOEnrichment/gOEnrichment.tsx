@@ -15,7 +15,7 @@ import _ from 'lodash';
 import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
 import DictySelect from 'components/genexpress/common/dictySelect/dictySelect';
 import { formatNumber } from 'utils/math';
-import { SortChangedEvent, ValueFormatterParams } from 'ag-grid-community';
+import { ColDef, SortChangedEvent, ValueFormatterParams } from 'ag-grid-community';
 import useReport from 'components/genexpress/common/reportBuilder/useReport';
 import { objectsArrayToTsv } from 'utils/reportUtils';
 import { advancedJoin } from 'utils/arrayUtils';
@@ -71,9 +71,8 @@ const GOEnrichment = ({
     const [allAspectsEmpty, setAllAspectsEmpty] = useState(true);
     const [treeView, setTreeView] = useState(true);
     const [sortModel, setSortModel] = useState<{ field: string; order: string } | null>(null);
-    const [gOEnrichmentAssociationsModalOpened, setGOEnrichmentAssociationsModalOpened] = useState(
-        false,
-    );
+    const [gOEnrichmentAssociationsModalOpened, setGOEnrichmentAssociationsModalOpened] =
+        useState(false);
     const [clickedGOEnrichmentRow, setClickedGOEnrichmentRow] = useState<GOEnrichmentRow>(
         {} as GOEnrichmentRow,
     );
@@ -206,40 +205,41 @@ A list of all gene associations for each term is available in a separate file - 
     };
 
     const columnDefs = useStateWithEffect(
-        () => [
-            {
-                field: 'pval',
-                headerName: 'p-value',
-                width: 85,
-                sort: getSort('pval'),
-                valueFormatter: ({ value }: ValueFormatterParams): string =>
-                    formatNumber(value, 'long'),
-            },
-            {
-                field: 'score',
-                headerName: 'Score',
-                sort: getSort('score'),
-                cellRendererFramework: ScoreCell,
-                minWidth: 85,
-            },
-            {
-                field: 'matched',
-                headerName: 'N',
-                width: 100,
-                sort: getSort('matched'),
-                cellRendererFramework: GOEnrichmentMatchedCell,
-                cellRendererParams: {
-                    onMatchedGenesClick: onMatchedGenesClickHandler,
+        () =>
+            [
+                {
+                    field: 'pval',
+                    headerName: 'p-value',
+                    width: 85,
+                    sort: getSort('pval'),
+                    valueFormatter: ({ value }: ValueFormatterParams): string =>
+                        formatNumber(value, 'long'),
                 },
-            },
-            {
-                field: 'term_name',
-                headerName: 'Term',
-                width: 400,
-                sortable: !treeView,
-                cellRendererFramework: treeView ? TermCell : null,
-            },
-        ],
+                {
+                    field: 'score',
+                    headerName: 'Score',
+                    sort: getSort('score'),
+                    cellRendererFramework: ScoreCell,
+                    minWidth: 85,
+                },
+                {
+                    field: 'matched',
+                    headerName: 'N',
+                    width: 100,
+                    sort: getSort('matched'),
+                    cellRendererFramework: GOEnrichmentMatchedCell,
+                    cellRendererParams: {
+                        onMatchedGenesClick: onMatchedGenesClickHandler,
+                    },
+                },
+                {
+                    field: 'term_name',
+                    headerName: 'Term',
+                    width: 400,
+                    sortable: !treeView,
+                    cellRendererFramework: treeView ? TermCell : null,
+                },
+            ] as ColDef[],
         [getSort, treeView],
     );
 

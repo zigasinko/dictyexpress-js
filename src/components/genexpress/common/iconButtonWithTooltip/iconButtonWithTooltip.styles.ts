@@ -2,13 +2,13 @@ import styled, { css, FlattenSimpleInterpolation } from 'styled-components';
 import { IconButton } from '@material-ui/core';
 
 export type StyledIconButtonProps = {
-    nopadding?: boolean;
+    noPadding?: boolean;
 };
 
 export const StyledIconButton = styled(IconButton)<StyledIconButtonProps>`
     && {
         ${(props): FlattenSimpleInterpolation | null =>
-            props.nopadding
+            props.noPadding
                 ? css`
                       padding: 0;
                   `

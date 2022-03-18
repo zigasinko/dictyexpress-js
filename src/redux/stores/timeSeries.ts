@@ -104,14 +104,10 @@ export const { changed: comparisonTimeSeriesChanged } = comparisonIdsSlice.actio
 export const { fetchSucceeded: timeSeriesFetchSucceeded } = timeSeriesByIdSlice.actions;
 export const { addSamplesToBasketSucceeded } = basketInfoSlice.actions;
 export const { fetchBasketExpressionsIdsSucceeded } = basketExpressionsIdsSlice.actions;
-export const {
-    started: timeSeriesFetchStarted,
-    ended: timeSeriesFetchEnded,
-} = isFetchingSlice.actions;
-export const {
-    started: addToBasketStarted,
-    ended: addToBasketEnded,
-} = isAddingToBasketSlice.actions;
+export const { started: timeSeriesFetchStarted, ended: timeSeriesFetchEnded } =
+    isFetchingSlice.actions;
+export const { started: addToBasketStarted, ended: addToBasketEnded } =
+    isAddingToBasketSlice.actions;
 
 export type TimeSeriesState = ReturnType<typeof timeSeriesReducer>;
 

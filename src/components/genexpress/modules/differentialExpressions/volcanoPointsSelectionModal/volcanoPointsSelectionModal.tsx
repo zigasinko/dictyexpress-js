@@ -11,7 +11,7 @@ import { Gene, VolcanoPoint } from 'redux/models/internal';
 import { connect, ConnectedProps } from 'react-redux';
 import { getGenes, getSelectedGenesIds } from 'redux/stores/genes';
 import { RootState } from 'redux/rootReducer';
-import { ValueGetterParams } from 'ag-grid-community';
+import { ColDef, ValueGetterParams } from 'ag-grid-community';
 import {
     DifferentialExpressionInfo,
     GeneVolcanoPointsGridWrapper,
@@ -111,7 +111,7 @@ const VolcanoPointSelectionModal = ({
             headerName: probFieldLabel,
             width: 90,
         },
-    ]);
+    ] as ColDef[]);
 
     return (
         <CenteredModal

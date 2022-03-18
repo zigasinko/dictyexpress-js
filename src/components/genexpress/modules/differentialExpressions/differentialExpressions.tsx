@@ -123,22 +123,20 @@ const DifferentialExpressions = ({
             return;
         }
 
-        const tempVolcanoData: Omit<
-            VolcanoPoint,
-            'logProbFiniteValue'
-        >[] = selectedDifferentialExpression.json.gene_id.map((geneId: string, index: number) => {
-            const probValue =
-                selectedDifferentialExpression.json[selectedDifferentialExpression.prob_field][
-                    index
-                ];
+        const tempVolcanoData: Omit<VolcanoPoint, 'logProbFiniteValue'>[] =
+            selectedDifferentialExpression.json.gene_id.map((geneId: string, index: number) => {
+                const probValue =
+                    selectedDifferentialExpression.json[selectedDifferentialExpression.prob_field][
+                        index
+                    ];
 
-            return {
-                geneId,
-                logFcValue: selectedDifferentialExpression.json.logfc[index],
-                logProbValue: -logOfBase(probValue, 10),
-                probValue,
-            };
-        });
+                return {
+                    geneId,
+                    logFcValue: selectedDifferentialExpression.json.logfc[index],
+                    logProbValue: -logOfBase(probValue, 10),
+                    probValue,
+                };
+            });
 
         const logProbLimit = getLogProbLimit(tempVolcanoData);
         const volcanoData = _.map(tempVolcanoData, (datum) => {

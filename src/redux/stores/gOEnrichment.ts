@@ -125,10 +125,8 @@ const gOEnrichmentReducer = combineReducers({
 });
 
 // Export actions.
-export const {
-    started: gOEnrichmentJsonFetchStarted,
-    ended: gOEnrichmentJsonFetchEnded,
-} = isFetchingGOEnrichmentJsonSlice.actions;
+export const { started: gOEnrichmentJsonFetchStarted, ended: gOEnrichmentJsonFetchEnded } =
+    isFetchingGOEnrichmentJsonSlice.actions;
 
 export const { pValueThresholdChanged } = pValueThresholdSlice.actions;
 

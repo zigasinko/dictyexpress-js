@@ -61,8 +61,11 @@ const GeneSelector = ({
     connectedGenesSelected,
     connectedAllGenesDeselected,
 }: PropsFromRedux): ReactElement => {
-    const { source: autocompleteSource, species: autocompleteSpecies, type: autocompleteType } =
-        basketInfo ?? {};
+    const {
+        source: autocompleteSource,
+        species: autocompleteSpecies,
+        type: autocompleteType,
+    } = basketInfo ?? {};
     const [autocompleteOpen, setAutocompleteOpen] = useState(false);
     const [value, setValue] = useState<Gene[]>([]);
     const [inputValue, setInputValue] = useState('');

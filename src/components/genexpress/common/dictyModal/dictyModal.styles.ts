@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Modal } from '@material-ui/core';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
+import { Theme } from '@material-ui/core/styles/createTheme';
 
 export const CenteredModal = styled(Modal)`
     display: flex;

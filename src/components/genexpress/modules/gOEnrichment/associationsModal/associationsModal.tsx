@@ -17,7 +17,7 @@ import {
     getSelectedGenesIds,
 } from 'redux/stores/genes';
 import { RootState } from 'redux/rootReducer';
-import { ValueGetterParams } from 'ag-grid-community';
+import { ColDef, ValueGetterParams } from 'ag-grid-community';
 import { fetchAssociationsGenes } from 'redux/epics/epicsActions';
 import { Tooltip } from '@material-ui/core';
 import {
@@ -70,7 +70,7 @@ const columnDefs = [
         headerName: 'Gene Full Name',
         flex: 1,
     },
-];
+] as ColDef[];
 
 const GOEnrichmentAssociationsModal = ({
     gOEnrichmentRow,

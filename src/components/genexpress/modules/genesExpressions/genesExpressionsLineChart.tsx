@@ -48,8 +48,7 @@ const getVegaSpecification = (
             value: false,
             on: [
                 {
-                    events:
-                        '@genesExpressionsLinesArea:click, @genesExpressionsPoints:click, @legendSymbol:click, @legendLabel:click',
+                    events: '@genesExpressionsLinesArea:click, @genesExpressionsPoints:click, @legendSymbol:click, @legendLabel:click',
                     update: 'event.ctrlKey',
                     force: true,
                 },
@@ -60,8 +59,7 @@ const getVegaSpecification = (
             value: null,
             on: [
                 {
-                    events:
-                        '@genesExpressionsLinesArea:click, @genesExpressionsPoints:click, @legendSymbol:click, @legendLabel:click',
+                    events: '@genesExpressionsLinesArea:click, @genesExpressionsPoints:click, @legendSymbol:click, @legendLabel:click',
                     update: 'datum.geneId == null ? datum.value : datum.geneId',
                     force: true,
                 },
@@ -72,10 +70,8 @@ const getVegaSpecification = (
             value: null,
             on: [
                 {
-                    events:
-                        '@legendSymbol:mouseover, @legendLabel:mouseover, @genesExpressionsLinesArea:mouseover, @genesExpressionsPoints:mouseover',
-                    update:
-                        '{geneId: datum.geneId == null ? datum.value : datum.geneId, timeSeriesName: datum.timeSeriesName}',
+                    events: '@legendSymbol:mouseover, @legendLabel:mouseover, @genesExpressionsLinesArea:mouseover, @genesExpressionsPoints:mouseover',
+                    update: '{geneId: datum.geneId == null ? datum.value : datum.geneId, timeSeriesName: datum.timeSeriesName}',
                     force: true,
                 },
             ],
@@ -85,8 +81,7 @@ const getVegaSpecification = (
             value: null,
             on: [
                 {
-                    events:
-                        '@legendSymbol:mouseout, @legendLabel:mouseout, @genesExpressionsLinesArea:mouseout, @genesExpressionsPoints:mouseout',
+                    events: '@legendSymbol:mouseout, @legendLabel:mouseout, @genesExpressionsLinesArea:mouseout, @genesExpressionsPoints:mouseout',
                     update: '{}',
                     force: true,
                 },
@@ -166,8 +161,7 @@ const getVegaSpecification = (
                                   ? { value: 'normal' }
                                   : [
                                         {
-                                            test:
-                                                "indata('highlighted', 'data', datum.value) || indata('hovered', 'geneId', datum.value)",
+                                            test: "indata('highlighted', 'data', datum.value) || indata('hovered', 'geneId', datum.value)",
                                             value: 'bold',
                                         },
                                         { value: 'normal' },
@@ -216,8 +210,7 @@ const getVegaSpecification = (
                             ],
                             strokeWidth: [
                                 {
-                                    test:
-                                        "indata('highlighted', 'data', datum.geneId) || (indata('hovered', 'geneId', datum.geneId) && (data('hovered')[0].timeSeriesName == null || indata('hovered', 'timeSeriesName', datum.timeSeriesName)))",
+                                    test: "indata('highlighted', 'data', datum.geneId) || (indata('hovered', 'geneId', datum.geneId) && (data('hovered')[0].timeSeriesName == null || indata('hovered', 'timeSeriesName', datum.timeSeriesName)))",
                                     value: highlightedLineStrokeWidth,
                                 },
                                 { value: lineStrokeWidth },
@@ -252,8 +245,7 @@ const getVegaSpecification = (
                             x: { scale: 'xscale', field: 'label' },
                             y: { scale: 'yscale', field: 'value' },
                             tooltip: {
-                                signal:
-                                    "{'Time series': datum.timeSeriesName, 'Gene': datum.geneName, 'Time': datum.label, 'Score': datum.value}",
+                                signal: "{'Time series': datum.timeSeriesName, 'Gene': datum.geneName, 'Time': datum.label, 'Score': datum.value}",
                             },
                             cursor: { value: 'pointer' },
                         },
@@ -274,8 +266,7 @@ const getVegaSpecification = (
                             ],
                             size: [
                                 {
-                                    test:
-                                        "indata('highlighted', 'data', datum.geneId) || (indata('hovered', 'geneId', datum.geneId) && (data('hovered')[0].timeSeriesName == null || indata('hovered', 'timeSeriesName', datum.timeSeriesName)))",
+                                    test: "indata('highlighted', 'data', datum.geneId) || (indata('hovered', 'geneId', datum.geneId) && (data('hovered')[0].timeSeriesName == null || indata('hovered', 'timeSeriesName', datum.timeSeriesName)))",
                                     value: 8 ** 2,
                                 },
                                 { value: 5 ** 2 },

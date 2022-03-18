@@ -34,8 +34,7 @@ const getVegaSpecification = (
             value: false,
             on: [
                 {
-                    events:
-                        '@horizontalLines:click, @verticalLines:click, @genesExpressionsHeatmap:click, @genesNames:click',
+                    events: '@horizontalLines:click, @verticalLines:click, @genesExpressionsHeatmap:click, @genesNames:click',
                     update: 'event.ctrlKey',
                     force: true,
                 },
@@ -46,8 +45,7 @@ const getVegaSpecification = (
             value: null,
             on: [
                 {
-                    events:
-                        '@horizontalLines:click, @verticalLines:click, @genesExpressionsHeatmap:click, @genesNames:click',
+                    events: '@horizontalLines:click, @verticalLines:click, @genesExpressionsHeatmap:click, @genesNames:click',
                     update: '{nodeIndex: datum.nodeIndex}',
                     force: true,
                 },
@@ -89,8 +87,7 @@ const getVegaSpecification = (
             value: null,
             on: [
                 {
-                    events:
-                        '@horizontalLines:mouseover, @verticalLines:mouseover, @genesExpressionsHeatmap:mouseover, @genesNames:mouseover',
+                    events: '@horizontalLines:mouseover, @verticalLines:mouseover, @genesExpressionsHeatmap:mouseover, @genesNames:mouseover',
                     update: '{nodeIndex: datum.nodeIndex}',
                     force: true,
                 },
@@ -101,8 +98,7 @@ const getVegaSpecification = (
             value: null,
             on: [
                 {
-                    events:
-                        '@horizontalLines:mouseout, @verticalLines:mouseout, @genesExpressionsHeatmap:mouseout, @genesNames:mouseout',
+                    events: '@horizontalLines:mouseout, @verticalLines:mouseout, @genesExpressionsHeatmap:mouseout, @genesNames:mouseout',
                     update: '{}',
                     force: true,
                 },
@@ -195,16 +191,14 @@ const getVegaSpecification = (
                 update: {
                     height: [
                         {
-                            test:
-                                "indata('highlightedClusterNodesIds', 'nodeIndex', datum.nodeIndex)",
+                            test: "indata('highlightedClusterNodesIds', 'nodeIndex', datum.nodeIndex)",
                             value: clusterLineWidth * 2,
                         },
                         { value: clusterLineWidth },
                     ],
                     fill: [
                         {
-                            test:
-                                "indata('highlightedClusterNodesIds', 'nodeIndex', datum.nodeIndex) || indata('hovered', 'nodeIndex', datum.nodeIndex)",
+                            test: "indata('highlightedClusterNodesIds', 'nodeIndex', datum.nodeIndex) || indata('hovered', 'nodeIndex', datum.nodeIndex)",
                             value: highlightedColor,
                         },
                         { value: color },
@@ -234,16 +228,14 @@ const getVegaSpecification = (
                 update: {
                     width: [
                         {
-                            test:
-                                "indata('highlightedClusterNodesIds', 'nodeIndex', datum.nodeIndex)",
+                            test: "indata('highlightedClusterNodesIds', 'nodeIndex', datum.nodeIndex)",
                             value: clusterLineWidth * 2,
                         },
                         { value: clusterLineWidth },
                     ],
                     fill: [
                         {
-                            test:
-                                "indata('highlightedClusterNodesIds', 'nodeIndex', datum.nodeIndex) || indata('hovered', 'nodeIndex', datum.nodeIndex)",
+                            test: "indata('highlightedClusterNodesIds', 'nodeIndex', datum.nodeIndex) || indata('hovered', 'nodeIndex', datum.nodeIndex)",
                             value: highlightedColor,
                         },
                         { value: color },
