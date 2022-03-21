@@ -23,6 +23,7 @@ export const GeneChip = ({
     const chipWrapperElement = useRef<HTMLDivElement>(null);
 
     const handleClickAway = (): void => {
+        console.log('clicked away');
         setInfoPopperOpen(false);
     };
 

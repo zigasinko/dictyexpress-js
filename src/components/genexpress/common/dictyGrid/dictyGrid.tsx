@@ -210,8 +210,11 @@ const DictyGrid = <T,>({
                     suppressRowClickSelection={suppressRowClickSelection}
                     onRowClicked={handleOnRowClicked}
                     onRowSelected={handleRowSelected}
-                    getRowNodeId={getRowId}
-                    immutableData
+                    getRowId={(params) => {
+                        return getRowId(params.data);
+                    }}
+                    /* getRowNodeId={getRowId}
+                    immutableData */
                     onSelectionChanged={handleOnSelectionChanged}
                     rowData={data}
                     quickFilterText={filter}

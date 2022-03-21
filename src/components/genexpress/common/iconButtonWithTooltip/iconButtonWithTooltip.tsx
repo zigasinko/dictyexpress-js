@@ -8,12 +8,11 @@ type IconButtonWithTooltipProps = {
     disabled?: boolean;
     children: ReactNode;
     onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-} & Pick<StyledIconButtonProps, 'noPadding'>;
+} & Pick<StyledIconButtonProps, '$disablePadding'>;
 
 const IconButtonWithTooltip = forwardRef<HTMLButtonElement, IconButtonWithTooltipProps>(
     (
-        // eslint-disable-next-line react/prop-types
-        { title, disabled, children, noPadding, onClick }: IconButtonWithTooltipProps,
+        { title, disabled, children, $disablePadding, onClick }: IconButtonWithTooltipProps,
         ref,
     ): ReactElement => {
         const forwardedRef = useForwardedRef<HTMLButtonElement>(ref);
@@ -25,7 +24,7 @@ const IconButtonWithTooltip = forwardRef<HTMLButtonElement, IconButtonWithToolti
                         aria-label={title}
                         onClick={onClick}
                         disabled={disabled}
-                        noPadding={noPadding}
+                        $disablePadding={$disablePadding}
                         ref={forwardedRef}
                     >
                         {children}

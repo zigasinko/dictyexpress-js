@@ -4,7 +4,7 @@ exports[`geneChip should render as highlighted snapshot 1`] = `
 <DocumentFragment>
   <div>
     <div
-      class="MuiButtonBase-root MuiChip-root sc-gKsewC AwlDB MuiChip-colorSecondary MuiChip-clickableColorSecondary MuiChip-deletableColorSecondary MuiChip-sizeSmall MuiChip-clickable MuiChip-deletable"
+      class="MuiButtonBase-root MuiChip-root sc-gKclnd btFKwt MuiChip-colorSecondary MuiChip-clickableColorSecondary MuiChip-deletableColorSecondary MuiChip-sizeSmall MuiChip-clickable MuiChip-deletable"
       role="button"
       tabindex="0"
     >
@@ -35,7 +35,7 @@ exports[`geneChip should render the same as default snapshot 1`] = `
 <DocumentFragment>
   <div>
     <div
-      class="MuiButtonBase-root MuiChip-root sc-gKsewC AwlDB MuiChip-sizeSmall MuiChip-clickable MuiChip-deletable"
+      class="MuiButtonBase-root MuiChip-root sc-gKclnd btFKwt MuiChip-sizeSmall MuiChip-clickable MuiChip-deletable"
       role="button"
       tabindex="0"
     >

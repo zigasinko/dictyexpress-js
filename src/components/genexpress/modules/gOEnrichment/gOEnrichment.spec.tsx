@@ -119,20 +119,20 @@ describe('gOEnrichment', () => {
         });
 
         it('should display term in a custom cell', () => {
-            expect(container.querySelector('.ag-react-container svg')).toBeInTheDocument();
+            expect(container.querySelector('.ag-cell svg')).toBeInTheDocument();
         });
 
         it('should switch between flat and tree view when user clicks "Flat"/"Hierarchy" button', async () => {
             fireEvent.click(screen.getByText('Flat'));
 
             await waitFor(() => {
-                expect(container.querySelector('.ag-react-container svg')).not.toBeInTheDocument();
+                expect(container.querySelector('.ag-cell svg')).not.toBeInTheDocument();
             });
 
             fireEvent.click(screen.getByText('Hierarchy'));
 
             await waitFor(() => {
-                expect(container.querySelector('.ag-react-container svg')).toBeInTheDocument();
+                expect(container.querySelector('.ag-cell svg')).toBeInTheDocument();
             });
         });
 
@@ -141,14 +141,14 @@ describe('gOEnrichment', () => {
             fireEvent.click(screen.getByText('Term'));
 
             await waitFor(() => {
-                expect(container.querySelector('.ag-react-container svg')).toBeInTheDocument();
+                expect(container.querySelector('.ag-cell svg')).toBeInTheDocument();
             });
 
             // If user clicks on "Score" header, view should change -> flat grid with sorting.
             fireEvent.click(screen.getByText('Score'));
 
             await waitFor(() => {
-                expect(container.querySelector('.ag-react-container svg')).not.toBeInTheDocument();
+                expect(container.querySelector('.ag-cell svg')).not.toBeInTheDocument();
             });
         });
 

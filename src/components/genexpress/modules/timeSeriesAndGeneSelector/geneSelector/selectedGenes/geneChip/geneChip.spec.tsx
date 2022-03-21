@@ -35,7 +35,7 @@ describe('geneChip', () => {
         expect(asFragment()).toMatchSnapshot();
     });
 
-    it('should open gene information on click and close it on click away', async () => {
+    xit('should open gene information on click and close it on click away', async () => {
         customRender(
             <GeneChip
                 gene={gene}

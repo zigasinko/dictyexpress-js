@@ -30,7 +30,7 @@ import { RootState } from 'redux/rootReducer';
 import { DONE_DATA_STATUS, WAITING_DATA_STATUS } from '@genialis/resolwe/dist/api/types/rest';
 import { mergeClusteringData } from 'redux/epics/clusteringEpics';
 import { generateRandomString } from 'utils/stringUtils';
-import { Server } from 'mock-socket';
+import { Client, Server } from 'mock-socket';
 import { sessionId, webSocketUrl } from 'api/base';
 import { Gene, MergedClusteringData } from 'redux/models/internal';
 import { objectsArrayToTsv } from 'utils/reportUtils';
@@ -563,7 +563,7 @@ describe('clustering integration', () => {
 
     describe("process data doesn't exist", () => {
         const observerId = uuidv4();
-        let webSocketMock: WebSocket;
+        let webSocketMock: Client;
 
         beforeAll(() => {
             fetchMock.resetMocks();

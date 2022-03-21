@@ -3,13 +3,13 @@
 exports[`gOEnrichmentScoreCell should render as default snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="sc-bdfBwQ bFLuhp"
+    class="sc-bdvvtL kYkOic"
   >
     <div
       aria-valuemax="100"
       aria-valuemin="0"
       aria-valuenow="0"
-      class="MuiLinearProgress-root MuiLinearProgress-colorSecondary sc-dlfnbm ftISem MuiLinearProgress-determinate"
+      class="MuiLinearProgress-root MuiLinearProgress-colorSecondary sc-dkPtRN cGzNTZ MuiLinearProgress-determinate"
       role="progressbar"
     >
       <div
@@ -18,7 +18,7 @@ exports[`gOEnrichmentScoreCell should render as default snapshot 1`] = `
       />
     </div>
     <span
-      class="sc-gsTCUz gnFYLz"
+      class="sc-gsDKAQ dzCCj"
     >
       12.00
     </span>

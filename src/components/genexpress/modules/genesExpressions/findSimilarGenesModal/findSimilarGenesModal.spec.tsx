@@ -20,7 +20,7 @@ import _ from 'lodash';
 import { DONE_DATA_STATUS, WAITING_DATA_STATUS } from '@genialis/resolwe/dist/api/types/rest';
 import { formatNumber } from 'utils/math';
 import { v4 as uuidv4 } from 'uuid';
-import { Server } from 'mock-socket';
+import { Client, Server } from 'mock-socket';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
 import { sessionId, webSocketUrl } from 'api/base';
 import { GeneSimilarity } from 'redux/models/internal';
@@ -242,7 +242,7 @@ describe('findSimilarGenesModal', () => {
 
     describe("process data doesn't exist", () => {
         const observerId = uuidv4();
-        let webSocketMock: WebSocket;
+        let webSocketMock: Client;
 
         beforeAll(() => {
             fetchMock.resetMocks();

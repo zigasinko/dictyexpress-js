@@ -26,7 +26,7 @@ import {
     WAITING_DATA_STATUS,
 } from '@genialis/resolwe/dist/api/types/rest';
 import { v4 as uuidv4 } from 'uuid';
-import { Server, WebSocket } from 'mock-socket';
+import { Client, Server } from 'mock-socket';
 import { sessionId, webSocketUrl } from 'api/base';
 import { appendMissingAttributesToJson } from 'utils/gOEnrichmentUtils';
 import { ProcessSlug, BookmarkStatePath } from 'components/genexpress/common/constants';
@@ -247,7 +247,7 @@ describe('goEnrichment integration', () => {
 
     describe("process data doesn't exist", () => {
         const observerId = uuidv4();
-        let webSocketMock: WebSocket;
+        let webSocketMock: Client;
 
         beforeAll(() => {
             fetchMock.resetMocks();
