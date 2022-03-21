@@ -1,4 +1,8 @@
-import 'playwright-testing-library/extend';
+import { test as baseTest } from '@playwright/test';
+import { fixtures, TestingLibraryFixtures } from '@playwright-testing-library/test/fixture';
+
+const test = baseTest.extend<TestingLibraryFixtures>(fixtures);
+const { expect } = test;
 
 enum Selectors {
     expressionsGraph = '[data-testid=genes-expressions-line-chart] svg',
@@ -6,50 +10,59 @@ enum Selectors {
     genesInputLabel = 'Search for a gene',
 }
 
-describe('Expression time courses', () => {
-    beforeEach(async () => {
-        // Create a new context with the saved localStorageDatastate
-        await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-        if (process.env.DICTY_STORAGE) {
-            const storageState = JSON.parse(process.env.DICTY_STORAGE);
-            context = await browser.newContext({ storageState });
-        } else {
-            await page.goto(global.baseURL);
-            // @ts-ignore
-            const document = await page.getDocument();
-            await (
-                await document.queryAllByRole('button', { name: 'Run dictyExpress' })
-            )[0].click();
-            await (await document.getByRole('button', { name: 'Login' })).click();
-            await (await document.getByLabelText('Username')).fill(process.env.LOGIN_USERNAME);
-            await (await document.getByLabelText('Password')).fill(process.env.LOGIN_PASSWORD);
-            await (await document.getByRole('button', { name: 'SIGN IN' })).click();
-            await page.waitForResponse(
-                (response: { url: () => string | string[] }) => {
-                    return response.url().includes('/relation?category=Time+series');
-                },
-                { timeout: 3000 },
-            );
+test.describe('Expression time courses', () => {
+    test.beforeEach(
+        async ({
+            browser,
+            context,
+            page,
+            queries: { getByLabelText, getByRole, queryAllByRole },
+        }) => {
+            // Create a new context with the saved localStorageDatastate
+            await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+            if (process.env.DICTY_STORAGE) {
+                const storageState = JSON.parse(process.env.DICTY_STORAGE);
+                context = await browser.newContext({ storageState });
+            } else {
+                await page.goto('http://localhost:3000');
+                await (await queryAllByRole('button', { name: 'Run dictyExpress' }))[0].click();
+                await (await getByRole('button', { name: 'Login' })).click();
+                await (
+                    await getByLabelText('Username')
+                ).fill(process.env.LOGIN_USERNAME ?? 'not-provided');
+                await (
+                    await getByLabelText('Password')
+                ).fill(process.env.LOGIN_PASSWORD ?? 'not-provided');
+                await (await getByRole('button', { name: 'SIGN IN' })).click();
+                await page.waitForResponse(
+                    (response: { url: () => string | string[] }) => {
+                        return response.url().includes('/relation?category=Time+series');
+                    },
+                    { timeout: 15000 },
+                );
 
-            const localStorageData = await context.storageState();
-            process.env.DICTY_STORAGE = JSON.stringify(localStorageData);
-        }
-    });
+                const localStorageData = await context.storageState();
+                process.env.DICTY_STORAGE = JSON.stringify(localStorageData);
+            }
+        },
+    );
 
-    it('should draw Expression Time Courses graph', async () => {
+    test('should draw Expression Time Courses graph', async ({
+        page,
+        queries: { getByRole, getByPlaceholderText },
+    }) => {
         const genes = 'eif3L fnkF_ps';
-        // @ts-ignore
-        const document = await page.getDocument();
-        await (await document.getByRole('gridcell', { name: '307' })).click();
+
+        await (await getByRole('gridcell', { name: '307' })).click();
 
         await page.waitForResponse((response: { url: () => string | string[] }) => {
             return response.url().includes('/api/storage');
         });
 
-        await (await document.getByPlaceholderText(Selectors.genesInputLabel)).fill('a');
+        await (await getByPlaceholderText(Selectors.genesInputLabel)).fill('a');
         await page.click(Selectors.option);
 
-        await (await document.getByPlaceholderText(Selectors.genesInputLabel)).fill('');
+        await (await getByPlaceholderText(Selectors.genesInputLabel)).fill('');
 
         // Playwright cross browser support for ClipboardEvent:paste isn't implemented yet therefore manual implementation
         await page.evaluate(async (text: string) => {
@@ -77,17 +90,6 @@ describe('Expression time courses', () => {
 
         const elementHandle = await page.waitForSelector(Selectors.expressionsGraph);
         const graphImg = await elementHandle.screenshot({ timeout: 20000 });
-        expect(graphImg).toMatchImageSnapshot({
-            capture: 'viewport',
-            scale: false,
-            // threshold for entire image
-            failureThreshold: 0.05,
-            // percent of image or number of pixels
-            failureThresholdType: 'percent',
-            // threshold for each pixel
-            customDiffConfig: { threshold: 0.1 },
-            // should ignore small pixel rectangle differences on different platforms
-            allowSizeMismatch: true,
-        });
+        expect(graphImg).toMatchSnapshot({ threshold: 0.1 });
     });
 });

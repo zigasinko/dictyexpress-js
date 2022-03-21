@@ -4,3 +4,10 @@ declare namespace NodeJS {
         port: number;
     }
 }
+interface Process {
+    env: {
+        PORT?: number;
+        LOGIN_USERNAME?: string;
+        LOGIN_PASSWORD?: string;
+    };
+}

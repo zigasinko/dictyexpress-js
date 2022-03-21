@@ -4,8 +4,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 Minimum requirements:
 
-- Node.js of version 16 LTS
-- yarn 1.22
+-   Node.js of version 16 LTS
+-   yarn 1.22
 
 ## GIT
 
@@ -46,25 +46,16 @@ See the section about [running tests](https://facebook.github.io/create-react-ap
 
 ### `npm run e2e:debug`
 
-Assuming locally running web site and macOS:
+Assuming locally running web site (using `yarn start` or `yarn serve`). On Windows git-bash is assumed.
 
 ```
-LOGIN_USERNAME=myuser LOGIN_PASSWORD=mysecret npm run e2e:debug
-```
+# Headed with inspector
+LOGIN_USERNAME=myuser LOGIN_PASSWORD=mysecret PWDEBUG=1 yarn e2e
 
-or for headless run:
-
-```
-LOGIN_USERNAME=myuser LOGIN_PASSWORD=mysecret CI=true npm run e2e:debug
-```
-
-on Windows also assuming locally running web site:
+# Headless
+LOGIN_USERNAME=myuser LOGIN_PASSWORD=mysecret yarn e2e
 
 ```
-npx cross-env LOGIN_USERNAME=myuser LOGIN_PASSWORD=mysecret npm run e2e:debug
-```
-
-Opens UI for e2e tests overview with custom user account.
 
 ### `npm run build`
 

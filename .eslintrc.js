@@ -41,6 +41,7 @@ module.exports = {
         'package-lock.json',
         'node_modules',
         'build',
+        'playwright.config.ts',
         'public/config.js',
     ],
     rules: {
