@@ -1,7 +1,6 @@
 import React, { ReactElement } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import ClearIcon from '@material-ui/icons/Clear';
-import { ContentCopy as ContentCopyIcon } from 'mdi-material-ui';
 import { Gene } from 'redux/models/internal';
 import {
     geneDeselected,

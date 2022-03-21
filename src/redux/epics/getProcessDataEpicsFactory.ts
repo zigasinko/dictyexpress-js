@@ -1,4 +1,4 @@
-import { ofType, Epic, combineEpics, StateObservable, ActionsObservable } from 'redux-observable';
+import { Epic, combineEpics, StateObservable } from 'redux-observable';
 import {
     map,
     startWith,
@@ -7,6 +7,7 @@ import {
     withLatestFrom,
     switchMap,
     mergeMap,
+    filter,
 } from 'rxjs/operators';
 import { of, from, EMPTY, Observable, merge, isObservable } from 'rxjs';
 import { RootState } from 'redux/rootReducer';
@@ -47,7 +48,7 @@ const activeQueryObserverDisposeFunction: { [_: string]: QueryObserverDisposeFun
 export type ProcessDataEpicsFactoryProps<DataType> = {
     processInfo: ProcessInfo;
     processParametersObservable: (
-        action: ActionsObservable<Action>,
+        action: Observable<Action>,
         state: StateObservable<RootState>,
     ) => Observable<Record<string, unknown> | Observable<ReturnType<typeof handleError>>>;
     fetchDataActionCreator: ActionCreatorWithPayload<number>;
@@ -121,9 +122,7 @@ const getProcessDataEpicsFactory = <DataType extends Data>({
 
     const fetchDataEpic: Epic<Action, Action, RootState> = (action$) => {
         return action$.pipe(
-            ofType<Action, ReturnType<typeof fetchDataActionCreator>>(
-                fetchDataActionCreator.toString(),
-            ),
+            filter(fetchDataActionCreator.match),
             switchMap((action) => {
                 return from(getDataReactive(action.payload, handleAnalysisDataResponse)).pipe(
                     mergeMap((response) => {
@@ -144,9 +143,7 @@ const getProcessDataEpicsFactory = <DataType extends Data>({
 
     const fetchStorageEpic: Epic<Action, Action, RootState> = (action$, state$) => {
         return action$.pipe(
-            ofType<Action, ReturnType<typeof fetchDataSucceededActionCreator>>(
-                fetchDataSucceededActionCreator.toString(),
-            ),
+            filter(fetchDataSucceededActionCreator.match),
             withLatestFrom(state$),
             switchMap(([action, state]) => {
                 return from(getStorage(getStorageIdFromData(action.payload))).pipe(

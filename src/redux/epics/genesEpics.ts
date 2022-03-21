@@ -75,9 +75,7 @@ const fetchGenesEpicsFactory = (
 ): Epic<Action, Action, RootState> => {
     return (action$, state$): Observable<Action> => {
         return action$.pipe(
-            ofType<Action, ReturnType<ActionCreatorWithPayload<TFetchGenesActionPayload, string>>>(
-                fetchGenesAction.toString(),
-            ),
+            filter(fetchGenesAction.match),
             withLatestFrom(state$),
             mergeMap(([action, state]) => {
                 return fetchGenesActionObservable(
@@ -111,9 +109,7 @@ const fetchAssociationsGenesEpic = fetchGenesEpicsFactory(
 
 const fetchPredefinedGenesEpic: Epic<Action, Action, RootState> = (action$, state$) =>
     action$.pipe(
-        ofType<Action, ReturnType<typeof fetchAndSelectPredefinedGenes>>(
-            fetchAndSelectPredefinedGenes.toString(),
-        ),
+        filter(fetchAndSelectPredefinedGenes.match),
         mergeMap((action) => {
             return state$.pipe(
                 mapStateSlice((state) => getBasketInfo(state.timeSeries)),

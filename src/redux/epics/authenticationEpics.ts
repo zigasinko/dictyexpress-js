@@ -1,6 +1,6 @@
 import { Action } from '@reduxjs/toolkit';
 import { ofType, Epic, combineEpics } from 'redux-observable';
-import { map, startWith, endWith, catchError, mergeMap } from 'rxjs/operators';
+import { map, startWith, endWith, catchError, mergeMap, filter } from 'rxjs/operators';
 import { of, from } from 'rxjs';
 import { RootState } from 'redux/rootReducer';
 import {
@@ -23,7 +23,7 @@ import { appStarted, login, loginSucceeded, logout, logoutSucceeded } from './ep
 
 const loginEpic: Epic<Action, Action, RootState> = (action$) =>
     action$.pipe(
-        ofType<Action, ReturnType<typeof login>>(login.toString()),
+        filter(login.match),
         mergeMap((action) => {
             return from(loginRequest(action.payload.username, action.payload.password)).pipe(
                 mergeMap(() => from(clearObservers()).pipe(map(loginSucceeded))),
