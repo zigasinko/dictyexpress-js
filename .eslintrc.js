@@ -8,6 +8,7 @@ module.exports = {
     // Allows us to use rules within our codebase.
     plugins: ['@typescript-eslint', 'prettier'],
     extends: [
+        'react-app',
         /* Config rules specified mostly from airbnb-config-typescript GitHub:
          * https://github.com/iamturns/eslint-config-airbnb-typescript and
          * https://blog.geographer.fr/eslint-guide.*/
@@ -19,11 +20,6 @@ module.exports = {
         // TypeScript-specific recommended rules, such as Missing return type on function.
         'plugin:@typescript-eslint/recommended',
         'plugin:@typescript-eslint/recommended-requiring-type-checking',
-        /* Uses eslint-config-prettier to disable ESLint rules from
-         * @typescript-eslint/eslint-plugin that would conflict with prettier.*/
-        'prettier/@typescript-eslint',
-        // Disable rules from the react plugin (in airbnb) that conflict with prettier.
-        'prettier/react',
         /* Enables eslint-plugin-prettier and eslint-config-prettier.
          * This will display prettier errors as ESLint errors. Make sure this is
          * always the last configuration in the extends array.*/

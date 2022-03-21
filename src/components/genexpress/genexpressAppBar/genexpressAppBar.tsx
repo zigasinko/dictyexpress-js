@@ -135,7 +135,9 @@ const GenexpressAppBar = ({
             <ActionsContainer>
                 <IconButtonWithTooltip
                     title="Bookmark"
-                    onClick={handleBookmarkClick}
+                    onClick={() => {
+                        void handleBookmarkClick();
+                    }}
                     disabled={isFetchingTimeSeries}
                     ref={bookmarkButtonElement}
                 >

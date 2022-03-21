@@ -252,7 +252,9 @@ const GeneSelector = ({
             <TitleSection>
                 <h3>Genes</h3>
                 <GeneSetSelector
-                    onSelect={handleImportedGenesNames}
+                    onSelect={() => {
+                        void handleImportedGenesNames();
+                    }}
                     selectedGenes={selectedGenes}
                     disabled={isDisabled}
                 />
