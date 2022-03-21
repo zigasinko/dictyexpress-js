@@ -24,11 +24,14 @@ const wsProxyConfig = {
     headers: {
         Host: targetDomain,
     },
+    pathRewrite: {
+        '^/ws-proxy': '/ws',
+    },
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 module.exports = (app) => {
     app.use(createProxyMiddleware('/api', proxyConfig));
     app.use(createProxyMiddleware('/rest-auth', proxyConfig));
-    app.use(createProxyMiddleware('/ws', wsProxyConfig));
+    app.use(createProxyMiddleware('/ws-proxy', wsProxyConfig));
 };
