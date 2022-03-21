@@ -1,6 +1,6 @@
 import React, { ReactElement, useRef, useState } from 'react';
-import { Menu, IconButton } from '@material-ui/core';
-import { MoreVert as MoreIcon } from '@material-ui/icons';
+import { Menu, IconButton } from '@mui/material';
+import { MoreVert as MoreIcon } from '@mui/icons-material';
 import { MobileSection, DesktopSection, DictyToolbar } from './dictyAppBar.styles';
 
 type AppBarProps = {

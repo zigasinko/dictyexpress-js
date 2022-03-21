@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { ChevronLeft, ChevronRight } from '@material-ui/icons';
+import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import experimentAndGeneSelection from 'images/modules/ExperimentAndGeneSelection.png';

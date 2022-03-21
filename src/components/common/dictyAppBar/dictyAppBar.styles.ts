@@ -1,6 +1,6 @@
 import styled, { FlattenSimpleInterpolation, css } from 'styled-components';
 import { breakpoints } from 'components/app/globalStyle';
-import { Toolbar } from '@material-ui/core';
+import { Toolbar } from '@mui/material';
 
 export const MobileSection = styled.div`
     display: flex;

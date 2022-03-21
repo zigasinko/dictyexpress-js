@@ -1,10 +1,5 @@
 import styled from 'styled-components';
 
-export const AutoCompleteItemSpan = styled.span`
-    display: block;
-    width: 100%;
-`;
-
 export const TitleSection = styled.div`
     display: flex;
     flex-flow: row nowrap;

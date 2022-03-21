@@ -19,7 +19,7 @@ import {
 import { RootState } from 'redux/rootReducer';
 import { ColDef, ValueGetterParams } from 'ag-grid-community';
 import { fetchAssociationsGenes } from 'redux/epics/epicsActions';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@mui/material';
 import {
     TermInfo,
     TermName,

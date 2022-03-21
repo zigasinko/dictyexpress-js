@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { useHistory } from 'react-router-dom';
-import { MenuItem } from '@material-ui/core';
+import { MenuItem } from '@mui/material';
 import SectionNames from 'components/landing/common/constants';
 import { scrollToTargetAdjusted } from 'utils/documentHelpers';
 import { appBarHeight } from 'components/app/globalStyle';

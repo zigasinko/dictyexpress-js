@@ -1,4 +1,4 @@
-import { FormControl } from '@material-ui/core';
+import { FormControl } from '@mui/material';
 import styled from 'styled-components';
 
 export const SimilarGenesGridWrapper = styled.div`

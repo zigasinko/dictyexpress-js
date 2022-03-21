@@ -1,6 +1,6 @@
 import styled, { css, FlattenSimpleInterpolation } from 'styled-components';
-import { TextField } from '@material-ui/core';
-import DeleteIcon from '@material-ui/icons/Delete';
+import { TextField } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export const DictyGridContainer = styled.div`
     height: 100%;

@@ -4,7 +4,7 @@ import { Spec } from 'vega';
 import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
 import { GeneExpression } from 'redux/models/internal';
 import { GEN_GREY } from 'components/genexpress/common/theming/theming';
-import { useTheme } from '@material-ui/core';
+import { useTheme } from '@mui/material';
 import useForwardedRef from 'components/genexpress/common/useForwardedRef';
 import Chart, { ChartHandle, DataDefinition, DataHandler } from '../../common/chart/chart';
 

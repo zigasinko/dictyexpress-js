@@ -4,7 +4,7 @@ import {
     Email as EmailIcon,
     Twitter as TwitterIcon,
     LinkedIn as LinkedInIcon,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 
 import { SectionContentContainer } from 'components/landing/common/layout.styles';
 import SectionNames from 'components/landing/common/constants';

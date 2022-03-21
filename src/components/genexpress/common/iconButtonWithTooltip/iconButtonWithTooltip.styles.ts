@@ -1,5 +1,5 @@
 import styled, { css, FlattenSimpleInterpolation } from 'styled-components';
-import { IconButton } from '@material-ui/core';
+import { IconButton } from '@mui/material';
 
 export type StyledIconButtonProps = {
     $disablePadding?: boolean;

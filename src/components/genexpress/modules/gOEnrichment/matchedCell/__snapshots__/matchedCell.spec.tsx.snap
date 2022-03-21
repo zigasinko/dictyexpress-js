@@ -6,17 +6,13 @@ exports[`gOEnrichmentMatchedCell should render as default snapshot 1`] = `
     class="sc-bdvvtL kYkOic"
   >
     <button
-      class="MuiButtonBase-root MuiButton-root MuiButton-text sc-gsDKAQ gFsplO MuiButton-textSecondary MuiButton-fullWidth"
+      class="MuiButton-root MuiButton-text MuiButton-textSecondary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-fullWidth MuiButtonBase-root sc-gsDKAQ gFsplO css-t89ene-MuiButtonBase-root-MuiButton-root"
       tabindex="0"
       type="button"
     >
+      12/250
       <span
-        class="MuiButton-label"
-      >
-        12/250
-      </span>
-      <span
-        class="MuiTouchRipple-root"
+        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
       />
     </button>
   </div>

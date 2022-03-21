@@ -2,7 +2,7 @@ import React, { ReactElement, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from 'redux/rootReducer';
 import { getIsLoggingIn } from 'redux/stores/authentication';
-import { TextField, Button } from '@material-ui/core';
+import { TextField, Button } from '@mui/material';
 import { login } from 'redux/epics/epicsActions';
 import {
     ModalHeader,

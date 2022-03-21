@@ -15,7 +15,7 @@ import { SignalValue, Spec } from 'vega';
 import { useDispatch } from 'react-redux';
 import { handleError } from 'utils/errorUtils';
 import { RendererContext } from 'components/common/rendererContext';
-import { useTheme } from '@material-ui/core';
+import { useTheme } from '@mui/material';
 import { vegaTheme } from '../theming/vegaTheme';
 import useUpdateEffect from '../useUpdateEffect';
 import withSizeme from '../withSizeme';

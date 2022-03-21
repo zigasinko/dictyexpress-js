@@ -1,6 +1,6 @@
 import React, { ReactElement, useRef, useState } from 'react';
-import Popper from '@material-ui/core/Popper';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import Popper from '@mui/material/Popper';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
 import { Gene } from 'redux/models/internal';
 import ConnectedGeneInformation from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/selectedGenes/geneInformation/geneInformation';
 import { GeneChipWrapper } from './geneChip.styles';
@@ -23,7 +23,6 @@ export const GeneChip = ({
     const chipWrapperElement = useRef<HTMLDivElement>(null);
 
     const handleClickAway = (): void => {
-        console.log('clicked away');
         setInfoPopperOpen(false);
     };
 
@@ -40,7 +39,7 @@ export const GeneChip = ({
                     ref={chipWrapperElement}
                     onClick={handleOnClick}
                     size="small"
-                    color={highlighted ? 'secondary' : 'default'}
+                    color={highlighted ? 'secondary' : undefined}
                 />
 
                 <Popper anchorEl={chipWrapperElement.current} open={infoPopperOpen}>

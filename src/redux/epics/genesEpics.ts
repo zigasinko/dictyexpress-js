@@ -4,7 +4,7 @@ import {
     ActionCreatorWithPayload,
     PayloadAction,
 } from '@reduxjs/toolkit';
-import { ofType, Epic, combineEpics } from 'redux-observable';
+import { Epic, combineEpics } from 'redux-observable';
 import {
     map,
     mergeMap,

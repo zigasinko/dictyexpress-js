@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { LinearProgress } from '@material-ui/core';
+import { LinearProgress } from '@mui/material';
 
 export const ModuleContainer = styled.div`
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);

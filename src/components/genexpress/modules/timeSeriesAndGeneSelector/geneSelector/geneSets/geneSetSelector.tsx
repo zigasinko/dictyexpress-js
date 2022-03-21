@@ -1,6 +1,6 @@
 import React, { ReactElement, useState } from 'react';
-import { Button } from '@material-ui/core';
-import SaveIcon from '@material-ui/icons/Save';
+import { Button } from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
 import { GeneSet, Gene } from 'redux/models/internal';
 import { LocalStorageKey } from 'components/genexpress/common/constants';
 import useLocalStorage from 'components/genexpress/common/useLocalStorage';

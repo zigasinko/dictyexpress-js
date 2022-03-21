@@ -1,10 +1,10 @@
 import React, { ReactElement, useState } from 'react';
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import {
     ModalFooter,
     FooterControlsContainer,
 } from 'components/genexpress/common/dictyModal/dictyModal.styles';
-import { Checkbox, FormControlLabel } from '@material-ui/core';
+import { Checkbox, FormControlLabel } from '@mui/material';
 import { connect, ConnectedProps } from 'react-redux';
 import { allGenesDeselected, genesSelected } from 'redux/stores/genes';
 

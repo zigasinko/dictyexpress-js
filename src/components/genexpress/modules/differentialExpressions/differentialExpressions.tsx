@@ -10,8 +10,15 @@ import {
     getDifferentialExpressions,
     getSelectedDifferentialExpression,
 } from 'redux/stores/differentialExpressions';
-import { FormControlLabel, MenuItem, Switch, TextField, Tooltip } from '@material-ui/core';
-import { SwapHoriz } from '@material-ui/icons';
+import {
+    FormControlLabel,
+    MenuItem,
+    SelectChangeEvent,
+    Switch,
+    TextField,
+    Tooltip,
+} from '@mui/material';
+import { SwapHoriz } from '@mui/icons-material';
 import { withSize, SizeMeProps } from 'react-sizeme';
 import { getSelectedTimeSeries } from 'redux/stores/timeSeries';
 import DictySelect from 'components/genexpress/common/dictySelect/dictySelect';
@@ -223,9 +230,7 @@ positives.
         [genesById, getCaption, selectedDifferentialExpression, volcanoPoints],
     );
 
-    const handleDifferentialExpressionsOnChange = (
-        event: ChangeEvent<{ value: unknown }>,
-    ): void => {
+    const handleDifferentialExpressionsOnChange = (event: SelectChangeEvent<unknown>): void => {
         connectedDifferentialExpressionSelected(event.target.value as number);
         // Unfocus select element.
         document.body.focus();

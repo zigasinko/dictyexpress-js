@@ -1,10 +1,10 @@
-import React, { ReactElement, useEffect, useState, ChangeEvent, useRef, useCallback } from 'react';
+import React, { ReactElement, useEffect, useState, useRef, useCallback } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import _ from 'lodash';
 import { getSelectedGenesExpressions, RootState } from 'redux/rootReducer';
 import { genesHighlighted, getHighlightedGenesIds, getSelectedGenes } from 'redux/stores/genes';
 import { ClusterNode, Option } from 'redux/models/internal';
-import { MenuItem, Tooltip } from '@material-ui/core';
+import { MenuItem, SelectChangeEvent, Tooltip } from '@mui/material';
 import DictySelect from 'components/genexpress/common/dictySelect/dictySelect';
 import { objectsArrayToTsv } from 'utils/reportUtils';
 import useReport from 'components/genexpress/common/reportBuilder/useReport';
@@ -165,11 +165,11 @@ const Clustering = ({
         }
     }, [clusterNodes, highlightedGenesIds]);
 
-    const handleDistanceMeasureChange = (event: ChangeEvent<{ value: unknown }>): void => {
+    const handleDistanceMeasureChange = (event: SelectChangeEvent<unknown>): void => {
         connectedDistanceMeasureChanged(event.target.value as DistanceMeasure);
     };
 
-    const handleLinkageFunctionChange = (event: ChangeEvent<{ value: unknown }>): void => {
+    const handleLinkageFunctionChange = (event: SelectChangeEvent<unknown>): void => {
         connectedLinkageFunctionChanged(event.target.value as ClusteringLinkageFunction);
     };
 

@@ -4,18 +4,19 @@ exports[`geneChip should render as highlighted snapshot 1`] = `
 <DocumentFragment>
   <div>
     <div
-      class="MuiButtonBase-root MuiChip-root sc-gKclnd btFKwt MuiChip-colorSecondary MuiChip-clickableColorSecondary MuiChip-deletableColorSecondary MuiChip-sizeSmall MuiChip-clickable MuiChip-deletable"
+      class="MuiButtonBase-root MuiChip-root MuiChip-filled MuiChip-sizeSmall MuiChip-colorSecondary MuiChip-clickable MuiChip-clickableColorSecondary MuiChip-deletable MuiChip-deletableColorSecondary MuiChip-filledSecondary sc-gKclnd btFKwt css-1c4970f-MuiButtonBase-root-MuiChip-root"
       role="button"
       tabindex="0"
     >
       <span
-        class="MuiChip-label MuiChip-labelSmall"
+        class="MuiChip-label MuiChip-labelSmall css-wjsjww-MuiChip-label"
       >
         TestGene0
       </span>
       <svg
         aria-hidden="true"
-        class="MuiSvgIcon-root MuiChip-deleteIcon MuiChip-deleteIconColorSecondary MuiChip-deleteIconSmall"
+        class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiChip-deleteIcon MuiChip-deleteIconSmall MuiChip-deleteIconColorSecondary MuiChip-deleteIconOutlinedColorSecondary css-i4bv87-MuiSvgIcon-root"
+        data-testid="CancelIcon"
         focusable="false"
         viewBox="0 0 24 24"
       >
@@ -23,9 +24,6 @@ exports[`geneChip should render as highlighted snapshot 1`] = `
           d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"
         />
       </svg>
-      <span
-        class="MuiTouchRipple-root"
-      />
     </div>
   </div>
 </DocumentFragment>
@@ -35,18 +33,19 @@ exports[`geneChip should render the same as default snapshot 1`] = `
 <DocumentFragment>
   <div>
     <div
-      class="MuiButtonBase-root MuiChip-root sc-gKclnd btFKwt MuiChip-sizeSmall MuiChip-clickable MuiChip-deletable"
+      class="MuiButtonBase-root MuiChip-root MuiChip-filled MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-deletable MuiChip-deletableColorDefault MuiChip-filledDefault sc-gKclnd btFKwt css-m5fh7u-MuiButtonBase-root-MuiChip-root"
       role="button"
       tabindex="0"
     >
       <span
-        class="MuiChip-label MuiChip-labelSmall"
+        class="MuiChip-label MuiChip-labelSmall css-wjsjww-MuiChip-label"
       >
         TestGene0
       </span>
       <svg
         aria-hidden="true"
-        class="MuiSvgIcon-root MuiChip-deleteIcon MuiChip-deleteIconSmall"
+        class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiChip-deleteIcon MuiChip-deleteIconSmall MuiChip-deleteIconColorDefault MuiChip-deleteIconOutlinedColorDefault css-i4bv87-MuiSvgIcon-root"
+        data-testid="CancelIcon"
         focusable="false"
         viewBox="0 0 24 24"
       >
@@ -54,9 +53,6 @@ exports[`geneChip should render the same as default snapshot 1`] = `
           d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"
         />
       </svg>
-      <span
-        class="MuiTouchRipple-root"
-      />
     </div>
   </div>
 </DocumentFragment>

@@ -1,10 +1,8 @@
 import React, { ReactElement, useState, useEffect, ReactNode, useCallback } from 'react';
-import Tooltip from '@material-ui/core/Tooltip';
 import _, { debounce } from 'lodash';
-import Autocomplete from '@material-ui/lab/Autocomplete';
 import { connect, ConnectedProps, useDispatch } from 'react-redux';
-import TextField from '@material-ui/core/TextField';
-import { CircularProgress } from '@material-ui/core';
+import TextField from '@mui/material/TextField';
+import { Autocomplete, Box, CircularProgress, ListItem, Tooltip } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import {
     getSelectedGenes,
@@ -23,18 +21,7 @@ import { handleError } from 'utils/errorUtils';
 import { getGenes, getPastedGenes } from 'api';
 import { objectsArrayToTsv } from 'utils/reportUtils';
 import useReport from 'components/genexpress/common/reportBuilder/useReport';
-import { AutoCompleteItemSpan, TitleSection } from './geneSelector.styles';
-
-const itemRender = (option: Gene): ReactElement => {
-    return (
-        <div>
-            <AutoCompleteItemSpan>{option.name}</AutoCompleteItemSpan>
-            <AutoCompleteItemSpan>
-                ({option.source}, <i>{option.species}</i>
-            </AutoCompleteItemSpan>
-        </div>
-    );
-};
+import { TitleSection } from './geneSelector.styles';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const mapStateToProps = (state: RootState) => {
@@ -263,7 +250,18 @@ const GeneSelector = ({
                 <Autocomplete
                     open={autocompleteOpen}
                     noOptionsText="No genes were found"
-                    renderOption={itemRender}
+                    renderOption={(props, option) => (
+                        <ListItem {...props}>
+                            <Box
+                                sx={{ display: 'flex', justifyContent: 'space-between', width: 1 }}
+                            >
+                                <span>{option.name}</span>
+                                <span>
+                                    {option.source}, <i>{option.species}</i>
+                                </span>
+                            </Box>
+                        </ListItem>
+                    )}
                     size="small"
                     loading={isLoading}
                     fullWidth
@@ -308,7 +306,7 @@ const GeneSelector = ({
                     )}
                     options={genes}
                     getOptionLabel={(option): string => option.name}
-                    getOptionSelected={(option: Gene, itemValue: Gene): boolean => {
+                    isOptionEqualToValue={(option: Gene, itemValue: Gene): boolean => {
                         return option.feature_id === itemValue.feature_id;
                     }}
                     value={value}

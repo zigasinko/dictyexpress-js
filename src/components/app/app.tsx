@@ -6,11 +6,11 @@ import '../../../node_modules/react-resizable/css/styles.css';
 import { ThemeProvider as StyledComponentsThemeProvider } from 'styled-components';
 import { Provider as ReduxProvider } from 'react-redux';
 import {
-    StylesProvider,
     ThemeProvider as MuiThemeProvider,
     createTheme,
     CssBaseline,
-} from '@material-ui/core';
+    StyledEngineProvider,
+} from '@mui/material';
 import { SnackbarProvider } from 'notistack';
 import LandingPage from 'components/landing/landingPage';
 import PageNotFound from 'components/pageNotFound';
@@ -28,7 +28,7 @@ const appTheme = createTheme(theme);
 const App = (): ReactElement => {
     return (
         <RendererContext.Provider value="svg">
-            <StylesProvider injectFirst>
+            <StyledEngineProvider injectFirst>
                 <ReduxProvider store={appStore}>
                     <MuiThemeProvider theme={appTheme}>
                         <CssBaseline />
@@ -47,7 +47,7 @@ const App = (): ReactElement => {
                         </StyledComponentsThemeProvider>
                     </MuiThemeProvider>
                 </ReduxProvider>
-            </StylesProvider>
+            </StyledEngineProvider>
         </RendererContext.Provider>
     );
 };

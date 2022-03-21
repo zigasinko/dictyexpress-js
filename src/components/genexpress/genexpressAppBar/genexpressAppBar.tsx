@@ -1,6 +1,6 @@
 import React, { ReactElement, useState, useEffect, useRef } from 'react';
-import { Button, Popover, Menu, MenuItem } from '@material-ui/core';
-import { Bookmark as BookmarkIcon } from '@material-ui/icons';
+import { Button, Popover, Menu, MenuItem } from '@mui/material';
+import { Bookmark as BookmarkIcon } from '@mui/icons-material';
 import dictyLogo from 'images/favicon.ico';
 import { connect, ConnectedProps, useStore } from 'react-redux';
 import { RootState } from 'redux/rootReducer';
@@ -184,7 +184,6 @@ const GenexpressAppBar = ({
                 <Menu
                     anchorEl={userButtonElement.current}
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                    getContentAnchorEl={null}
                     transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                     open
                     disableScrollLock

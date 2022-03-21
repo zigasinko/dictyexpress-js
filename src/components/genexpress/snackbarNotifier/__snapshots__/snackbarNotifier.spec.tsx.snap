@@ -3,29 +3,29 @@
 exports[`snackbarNotifier should render as snapshot with notifications in all different variants 1`] = `
 <DocumentFragment>
   <div
-    class="makeStyles-bottom-4 makeStyles-left-5 makeStyles-root-1"
+    class="SnackbarContainer-bottom SnackbarContainer-left SnackbarContainer-root css-uwcd5u"
   >
     <div
-      class="MuiCollapse-root MuiCollapse-entered"
+      class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-pwcg7p-MuiCollapse-root"
       style="min-height: 0px;"
     >
       <div
-        class="MuiCollapse-wrapper"
+        class="MuiCollapse-wrapper MuiCollapse-vertical css-smkl36-MuiCollapse-wrapper"
       >
         <div
-          class="MuiCollapse-wrapperInner"
+          class="MuiCollapse-wrapperInner MuiCollapse-vertical css-9l5vo-MuiCollapse-wrapperInner"
         >
           <div
-            class="SnackbarItem-root-8 SnackbarItem-wrappedRoot-23 SnackbarItem-anchorOriginBottomLeft-14"
+            class="SnackbarItem-wrappedRoot css-1taihvu"
           >
             <div
               aria-describedby="notistack-snackbar"
-              class="ForwardRef-root-24 SnackbarItem-contentRoot-15"
+              class="SnackbarContent-root SnackbarItem-contentRoot css-hped4j"
               role="alert"
               style="webkit-transform: none; transform: none; webkit-transition: -webkit-transform 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms; transition: transform 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;"
             >
               <div
-                class="SnackbarItem-message-21"
+                class="SnackbarItem-message"
                 id="notistack-snackbar"
               >
                 Test message
@@ -36,31 +36,31 @@ exports[`snackbarNotifier should render as snapshot with notifications in all di
       </div>
     </div>
     <div
-      class="MuiCollapse-root MuiCollapse-entered"
+      class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-pwcg7p-MuiCollapse-root"
       style="min-height: 0px;"
     >
       <div
-        class="MuiCollapse-wrapper"
+        class="MuiCollapse-wrapper MuiCollapse-vertical css-smkl36-MuiCollapse-wrapper"
       >
         <div
-          class="MuiCollapse-wrapperInner"
+          class="MuiCollapse-wrapperInner MuiCollapse-vertical css-9l5vo-MuiCollapse-wrapperInner"
         >
           <div
-            class="SnackbarItem-root-8 SnackbarItem-wrappedRoot-23 SnackbarItem-anchorOriginBottomLeft-14"
+            class="SnackbarItem-wrappedRoot css-1taihvu"
           >
             <div
               aria-describedby="notistack-snackbar"
-              class="ForwardRef-root-24 SnackbarItem-contentRoot-15 SnackbarItem-variantError-18 SnackbarItem-lessPadding-16"
+              class="SnackbarContent-root SnackbarItem-contentRoot SnackbarItem-variantError SnackbarItem-lessPadding css-hped4j"
               role="alert"
               style="webkit-transform: none; transform: none; webkit-transition: -webkit-transform 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms; transition: transform 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;"
             >
               <div
-                class="SnackbarItem-message-21"
+                class="SnackbarItem-message"
                 id="notistack-snackbar"
               >
                 <svg
                   aria-hidden="true"
-                  class="MuiSvgIcon-root"
+                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
                   focusable="false"
                   style="font-size: 20px; margin-inline-end: 8px;"
                   viewBox="0 0 24 24"
@@ -79,31 +79,31 @@ exports[`snackbarNotifier should render as snapshot with notifications in all di
       </div>
     </div>
     <div
-      class="MuiCollapse-root MuiCollapse-entered"
+      class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered css-pwcg7p-MuiCollapse-root"
       style="min-height: 0px;"
     >
       <div
-        class="MuiCollapse-wrapper"
+        class="MuiCollapse-wrapper MuiCollapse-vertical css-smkl36-MuiCollapse-wrapper"
       >
         <div
-          class="MuiCollapse-wrapperInner"
+          class="MuiCollapse-wrapperInner MuiCollapse-vertical css-9l5vo-MuiCollapse-wrapperInner"
         >
           <div
-            class="SnackbarItem-root-8 SnackbarItem-wrappedRoot-23 SnackbarItem-anchorOriginBottomLeft-14"
+            class="SnackbarItem-wrappedRoot css-1taihvu"
           >
             <div
               aria-describedby="notistack-snackbar"
-              class="ForwardRef-root-24 SnackbarItem-contentRoot-15 SnackbarItem-variantSuccess-17 SnackbarItem-lessPadding-16"
+              class="SnackbarContent-root SnackbarItem-contentRoot SnackbarItem-variantSuccess SnackbarItem-lessPadding css-hped4j"
               role="alert"
               style="webkit-transform: none; transform: none; webkit-transition: -webkit-transform 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms; transition: transform 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;"
             >
               <div
-                class="SnackbarItem-message-21"
+                class="SnackbarItem-message"
                 id="notistack-snackbar"
               >
                 <svg
                   aria-hidden="true"
-                  class="MuiSvgIcon-root"
+                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
                   focusable="false"
                   style="font-size: 20px; margin-inline-end: 8px;"
                   viewBox="0 0 24 24"

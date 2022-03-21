@@ -1,4 +1,4 @@
-import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import {
     ModalBody,
     ModalHeader,
@@ -12,7 +12,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { getGenesById, getIsFetchingSimilarGenes, getSelectedGenes } from 'redux/stores/genes';
 import { RootState } from 'redux/rootReducer';
 import { ColDef, ValueGetterParams } from 'ag-grid-community';
-import { MenuItem } from '@material-ui/core';
+import { MenuItem } from '@mui/material';
 import DictySelect from 'components/genexpress/common/dictySelect/dictySelect';
 import { fetchGenesSimilarities } from 'redux/epics/epicsActions';
 import {
@@ -31,6 +31,7 @@ import {
     DistanceMeasureFormControl,
 } from './findSimilarGenesModal.styles';
 import ToDictybaseCell from './toDictybaseCell/toDictybaseCell';
+import { SelectChangeEvent } from '@mui/material';
 
 export const distanceMeasureOptions: Option<DistanceMeasure>[] = [
     { value: DistanceMeasure.spearman, label: 'Spearman' },
@@ -145,7 +146,7 @@ const FindSimilarGenesModal = ({
         connectedFetchGenesSimilarities();
     }, [connectedFetchGenesSimilarities]);
 
-    const handleGeneOnChange = (event: ChangeEvent<{ value: unknown }>): void => {
+    const handleGeneOnChange = (event: SelectChangeEvent<unknown>): void => {
         connectedGenesSimilaritiesQueryGeneSelected(event.target.value as string);
 
         document.body.focus();
@@ -180,7 +181,7 @@ const FindSimilarGenesModal = ({
                             disabled={selectedGenes.length === 0}
                             label="Distance Measure"
                             value={distanceMeasure}
-                            handleOnChange={(event: ChangeEvent<{ value: unknown }>): void => {
+                            handleOnChange={(event: SelectChangeEvent<unknown>): void => {
                                 connectedGenesSimilaritiesDistanceMeasureChanged(
                                     event.target.value as DistanceMeasure,
                                 );

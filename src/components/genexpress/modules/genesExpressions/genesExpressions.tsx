@@ -9,7 +9,7 @@ import { getHighlightedGenesIds, genesHighlighted, getSelectedGenesIds } from 'r
 import { getBasketExpressionsIds, getComparisonTimeSeries } from 'redux/stores/timeSeries';
 import { ChartHandle } from 'components/genexpress/common/chart/chart';
 import useReport from 'components/genexpress/common/reportBuilder/useReport';
-import { Button, FormControlLabel, Switch } from '@material-ui/core';
+import { Button, FormControlLabel, Switch } from '@mui/material';
 import { GeneExpression } from 'redux/models/internal';
 import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
 import useBookmarkableState from 'components/genexpress/common/useBookmarkableState';

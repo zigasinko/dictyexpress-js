@@ -1,5 +1,5 @@
 import React, { ReactNode, ReactElement, forwardRef } from 'react';
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@mui/material';
 import { StyledIconButton, StyledIconButtonProps } from './iconButtonWithTooltip.styles';
 import useForwardedRef from '../useForwardedRef';
 
@@ -18,7 +18,7 @@ const IconButtonWithTooltip = forwardRef<HTMLButtonElement, IconButtonWithToolti
         const forwardedRef = useForwardedRef<HTMLButtonElement>(ref);
 
         return (
-            <Tooltip title={title}>
+            <Tooltip title={title} aria-label="">
                 <span>
                     <StyledIconButton
                         aria-label={title}

@@ -1,11 +1,12 @@
-import React, { ReactElement, ComponentType } from 'react';
+import React, { ReactElement } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { render, RenderResult, waitFor } from '@testing-library/react';
 import { ThemeProvider as StyledComponentsThemeProvider } from 'styled-components';
-import { createTheme, StylesProvider, MuiThemeProvider } from '@material-ui/core';
+import { createTheme } from '@mui/material';
 import { SnackbarProvider } from 'notistack';
 import { MockStoreEnhanced } from 'redux-mock-store';
 import { AppDispatch } from 'redux/appStore';
+import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
 import { RendererContext } from 'components/common/rendererContext';
 import {
     ExportFile,
@@ -34,9 +35,9 @@ export const customRender = (ui: ReactElement, options?: CustomRenderOptions): R
     const AllTheProviders = ({ children }: { children: ReactElement }): ReactElement => {
         return (
             <RendererContext.Provider value="svg">
-                <StylesProvider injectFirst>
+                <StyledEngineProvider injectFirst>
                     <ReduxProvider store={options?.mockedStore ?? store}>
-                        <MuiThemeProvider theme={appTheme}>
+                        <ThemeProvider theme={appTheme}>
                             <StyledComponentsThemeProvider theme={appTheme}>
                                 <GlobalStyle />
                                 <SnackbarProvider maxSnack={3}>
@@ -49,15 +50,15 @@ export const customRender = (ui: ReactElement, options?: CustomRenderOptions): R
                                     </MemoryRouter>
                                 </SnackbarProvider>
                             </StyledComponentsThemeProvider>
-                        </MuiThemeProvider>
+                        </ThemeProvider>
                     </ReduxProvider>
-                </StylesProvider>
+                </StyledEngineProvider>
             </RendererContext.Provider>
         );
     };
 
     return render(ui, {
-        wrapper: AllTheProviders as ComponentType,
+        wrapper: AllTheProviders,
         ...options,
     });
 };

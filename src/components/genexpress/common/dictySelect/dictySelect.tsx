@@ -1,5 +1,5 @@
-import { FormControl, InputLabel, Select } from '@material-ui/core';
-import React, { ChangeEvent, ReactElement, ReactNode } from 'react';
+import { FormControl, InputLabel, Select, SelectProps } from '@mui/material';
+import React, { ReactElement, ReactNode } from 'react';
 import { generateRandomString } from 'utils/stringUtils';
 
 type DictySelectProps = {
@@ -7,7 +7,7 @@ type DictySelectProps = {
     label: string;
     value: unknown;
     disabled?: boolean;
-    handleOnChange: (event: ChangeEvent<{ value: unknown }>) => void;
+    handleOnChange: SelectProps['onChange'];
 };
 
 const DictySelect = ({

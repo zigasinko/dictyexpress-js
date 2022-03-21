@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import { Gene } from 'redux/models/internal';
 import dictyBaseLogo from 'images/dictybase_logo2.jpg';
 import {

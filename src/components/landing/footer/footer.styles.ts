@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Link } from '@material-ui/core';
+import { Link } from '@mui/material';
 
 export const FooterContainer = styled.div`
     background-color: #6f6f6f;

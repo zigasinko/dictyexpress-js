@@ -1,8 +1,8 @@
-import React, { ChangeEvent, ReactElement, useCallback, useEffect, useState } from 'react';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from 'redux/rootReducer';
 import { getSelectedGenes } from 'redux/stores/genes';
-import { Button, MenuItem, Tooltip } from '@material-ui/core';
+import { Button, MenuItem, Tooltip } from '@mui/material';
 import {
     getGOEnrichmentJson,
     getIsFetchingGOEnrichmentJson,
@@ -33,6 +33,7 @@ import ScoreCell from './scoreCell/scoreCell';
 import GOEnrichmentMatchedCell from './matchedCell/matchedCell';
 import TermCell from './termCell/termCell';
 import GOEnrichmentAssociationsModal from './associationsModal/associationsModal';
+import { SelectChangeEvent } from '@mui/material';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const mapStateToProps = (state: RootState) => {
@@ -159,7 +160,7 @@ A list of all gene associations for each term is available in a separate file - 
         [gOEnrichmentJson, getCaption],
     );
 
-    const handleAspectsOnChange = (event: ChangeEvent<{ value: unknown }>): void => {
+    const handleAspectsOnChange = (event: SelectChangeEvent<unknown>): void => {
         const selectedAspectOption = aspectOptions.find(
             (aspectOption) => aspectOption.value === event.target.value,
         );
@@ -168,7 +169,7 @@ A list of all gene associations for each term is available in a separate file - 
         }
     };
 
-    const handlePValueThresholdChange = (event: ChangeEvent<{ value: unknown }>): void => {
+    const handlePValueThresholdChange = (event: SelectChangeEvent<unknown>): void => {
         connectedPValueThresholdChanged(event.target.value as number);
     };
 

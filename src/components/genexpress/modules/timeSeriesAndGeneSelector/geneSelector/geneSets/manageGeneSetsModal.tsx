@@ -1,5 +1,5 @@
 import React, { ReactElement, useState } from 'react';
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import { ColDef, ValueFormatterParams } from 'ag-grid-community';
 import {
     ModalFooter,

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Button } from '@material-ui/core';
+import { Button } from '@mui/material';
 import dictyImage from 'images/dicty_image.png';
 import { breakpoints } from 'components/app/globalStyle';
 
