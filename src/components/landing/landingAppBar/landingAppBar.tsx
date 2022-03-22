@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { MenuItem } from '@mui/material';
 import SectionNames from 'components/landing/common/constants';
 import { scrollToTargetAdjusted } from 'utils/documentHelpers';
@@ -32,10 +32,10 @@ const scrollButtonsData = [
 ];
 
 const LandingAppBar = (): ReactElement => {
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const navigateToDictyExpress = (): void => {
-        history.push(`/bcm`);
+        navigate('/bcm');
     };
 
     const scrollToSection = (hash: string): void => {

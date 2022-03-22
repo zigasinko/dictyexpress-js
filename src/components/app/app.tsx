@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { Route, Switch, BrowserRouter } from 'react-router-dom';
+import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import './app.scss';
 import '../../../node_modules/react-grid-layout/css/styles.css';
 import '../../../node_modules/react-resizable/css/styles.css';
@@ -36,12 +36,12 @@ const App = (): ReactElement => {
                             <GlobalStyle />
                             <SnackbarProvider maxSnack={3}>
                                 <BrowserRouter>
-                                    <Switch>
-                                        <Route exact path="/" component={LandingPage} />
-                                        <Route path="/landing" component={LandingPage} />
-                                        <Route path="/bcm" component={GeneExpressGrid} />
-                                        <Route component={PageNotFound} />
-                                    </Switch>
+                                    <Routes>
+                                        <Route path="/" element={<LandingPage />} />
+                                        <Route path="/landing" element={<LandingPage />} />
+                                        <Route path="/bcm" element={<GeneExpressGrid />} />
+                                        <Route path="*" element={<PageNotFound />} />
+                                    </Routes>
                                 </BrowserRouter>
                             </SnackbarProvider>
                         </StyledComponentsThemeProvider>
