@@ -38,7 +38,7 @@ test.describe('Expression time courses', () => {
                     (response: { url: () => string | string[] }) => {
                         return response.url().includes('/relation?category=Time+series');
                     },
-                    { timeout: 15000 },
+                    { timeout: 30000 },
                 );
 
                 const localStorageData = await context.storageState();
@@ -88,8 +88,11 @@ test.describe('Expression time courses', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await page.$eval('header', (el: { remove: () => any }) => el.remove());
 
-        const elementHandle = await page.waitForSelector(Selectors.expressionsGraph);
-        const graphImg = await elementHandle.screenshot({ timeout: 20000 });
-        expect(graphImg).toMatchSnapshot({ threshold: 0.1 });
+        await page.waitForSelector(Selectors.expressionsGraph);
+
+        const graphPoints = page.locator("g[role='graphics-symbol'].genesExpressionsPoints");
+        const graphLines = page.locator("g[role='graphics-symbol'].genesExpressionsLines");
+        await expect(graphPoints).toHaveCount(1);
+        await expect(graphLines).toHaveCount(1);
     });
 });

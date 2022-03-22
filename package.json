@@ -51,8 +51,6 @@
         "test": "react-scripts test",
         "prettier": "prettier",
         "e2e": "env-cmd -f .playwright.env playwright test -c playwright.config.ts \"e2e/(\\w/*)*/.*.spec.ts\"",
-        "e2e:run": "cd e2e && jest",
-        "e2e:debug": "cd e2e && cross-env DEBUG=pw:api PWDEBUG=1 jest",
         "eject": "react-scripts eject",
         "lint": "eslint --ext .js,.jsx,.ts,.tsx,.env,.rc .",
         "lint:fix": "npm run lint -- --fix",
