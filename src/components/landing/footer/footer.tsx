@@ -52,7 +52,7 @@ const Footer = (): ReactElement => (
                         <a href="mailto:info@genialis.com">info@genialis.com</a>
                     </div>
                     <div>
-                        Copyright: Genialis, Inc. 2020 {' | '}
+                        Copyright: Genialis, Inc. {`${new Date().getFullYear()} | `}
                         <a
                             href="https://www.genialis.com/privacy-policy/"
                             rel="noopener noreferrer"
