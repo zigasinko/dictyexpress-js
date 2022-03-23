@@ -36,7 +36,7 @@ jobs:
           VERSION="dev-${SHORT_SHA}"
 
           # Override VERSION in tagged commits.
-          if ${{ github.ref_type == "tag" }};
+          if ${{ github.ref_type == 'tag' }};
           # Do not wrap conditions in brackets or quotes here, since bash would evaluate it as a string.
           then
             VERSION=${{ github.ref_name }}
@@ -44,7 +44,7 @@ jobs:
 
           # Set environment for later steps.
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "FILENAME=expressions-ui-$VERSION.tar.gz" >> $GITHUB_ENV
+          echo "FILENAME=dictyexpress-js-$VERSION.tar.gz" >> $GITHUB_ENV
       - name: Install NPM packages
         run: yarn
       - name: Build bundle
