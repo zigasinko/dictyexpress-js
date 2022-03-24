@@ -54,7 +54,6 @@ LOGIN_USERNAME=myuser LOGIN_PASSWORD=mysecret PWDEBUG=1 yarn e2e
 
 # Headless
 LOGIN_USERNAME=myuser LOGIN_PASSWORD=mysecret yarn e2e
-
 ```
 
 ### `npm run build`
@@ -64,6 +63,14 @@ It correctly bundles React in production mode and optimizes the build for the be
 
 The build is minified and the filenames include the hashes.<br />
 Update `/build/config.js` with appropriate endpoint URLs and your app is ready to be deployed.
+
+Recommended CSP header.<br />
+`${WEBSOCKET_URL}` - WebSocket URL, written in config.js.<br />
+`${SENTRY_REPORT_URI}` - security report URL in Sentry project settings.<br />
+
+```
+default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; script-src 'self' 'unsafe-eval'; connect-src 'self' *.sentry.io ${WEBSOCKET_URL}; report-uri ${SENTRY_REPORT_URI}
+```
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
