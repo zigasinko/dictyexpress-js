@@ -145,17 +145,6 @@ describe('genes store', () => {
             expect(newState).toEqual(expectedState);
         });
 
-        it('should clear selected and highlighted genes ids when timeSeries is selected', () => {
-            const newState = genesReducer(initialState, timeSeriesSelected(0));
-            const expectedState = {
-                ...initialState,
-                selectedGenesIds: [],
-                highlightedGenesIds: [],
-            };
-
-            expect(newState).toEqual(expectedState);
-        });
-
         it('should highlight a gene', () => {
             const newGene = generateGene(5);
             const newState = genesReducer(initialState, geneHighlighted(newGene.feature_id));

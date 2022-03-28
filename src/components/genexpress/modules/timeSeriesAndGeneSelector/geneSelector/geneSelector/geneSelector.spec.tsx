@@ -97,7 +97,7 @@ describe('geneSelector', () => {
             });
         });
 
-        it.only('should dispatch genesSelected action after user selects a gene from autocomplete', async () => {
+        it('should dispatch genesSelected action after user selects a gene from autocomplete', async () => {
             fireEvent.change(screen.getByPlaceholderText('Search for a gene'), {
                 target: { value: genes[1].name.slice(0, 1) },
             });

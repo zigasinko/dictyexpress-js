@@ -1,4 +1,4 @@
-import React, { ReactElement, useState, useEffect, ReactNode, useCallback } from 'react';
+import React, { ReactElement, useState, useEffect, ReactNode, useCallback, useRef } from 'react';
 import _, { debounce } from 'lodash';
 import { connect, ConnectedProps, useDispatch } from 'react-redux';
 import TextField from '@mui/material/TextField';
@@ -13,7 +13,7 @@ import {
 } from 'redux/stores/genes';
 import { Gene } from 'redux/models/internal';
 import SelectedGenes from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/selectedGenes/selectedGenes';
-import { getBasketInfo } from 'redux/stores/timeSeries';
+import { getBasketInfo, getSelectedTimeSeries } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
 import { splitAndCleanGenesString } from 'utils/stringUtils';
 import GeneSetSelector from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/geneSets/geneSetSelector';
@@ -29,6 +29,7 @@ const mapStateToProps = (state: RootState) => {
         selectedGenes: getSelectedGenes(state.genes),
         basketInfo: getBasketInfo(state.timeSeries),
         highlightedGenesIds: getHighlightedGenesIds(state.genes),
+        selectedTimeSeries: getSelectedTimeSeries(state.timeSeries),
     };
 };
 
@@ -44,6 +45,7 @@ const GeneSelector = ({
     basketInfo,
     selectedGenes,
     highlightedGenesIds,
+    selectedTimeSeries,
     connectedGenesFetchSucceeded,
     connectedGenesSelected,
     connectedAllGenesDeselected,
@@ -56,13 +58,14 @@ const GeneSelector = ({
     const [autocompleteOpen, setAutocompleteOpen] = useState(false);
     const [value, setValue] = useState<Gene[]>([]);
     const [inputValue, setInputValue] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [isFetchingPastedGenes, setIsFetchingPastedGenes] = useState(false);
+    const [isFetching, setIsFetching] = useState(false);
     const [genes, setGenes] = useState<Gene[]>([]);
+    const selectedGenesRef = useRef<Gene[]>([]);
+    const selectedTimeSeriesRef = useRef(selectedTimeSeries);
     const { enqueueSnackbar } = useSnackbar();
     const dispatch = useDispatch();
 
-    const isDisabled = _.isEmpty(basketInfo);
+    const isDisabled = _.isEmpty(basketInfo) || isFetching;
 
     // TODO: Latest version of eslint (7.19.0) has a problem inferring dependencies from non-wrapped
     // functions. Enable this eslint rule once it's fixed.
@@ -72,6 +75,7 @@ const GeneSelector = ({
             if (autocompleteSource == null || autocompleteType == null) {
                 return;
             }
+            setIsFetching(true);
             const genesResults = await getGenes(
                 autocompleteSource,
                 autocompleteType,
@@ -87,7 +91,7 @@ const GeneSelector = ({
             }
 
             setAutocompleteOpen(true);
-            setIsLoading(false);
+            setIsFetching(false);
         }, 500),
         [autocompleteSource, autocompleteSpecies, autocompleteType, enqueueSnackbar],
     );
@@ -95,7 +99,6 @@ const GeneSelector = ({
     useEffect(() => {
         // Fetching genes is done with debounced function so that request is only sent after user is done typing.
         if (inputValue !== '') {
-            setIsLoading(true);
             void fetchGenes(inputValue);
         } else {
             setAutocompleteOpen(false);
@@ -108,11 +111,6 @@ const GeneSelector = ({
             fetchGenes.cancel();
         };
     }, [fetchGenes, inputValue]);
-
-    useEffect(() => {
-        // If selectedGenes store data is changed (e.g. gene(s) were removed), autocomplete data also needs to get refreshed.
-        setValue(selectedGenes);
-    }, [selectedGenes]);
 
     useReport(
         (processFile) => {
@@ -158,41 +156,67 @@ const GeneSelector = ({
     };
 
     /**
-     * Push entered genes names into selected state.
+     * Set entered genes names into selected state.
      * All remaining (not existing genes names) are printed into autocomplete input.
      * User has to manually do something with them (fix them).
      * @param genesNames - Array of genes names.
      */
-    const handleImportedGenesNames = async (genesNames: string[]): Promise<void> => {
-        setIsFetchingPastedGenes(true);
+    const handleImportedGenesNames = useCallback(
+        async (genesNames: string[]): Promise<void> => {
+            try {
+                if (autocompleteSource == null || autocompleteType == null) {
+                    return;
+                }
 
-        try {
-            if (autocompleteSource == null || autocompleteType == null) {
-                return;
+                setIsFetching(true);
+                const pastedGenes = await getPastedGenes(
+                    autocompleteSource,
+                    autocompleteType,
+                    genesNames,
+                    autocompleteSpecies,
+                );
+
+                connectedGenesFetchSucceeded(pastedGenes);
+                connectedAllGenesDeselected();
+                connectedGenesSelected(pastedGenes.map((gene) => gene.feature_id));
+
+                // Get and display not found genes.
+                const notFoundGenesNames = genesNames.filter(
+                    (geneName) => _.find(pastedGenes, { name: geneName }) == null,
+                );
+                setInputValue(notFoundGenesNames.join());
+            } catch (error) {
+                dispatch(handleError('Error searching for pasted genes.', error));
+            } finally {
+                setIsFetching(false);
             }
+        },
+        [
+            autocompleteSource,
+            autocompleteSpecies,
+            autocompleteType,
+            connectedAllGenesDeselected,
+            connectedGenesFetchSucceeded,
+            connectedGenesSelected,
+            dispatch,
+        ],
+    );
 
-            const pastedGenes = await getPastedGenes(
-                autocompleteSource,
-                autocompleteType,
-                genesNames,
-                autocompleteSpecies,
-            );
+    useEffect(() => {
+        // If selectedGenes store data is changed (e.g. gene(s) were removed), autocomplete data also needs to get refreshed.
+        setValue(selectedGenes);
+        selectedGenesRef.current = selectedGenes;
+    }, [selectedGenes]);
 
-            connectedGenesFetchSucceeded(pastedGenes);
-            connectedAllGenesDeselected();
-            connectedGenesSelected(pastedGenes.map((gene) => gene.feature_id));
-
-            // Get and display not found genes.
-            const notFoundGenesNames = genesNames.filter(
-                (geneName) => _.find(pastedGenes, { name: geneName }) == null,
-            );
-            setInputValue(notFoundGenesNames.join());
-        } catch (error) {
-            dispatch(handleError('Error searching for pasted genes.', error));
+    useEffect(() => {
+        if (
+            selectedTimeSeriesRef.current !== selectedTimeSeries &&
+            selectedGenesRef.current.length > 0
+        ) {
+            void handleImportedGenesNames(selectedGenesRef.current.map((gene) => gene.name));
+            selectedTimeSeriesRef.current = selectedTimeSeries;
         }
-
-        setIsFetchingPastedGenes(false);
-    };
+    }, [handleImportedGenesNames, selectedTimeSeries]);
 
     /**
      * Clean/retrieve entered genes names and push them into selected state.
@@ -246,7 +270,7 @@ const GeneSelector = ({
                     disabled={isDisabled}
                 />
             </TitleSection>
-            <Tooltip title={isDisabled ? 'First select a time series.' : ''}>
+            <Tooltip title={selectedTimeSeries == null ? 'First select a time series.' : ''}>
                 <Autocomplete
                     open={autocompleteOpen}
                     noOptionsText="No genes were found"
@@ -263,7 +287,7 @@ const GeneSelector = ({
                         </ListItem>
                     )}
                     size="small"
-                    loading={isLoading}
+                    loading={isFetching}
                     fullWidth
                     renderTags={(): ReactNode => undefined}
                     loadingText="Loading"
@@ -291,7 +315,7 @@ const GeneSelector = ({
                                 ...params.InputProps,
                                 endAdornment: (
                                     <>
-                                        {isLoading || isFetchingPastedGenes ? (
+                                        {isFetching ? (
                                             <CircularProgress color="inherit" size={20} />
                                         ) : null}
                                         {params.InputProps.endAdornment}

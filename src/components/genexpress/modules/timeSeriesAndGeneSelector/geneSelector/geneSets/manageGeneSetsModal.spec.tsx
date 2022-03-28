@@ -40,6 +40,7 @@ describe('manageGeneSets', () => {
     });
 
     it('should call onDelete with selected gene sets', async () => {
+        fireEvent.click(screen.getByRole('button', { name: 'Edit' }));
         // Simulate select first row (gene set).
         fireEvent.click(
             screen.getAllByLabelText('Press Space to toggle row selection (unchecked)')[0],

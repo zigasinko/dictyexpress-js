@@ -14,7 +14,7 @@ import {
 } from 'components/genexpress/common/reportBuilder/reportBuilder';
 import { MemoryRouter } from 'react-router-dom';
 import { BackendAppState } from 'redux/models/rest';
-import { BookmarkComponentsState } from 'redux/models/internal';
+import { BookmarkComponentsState, Gene } from 'redux/models/internal';
 import { BookmarkReduxState, RootState } from '../redux/rootReducer';
 import theme from '../components/app/theme';
 import { GlobalStyle } from '../components/app/globalStyle';
@@ -84,13 +84,17 @@ export const getFetchMockCallsWithUrl = (
     );
 };
 
+export const resolveStringifiedObjectPromise = (object: unknown): Promise<string> => {
+    return Promise.resolve(JSON.stringify(object));
+};
+
 /**
  * FetchMock mockResponse is defined in needed tests. This function handles (returns
  * empty responses) all common request that can be called in different modules (mostly
  * in integration tests).
  * @param request - Request that was intercepted by fetch-mock.
  */
-export const handleCommonRequests = (request: Request): Promise<string> | null => {
+export const handleCommonRequests = (request: Request, genes?: Gene[]): Promise<string> | null => {
     if (request.url.includes('csrf')) {
         return Promise.resolve('');
     }
@@ -100,18 +104,21 @@ export const handleCommonRequests = (request: Request): Promise<string> | null =
     }
 
     if (request.url.includes('user?current_only')) {
-        return Promise.resolve(JSON.stringify({ items: [] }));
+        return resolveStringifiedObjectPromise({ items: [] });
     }
 
     if (request.url.includes('make_read_only')) {
-        return Promise.resolve(JSON.stringify({ id: '', modified: '' }));
+        return resolveStringifiedObjectPromise({ id: '', modified: '' });
+    }
+
+    if (genes != null && request.url.includes('paste')) {
+        const { pasted } = request.body && JSON.parse(request.body.toString());
+        return resolveStringifiedObjectPromise(
+            genes.filter((gene) => (pasted as string[]).includes(gene.name)),
+        );
     }
 
     return null;
-};
-
-export const resolveStringifiedObjectPromise = (object: unknown): Promise<string> => {
-    return Promise.resolve(JSON.stringify(object));
 };
 
 /**

@@ -117,7 +117,8 @@ describe('goEnrichment integration', () => {
                 }
 
                 return (
-                    handleCommonRequests(req) ?? Promise.reject(new Error(`bad url: ${req.url}`))
+                    handleCommonRequests(req, genes) ??
+                    Promise.reject(new Error(`bad url: ${req.url}`))
                 );
             });
         });
@@ -223,6 +224,8 @@ describe('goEnrichment integration', () => {
                     // listens to mouseDown event to expand options menu.
                     fireEvent.mouseDown(await screen.findByLabelText('Aspect'));
                     fireEvent.click(await screen.findByText(aspectOption.label));
+
+                    console.log('new aspect clicked', aspectOption.value);
 
                     await screen.findByText(
                         differentGOEnrichmentJson.tree[aspectOption.value][0].term_name,

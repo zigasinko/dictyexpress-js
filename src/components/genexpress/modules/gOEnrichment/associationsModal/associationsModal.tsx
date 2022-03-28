@@ -11,7 +11,6 @@ import { Gene, GOEnrichmentRow } from 'redux/models/internal';
 import { connect, ConnectedProps } from 'react-redux';
 import amigoLogo from 'images/amigo_logo.png';
 import {
-    genesSelected,
     getGenesById,
     getIsFetchingAssociationsGenes,
     getSelectedGenesIds,
@@ -38,7 +37,6 @@ const mapStateToProps = (state: RootState) => {
 };
 
 const connector = connect(mapStateToProps, {
-    connectedGenesSelected: genesSelected,
     connectedFetchAssociationsGenes: fetchAssociationsGenes,
 });
 

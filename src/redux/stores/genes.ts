@@ -36,11 +36,6 @@ const selectedGenesIdsSlice = createSlice({
             return selectedGenesIdsInitialState;
         },
     },
-    extraReducers: (builder) => {
-        builder.addCase(timeSeriesSelected, (): string[] => {
-            return selectedGenesIdsInitialState;
-        });
-    },
 });
 
 const highlightedGenesInitialState = [] as Gene['feature_id'][];
@@ -70,7 +65,7 @@ const highlightedGenesSlice = createSlice({
         );
         clearStateOnActions(
             builder,
-            [timeSeriesSelected, selectedGenesIdsSlice.actions.deselectedAll],
+            [selectedGenesIdsSlice.actions.deselectedAll],
             highlightedGenesInitialState,
         );
     },

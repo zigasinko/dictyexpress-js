@@ -107,11 +107,7 @@ describe('genesExpressions integration', () => {
                 });
             }
 
-            if (req.url.includes('paste')) {
-                return resolveStringifiedObjectPromise([genes[0]]);
-            }
-
-            if (req.url.includes('feature')) {
+            if (req.url.endsWith('feature')) {
                 return resolveStringifiedObjectPromise({
                     results: genes,
                 });
@@ -126,7 +122,9 @@ describe('genesExpressions integration', () => {
                 return resolveStringifiedObjectPromise(backendBookmark);
             }
 
-            return handleCommonRequests(req) ?? Promise.reject(new Error(`bad url: ${req.url}`));
+            return (
+                handleCommonRequests(req, genes) ?? Promise.reject(new Error(`bad url: ${req.url}`))
+            );
         });
     });
 
