@@ -11,6 +11,7 @@ import {
 import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
 import { GeneSet } from 'redux/models/internal';
 import { ManageGeneSetsGridWrapper } from './manageGeneSetsModal.styles';
+import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
 
 type ManageGeneSetsModalProps = {
     geneSets: GeneSet[];
@@ -19,12 +20,13 @@ type ManageGeneSetsModalProps = {
     onClose: () => void;
 };
 
-const columnDefs = [
-    {
-        headerCheckboxSelection: true,
-        checkboxSelection: true,
-        width: 25,
-    },
+const checkboxColumnDef = {
+    headerCheckboxSelection: true,
+    checkboxSelection: true,
+    width: 25,
+};
+
+const geneSetColumnDefs = [
     {
         field: 'dateTime',
         headerName: 'Date',
@@ -52,6 +54,7 @@ const ManageGeneSetsModal = ({
     onClose,
 }: ManageGeneSetsModalProps): ReactElement => {
     const [selectedGeneSets, setSelectedGeneSets] = useState<GeneSet[]>([]);
+    const [isEditMode, setIsEditMode] = useState(false);
     const geneSetsSelectionChangedHandler = (newSelectedGeneSets: GeneSet[]): void => {
         setSelectedGeneSets(newSelectedGeneSets);
     };
@@ -63,6 +66,10 @@ const ManageGeneSetsModal = ({
     const handleOnClick = (geneSet: GeneSet): void => {
         onClick(geneSet);
     };
+
+    const columnDefs = useStateWithEffect(() => {
+        return isEditMode ? [checkboxColumnDef, ...geneSetColumnDefs] : geneSetColumnDefs;
+    }, [isEditMode]);
 
     return (
         <CenteredModal
@@ -91,9 +98,21 @@ const ManageGeneSetsModal = ({
                     </ManageGeneSetsGridWrapper>
                 </ModalBody>
                 <ModalFooter>
-                    <Button onClick={handleOnDelete} disabled={selectedGeneSets.length === 0}>
-                        Delete selected
-                    </Button>
+                    {isEditMode ? (
+                        <Button onClick={handleOnDelete} disabled={selectedGeneSets.length === 0}>
+                            Delete selected
+                        </Button>
+                    ) : (
+                        <Button
+                            onClick={() => {
+                                setIsEditMode(true);
+                            }}
+                            disabled={geneSets.length === 0}
+                        >
+                            Edit
+                        </Button>
+                    )}
+
                     <Button onClick={onClose}>Close</Button>
                 </ModalFooter>
             </ModalContainer>
