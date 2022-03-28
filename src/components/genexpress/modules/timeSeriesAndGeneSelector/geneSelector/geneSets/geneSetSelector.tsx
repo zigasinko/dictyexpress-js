@@ -6,6 +6,8 @@ import { LocalStorageKey } from 'components/genexpress/common/constants';
 import useLocalStorage from 'components/genexpress/common/useLocalStorage';
 import IconButtonWithTooltip from 'components/genexpress/common/iconButtonWithTooltip/iconButtonWithTooltip';
 import ManageGeneSetsModal from './manageGeneSetsModal';
+import { useDispatch } from 'react-redux';
+import { addInfoSnackbar } from 'redux/stores/notifications';
 
 type SelectGeneSetProps = {
     selectedGenes: Gene[];
@@ -23,6 +25,7 @@ const GeneSetSelector = ({
         LocalStorageKey.geneSets,
         [],
     );
+    const dispatch = useDispatch();
 
     /**
      * Saves gene set to local storage so user can later use it from history.
@@ -35,6 +38,8 @@ const GeneSetSelector = ({
             } as GeneSet;
 
             localStorageSetGeneSets((prevGeneSets) => [...prevGeneSets, newGeneSet]);
+
+            dispatch(addInfoSnackbar('Gene set saved.'));
         }
     };
 

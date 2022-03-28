@@ -37,6 +37,11 @@ export const addErrorSnackbar = (
     message: string,
 ): PayloadAction<SnackbarNotificationContent, string> => addSnackbar({ message, variant: 'error' });
 
+export const addInfoSnackbar = (
+    message: string,
+): PayloadAction<SnackbarNotificationContent, string> =>
+    addSnackbar({ message, variant: 'success' });
+
 export type NotificationsState = ReturnType<typeof notificationsReducer>;
 
 export default notificationsReducer;

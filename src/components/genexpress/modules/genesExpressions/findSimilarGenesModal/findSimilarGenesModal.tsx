@@ -95,7 +95,8 @@ const columnDefs = [
     {
         field: 'feature_id',
         headerName: 'Gene ID',
-        cellRendererFramework: ToDictybaseCell,
+        cellRenderer: ToDictybaseCell,
+        // cellRendererFramework: ToDictybaseCell,
     },
 ] as ColDef[];
 

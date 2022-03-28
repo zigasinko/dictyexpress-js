@@ -220,7 +220,7 @@ A list of all gene associations for each term is available in a separate file - 
                     field: 'score',
                     headerName: 'Score',
                     sort: getSort('score'),
-                    cellRendererFramework: ScoreCell,
+                    cellRenderer: ScoreCell,
                     minWidth: 85,
                 },
                 {
@@ -228,7 +228,7 @@ A list of all gene associations for each term is available in a separate file - 
                     headerName: 'N',
                     width: 100,
                     sort: getSort('matched'),
-                    cellRendererFramework: GOEnrichmentMatchedCell,
+                    cellRenderer: GOEnrichmentMatchedCell,
                     cellRendererParams: {
                         onMatchedGenesClick: onMatchedGenesClickHandler,
                     },
@@ -238,7 +238,7 @@ A list of all gene associations for each term is available in a separate file - 
                     headerName: 'Term',
                     width: 400,
                     sortable: !treeView,
-                    cellRendererFramework: treeView ? TermCell : null,
+                    cellRenderer: treeView ? TermCell : null,
                 },
             ] as ColDef[],
         [getSort, treeView],

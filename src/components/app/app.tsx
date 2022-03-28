@@ -3,7 +3,7 @@ import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import './app.scss';
 import '../../../node_modules/react-grid-layout/css/styles.css';
 import '../../../node_modules/react-resizable/css/styles.css';
-import { ThemeProvider as StyledComponentsThemeProvider } from 'styled-components';
+import styled, { ThemeProvider as StyledComponentsThemeProvider } from 'styled-components';
 import { Provider as ReduxProvider } from 'react-redux';
 import {
     ThemeProvider as MuiThemeProvider,
@@ -25,6 +25,12 @@ void getCSRFCookie();
 
 const appTheme = createTheme(theme);
 
+const StyledSnackbarProvider = styled(SnackbarProvider)`
+    &.SnackbarItem-variantSuccess {
+        background: ${theme.palette.secondary.main};
+    }
+`;
+
 const App = (): ReactElement => {
     return (
         <RendererContext.Provider value="svg">
@@ -34,7 +40,7 @@ const App = (): ReactElement => {
                         <CssBaseline />
                         <StyledComponentsThemeProvider theme={appTheme}>
                             <GlobalStyle />
-                            <SnackbarProvider maxSnack={3}>
+                            <StyledSnackbarProvider maxSnack={3}>
                                 <BrowserRouter>
                                     <Routes>
                                         <Route path="/" element={<LandingPage />} />
@@ -43,7 +49,7 @@ const App = (): ReactElement => {
                                         <Route path="*" element={<PageNotFound />} />
                                     </Routes>
                                 </BrowserRouter>
-                            </SnackbarProvider>
+                            </StyledSnackbarProvider>
                         </StyledComponentsThemeProvider>
                     </MuiThemeProvider>
                 </ReduxProvider>

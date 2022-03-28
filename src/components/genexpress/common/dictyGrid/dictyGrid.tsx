@@ -153,11 +153,6 @@ const DictyGrid = <T,>({
         sizeColumns();
     };
 
-    // TODO: check if resetting row heights is necessary after column resize event.
-    const handleOnColumnResized = (): void => {
-        gridApi.current?.resetRowHeights();
-    };
-
     const handleOnGridSizeChanged = (): void => {
         sizeColumns();
     };
@@ -216,7 +211,6 @@ const DictyGrid = <T,>({
                     onSelectionChanged={handleOnSelectionChanged}
                     rowData={data}
                     quickFilterText={filter}
-                    onColumnResized={handleOnColumnResized}
                 />
             </GridWrapper>
         </DictyGridContainer>
