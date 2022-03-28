@@ -18,18 +18,21 @@ const genesByIdSlice = createSlice({
     },
 });
 
-const selectedGenesIdsInitialState = [] as string[];
+const selectedGenesIdsInitialState = [] as Gene['feature_id'][];
 const selectedGenesIdsSlice = createSlice({
     name: 'genes',
     initialState: selectedGenesIdsInitialState,
     reducers: {
-        selectedMultiple: (state, action: PayloadAction<string[]>): string[] => {
+        selectedMultiple: (
+            state,
+            action: PayloadAction<Gene['feature_id'][]>,
+        ): Gene['feature_id'][] => {
             return _.uniq([...state, ...action.payload]);
         },
-        deselected: (state, action: PayloadAction<string>): string[] => {
+        deselected: (state, action: PayloadAction<Gene['feature_id']>): Gene['feature_id'][] => {
             return state.filter((geneId) => geneId !== action.payload);
         },
-        deselectedAll: (): string[] => {
+        deselectedAll: (): Gene['feature_id'][] => {
             return selectedGenesIdsInitialState;
         },
     },
@@ -40,25 +43,28 @@ const selectedGenesIdsSlice = createSlice({
     },
 });
 
-const highlightedGenesInitialState = [] as string[];
+const highlightedGenesInitialState = [] as Gene['feature_id'][];
 const highlightedGenesSlice = createSlice({
     name: 'genes',
     initialState: highlightedGenesInitialState,
     reducers: {
-        highlighted: (state, action: PayloadAction<string>): string[] => {
+        highlighted: (state, action: PayloadAction<Gene['feature_id']>): Gene['feature_id'][] => {
             return [...state, action.payload];
         },
-        highlightedMultiple: (_state, action: PayloadAction<string[]>): string[] => {
+        highlightedMultiple: (
+            _state,
+            action: PayloadAction<Gene['feature_id'][]>,
+        ): Gene['feature_id'][] => {
             return [...action.payload];
         },
-        unhighlighted: (state, action: PayloadAction<string>): string[] => {
+        unhighlighted: (state, action: PayloadAction<Gene['feature_id']>): Gene['feature_id'][] => {
             return state.filter((geneId) => action.payload !== geneId);
         },
     },
     extraReducers: (builder) => {
         builder.addCase(
             selectedGenesIdsSlice.actions.deselected,
-            (state, action: PayloadAction<string>): string[] => {
+            (state, action: PayloadAction<Gene['feature_id']>): Gene['feature_id'][] => {
                 return state.filter((highlightedGeneId) => action.payload !== highlightedGeneId);
             },
         );
@@ -138,7 +144,8 @@ export const getGenesIdsInStore = createSelector(getGenes, (genes) =>
     genes.map((gene) => gene.feature_id),
 );
 
-export const getHighlightedGenesIds = (state: GenesState): string[] => state.highlightedGenesIds;
+export const getHighlightedGenesIds = (state: GenesState): Gene['feature_id'][] =>
+    state.highlightedGenesIds;
 export const isFetchingDifferentialExpressionGenes = (state: GenesState): boolean =>
     state.isFetchingDifferentialExpressionGenes;
 export const getIsFetchingAssociationsGenes = (state: GenesState): boolean =>

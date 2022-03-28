@@ -12,7 +12,7 @@ import { addInfoSnackbar } from 'redux/stores/notifications';
 type SelectGeneSetProps = {
     selectedGenes: Gene[];
     disabled?: boolean;
-    onSelect: (genesNames: string[]) => void;
+    onSelect: (genesNames: Gene['name'][]) => void;
 };
 
 const GeneSetSelector = ({
@@ -23,7 +23,12 @@ const GeneSetSelector = ({
     const [manageModalOpened, setManageModalOpened] = useState(false);
     const [localStorageGeneSets, localStorageSetGeneSets] = useLocalStorage<GeneSet[]>(
         LocalStorageKey.geneSets,
-        [],
+        [
+            {
+                dateTime: new Date(),
+                genesNames: ['pkaR', 'pkgB', 'pkaC', 'ppk1', 'pks5', 'pks6'],
+            },
+        ],
     );
     const dispatch = useDispatch();
 

@@ -19,9 +19,7 @@ export type RelationsById = {
     [_: number]: Relation;
 };
 
-export type GenesById = {
-    [_: string]: Gene;
-};
+export type GenesById = Record<Gene['feature_id'], Gene>;
 
 export type BasketInfo = {
     id: string;
@@ -79,11 +77,11 @@ export type ClusterNode = {
 
 export type GeneSet = {
     dateTime: Date;
-    genesNames: string[];
+    genesNames: Gene['name'][];
 };
 
 export type VolcanoPoint = {
-    geneId: string; // Feature (gene) id
+    geneId: Gene['feature_id']; // Feature (gene) id
     logFcValue: number;
     logProbValue: number;
     logProbFiniteValue: number;
