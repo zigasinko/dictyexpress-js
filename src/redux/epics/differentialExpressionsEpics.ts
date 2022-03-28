@@ -1,6 +1,6 @@
 import { Action } from '@reduxjs/toolkit';
 import { Epic, combineEpics } from 'redux-observable';
-import { map, mergeMap, startWith, endWith, catchError } from 'rxjs/operators';
+import { mergeMap, startWith, endWith, catchError } from 'rxjs/operators';
 import { of, from, merge } from 'rxjs';
 import { getBasketId } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
@@ -14,6 +14,7 @@ import {
     differentialExpressionStorageFetchSucceeded,
     getSelectedDifferentialExpression,
     getDifferentialExpressions as getStoreDifferentialExpressions,
+    differentialExpressionSelected,
 } from 'redux/stores/differentialExpressions';
 import { getDifferentialExpressions, getStorage } from 'api';
 import { fetchDifferentialExpressionGenes } from './epicsActions';
@@ -28,8 +29,15 @@ const fetchDifferentialExpressionsEpic: Epic<Action, Action, RootState> = (actio
         ),
         mergeMap((basketId) => {
             return from(getDifferentialExpressions(basketId)).pipe(
-                map((differentialExpressions) => {
-                    return differentialExpressionsFetchSucceeded(differentialExpressions);
+                mergeMap((differentialExpressions) => {
+                    if (differentialExpressions.length === 1) {
+                        return merge(
+                            of(differentialExpressionsFetchSucceeded(differentialExpressions)),
+                            of(differentialExpressionSelected(differentialExpressions[0].id)),
+                        );
+                    }
+
+                    return of(differentialExpressionsFetchSucceeded(differentialExpressions));
                 }),
                 catchError((error) =>
                     of(handleError(`Error retrieving differential expressions.`, error)),
