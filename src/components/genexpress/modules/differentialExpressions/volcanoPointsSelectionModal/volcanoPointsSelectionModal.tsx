@@ -79,7 +79,9 @@ const VolcanoPointSelectionModal = ({
     const columnDefs = useRef([
         {
             headerCheckboxSelection: true,
-            checkboxSelection: true,
+            checkboxSelection: (params) => {
+                return params.data.gene?.name != null;
+            },
             width: 25,
         },
         {
@@ -133,6 +135,7 @@ const VolcanoPointSelectionModal = ({
                             filterLabel="Filter"
                             selectedData={selectedGeneVolcanoPoints}
                             columnDefs={columnDefs.current}
+                            suppressRowClickSelection
                             selectionMode="multiple"
                             onSelectionChanged={setSelectedGeneVolcanoPoints}
                         />

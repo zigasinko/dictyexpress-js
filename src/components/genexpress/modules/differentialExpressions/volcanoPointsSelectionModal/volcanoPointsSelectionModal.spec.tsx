@@ -14,9 +14,13 @@ const genes = _.flatMap(genesById);
 const volcanoPoints = generateVolcanoPoints(5);
 
 // Update volcanoPoints geneIds with the ones in store.
-for (let i = 0; i < volcanoPoints.length; i += 1) {
+for (let i = 0; i < volcanoPoints.length - 1; i += 1) {
     volcanoPoints[i].geneId = genes[i].feature_id;
 }
+
+const selectRow = (geneId: string) => {
+    fireEvent.click(screen.getByText(geneId).parentElement?.querySelector('input') as HTMLElement);
+};
 
 describe('volcanoPointsSelectionModal', () => {
     let initialState: RootState;
@@ -100,45 +104,38 @@ describe('volcanoPointsSelectionModal', () => {
             expect(screen.getByText(`Select all ${volcanoPoints.length}`));
         });
 
-        it('should dispatch genesSelected action after user selects volcano points anc clicks select', async () => {
-            await waitFor(() =>
-                fireEvent.click(screen.getByText(genesById[volcanoPoints[1].geneId].name)),
-            );
+        it('should not dispatch genesSelected action for genes without name', () => {
+            selectRow(volcanoPoints[volcanoPoints.length - 1].geneId);
 
-            fireEvent(
-                screen.getByText(genesById[volcanoPoints[2].geneId].name),
-                new MouseEvent('click', { bubbles: true, cancelable: true, ctrlKey: true }),
-            );
+            expect(screen.getByText('Select')).toBeDisabled();
+        });
+
+        it('should dispatch genesSelected action after user selects volcano points anc clicks select', async () => {
+            selectRow(volcanoPoints[1].geneId);
+
+            selectRow(volcanoPoints[2].geneId);
 
             await waitFor(() => expect(screen.getByText('Select')).toBeEnabled());
             fireEvent.click(screen.getByText('Select'));
 
-            await waitFor(() => {
-                expect(mockedStore.getActions()).toEqual([
-                    genesSelected([volcanoPoints[1].geneId, volcanoPoints[2].geneId]),
-                ]);
-            });
+            expect(mockedStore.getActions()).toEqual([
+                genesSelected([volcanoPoints[1].geneId, volcanoPoints[2].geneId]),
+            ]);
         });
 
         it('should first dispatch allGenesDeselected action and then should dispatch genesSelected action after user selects volcano points anc clicks select', async () => {
-            await waitFor(() =>
-                fireEvent.click(screen.getByText(genesById[volcanoPoints[1].geneId].name)),
-            );
-            fireEvent(
-                screen.getByText(genesById[volcanoPoints[2].geneId].name),
-                new MouseEvent('click', { bubbles: true, cancelable: true, ctrlKey: true }),
-            );
+            selectRow(volcanoPoints[1].geneId);
+
+            selectRow(volcanoPoints[2].geneId);
 
             await waitFor(() => expect(screen.getByText('Select')).toBeEnabled());
             fireEvent.click(screen.getByText('Append selected genes to Genes module'));
             fireEvent.click(screen.getByText('Select'));
 
-            await waitFor(() => {
-                expect(mockedStore.getActions()).toEqual([
-                    allGenesDeselected(),
-                    genesSelected([volcanoPoints[1].geneId, volcanoPoints[2].geneId]),
-                ]);
-            });
+            expect(mockedStore.getActions()).toEqual([
+                allGenesDeselected(),
+                genesSelected([volcanoPoints[1].geneId, volcanoPoints[2].geneId]),
+            ]);
         });
 
         it('should dispatch genesSelected with all genes ids after user clicks select all', () => {
@@ -149,17 +146,14 @@ describe('volcanoPointsSelectionModal', () => {
             ]);
         });
 
-        it('should first dispatch allGenesDeselected action and then dispatch genesSelected with all genes ids after user clicks select all', async () => {
+        it('should first dispatch allGenesDeselected action and then dispatch genesSelected with all genes ids after user clicks select all', () => {
             fireEvent.click(screen.getByText('Append selected genes to Genes module'));
             fireEvent.click(screen.getByText('Select all', { exact: false }));
 
-            // TODO: check if this await is necessary
-            await waitFor(() => {
-                expect(mockedStore.getActions()).toEqual([
-                    allGenesDeselected(),
-                    genesSelected(volcanoPoints.map((volcanoPoint) => volcanoPoint.geneId)),
-                ]);
-            });
+            expect(mockedStore.getActions()).toEqual([
+                allGenesDeselected(),
+                genesSelected(volcanoPoints.map((volcanoPoint) => volcanoPoint.geneId)),
+            ]);
         });
     });
 });

@@ -11,7 +11,6 @@ import genesReducer, {
     geneUnhighlighted,
     genesFetchSucceeded,
 } from './genes';
-import { timeSeriesSelected } from './timeSeries';
 
 describe('genes store', () => {
     let initialState: GenesState;

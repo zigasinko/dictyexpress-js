@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction, createSelector, combineReducers } from '@reduxjs/toolkit';
 import _ from 'lodash';
 import { Gene, GenesById } from 'redux/models/internal';
-import { timeSeriesSelected } from './timeSeries';
 import createIsFetchingSlice from './fetch';
 import { clearStateOnActions } from './common';
 

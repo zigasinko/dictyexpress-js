@@ -135,7 +135,7 @@ const GOEnrichmentAssociationsModal = ({
                         </Tooltip>
                     </TermInfo>
                     <p>
-                        {gOEnrichmentRow.total > 1
+                        {gOEnrichmentRow.total === 1
                             ? `1 gene is associated with ${gOEnrichmentRow.term_id} term`
                             : `${gOEnrichmentRow.total} genes are associated with ${gOEnrichmentRow.term_id} term`}
                     </p>
