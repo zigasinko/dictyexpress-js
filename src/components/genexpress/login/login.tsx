@@ -31,8 +31,8 @@ type LoginProps = {
 } & PropsFromRedux;
 
 const Login = ({ connectedLogin, isLoggingIn, closeModal }: LoginProps): ReactElement => {
-    const [userData, setUserData] = useState<{ username: string; password: string }>({
-        username: '',
+    const [userData, setUserData] = useState<{ email: string; password: string }>({
+        email: '',
         password: '',
     });
 
@@ -62,16 +62,17 @@ const Login = ({ connectedLogin, isLoggingIn, closeModal }: LoginProps): ReactEl
                 <ModalBody>
                     <form name="loginForm" id="loginForm" onSubmit={handleOnSubmit}>
                         <TextField
-                            id="username"
-                            name="username"
+                            id="email"
+                            name="email"
                             variant="outlined"
-                            label="Username"
+                            required
+                            label="E-mail"
                             color="secondary"
                             size="small"
                             fullWidth
                             margin="normal"
                             onChange={handleChange}
-                            value={userData.username}
+                            value={userData.email}
                         />
                         <TextField
                             id="password"
@@ -80,6 +81,7 @@ const Login = ({ connectedLogin, isLoggingIn, closeModal }: LoginProps): ReactEl
                             type="password"
                             label="Password"
                             color="secondary"
+                            required
                             fullWidth
                             margin="normal"
                             autoComplete="current-password"
@@ -93,7 +95,7 @@ const Login = ({ connectedLogin, isLoggingIn, closeModal }: LoginProps): ReactEl
                     <Button
                         form="loginForm"
                         type="submit"
-                        disabled={!userData.username || !userData.password}
+                        disabled={!userData.email || !userData.password}
                         data-testid="submit-credentials"
                     >
                         SIGN IN

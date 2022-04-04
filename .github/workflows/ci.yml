@@ -46,7 +46,7 @@ jobs:
         run: yarn build
       - name: Run E2E tests
         env:
-          LOGIN_USERNAME: ${{ secrets.QA2_LOGIN_USERNAME }}
+          LOGIN_EMAIL: ${{ secrets.QA2_LOGIN_EMAIL }}
           LOGIN_PASSWORD: ${{ secrets.QA2_LOGIN_PASSWORD }}
           CI: true
         run: yarn e2e

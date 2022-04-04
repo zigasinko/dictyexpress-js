@@ -9,7 +9,7 @@ export const pasteGenesNames = createAction<string[]>('genes/pasteGenesNames');
 export const fetchTimeSeries = createAction('timeSeries/fetchTimeSeries');
 export const selectFirstTimeSeries = createAction('timeSeries/selectFirstTimeSeries');
 
-export const login = createAction<{ username: string; password: string }>('authentication/login');
+export const login = createAction<{ email: string; password: string }>('authentication/login');
 export const loginSucceeded = createAction('authentication/loginSucceeded');
 export const logout = createAction('authentication/logout');
 export const logoutSucceeded = createAction('authentication/logoutSucceeded');

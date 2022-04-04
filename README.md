@@ -50,10 +50,10 @@ Assuming locally running web site (using `yarn start` or `yarn serve`). On Windo
 
 ```
 # Headed with inspector
-LOGIN_USERNAME=myuser LOGIN_PASSWORD=mysecret PWDEBUG=1 yarn e2e
+LOGIN_EMAIL=myuser@my.com LOGIN_PASSWORD=mysecret PWDEBUG=1 yarn e2e
 
 # Headless
-LOGIN_USERNAME=myuser LOGIN_PASSWORD=mysecret yarn e2e
+LOGIN_EMAIL=myuser@my.com LOGIN_PASSWORD=mysecret yarn e2e
 ```
 
 ### `npm run build`

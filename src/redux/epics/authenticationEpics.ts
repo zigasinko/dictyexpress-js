@@ -25,7 +25,7 @@ const loginEpic: Epic<Action, Action, RootState> = (action$) =>
     action$.pipe(
         filter(login.match),
         mergeMap((action) => {
-            return from(loginRequest(action.payload.username, action.payload.password)).pipe(
+            return from(loginRequest(action.payload.email, action.payload.password)).pipe(
                 mergeMap(() => from(clearObservers()).pipe(map(loginSucceeded))),
                 catchError((error) => {
                     if (error instanceof ResponseError) {

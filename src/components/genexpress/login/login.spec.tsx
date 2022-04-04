@@ -9,7 +9,7 @@ import { User } from '@genialis/resolwe/dist/api/types/rest';
 import { login } from 'redux/epics/epicsActions';
 import Login from './login';
 
-const usernameValue = 'asdf';
+const emailValue = 'asdf@gmail.com';
 const passwordValue = 'asdf';
 
 describe('login', () => {
@@ -29,22 +29,22 @@ describe('login', () => {
         });
     });
 
-    it('should mask password value', () => {
-        fireEvent.change(screen.getByLabelText('Password'), {
+    it('should mask password value', async () => {
+        fireEvent.change(await screen.findByLabelText('Password *'), {
             target: { value: passwordValue },
         });
 
         expect(screen.getByDisplayValue(passwordValue)).toHaveAttribute('type', 'password');
     });
 
-    it('should disable submit button until username and password are entered', () => {
+    it('should disable submit button until email and password are entered', () => {
         expect(screen.getByRole('button', { name: 'SIGN IN' })).toBeDisabled();
 
-        fireEvent.change(screen.getByLabelText('Username'), {
-            target: { value: usernameValue },
+        fireEvent.change(screen.getByLabelText('E-mail *'), {
+            target: { value: emailValue },
         });
 
-        fireEvent.change(screen.getByLabelText('Password'), {
+        fireEvent.change(screen.getByLabelText('Password *'), {
             target: { value: passwordValue },
         });
 
@@ -52,11 +52,11 @@ describe('login', () => {
     });
 
     it('should trigger login action after user clicks SIGN IN', async () => {
-        fireEvent.change(screen.getByLabelText('Username'), {
-            target: { value: usernameValue },
+        fireEvent.change(screen.getByLabelText('E-mail *'), {
+            target: { value: emailValue },
         });
 
-        fireEvent.change(screen.getByLabelText('Password'), {
+        fireEvent.change(screen.getByLabelText('Password *'), {
             target: { value: passwordValue },
         });
 
@@ -64,7 +64,7 @@ describe('login', () => {
 
         await waitFor(() =>
             expect(mockedStore.getActions()).toEqual([
-                login({ username: usernameValue, password: passwordValue }),
+                login({ email: emailValue, password: passwordValue }),
             ]),
         );
     });

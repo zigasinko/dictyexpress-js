@@ -7,7 +7,7 @@ declare namespace NodeJS {
 interface Process {
     env: {
         PORT?: number;
-        LOGIN_USERNAME?: string;
+        LOGIN_EMAIL?: string;
         LOGIN_PASSWORD?: string;
     };
 }
