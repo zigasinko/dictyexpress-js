@@ -225,8 +225,6 @@ describe('goEnrichment integration', () => {
                     fireEvent.mouseDown(await screen.findByLabelText('Aspect'));
                     fireEvent.click(await screen.findByText(aspectOption.label));
 
-                    console.log('new aspect clicked', aspectOption.value);
-
                     await screen.findByText(
                         differentGOEnrichmentJson.tree[aspectOption.value][0].term_name,
                     );

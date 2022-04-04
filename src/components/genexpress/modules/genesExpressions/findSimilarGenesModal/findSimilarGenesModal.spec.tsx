@@ -26,7 +26,6 @@ import { sessionId, webSocketUrl } from 'api/base';
 import { GeneSimilarity } from 'redux/models/internal';
 import { MockStoreEnhanced } from 'redux-mock-store';
 import { AppDispatch } from 'redux/appStore';
-import { fetchGenesSimilarities } from 'redux/epics/epicsActions';
 import { genesSelected } from 'redux/stores/genes';
 import { ProcessSlug } from 'components/genexpress/common/constants';
 import FindSimilarGenesModal, { distanceMeasureOptions } from './findSimilarGenesModal';
@@ -126,17 +125,18 @@ describe('findSimilarGenesModal', () => {
                 initialState.genes.selectedGenesIds = _.flatMap(initialState.genes.byId).map(
                     (gene) => gene.feature_id,
                 );
-                initialState.genesSimilarities.data = [];
+                initialState.genesSimilarities.data = null;
                 initialState.genesSimilarities.queryGeneId = _.flatMap(
                     initialState.genes.byId,
                 )[0].feature_id;
 
-                customRender(<FindSimilarGenesModal handleOnClose={mockedOnClose} />, {
+                customRender(<FindSimilarGenesModal handleOnClose={mockedOnClose} open />, {
                     initialState,
                 });
             });
 
             it('should fetch genes similarities data (Find similar gene process) and display their data in data grid', async () => {
+                fireEvent.click(await screen.findByRole('button', { name: 'Find' }));
                 await validateSimilarGenesGrid(genesSimilarities);
             });
         });
@@ -150,7 +150,7 @@ describe('findSimilarGenesModal', () => {
                 initialState.genesSimilarities.data = differentGenesSimilarities;
                 initialState.genesSimilarities.queryGeneId = genes[0].feature_id;
 
-                customRender(<FindSimilarGenesModal handleOnClose={mockedOnClose} />, {
+                customRender(<FindSimilarGenesModal handleOnClose={mockedOnClose} open />, {
                     initialState,
                 });
             });
@@ -173,6 +173,8 @@ describe('findSimilarGenesModal', () => {
                 fireEvent.mouseDown(screen.getByLabelText('Distance Measure'));
                 fireEvent.click(await screen.findByText(distanceMeasureOptions[1].label));
 
+                fireEvent.click(screen.getByRole('button', { name: 'Find' }));
+
                 await validateSimilarGenesGrid(genesSimilarities);
             });
 
@@ -183,6 +185,8 @@ describe('findSimilarGenesModal', () => {
                 // listens to mouseDown event to expand options menu.
                 fireEvent.mouseDown(screen.getByLabelText('Gene'));
                 fireEvent.click(await screen.findByText(genes[1].name));
+
+                fireEvent.click(screen.getByRole('button', { name: 'Find' }));
 
                 await validateSimilarGenesGrid(genesSimilarities.slice(0, 2));
             });
@@ -202,7 +206,7 @@ describe('findSimilarGenesModal', () => {
                 mockedStore = mockStore(initialState);
                 mockedStore.clearActions();
 
-                customRender(<FindSimilarGenesModal handleOnClose={mockedOnClose} />, {
+                customRender(<FindSimilarGenesModal handleOnClose={mockedOnClose} open />, {
                     mockedStore,
                 });
             });
@@ -217,7 +221,6 @@ describe('findSimilarGenesModal', () => {
 
                 await waitFor(() => {
                     expect(mockedStore.getActions()).toEqual([
-                        fetchGenesSimilarities(),
                         genesSelected([genes[3].feature_id]),
                     ]);
                 });
@@ -228,7 +231,6 @@ describe('findSimilarGenesModal', () => {
 
                 await waitFor(() => {
                     expect(mockedStore.getActions()).toEqual([
-                        fetchGenesSimilarities(),
                         genesSelected(
                             _.flatMap(differentGenesSimilarities).map(
                                 (geneSimilarity) => geneSimilarity.gene,
@@ -298,7 +300,7 @@ describe('findSimilarGenesModal', () => {
 
             initialState.genes.byId = genesById;
             initialState.genes.selectedGenesIds = genes.map((gene) => gene.feature_id);
-            initialState.genesSimilarities.data = [];
+            initialState.genesSimilarities.data = null;
 
             customRender(<GeneExpressGrid />, {
                 initialState,
@@ -309,7 +311,8 @@ describe('findSimilarGenesModal', () => {
             fireEvent.click(screen.getByText('Find similar genes'));
         });
 
-        it('should fetch genes similarities data via WebSocket', async () => {
+        it('should fetch genes similarities data via WebSocket after users clicks on Find', async () => {
+            fireEvent.click(screen.getByRole('button', { name: 'Find' }));
             // Wait for data object with 'waiting' status is returned.
             await waitFor(() => {
                 expect(getFetchMockCallsWithUrl(`api/data?id=${dataId}`)).toHaveLength(1);

@@ -50,7 +50,7 @@ const GenesExpressionsWidget = ({
     highlightedGenesIds,
     comparisonTimeSeries,
 }: PropsFromRedux): ReactElement => {
-    const [findSimilarGenesModalOpened, setManageModalOpened] = useState(false);
+    const [findSimilarGenesModalOpened, setFindSimilarGenesModalOpened] = useState(false);
     const [selectTimeSeriesModalOpened, setSelectTimeSeriesModalOpened] = useState(false);
     const [showLegend, setShowLegend] = useBookmarkableState(
         false,
@@ -94,7 +94,7 @@ const GenesExpressionsWidget = ({
                     <div>
                         <Button
                             onClick={(): void => {
-                                setManageModalOpened(true);
+                                setFindSimilarGenesModalOpened(true);
                             }}
                             disabled={disabledControls || basketExpressionsIds.length === 0}
                         >
@@ -155,9 +155,10 @@ const GenesExpressionsWidget = ({
                     </GenesExpressionsLineChartContainer>
                 )}
             </GenesExpressionsContainer>
-            {findSimilarGenesModalOpened && (
-                <FindSimilarGenesModal handleOnClose={(): void => setManageModalOpened(false)} />
-            )}
+            <FindSimilarGenesModal
+                open={findSimilarGenesModalOpened}
+                handleOnClose={(): void => setFindSimilarGenesModalOpened(false)}
+            />
             {selectTimeSeriesModalOpened && (
                 <SelectComparisonTimeSeriesModal
                     handleOnClose={(): void => setSelectTimeSeriesModalOpened(false)}

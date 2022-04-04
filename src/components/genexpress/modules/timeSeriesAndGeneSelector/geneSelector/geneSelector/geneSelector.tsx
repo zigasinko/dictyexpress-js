@@ -149,6 +149,7 @@ const GeneSelector = ({
 
     const handleOnChange = (_event: unknown, newValue: Gene[]): void => {
         setValue(newValue);
+        setInputValue('');
         connectedGenesFetchSucceeded(newValue);
         connectedGenesSelected(newValue.map((gene) => gene.feature_id));
 
@@ -168,6 +169,8 @@ const GeneSelector = ({
                     return;
                 }
 
+                connectedAllGenesDeselected();
+
                 setIsFetching(true);
                 const pastedGenes = await getPastedGenes(
                     autocompleteSource,
@@ -177,7 +180,6 @@ const GeneSelector = ({
                 );
 
                 connectedGenesFetchSucceeded(pastedGenes);
-                connectedAllGenesDeselected();
                 connectedGenesSelected(pastedGenes.map((gene) => gene.feature_id));
 
                 // Get and display not found genes.
@@ -211,12 +213,23 @@ const GeneSelector = ({
     useEffect(() => {
         if (
             selectedTimeSeriesRef.current !== selectedTimeSeries &&
-            selectedGenesRef.current.length > 0
+            selectedGenesRef.current.length > 0 &&
+            autocompleteSource != null &&
+            autocompleteType != null
         ) {
-            void handleImportedGenesNames(selectedGenesRef.current.map((gene) => gene.name));
+            void handleImportedGenesNames([
+                ...selectedGenesRef.current.map((gene) => gene.name),
+                ...splitAndCleanGenesString(inputValue),
+            ]);
             selectedTimeSeriesRef.current = selectedTimeSeries;
         }
-    }, [handleImportedGenesNames, selectedTimeSeries]);
+    }, [
+        autocompleteSource,
+        autocompleteType,
+        handleImportedGenesNames,
+        inputValue,
+        selectedTimeSeries,
+    ]);
 
     /**
      * Clean/retrieve entered genes names and push them into selected state.
@@ -234,6 +247,7 @@ const GeneSelector = ({
     const handleOnPaste = (event: React.ClipboardEvent<HTMLDivElement>): void => {
         event.preventDefault();
         const clipboardData = event.clipboardData.getData('text');
+        setInputValue(clipboardData);
         handleImportedGenesNamesString(clipboardData);
     };
 
@@ -277,7 +291,11 @@ const GeneSelector = ({
                     renderOption={(props, option) => (
                         <ListItem {...props}>
                             <Box
-                                sx={{ display: 'flex', justifyContent: 'space-between', width: 1 }}
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    width: 1,
+                                }}
                             >
                                 <span>{option.name}</span>
                                 <span>
@@ -291,7 +309,6 @@ const GeneSelector = ({
                     fullWidth
                     renderTags={(): ReactNode => undefined}
                     loadingText="Loading"
-                    disableCloseOnSelect
                     multiple
                     clearOnBlur={false}
                     onOpen={openDropDown}

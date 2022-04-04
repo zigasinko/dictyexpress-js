@@ -1,8 +1,8 @@
-import React from 'react';
 import { screen, fireEvent, waitFor, RenderResult } from '@testing-library/react';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
 import {
     customRender,
+    getFetchMockCallsWithUrl,
     handleCommonRequests,
     resolveStringifiedObjectPromise,
     validateCreateStateRequest,
@@ -321,6 +321,16 @@ describe('genesExpressions integration', () => {
                 expect(_.get(bookmarkState, BookmarkStatePath.genesExpressionsShowLegend)).toEqual(
                     false,
                 );
+            });
+        });
+
+        it('should re-apply selected genes when selected time series changes', async () => {
+            await validateChart(initialState.genes.selectedGenesIds.length);
+
+            fireEvent.click(screen.getByText(timeSeries[1].collection.name));
+
+            await waitFor(() => {
+                expect(getFetchMockCallsWithUrl(`feature/paste`)).toHaveLength(1);
             });
         });
     });

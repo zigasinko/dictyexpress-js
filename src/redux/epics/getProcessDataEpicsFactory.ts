@@ -96,6 +96,7 @@ const getProcessDataEpicsFactory = <DataType extends Data>({
                 // data via WebSocket.
                 if (activeQueryObserverDisposeFunction[processInfo.name] != null) {
                     void activeQueryObserverDisposeFunction[processInfo.name]();
+                    delete activeQueryObserverDisposeFunction[processInfo.name];
                 }
 
                 if (_.isEmpty(input)) {

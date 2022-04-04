@@ -5,6 +5,7 @@ export const SelectedGenesContainer = styled.div`
     display: flex;
     flex-flow: row wrap;
     max-height: 90px;
+    min-height: 30px;
     overflow-y: auto;
 `;
 

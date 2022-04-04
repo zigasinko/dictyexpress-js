@@ -6,7 +6,13 @@ import {
     resolveStringifiedObjectPromise,
     validateExportFile,
 } from 'tests/test-utils';
-import { testState, mockStore, generateGenesById, generateBasketInfo } from 'tests/mock';
+import {
+    testState,
+    mockStore,
+    generateGenesById,
+    generateBasketInfo,
+    generateBasketAddSamplesResponse,
+} from 'tests/mock';
 import { allGenesDeselected, genesFetchSucceeded, genesSelected } from 'redux/stores/genes';
 import { MockStoreEnhanced } from 'redux-mock-store';
 import { RootState } from 'redux/rootReducer';
@@ -29,6 +35,10 @@ describe('geneSelector', () => {
                 return resolveStringifiedObjectPromise({
                     results: genes,
                 });
+            }
+
+            if (req.url.includes('basket/_/add_samples')) {
+                return resolveStringifiedObjectPromise(generateBasketAddSamplesResponse('2'));
             }
 
             return handleCommonRequests(req) ?? Promise.reject(new Error(`bad url: ${req.url}`));
@@ -69,8 +79,8 @@ describe('geneSelector', () => {
 
             await waitFor(() => {
                 expect(mockedStore.getActions()).toEqual([
-                    genesFetchSucceeded(genes),
                     allGenesDeselected(),
+                    genesFetchSucceeded(genes),
                     genesSelected(genes.map((gene) => gene.feature_id)),
                 ]);
             });
@@ -90,8 +100,8 @@ describe('geneSelector', () => {
 
             await waitFor(() => {
                 expect(mockedStore.getActions()).toEqual([
-                    genesFetchSucceeded(genes),
                     allGenesDeselected(),
+                    genesFetchSucceeded(genes),
                     genesSelected(genes.map((gene) => gene.feature_id)),
                 ]);
             });
@@ -169,13 +179,18 @@ describe('geneSelector', () => {
     });
 
     describe('genes already selected and highlighted', () => {
+        let mockedStore: MockStoreEnhanced<RootState, AppDispatch>;
+
         beforeEach(() => {
             initialState.genes.byId = genesById;
             initialState.genes.selectedGenesIds = genes.map((gene) => gene.feature_id);
             initialState.genes.highlightedGenesIds = [genes[0].feature_id];
+            mockedStore = mockStore(initialState);
+            mockedStore.clearActions();
 
             customRender(<GeneSelector />, {
                 initialState,
+                mockedStore,
             });
         });
 

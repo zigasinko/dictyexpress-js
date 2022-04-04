@@ -18,7 +18,7 @@ describe('genesSimilarities store', () => {
     describe('empty initial state', () => {
         beforeEach(() => {
             initialState = {
-                data: [],
+                data: null,
                 queryGeneId: null,
                 distanceMeasure: DistanceMeasure.pearson,
                 isFetchingGenesSimilarities: false,
@@ -83,7 +83,7 @@ describe('genesSimilarities store', () => {
             const expectedState = {
                 ...initialState,
                 distanceMeasure: 'pearson',
-                data: [],
+                data: null,
             };
 
             expect(newState).toEqual(expectedState);
@@ -97,7 +97,7 @@ describe('genesSimilarities store', () => {
             const expectedState = {
                 ...initialState,
                 queryGeneId: '123',
-                data: [],
+                data: null,
             };
 
             expect(newState).toEqual(expectedState);

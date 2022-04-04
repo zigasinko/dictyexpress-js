@@ -39,7 +39,7 @@ const distanceMeasureSlice = createSlice({
     },
 });
 
-const genesSimilaritiesInitialState = [] as GeneSimilarity[];
+const genesSimilaritiesInitialState = null as GeneSimilarity[] | null;
 const genesSimilaritiesSlice = createSlice({
     name: 'genesSimilarities',
     initialState: genesSimilaritiesInitialState,
@@ -84,7 +84,8 @@ export type GenesSimilaritiesState = ReturnType<typeof genesSimilaritiesReducer>
 export default genesSimilaritiesReducer;
 
 // Selectors (exposes the store to containers).
-export const getGenesSimilarities = (state: GenesSimilaritiesState): GeneSimilarity[] => state.data;
+export const getGenesSimilarities = (state: GenesSimilaritiesState): GeneSimilarity[] | null =>
+    state.data;
 export const getGenesSimilaritiesQueryGeneId = (state: GenesSimilaritiesState): string | null =>
     state.queryGeneId;
 export const getIsFetchingGenesSimilarities = (state: GenesSimilaritiesState): boolean =>

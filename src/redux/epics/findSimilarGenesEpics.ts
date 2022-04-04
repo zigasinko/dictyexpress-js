@@ -14,9 +14,9 @@ import {
     genesSimilaritiesQueryGeneSet,
 } from 'redux/stores/genesSimilarities';
 import { combineEpics, Epic, ofType } from 'redux-observable';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { filter, map, mergeMap, switchMap, withLatestFrom } from 'rxjs/operators';
 import { Action } from '@reduxjs/toolkit';
-import { combineLatest, of } from 'rxjs';
+import { combineLatest, merge, of } from 'rxjs';
 import {
     fetchGenesSimilarities,
     fetchGenesSimilaritiesData,
@@ -30,49 +30,62 @@ import { mapStateSlice } from './rxjsCustomFilters';
 
 const processParametersObservable: ProcessDataEpicsFactoryProps<FindSimilarGenesData>['processParametersObservable'] =
     (action$, state$) => {
-        return combineLatest([
-            action$.pipe(ofType(fetchGenesSimilarities)),
-            state$.pipe(
-                mapStateSlice((state) => {
-                    return getBasketExpressionsIds(state.timeSeries);
-                }),
-            ),
-            state$.pipe(
-                mapStateSlice((state) => {
-                    return getGenesSimilaritiesQueryGeneId(state.genesSimilarities) ?? '';
-                }),
-            ),
-            state$.pipe(
-                mapStateSlice((state) => {
-                    return getGenesSimilaritiesDistanceMeasure(state.genesSimilarities);
-                }),
-            ),
-        ]).pipe(
-            filter(() => getGenesSimilarities(state$.value.genesSimilarities).length === 0),
-            switchMap(
-                // Unused _fetchGenesSimilarities var is necessary to keep rxjs from piping before
-                // fetchGenesSimilarities action is emitted (after find similar genes modal is opened).
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                ([_fetchGenesSimilarities, expressionsIds, queryGeneId, distanceMeasure]) => {
-                    // The {Pearson/Spearman} correlation between genes must be computed on at least
-                    // two genes.
-                    if (queryGeneId === '') {
-                        return of({});
-                    }
-
-                    // If basket expressions aren't in store yet, hierarchical clustering can't be
-                    // computed.
-                    if (expressionsIds.length === 0) {
-                        return of({});
-                    }
-
+        return merge(
+            action$.pipe(
+                ofType(fetchGenesSimilarities),
+                withLatestFrom(state$),
+                mergeMap(([, state]) => {
                     return of({
-                        expressions: _.sortBy(expressionsIds),
-                        gene: queryGeneId,
-                        distance: distanceMeasure,
+                        expressionsIds: getBasketExpressionsIds(state.timeSeries),
+                        queryGeneId: getGenesSimilaritiesQueryGeneId(state.genesSimilarities),
+                        distanceMeasure: getGenesSimilaritiesDistanceMeasure(
+                            state.genesSimilarities,
+                        ),
                     });
-                },
+                }),
+                filter(() => getGenesSimilarities(state$.value.genesSimilarities) == null),
+                switchMap(
+                    // Unused _fetchGenesSimilarities var is necessary to keep rxjs from piping before
+                    // fetchGenesSimilarities action is emitted (after find similar genes modal is opened).
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    ({ expressionsIds, queryGeneId, distanceMeasure }) => {
+                        // The {Pearson/Spearman} correlation between genes must be computed on at least
+                        // two genes.
+                        if (queryGeneId == null) {
+                            return of({});
+                        }
+
+                        // If basket expressions aren't in store yet, hierarchical clustering can't be
+                        // computed.
+                        if (expressionsIds.length === 0) {
+                            return of({});
+                        }
+
+                        return of({
+                            expressions: _.sortBy(expressionsIds),
+                            gene: queryGeneId,
+                            distance: distanceMeasure,
+                        });
+                    },
+                ),
             ),
+            combineLatest([
+                state$.pipe(
+                    mapStateSlice((state) => {
+                        return getBasketExpressionsIds(state.timeSeries);
+                    }),
+                ),
+                state$.pipe(
+                    mapStateSlice((state) => {
+                        return getGenesSimilaritiesQueryGeneId(state.genesSimilarities);
+                    }),
+                ),
+                state$.pipe(
+                    mapStateSlice((state) => {
+                        return getGenesSimilaritiesDistanceMeasure(state.genesSimilarities);
+                    }),
+                ),
+            ]).pipe(mergeMap(() => of({}))),
         );
     };
 

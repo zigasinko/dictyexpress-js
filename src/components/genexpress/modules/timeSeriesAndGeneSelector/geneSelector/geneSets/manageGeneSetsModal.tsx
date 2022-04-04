@@ -40,7 +40,7 @@ const geneSetColumnDefs = [
         field: 'genesNames',
         headerName: 'Genes',
         autoHeight: true,
-        cellStyle: { 'white-space': 'normal' },
+        cellStyle: { whiteSpace: 'normal' },
         valueFormatter: (params: ValueFormatterParams): string => {
             return params.value.join(', ');
         },

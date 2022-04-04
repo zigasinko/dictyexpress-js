@@ -14,7 +14,7 @@ import {
     withLatestFrom,
     filter,
 } from 'rxjs/operators';
-import { of, from, EMPTY, Observable, combineLatest, merge } from 'rxjs';
+import { of, from, EMPTY, Observable, merge } from 'rxjs';
 import { getBasketInfo } from 'redux/stores/timeSeries';
 import { getGenesSimilaritiesQueryGene, RootState } from 'redux/rootReducer';
 import {
@@ -135,16 +135,12 @@ const fetchPredefinedGenesEpic: Epic<Action, Action, RootState> = (action$, stat
     );
 
 const fetchSimilarGenesEpic: Epic<Action, Action, RootState> = (action$, state$) => {
-    return combineLatest([
-        state$.pipe(mapStateSlice((state) => getGenesSimilarities(state.genesSimilarities))),
-        state$.pipe(
-            mapStateSlice((state) => {
-                return getGenesSimilaritiesQueryGene(state);
-            }),
-        ),
-    ]).pipe(
-        filter(([genesSimilarities]) => genesSimilarities.length > 0),
-        mergeMap(([genesSimilarities, queryGene]) => {
+    return state$.pipe(
+        mapStateSlice((state) => getGenesSimilarities(state.genesSimilarities)),
+        filter((genesSimilarities) => genesSimilarities.length > 0),
+        withLatestFrom(state$),
+        mergeMap(([genesSimilarities, state]) => {
+            const queryGene = getGenesSimilaritiesQueryGene(state);
             return fetchGenesActionObservable(
                 genesSimilarities.map((geneSimilarity) => geneSimilarity.gene),
                 state$.value,

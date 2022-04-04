@@ -12,7 +12,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { getGenesById, getIsFetchingSimilarGenes, getSelectedGenes } from 'redux/stores/genes';
 import { RootState } from 'redux/rootReducer';
 import { ColDef, ValueGetterParams } from 'ag-grid-community';
-import { MenuItem } from '@mui/material';
+import { Box, Button, MenuItem } from '@mui/material';
 import DictySelect from 'components/genexpress/common/dictySelect/dictySelect';
 import { fetchGenesSimilarities } from 'redux/epics/epicsActions';
 import {
@@ -32,6 +32,7 @@ import {
 } from './findSimilarGenesModal.styles';
 import ToDictybaseCell from './toDictybaseCell/toDictybaseCell';
 import { SelectChangeEvent } from '@mui/material';
+import { LoadingBar } from 'components/genexpress/common/dictyModule/dictyModule.styles';
 
 export const distanceMeasureOptions: Option<DistanceMeasure>[] = [
     { value: DistanceMeasure.spearman, label: 'Spearman' },
@@ -61,6 +62,7 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 type FindSimilarGenesModalProps = {
     handleOnClose: () => void;
+    open: boolean;
 } & PropsFromRedux;
 
 type SimilarGene = { distance: number } & Pick<Gene, 'feature_id' | 'name' | 'description'>;
@@ -69,7 +71,7 @@ const columnDefs = [
     {
         headerCheckboxSelection: true,
         checkboxSelection: true,
-        width: 25,
+        width: 35,
     },
     {
         valueGetter: (params: ValueGetterParams): string => {
@@ -96,11 +98,11 @@ const columnDefs = [
         field: 'feature_id',
         headerName: 'Gene ID',
         cellRenderer: ToDictybaseCell,
-        // cellRendererFramework: ToDictybaseCell,
     },
 ] as ColDef[];
 
 const FindSimilarGenesModal = ({
+    open,
     genesById,
     selectedGenes,
     genesSimilarities,
@@ -113,39 +115,29 @@ const FindSimilarGenesModal = ({
     connectedGenesSimilaritiesQueryGeneSelected,
     connectedGenesSimilaritiesDistanceMeasureChanged,
 }: FindSimilarGenesModalProps): ReactElement => {
-    const [similarGenes, setSimilarGenes] = useState<SimilarGene[]>([]);
-
-    const [queryGene, setQueryGene] = useState<Gene>();
+    const [similarGenes, setSimilarGenes] = useState<SimilarGene[] | null>(null);
     const [selectedSimilarGenes, setSelectedSimilarGenes] = useState<SimilarGene[]>([]);
 
     useEffect(() => {
         setSimilarGenes(
-            genesSimilarities.flatMap((geneSimilarity) => ({
+            genesSimilarities?.flatMap((geneSimilarity) => ({
                 feature_id: geneSimilarity.gene,
                 name: genesById[geneSimilarity.gene]?.name,
                 description: genesById[geneSimilarity.gene]?.description,
                 distance: geneSimilarity.distance,
-            })),
+            })) ?? null,
         );
     }, [genesById, genesSimilarities]);
 
     useEffect(() => {
         setSelectedSimilarGenes(
-            similarGenes.filter((similarGene) =>
+            similarGenes?.filter((similarGene) =>
                 selectedGenes
                     .map((selectedGene) => selectedGene.feature_id)
                     .includes(similarGene.feature_id),
-            ),
+            ) ?? [],
         );
     }, [selectedGenes, similarGenes]);
-
-    useEffect(() => {
-        setQueryGene(selectedGenes.find((gene) => gene.feature_id === queryGeneId));
-    }, [queryGeneId, selectedGenes]);
-
-    useEffect(() => {
-        connectedFetchGenesSimilarities();
-    }, [connectedFetchGenesSimilarities]);
 
     const handleGeneOnChange = (event: SelectChangeEvent<unknown>): void => {
         connectedGenesSimilaritiesQueryGeneSelected(event.target.value as string);
@@ -153,55 +145,74 @@ const FindSimilarGenesModal = ({
         document.body.focus();
     };
 
+    const isLoading = isFetchingGenesSimilarities || isFetchingSimilarGenes;
+
     return (
         <CenteredModal
-            open
+            open={open}
             aria-labelledby="modalTitle"
             aria-describedby="modalDescription"
             onClose={handleOnClose}
         >
             <ModalContainer>
-                <ModalHeader id="modalTitle">Find Similar Genes</ModalHeader>
+                <ModalHeader id="modalTitle">
+                    Find Similar Genes
+                    {isLoading && <LoadingBar color="secondary" />}
+                </ModalHeader>
                 <ModalBody>
-                    <QueryGeneSelectFormControl>
-                        <DictySelect
-                            label="Gene"
-                            value={queryGene?.feature_id}
-                            handleOnChange={handleGeneOnChange}
-                            disabled={selectedGenes.length === 0}
-                        >
-                            {selectedGenes.map((gene) => (
-                                <MenuItem value={gene.feature_id} key={gene.feature_id}>
-                                    {gene.name}
-                                </MenuItem>
-                            ))}
-                        </DictySelect>
-                    </QueryGeneSelectFormControl>
-                    <DistanceMeasureFormControl>
-                        <DictySelect
-                            disabled={selectedGenes.length === 0}
-                            label="Distance Measure"
-                            value={distanceMeasure}
-                            handleOnChange={(event: SelectChangeEvent<unknown>): void => {
-                                connectedGenesSimilaritiesDistanceMeasureChanged(
-                                    event.target.value as DistanceMeasure,
-                                );
-                            }}
-                        >
-                            {distanceMeasureOptions.map((distanceMeasureOption) => (
-                                <MenuItem
-                                    value={distanceMeasureOption.value}
-                                    key={distanceMeasureOption.value}
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <div>
+                            <QueryGeneSelectFormControl>
+                                <DictySelect
+                                    label="Gene"
+                                    value={queryGeneId}
+                                    handleOnChange={handleGeneOnChange}
+                                    disabled={selectedGenes.length === 0}
                                 >
-                                    {distanceMeasureOption.label}
-                                </MenuItem>
-                            ))}
-                        </DictySelect>
-                    </DistanceMeasureFormControl>
+                                    {selectedGenes.map((gene) => (
+                                        <MenuItem value={gene.feature_id} key={gene.feature_id}>
+                                            {gene.name}
+                                        </MenuItem>
+                                    ))}
+                                </DictySelect>
+                            </QueryGeneSelectFormControl>
+                            <DistanceMeasureFormControl>
+                                <DictySelect
+                                    disabled={selectedGenes.length === 0}
+                                    label="Distance Measure"
+                                    value={distanceMeasure}
+                                    handleOnChange={(event: SelectChangeEvent<unknown>): void => {
+                                        connectedGenesSimilaritiesDistanceMeasureChanged(
+                                            event.target.value as DistanceMeasure,
+                                        );
+                                    }}
+                                >
+                                    {distanceMeasureOptions.map((distanceMeasureOption) => (
+                                        <MenuItem
+                                            value={distanceMeasureOption.value}
+                                            key={distanceMeasureOption.value}
+                                        >
+                                            {distanceMeasureOption.label}
+                                        </MenuItem>
+                                    ))}
+                                </DictySelect>
+                            </DistanceMeasureFormControl>
+                        </div>
+                        {similarGenes == null && (
+                            <Button
+                                onClick={() => {
+                                    connectedFetchGenesSimilarities();
+                                }}
+                            >
+                                Find
+                            </Button>
+                        )}
+                    </Box>
+
                     <SimilarGenesGridWrapper>
                         <DictyGrid
-                            data={similarGenes}
-                            isFetching={isFetchingGenesSimilarities || isFetchingSimilarGenes}
+                            data={similarGenes ?? []}
+                            isFetching={isLoading}
                             getRowId={(data): string => data.feature_id}
                             filterLabel="Filter"
                             selectedData={selectedSimilarGenes}
@@ -212,7 +223,7 @@ const FindSimilarGenesModal = ({
                     </SimilarGenesGridWrapper>
                 </ModalBody>
                 <GeneSelectorModalControls
-                    allGenesIds={similarGenes.map((gene) => gene.feature_id)}
+                    allGenesIds={similarGenes?.map((gene) => gene.feature_id) ?? []}
                     selectedGenesIds={selectedSimilarGenes.map((gene) => gene.feature_id)}
                     onClose={handleOnClose}
                 />

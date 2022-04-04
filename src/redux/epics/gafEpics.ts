@@ -1,5 +1,5 @@
 import { Epic, combineEpics } from 'redux-observable';
-import { map, mergeMap, catchError, filter } from 'rxjs/operators';
+import { map, catchError, filter, switchMap } from 'rxjs/operators';
 import { of, from } from 'rxjs';
 import { RootState } from 'redux/rootReducer';
 import { DataGafAnnotation } from '@genialis/resolwe/dist/api/types/rest';
@@ -33,23 +33,20 @@ const fetchGafEpic: Epic<Action, Action, RootState> = (action$, state$) => {
             () => _.isEmpty(getGaf(state$.value.gOEnrichment)),
         ),
         filter((selectedGenes) => selectedGenes.length > 0),
-        mergeMap((selectedGenes) => {
+        map((selectedGenes) => [selectedGenes[0].source, selectedGenes[0].species]),
+        switchMap(([source, species]) => {
             return from(getGafs()).pipe(
                 map((gafs) => (gafs.length === 0 ? null : gafs)),
                 filterNullAndUndefined(),
                 map((gafs) => {
-                    const annotationGaf = findAppropriateGaf(
-                        selectedGenes[0].source,
-                        selectedGenes[0].species,
-                        gafs,
-                    );
+                    const annotationGaf = findAppropriateGaf(source, species, gafs);
 
                     if (annotationGaf != null) {
                         return gafFetchSucceeded(annotationGaf);
                     }
 
                     throw new Error(
-                        `No matching GAF annotation was found for species '${selectedGenes[0].species}'.`,
+                        `No matching GAF annotation was found for species '${species}'.`,
                     );
                 }),
                 catchError((error) =>
