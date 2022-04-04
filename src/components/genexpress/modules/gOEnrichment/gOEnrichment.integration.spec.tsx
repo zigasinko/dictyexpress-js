@@ -333,6 +333,8 @@ describe('goEnrichment integration', () => {
                 { timeout: 2500 },
             );
 
+            await screen.findByTestId('ScheduleIcon');
+
             await waitFor(() => {
                 webSocketMock.send(
                     JSON.stringify({

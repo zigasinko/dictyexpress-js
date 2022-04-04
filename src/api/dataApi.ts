@@ -46,7 +46,7 @@ export const getDataReactive = async <T>(
     dataId: number,
     handleDataResponse: (items: T) => Observable<Action | never>,
 ): Promise<{ item: T; disposeFunction: QueryObserverDisposeFunction }> => {
-    const getClusteringDataRequest = (): Promise<Response> => getReactive(baseUrl, { id: dataId });
+    const getDataRequest = (): Promise<Response> => getReactive(baseUrl, { id: dataId });
 
     const webSocketMessageOutputReduxAction = (
         items: unknown[],
@@ -55,7 +55,7 @@ export const getDataReactive = async <T>(
     };
 
     const { items, disposeFunction } = await reactiveRequest<T>(
-        getClusteringDataRequest,
+        getDataRequest,
         webSocketMessageOutputReduxAction,
     );
     return { item: items[0], disposeFunction };

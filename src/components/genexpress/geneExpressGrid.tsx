@@ -12,13 +12,13 @@ import {
 import { breakpoints } from 'components/app/globalStyle';
 import { defaultBreakpointCols, getLayouts, layoutsChanged } from 'redux/stores/layouts';
 import _ from 'lodash';
-import { getIsFetchingGOEnrichmentJson } from 'redux/stores/gOEnrichment';
+import { getGOEnrichmentStatus, getIsFetchingGOEnrichmentJson } from 'redux/stores/gOEnrichment';
 import {
     appStarted,
     fetchAndSelectPredefinedGenes,
     selectFirstTimeSeries,
 } from 'redux/epics/epicsActions';
-import { getIsFetchingClusteringData } from 'redux/stores/clustering';
+import { getClusteringStatus, getIsFetchingClusteringData } from 'redux/stores/clustering';
 import { useLocation } from 'react-router-dom';
 import { loadBookmarkedState } from 'managers/bookmarkStateManager';
 import { getUrlQueryParameter } from 'utils/url';
@@ -51,6 +51,8 @@ const mapStateToProps = (state: RootState) => {
         isLoggingOut: getIsLoggingOut(state.authentication),
         isFetchingGOEnrichmentJson: getIsFetchingGOEnrichmentJson(state.gOEnrichment),
         isFetchingClusteringData: getIsFetchingClusteringData(state.clustering),
+        clusteringStatus: getClusteringStatus(state.clustering),
+        gOEnrichmentStatus: getGOEnrichmentStatus(state.gOEnrichment),
     };
 };
 
@@ -72,6 +74,8 @@ const GeneExpressGrid = ({
     isFetchingClusteringData,
     isLoggingOut,
     isFetchingGOEnrichmentJson,
+    clusteringStatus,
+    gOEnrichmentStatus,
     connectedLayoutsChanged,
     connectedFetchAndSelectPredefinedGenes,
     connectedSelectFirstTimeSeries,
@@ -161,6 +165,7 @@ const GeneExpressGrid = ({
                         <DictyModule
                             title="Gene Ontology Enrichment"
                             isLoading={isFetchingGOEnrichmentJson}
+                            status={gOEnrichmentStatus}
                         >
                             <GOEnrichment />
                         </DictyModule>
@@ -169,6 +174,7 @@ const GeneExpressGrid = ({
                         <DictyModule
                             title="Hierarchical Clustering"
                             isLoading={isFetchingClusteringData}
+                            status={clusteringStatus}
                         >
                             <Clustering />
                         </DictyModule>

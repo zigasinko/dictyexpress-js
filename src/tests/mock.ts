@@ -689,6 +689,7 @@ export const testState = (): RootState => {
             isFetchingBookmarkedGenes: false,
         },
         genesSimilarities: {
+            status: null,
             data: [],
             queryGeneId: null,
             distanceMeasure: DistanceMeasure.spearman,
@@ -705,6 +706,7 @@ export const testState = (): RootState => {
             selectedId: 0,
         },
         gOEnrichment: {
+            status: null,
             json: null,
             gaf: generateGaf(1).humanGaf,
             source: '',
@@ -714,6 +716,7 @@ export const testState = (): RootState => {
             ontologyObo: { id: 24330 } as Data,
         },
         clustering: {
+            status: null,
             distanceMeasure: DistanceMeasure.pearson,
             isFetchingClusteringData: false,
             linkageFunction: ClusteringLinkageFunction.average,

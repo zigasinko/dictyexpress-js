@@ -1,3 +1,4 @@
+import { DataStatus } from '@genialis/resolwe/dist/api/types/rest';
 import { createSlice, PayloadAction, combineReducers } from '@reduxjs/toolkit';
 import { DistanceMeasure } from 'components/genexpress/common/constants';
 import { GeneSimilarity } from 'redux/models/internal';
@@ -61,9 +62,21 @@ const genesSimilaritiesSlice = createSlice({
     },
 });
 
+const similaritiesStatusInitialState = null as DataStatus | null;
+const similaritiesStatusSlice = createSlice({
+    name: 'genesSimilarities',
+    initialState: similaritiesStatusInitialState,
+    reducers: {
+        updated: (_state, action: PayloadAction<DataStatus | null>) => {
+            return action.payload;
+        },
+    },
+});
+
 const isFetchingGenesSimilaritiesSlice = createIsFetchingSlice('genesSimilarities');
 
 const genesSimilaritiesReducer = combineReducers({
+    status: similaritiesStatusSlice.reducer,
     data: genesSimilaritiesSlice.reducer,
     queryGeneId: queryGeneIdSlice.reducer,
     distanceMeasure: distanceMeasureSlice.reducer,
@@ -78,6 +91,7 @@ export const { selected: genesSimilaritiesQueryGeneSelected, set: genesSimilarit
     queryGeneIdSlice.actions;
 export const { distanceMeasureChanged: genesSimilaritiesDistanceMeasureChanged } =
     distanceMeasureSlice.actions;
+export const { updated: genesSimilaritiesStatusUpdated } = similaritiesStatusSlice.actions;
 
 export type GenesSimilaritiesState = ReturnType<typeof genesSimilaritiesReducer>;
 
@@ -93,3 +107,4 @@ export const getIsFetchingGenesSimilarities = (state: GenesSimilaritiesState): b
 export const getGenesSimilaritiesDistanceMeasure = (
     state: GenesSimilaritiesState,
 ): DistanceMeasure => state.distanceMeasure;
+export const getGenesSimilaritiesStatus = (state: GenesSimilaritiesState) => state.status;

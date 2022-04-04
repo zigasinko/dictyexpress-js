@@ -1,3 +1,4 @@
+import { DONE_DATA_STATUS } from '@genialis/resolwe/dist/api/types/rest';
 import { DistanceMeasure, ClusteringLinkageFunction } from 'components/genexpress/common/constants';
 import _ from 'lodash';
 import { mergeClusteringData } from 'redux/epics/clusteringEpics';
@@ -23,6 +24,7 @@ describe('clusteringStore store', () => {
     describe('empty initial state', () => {
         beforeEach(() => {
             initialState = {
+                status: null,
                 mergedData: null,
                 distanceMeasure: DistanceMeasure.spearman,
                 linkageFunction: ClusteringLinkageFunction.average,
@@ -73,6 +75,7 @@ describe('clusteringStore store', () => {
     describe('not empty initial state', () => {
         beforeEach(() => {
             initialState = {
+                status: DONE_DATA_STATUS,
                 mergedData: mergedClusteringData,
                 distanceMeasure: DistanceMeasure.spearman,
                 linkageFunction: ClusteringLinkageFunction.average,

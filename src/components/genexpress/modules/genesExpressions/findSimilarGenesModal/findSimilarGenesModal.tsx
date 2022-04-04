@@ -21,6 +21,7 @@ import {
     getGenesSimilarities,
     getGenesSimilaritiesDistanceMeasure,
     getGenesSimilaritiesQueryGeneId,
+    getGenesSimilaritiesStatus,
     getIsFetchingGenesSimilarities,
 } from 'redux/stores/genesSimilarities';
 import { formatNumber } from 'utils/math';
@@ -33,6 +34,7 @@ import {
 import ToDictybaseCell from './toDictybaseCell/toDictybaseCell';
 import { SelectChangeEvent } from '@mui/material';
 import { LoadingBar } from 'components/genexpress/common/dictyModule/dictyModule.styles';
+import { StatusIcon } from 'components/genexpress/common/statusIcon';
 
 export const distanceMeasureOptions: Option<DistanceMeasure>[] = [
     { value: DistanceMeasure.spearman, label: 'Spearman' },
@@ -49,6 +51,7 @@ const mapStateToProps = (state: RootState) => {
         genesSimilarities: getGenesSimilarities(state.genesSimilarities),
         isFetchingGenesSimilarities: getIsFetchingGenesSimilarities(state.genesSimilarities),
         isFetchingSimilarGenes: getIsFetchingSimilarGenes(state.genes),
+        genesSimilaritiesStatus: getGenesSimilaritiesStatus(state.genesSimilarities),
     };
 };
 
@@ -111,6 +114,7 @@ const FindSimilarGenesModal = ({
     handleOnClose,
     isFetchingGenesSimilarities,
     isFetchingSimilarGenes,
+    genesSimilaritiesStatus,
     connectedFetchGenesSimilarities,
     connectedGenesSimilaritiesQueryGeneSelected,
     connectedGenesSimilaritiesDistanceMeasureChanged,
@@ -157,6 +161,9 @@ const FindSimilarGenesModal = ({
             <ModalContainer>
                 <ModalHeader id="modalTitle">
                     Find Similar Genes
+                    {genesSimilaritiesStatus != null && (
+                        <StatusIcon status={genesSimilaritiesStatus} />
+                    )}
                     {isLoading && <LoadingBar color="secondary" />}
                 </ModalHeader>
                 <ModalBody>

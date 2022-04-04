@@ -13,6 +13,8 @@ import {
     catchError,
     withLatestFrom,
     filter,
+    switchMap,
+    first,
 } from 'rxjs/operators';
 import { of, from, EMPTY, Observable, merge } from 'rxjs';
 import { getBasketInfo } from 'redux/stores/timeSeries';
@@ -110,10 +112,11 @@ const fetchAssociationsGenesEpic = fetchGenesEpicsFactory(
 const fetchPredefinedGenesEpic: Epic<Action, Action, RootState> = (action$, state$) =>
     action$.pipe(
         filter(fetchAndSelectPredefinedGenes.match),
-        mergeMap((action) => {
+        switchMap((action) => {
             return state$.pipe(
                 mapStateSlice((state) => getBasketInfo(state.timeSeries)),
-                mergeMap((basketInfo) => {
+                first(),
+                switchMap((basketInfo) => {
                     return merge(
                         fetchGenesActionObservable(
                             action.payload.geneIds,

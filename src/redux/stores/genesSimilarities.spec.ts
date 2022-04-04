@@ -18,6 +18,7 @@ describe('genesSimilarities store', () => {
     describe('empty initial state', () => {
         beforeEach(() => {
             initialState = {
+                status: null,
                 data: null,
                 queryGeneId: null,
                 distanceMeasure: DistanceMeasure.pearson,
@@ -68,6 +69,7 @@ describe('genesSimilarities store', () => {
     describe('not empty initial state', () => {
         beforeEach(() => {
             initialState = {
+                status: null,
                 data: genesSimilaritiesJson,
                 queryGeneId: genes[1].feature_id,
                 distanceMeasure: DistanceMeasure.spearman,

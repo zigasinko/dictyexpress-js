@@ -2,7 +2,7 @@ import { RootState } from 'redux/rootReducer';
 import { getSelectedGenesIds } from 'redux/stores/genes';
 import _ from 'lodash';
 import { getBasketExpressionsIds } from 'redux/stores/timeSeries';
-import { Storage } from '@genialis/resolwe/dist/api/types/rest';
+import { DataStatus, Storage } from '@genialis/resolwe/dist/api/types/rest';
 import { FindSimilarGenesData } from 'redux/models/rest';
 import {
     getGenesSimilaritiesDistanceMeasure,
@@ -12,6 +12,7 @@ import {
     genesSimilaritiesFetchStarted,
     genesSimilaritiesFetchSucceeded,
     genesSimilaritiesQueryGeneSet,
+    genesSimilaritiesStatusUpdated,
 } from 'redux/stores/genesSimilarities';
 import { combineEpics, Epic, ofType } from 'redux-observable';
 import { filter, map, mergeMap, switchMap, withLatestFrom } from 'rxjs/operators';
@@ -101,6 +102,7 @@ const getFindSimilarGenesProcessDataEpics = getProcessDataEpicsFactory<FindSimil
     },
     actionFromStorageResponse: (storage: Storage) =>
         genesSimilaritiesFetchSucceeded(storage.json['similar genes']),
+    actionFromStatusUpdate: (status: DataStatus | null) => genesSimilaritiesStatusUpdated(status),
 });
 
 const handleSelectedGenesChangedEpic: Epic<Action, Action, RootState> = (action$, state$) => {

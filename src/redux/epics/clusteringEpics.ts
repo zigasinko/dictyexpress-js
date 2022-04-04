@@ -11,6 +11,7 @@ import {
     getClusteringDistanceMeasure,
     getClusteringLinkageFunction,
     getMergedClusteringData,
+    clusteringStatusUpdated,
 } from 'redux/stores/clustering';
 import {
     getSourceFromFeatures,
@@ -18,7 +19,7 @@ import {
 } from '@genialis/resolwe/dist/api/types/utils';
 import { GenesById, MergedClusteringData } from 'redux/models/internal';
 import { Feature } from '@genialis/resolwe/dist/api/types/modules';
-import { GeneClustering, Storage } from '@genialis/resolwe/dist/api/types/rest';
+import { DataStatus, GeneClustering, Storage } from '@genialis/resolwe/dist/api/types/rest';
 import { ClusteringData } from 'redux/models/rest';
 import { filter, switchMap } from 'rxjs/operators';
 import { fetchClusteringData, fetchClusteringDataSucceeded } from './epicsActions';
@@ -124,6 +125,7 @@ const getClusteringProcessDataEpics = getProcessDataEpicsFactory<ClusteringData>
         mergedClusteringDataFetchSucceeded(
             mergeClusteringData(storage.json, getGenesById(state.genes)),
         ),
+    actionFromStatusUpdate: (status: DataStatus | null) => clusteringStatusUpdated(status),
 });
 
 export default getClusteringProcessDataEpics;

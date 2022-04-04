@@ -28,10 +28,10 @@ test.describe('Expression time courses', () => {
                 await (await queryAllByRole('button', { name: 'Run dictyExpress' }))[0].click();
                 await (await getByRole('button', { name: 'Login' })).click();
                 await (
-                    await getByLabelText('Username')
-                ).fill(process.env.LOGIN_USERNAME ?? 'not-provided');
+                    await getByLabelText('E-mail *')
+                ).fill(process.env.LOGIN_EMAIL ?? 'not-provided');
                 await (
-                    await getByLabelText('Password')
+                    await getByLabelText('Password *')
                 ).fill(process.env.LOGIN_PASSWORD ?? 'not-provided');
                 await (await getByRole('button', { name: 'SIGN IN' })).click();
                 await page.waitForResponse(

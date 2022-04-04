@@ -2,6 +2,7 @@ import {
     Data,
     DataGafAnnotation,
     DataGOEnrichmentAnalysis,
+    DataStatus,
     GOEnrichmentJson,
 } from '@genialis/resolwe/dist/api/types/rest';
 import { combineReducers, createSlice, PayloadAction } from '@reduxjs/toolkit';
@@ -112,9 +113,21 @@ const ontologyOboSlice = createSlice({
     },
 });
 
+const gOEnrichmentStatusInitialState = null as DataStatus | null;
+const gOEnrichmentStatusSlice = createSlice({
+    name: 'gOEnrichment',
+    initialState: gOEnrichmentStatusInitialState,
+    reducers: {
+        updated: (_state, action: PayloadAction<DataStatus | null>) => {
+            return action.payload;
+        },
+    },
+});
+
 const isFetchingGOEnrichmentJsonSlice = createIsFetchingSlice('gOEnrichment');
 
 const gOEnrichmentReducer = combineReducers({
+    status: gOEnrichmentStatusSlice.reducer,
     json: gOEnrichmentJsonSlice.reducer,
     gaf: gafSlice.reducer,
     isFetchingJson: isFetchingGOEnrichmentJsonSlice.reducer,
@@ -136,6 +149,8 @@ export const { ontologyOboFetchSucceeded } = ontologyOboSlice.actions;
 
 export const { fetchSucceeded: gOEnrichmentJsonFetchSucceeded } = gOEnrichmentJsonSlice.actions;
 
+export const { updated: gOEnrichmentStatusUpdated } = gOEnrichmentStatusSlice.actions;
+
 export type GOEnrichmentState = ReturnType<typeof gOEnrichmentReducer>;
 
 export default gOEnrichmentReducer;
@@ -150,3 +165,4 @@ export const getGaf = (state: GOEnrichmentState): DataGafAnnotation | null => st
 export const getGOEnrichmentSpecies = (state: GOEnrichmentState): string => state.species;
 export const getGOEnrichmentSource = (state: GOEnrichmentState): string => state.source;
 export const getOntologyObo = (state: GOEnrichmentState): Data | null => state.ontologyObo;
+export const getGOEnrichmentStatus = (state: GOEnrichmentState) => state.status;

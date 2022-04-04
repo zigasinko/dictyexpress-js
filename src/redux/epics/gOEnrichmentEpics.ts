@@ -12,6 +12,7 @@ import {
     gOEnrichmentJsonFetchEnded,
     gOEnrichmentJsonFetchStarted,
     gOEnrichmentJsonFetchSucceeded,
+    gOEnrichmentStatusUpdated,
 } from 'redux/stores/gOEnrichment';
 import { appendMissingAttributesToJson } from 'utils/gOEnrichmentUtils';
 import { DataGOEnrichmentAnalysis, Storage } from '@genialis/resolwe/dist/api/types/rest';
@@ -81,6 +82,7 @@ const getGOEnrichmentProcessDataEpics = getProcessDataEpicsFactory<DataGOEnrichm
         appendMissingAttributesToJson(storage.json, source, species);
         return gOEnrichmentJsonFetchSucceeded(storage.json);
     },
+    actionFromStatusUpdate: (status) => gOEnrichmentStatusUpdated(status),
 });
 
 export default getGOEnrichmentProcessDataEpics;

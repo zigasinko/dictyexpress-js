@@ -14,6 +14,9 @@ export const ModalContainer = styled.div`
 `;
 
 export const ModalHeader = styled.h3`
+    display: flex;
+    align-items: center;
+    gap: 10px;
     position: relative;
     border-bottom: 1px solid #e5e5e5;
     min-height: 16px;

@@ -1,3 +1,4 @@
+import { DataStatus } from '@genialis/resolwe/dist/api/types/rest';
 import { combineReducers, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { DistanceMeasure, ClusteringLinkageFunction } from 'components/genexpress/common/constants';
 import { MergedClusteringData } from 'redux/models/internal';
@@ -29,6 +30,17 @@ const linkageFunctionSlice = createSlice({
             _state,
             action: PayloadAction<ClusteringLinkageFunction>,
         ): ClusteringLinkageFunction => {
+            return action.payload;
+        },
+    },
+});
+
+const clusteringStatusInitialState = null as DataStatus | null;
+const clusteringStatusSlice = createSlice({
+    name: 'clustering',
+    initialState: clusteringStatusInitialState,
+    reducers: {
+        updated: (_state, action: PayloadAction<DataStatus | null>) => {
             return action.payload;
         },
     },
@@ -66,6 +78,7 @@ const isFetchingClusteringDataSlice = createIsFetchingSlice('clustering');
 
 const clusteringReducer = combineReducers({
     mergedData: mergedClusteringDataSlice.reducer,
+    status: clusteringStatusSlice.reducer,
     distanceMeasure: distanceMeasureSlice.reducer,
     linkageFunction: linkageFunctionSlice.reducer,
     isFetchingClusteringData: isFetchingClusteringDataSlice.reducer,
@@ -82,6 +95,8 @@ export const { linkageFunctionChanged: clusteringLinkageFunctionChanged } =
 export const { fetchSucceeded: mergedClusteringDataFetchSucceeded } =
     mergedClusteringDataSlice.actions;
 
+export const { updated: clusteringStatusUpdated } = clusteringStatusSlice.actions;
+
 export type ClusteringState = ReturnType<typeof clusteringReducer>;
 
 export default clusteringReducer;
@@ -94,3 +109,4 @@ export const getClusteringDistanceMeasure = (state: ClusteringState): DistanceMe
     state.distanceMeasure;
 export const getClusteringLinkageFunction = (state: ClusteringState): ClusteringLinkageFunction =>
     state.linkageFunction;
+export const getClusteringStatus = (state: ClusteringState) => state.status;

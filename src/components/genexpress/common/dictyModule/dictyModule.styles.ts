@@ -10,6 +10,10 @@ export const ModuleContainer = styled.div`
 
 export const ModuleHeader = styled.div`
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     width: 100%;
     font-size: 1rem;
     background-color: #eee;

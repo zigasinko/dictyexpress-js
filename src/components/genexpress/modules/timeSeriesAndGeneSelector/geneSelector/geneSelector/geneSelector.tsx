@@ -65,7 +65,7 @@ const GeneSelector = ({
     const { enqueueSnackbar } = useSnackbar();
     const dispatch = useDispatch();
 
-    const isDisabled = _.isEmpty(basketInfo) || isFetching;
+    const isDisabled = _.isEmpty(basketInfo);
 
     // TODO: Latest version of eslint (7.19.0) has a problem inferring dependencies from non-wrapped
     // functions. Enable this eslint rule once it's fixed.

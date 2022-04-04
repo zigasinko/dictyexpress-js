@@ -41,6 +41,7 @@ describe('gOEnrichmentStore store', () => {
     describe('empty initial state', () => {
         beforeEach(() => {
             initialState = {
+                status: null,
                 json: null,
                 gaf: null,
                 source: '',
@@ -118,6 +119,7 @@ describe('gOEnrichmentStore store', () => {
     describe('not empty initial state', () => {
         beforeEach(() => {
             initialState = {
+                status: null,
                 json: gOEnrichmentJson,
                 gaf: humanGaf,
                 source: 'DICTYBASE',

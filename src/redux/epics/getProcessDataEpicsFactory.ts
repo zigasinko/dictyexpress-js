@@ -9,13 +9,14 @@ import {
     mergeMap,
     filter,
 } from 'rxjs/operators';
-import { of, from, EMPTY, Observable, merge, isObservable } from 'rxjs';
+import { of, from, Observable, merge, isObservable, EMPTY } from 'rxjs';
 import { RootState } from 'redux/rootReducer';
 import { handleError } from 'utils/errorUtils';
 import { Action, ActionCreatorWithoutPayload, ActionCreatorWithPayload } from '@reduxjs/toolkit';
 import { DisposeFunction as QueryObserverDisposeFunction } from 'managers/queryObserverManager';
 import {
     Data,
+    DataStatus,
     DONE_DATA_STATUS,
     ERROR_DATA_STATUS,
     Storage,
@@ -57,6 +58,7 @@ export type ProcessDataEpicsFactoryProps<DataType> = {
     fetchDataSucceededActionCreator: ActionCreatorWithPayload<DataType>;
     getStorageIdFromData: (data: DataType) => number;
     actionFromStorageResponse: (storage: Storage, state: RootState) => Action;
+    actionFromStatusUpdate: (status: DataStatus | null) => Action;
 };
 
 const getProcessDataEpicsFactory = <DataType extends Data>({
@@ -68,14 +70,16 @@ const getProcessDataEpicsFactory = <DataType extends Data>({
     fetchDataSucceededActionCreator,
     getStorageIdFromData,
     actionFromStorageResponse,
+    actionFromStatusUpdate,
 }: ProcessDataEpicsFactoryProps<DataType>): Epic<Action, Action, RootState> => {
     const handleProcessEndedWithError = (message: string, error?: Error): Observable<Action> => {
         return merge(of(handleError(message, error)), of(processEndedActionCreator()));
     };
 
     const handleAnalysisDataResponse = (response: DataType): Observable<Action | never> => {
+        let resultAction = EMPTY as Observable<Action<unknown>> | Observable<never>;
         if (response.status === ERROR_DATA_STATUS) {
-            return handleProcessEndedWithError(
+            resultAction = handleProcessEndedWithError(
                 `${processInfo.name} analysis ended with an error ${
                     response.process_error.length > 0 ? response.process_error[0] : ''
                 }`,
@@ -83,10 +87,10 @@ const getProcessDataEpicsFactory = <DataType extends Data>({
         }
 
         if (response.status === DONE_DATA_STATUS && getStorageIdFromData(response) != null) {
-            return of(fetchDataSucceededActionCreator(response));
+            resultAction = of(fetchDataSucceededActionCreator(response));
         }
 
-        return EMPTY;
+        return merge(of(actionFromStatusUpdate(response.status)), resultAction);
     };
 
     const getOrCreateEpic: Epic<Action, Action, RootState> = (action$, state$) => {

@@ -30,8 +30,8 @@ describe('genexpressAppBar', () => {
         it('should open login modal', async () => {
             fireEvent.click(await screen.findByText('Login'));
 
-            expect(await screen.findByLabelText('Username'));
-            expect(await screen.findByLabelText('Password'));
+            expect(await screen.findByLabelText('E-mail *'));
+            expect(await screen.findByLabelText('Password *'));
         });
     });
 

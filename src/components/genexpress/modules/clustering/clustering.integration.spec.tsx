@@ -649,6 +649,8 @@ describe('clustering integration', () => {
                 expect(getFetchMockCallsWithUrl(`api/data?id=${dataId}`)).toHaveLength(1);
             });
 
+            await screen.findByTestId('ScheduleIcon');
+
             await waitFor(() => {
                 webSocketMock.send(
                     JSON.stringify({
