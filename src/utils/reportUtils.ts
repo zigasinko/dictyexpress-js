@@ -1,15 +1,15 @@
 import _ from 'lodash';
 import * as vega from 'vega';
 
-export const objectsArrayToTsv = (rows: Record<string, unknown>[]): string => {
-    if (_.isEmpty(rows) || _.isEmpty(rows[0])) {
+export const objectsArrayToTsv = (data: Record<string, unknown>[]): string => {
+    if (_.isEmpty(data) || _.isEmpty(data[0])) {
         return '';
     }
-    const array = [Object.keys(rows[0]), ...rows];
 
-    return array
-        .map((it) => {
-            return Object.values(it).join('\t');
+    const headers = Object.keys(data[0]);
+    return [headers, ...data]
+        .map((item) => {
+            return Object.values(item).join('\t');
         })
         .join('\n');
 };

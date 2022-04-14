@@ -79,5 +79,5 @@ export const exportToZip = async (prefix: string): Promise<void> => {
         logError('All exported files must have unique paths.');
     }
 
-    void saveJsZip(createJsZip(uniqueFiles), prefix);
+    return saveJsZip(createJsZip(uniqueFiles), prefix);
 };

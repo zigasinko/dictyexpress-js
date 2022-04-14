@@ -1,5 +1,5 @@
 import React, { ReactElement, useState, useEffect, useRef } from 'react';
-import { Button, Popover, Menu, MenuItem } from '@mui/material';
+import { Button, CircularProgress, Popover, Menu, MenuItem } from '@mui/material';
 import { Bookmark as BookmarkIcon } from '@mui/icons-material';
 import dictyLogo from 'images/favicon.ico';
 import { connect, ConnectedProps, useStore } from 'react-redux';
@@ -87,6 +87,7 @@ const GenexpressAppBar = ({
     const bookmarkButtonElement = useRef<HTMLButtonElement>(null);
     const userButtonElement = useRef<HTMLButtonElement>(null);
     const [bookmark, setBookmark] = useState('');
+    const [isExporting, setIsExporting] = useState(false);
 
     useEffect(() => {
         if (isLoggedIn) {
@@ -97,8 +98,11 @@ const GenexpressAppBar = ({
     /**
      * Execute export once user clicks on Export button in export prefix modal.
      */
-    const handleExportPrefix = (prefix: string): void => {
-        void reportBuilder.exportToZip(prefix);
+    const handleExportPrefix = async (prefix: string) => {
+        setIsExporting(true);
+        await reportBuilder.exportToZip(prefix);
+
+        setIsExporting(false);
     };
 
     const handleBookmarkClick = async (): Promise<void> => {
@@ -108,11 +112,7 @@ const GenexpressAppBar = ({
             DictyUrlQueryParameter.appState,
             await saveBookmarkState(store.getState()),
         );
-        /* const url = updateUrlParameter(
-        window.location.href,
-        DictyUrlQueryParameter.appState,
-        await saveBookmarkState(store.getState()),
-    ); */
+
         setBookmark(url.toString());
         setBookmarkPopoverOpened(true);
     };
@@ -128,7 +128,9 @@ const GenexpressAppBar = ({
     const desktopSection = (
         <DesktopSectionContainer>
             <TitleContainer>
-                <DictyLogo src={dictyLogo} alt="dictyExpress logo" />
+                <a href="/">
+                    <DictyLogo src={dictyLogo} alt="dictyExpress logo" />
+                </a>
                 <GenexpressTitle>{process.env.REACT_APP_NAME}</GenexpressTitle>
                 <Version />
             </TitleContainer>
@@ -147,14 +149,16 @@ const GenexpressAppBar = ({
                     title={
                         areExportingModulesLoading
                             ? 'Export will be available when all modules are loaded.'
+                            : isExporting
+                            ? 'Exporting'
                             : 'Export'
                     }
-                    disabled={areExportingModulesLoading}
+                    disabled={areExportingModulesLoading || isExporting}
                     onClick={(): void => {
                         setExportPrefixModalOpened(true);
                     }}
                 >
-                    <DownloadIcon />
+                    {isExporting ? <CircularProgress size={20} /> : <DownloadIcon />}
                 </IconButtonWithTooltip>
                 <Button onClick={connectedLayoutsReset}>Default layout</Button>
                 {isLoggedIn ? (
@@ -206,7 +210,9 @@ const GenexpressAppBar = ({
                     confirmButtonLabel="Export"
                     validationRegex={/^[A-Za-z0-9 .\-_()[\]]*$/}
                     onClose={(): void => setExportPrefixModalOpened(false)}
-                    onConfirm={handleExportPrefix}
+                    onConfirm={(value) => {
+                        void handleExportPrefix(value);
+                    }}
                 />
             )}
             <Popover

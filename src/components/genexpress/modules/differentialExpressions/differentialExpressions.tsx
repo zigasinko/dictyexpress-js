@@ -201,7 +201,18 @@ positives.
         async (processFile) => {
             processFile(
                 'Differential Expressions/selected_differential_expression.tsv',
-                objectsArrayToTsv([_.omit(selectedDifferentialExpression, ['output'])]),
+                objectsArrayToTsv([
+                    _.pick(selectedDifferentialExpression, [
+                        'name',
+                        'slug',
+                        'created',
+                        'logfc_threshold',
+                        'prob_field',
+                        'prob_threshold',
+                        'up_regulated',
+                        'down_regulated',
+                    ]),
+                ]),
                 false,
             );
 

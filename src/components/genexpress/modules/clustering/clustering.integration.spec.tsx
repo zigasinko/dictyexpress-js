@@ -536,7 +536,12 @@ describe('clustering integration', () => {
                     (exportFile) => {
                         expect(exportFile?.content).toEqual(
                             objectsArrayToTsv(
-                                (initialState.clustering.mergedData as MergedClusteringData).order,
+                                (
+                                    initialState.clustering.mergedData as MergedClusteringData
+                                ).order.map((datum) => ({
+                                    ...datum,
+                                    gene: datum.gene.name,
+                                })),
                             ),
                         );
                     },

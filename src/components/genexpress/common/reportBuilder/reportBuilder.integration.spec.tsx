@@ -32,8 +32,14 @@ describe('reportBuilder integration', () => {
         // Export button in prefix modal.
         fireEvent.click(await screen.findByRole('button', { name: 'Export' }));
 
+        expect(screen.queryByTestId('GetAppIcon')).toBeNull();
+        screen.getByRole('progressbar');
+
         await waitFor(() => {
             expect(saveAsSpy).toBeCalled();
         });
+
+        screen.getByTestId('GetAppIcon');
+        expect(screen.queryByRole('progressbar')).toBeNull();
     });
 });

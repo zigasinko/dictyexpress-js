@@ -242,7 +242,12 @@ Clustering was done on ${selectedGenes.length === 0 ? 'all genes' : `selected ge
                 );
                 processFile(
                     'Sample Hierarchical Clustering/clustering_table/order.tsv',
-                    objectsArrayToTsv(mergedData.order),
+                    objectsArrayToTsv(
+                        mergedData.order.map((datum) => ({
+                            ...datum,
+                            gene: datum.gene.name,
+                        })),
+                    ),
                     false,
                 );
             }
