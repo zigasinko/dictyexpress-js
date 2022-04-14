@@ -36,6 +36,7 @@ import TextInputModal from '../common/textInputModal/textInputModal';
 import { ModalHeader } from '../common/dictyModal/dictyModal.styles';
 import { DictyUrlQueryParameter } from '../common/constants';
 import { Version } from '../../common/version';
+import { Link } from 'react-router-dom';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const mapStateToProps = (state: RootState) => {
@@ -128,9 +129,9 @@ const GenexpressAppBar = ({
     const desktopSection = (
         <DesktopSectionContainer>
             <TitleContainer>
-                <a href="/">
+                <Link to="/">
                     <DictyLogo src={dictyLogo} alt="dictyExpress logo" />
-                </a>
+                </Link>
                 <GenexpressTitle>{process.env.REACT_APP_NAME}</GenexpressTitle>
                 <Version />
             </TitleContainer>

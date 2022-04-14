@@ -11,6 +11,7 @@ import {
     HomeDescription,
     HomeDemo,
 } from './home.styles';
+import { Link } from 'react-router-dom';
 
 const Home = (): ReactElement => (
     <HomeContainer id="home">
@@ -29,7 +30,7 @@ const Home = (): ReactElement => (
                     </p>
                     <p>
                         <HomeRunDictyButton variant="outlined" role="button" name="enter-app">
-                            <a href="/bcm/">Run dictyExpress</a>
+                            <Link to="/bcm/">Run dictyExpress</Link>
                         </HomeRunDictyButton>
                     </p>
                 </HomeDescription>
