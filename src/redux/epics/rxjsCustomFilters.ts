@@ -19,7 +19,7 @@ export const filterNullAndUndefined = <T>() => {
 };
 
 export const mapStateSlice = <T>(
-    selector: (state: RootState) => T | null,
+    selector: (state: RootState) => T,
     // Filter if target state is already set (e.g. unit tests initialState).
     existenceFilter?: (value: T) => boolean,
 ) => {
@@ -27,7 +27,7 @@ export const mapStateSlice = <T>(
         state$.pipe(
             map((state) => selector(state)),
             distinctUntilChanged(),
-            filterNullAndUndefined(),
+            // filterNullAndUndefined(),
             filter((value) => existenceFilter?.(value) ?? true),
         );
 };

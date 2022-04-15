@@ -36,7 +36,7 @@ import { handleError } from 'utils/errorUtils';
 import { BasketInfo, Gene } from 'redux/models/internal';
 import { listByIds } from 'api';
 import { getGenesSimilarities } from 'redux/stores/genesSimilarities';
-import { mapStateSlice } from './rxjsCustomFilters';
+import { filterNullAndUndefined, mapStateSlice } from './rxjsCustomFilters';
 import {
     fetchAssociationsGenes,
     fetchAndSelectPredefinedGenes,
@@ -115,6 +115,7 @@ const fetchPredefinedGenesEpic: Epic<Action, Action, RootState> = (action$, stat
         switchMap((action) => {
             return state$.pipe(
                 mapStateSlice((state) => getBasketInfo(state.timeSeries)),
+                filterNullAndUndefined(),
                 first(),
                 switchMap((basketInfo) => {
                     return merge(
@@ -140,6 +141,7 @@ const fetchPredefinedGenesEpic: Epic<Action, Action, RootState> = (action$, stat
 const fetchSimilarGenesEpic: Epic<Action, Action, RootState> = (action$, state$) => {
     return state$.pipe(
         mapStateSlice((state) => getGenesSimilarities(state.genesSimilarities)),
+        filterNullAndUndefined(),
         filter((genesSimilarities) => genesSimilarities.length > 0),
         withLatestFrom(state$),
         mergeMap(([genesSimilarities, state]) => {

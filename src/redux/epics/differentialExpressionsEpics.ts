@@ -18,7 +18,7 @@ import {
 } from 'redux/stores/differentialExpressions';
 import { getDifferentialExpressions, getStorage } from 'api';
 import { fetchDifferentialExpressionGenes } from './epicsActions';
-import { mapStateSlice } from './rxjsCustomFilters';
+import { filterNullAndUndefined, mapStateSlice } from './rxjsCustomFilters';
 
 const fetchDifferentialExpressionsEpic: Epic<Action, Action, RootState> = (action$, state$) => {
     return state$.pipe(
@@ -27,6 +27,7 @@ const fetchDifferentialExpressionsEpic: Epic<Action, Action, RootState> = (actio
             () =>
                 getStoreDifferentialExpressions(state$.value.differentialExpressions).length === 0,
         ),
+        filterNullAndUndefined(),
         mergeMap((basketId) => {
             return from(getDifferentialExpressions(basketId)).pipe(
                 mergeMap((differentialExpressions) => {
@@ -53,8 +54,9 @@ const fetchDifferentialExpressionsDataEpic: Epic<Action, Action, RootState> = (a
     return state$.pipe(
         mapStateSlice(
             (state) => getSelectedDifferentialExpression(state.differentialExpressions),
-            (selectedDifferentialExpression) => selectedDifferentialExpression.json == null,
+            (selectedDifferentialExpression) => selectedDifferentialExpression?.json == null,
         ),
+        filterNullAndUndefined(),
         mergeMap((selectedDifferentialExpression) => {
             return from(getStorage(selectedDifferentialExpression.output.de_json)).pipe(
                 mergeMap((storage) => {

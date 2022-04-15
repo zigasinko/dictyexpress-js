@@ -21,10 +21,10 @@ import getProcessDataEpicsFactory, {
     ProcessDataEpicsFactoryProps,
     ProcessesInfo,
 } from './getProcessDataEpicsFactory';
-import { mapStateSlice } from './rxjsCustomFilters';
+import { filterNullAndUndefined, mapStateSlice } from './rxjsCustomFilters';
 
 const processParametersObservable: ProcessDataEpicsFactoryProps<DataGOEnrichmentAnalysis>['processParametersObservable'] =
-    (action$, state$) => {
+    (_action$, state$) => {
         return combineLatest([
             state$.pipe(
                 mapStateSlice((state) => {
@@ -45,13 +45,15 @@ const processParametersObservable: ProcessDataEpicsFactoryProps<DataGOEnrichment
                 mapStateSlice((state) => {
                     return getOntologyObo(state.gOEnrichment);
                 }),
+                filterNullAndUndefined(),
             ),
         ]).pipe(
             filter(() => getGOEnrichmentJson(state$.value.gOEnrichment) == null),
             switchMap(([gaf, pValueThreshold, selectedGenes, ontologyObo]) => {
-                if (selectedGenes.length === 0) {
+                if (gaf == null || selectedGenes.length === 0) {
                     return of({});
                 }
+
                 return of({
                     genes: selectedGenes.map((gene) => gene.feature_id),
                     pval_threshold: pValueThreshold,

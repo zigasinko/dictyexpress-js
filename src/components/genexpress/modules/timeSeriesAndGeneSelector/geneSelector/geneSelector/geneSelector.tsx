@@ -213,14 +213,16 @@ const GeneSelector = ({
     useEffect(() => {
         if (
             selectedTimeSeriesRef.current !== selectedTimeSeries &&
-            selectedGenesRef.current.length > 0 &&
             autocompleteSource != null &&
             autocompleteType != null
         ) {
-            void handleImportedGenesNames([
-                ...selectedGenesRef.current.map((gene) => gene.name),
-                ...splitAndCleanGenesString(inputValue),
-            ]);
+            if (selectedGenesRef.current.length > 0 || inputValue !== '') {
+                void handleImportedGenesNames([
+                    ...selectedGenesRef.current.map((gene) => gene.name),
+                    ...splitAndCleanGenesString(inputValue),
+                ]);
+            }
+
             selectedTimeSeriesRef.current = selectedTimeSeries;
         }
     }, [

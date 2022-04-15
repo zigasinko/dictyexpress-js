@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { Gene, GenesById } from 'redux/models/internal';
 import createIsFetchingSlice from './fetch';
 import { clearStateOnActions } from './common';
+import { shallowEqual } from 'react-redux';
 
 // State slices.
 const genesByIdInitialState = {} as GenesById;
@@ -131,6 +132,7 @@ export const getSelectedGenes = createSelector(
     (genesById, selectedGenesIds) => {
         return selectedGenesIds.map((geneId) => genesById[geneId]).filter((gene) => gene != null);
     },
+    { memoizeOptions: { resultEqualityCheck: shallowEqual } },
 );
 
 export const getGenes = createSelector(getGenesById, (genesById) => _.flatMap(genesById));

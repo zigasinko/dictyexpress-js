@@ -118,7 +118,7 @@ const gOEnrichmentStatusSlice = createSlice({
     name: 'gOEnrichment',
     initialState: gOEnrichmentStatusInitialState,
     reducers: {
-        updated: (_state, action: PayloadAction<DataStatus | null>) => {
+        statusUpdated: (_state, action: PayloadAction<DataStatus | null>) => {
             return action.payload;
         },
     },
@@ -149,7 +149,7 @@ export const { ontologyOboFetchSucceeded } = ontologyOboSlice.actions;
 
 export const { fetchSucceeded: gOEnrichmentJsonFetchSucceeded } = gOEnrichmentJsonSlice.actions;
 
-export const { updated: gOEnrichmentStatusUpdated } = gOEnrichmentStatusSlice.actions;
+export const { statusUpdated: gOEnrichmentStatusUpdated } = gOEnrichmentStatusSlice.actions;
 
 export type GOEnrichmentState = ReturnType<typeof gOEnrichmentReducer>;
 

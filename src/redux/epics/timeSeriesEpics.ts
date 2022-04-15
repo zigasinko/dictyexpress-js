@@ -17,11 +17,10 @@ import {
     getTimeSeries,
 } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
-import { BasketInfo } from 'redux/models/internal';
 import { handleError } from 'utils/errorUtils';
 import { addToBasket, getTimeSeriesRelations, getBasketExpressions } from 'api';
 import { fetchTimeSeries, loginSucceeded, selectFirstTimeSeries } from './epicsActions';
-import { mapStateSlice } from './rxjsCustomFilters';
+import { filterNullAndUndefined, mapStateSlice } from './rxjsCustomFilters';
 
 const fetchTimeSeriesEpic: Epic<Action, Action, RootState> = (action$) => {
     return action$.pipe(
@@ -77,10 +76,11 @@ const timeSeriesSelectedEpic: Epic<Action, Action, RootState> = (action$, state$
 
 const fetchBasketExpressionsEpic: Epic<Action, Action, RootState> = (action$, state$) => {
     return state$.pipe(
-        mapStateSlice<BasketInfo>(
+        mapStateSlice(
             (state) => getBasketInfo(state.timeSeries),
             () => getBasketExpressionsIds(state$.value.timeSeries).length === 0,
         ),
+        filterNullAndUndefined(),
         mergeMap((basketInfo) => {
             return from(getBasketExpressions(basketInfo.id)).pipe(
                 map((basketExpressions) => {
