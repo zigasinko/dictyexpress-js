@@ -139,6 +139,13 @@ export type GOEnrichmentTerm = {
     selected_gene_associations: GOEnrichmentNode['gene_ids'];
 };
 
+export type GeneMapping = {
+    source_db: string;
+    source_id: string;
+    target_db: string;
+    target_id: string;
+};
+
 // If key is undefined, it will be generated in the reducer.
 export type SnackbarNotificationContent = {
     key?: SnackbarKey;

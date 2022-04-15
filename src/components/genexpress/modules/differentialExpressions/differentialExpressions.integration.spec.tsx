@@ -133,6 +133,8 @@ describe('differentialExpressions integration', () => {
         });
 
         it('should load selected differential expression, genes and highlighted genes from bookmark', async () => {
+            jest.setTimeout(10000);
+
             ({ container } = customRender(<GeneExpressGrid />, {
                 initialState,
                 route: generateBookmarkQueryParameter(),

@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const AssociationsGridWrapper = styled.div`
     height: 400px;
+    margin-top: 20px;
 `;
 
 export const TermInfo = styled.h2`
