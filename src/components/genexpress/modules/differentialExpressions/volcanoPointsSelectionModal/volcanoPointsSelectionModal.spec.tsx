@@ -14,9 +14,10 @@ const genes = _.flatMap(genesById);
 const volcanoPoints = generateVolcanoPoints(5);
 
 // Update volcanoPoints geneIds with the ones in store.
-for (let i = 0; i < volcanoPoints.length - 1; i += 1) {
+for (let i = 0; i < volcanoPoints.length - 2; i += 1) {
     volcanoPoints[i].geneId = genes[i].feature_id;
 }
+volcanoPoints[4].geneId = 'asdf';
 
 const selectRow = (geneId: string) => {
     fireEvent.click(screen.getByText(geneId).parentElement?.querySelector('input') as HTMLElement);
@@ -56,7 +57,7 @@ describe('volcanoPointsSelectionModal', () => {
 
             await waitFor(() => {
                 expect(mockedStore.getActions()).toEqual([
-                    genesSelected(initialState.genes.selectedGenesIds),
+                    genesSelected(initialState.genes.selectedGenesIds.slice(0, -1)),
                 ]);
             });
 
@@ -97,11 +98,11 @@ describe('volcanoPointsSelectionModal', () => {
         });
 
         it('should display volcano points in a grid', () => {
-            volcanoPoints.forEach((volcanoPoint) => {
+            volcanoPoints.slice(0, -1).forEach((volcanoPoint) => {
                 expect(screen.getByText(genesById[volcanoPoint.geneId].name));
             });
 
-            expect(screen.getByText(`Select all ${volcanoPoints.length}`));
+            expect(screen.getByText(`Select all ${volcanoPoints.length - 1}`));
         });
 
         it('should not dispatch genesSelected action for genes without name', () => {
@@ -142,7 +143,9 @@ describe('volcanoPointsSelectionModal', () => {
             fireEvent.click(screen.getByText('Select all', { exact: false }));
 
             expect(mockedStore.getActions()).toEqual([
-                genesSelected(volcanoPoints.map((volcanoPoint) => volcanoPoint.geneId)),
+                genesSelected(
+                    volcanoPoints.slice(0, -1).map((volcanoPoint) => volcanoPoint.geneId),
+                ),
             ]);
         });
 
@@ -152,7 +155,9 @@ describe('volcanoPointsSelectionModal', () => {
 
             expect(mockedStore.getActions()).toEqual([
                 allGenesDeselected(),
-                genesSelected(volcanoPoints.map((volcanoPoint) => volcanoPoint.geneId)),
+                genesSelected(
+                    volcanoPoints.slice(0, -1).map((volcanoPoint) => volcanoPoint.geneId),
+                ),
             ]);
         });
     });

@@ -80,7 +80,7 @@ const VolcanoPointSelectionModal = ({
         {
             headerCheckboxSelection: true,
             checkboxSelection: (params) => {
-                return params.data.gene?.name != null;
+                return params.data.gene != null;
             },
             width: 25,
         },
@@ -142,7 +142,9 @@ const VolcanoPointSelectionModal = ({
                     </GeneVolcanoPointsGridWrapper>
                 </ModalBody>
                 <GeneSelectorModalControls
-                    allGenesIds={genes.map((gene) => gene.feature_id)}
+                    allGenesIds={geneVolcanoPoints
+                        .filter((volcanoPoint) => volcanoPoint.gene != null)
+                        .map((volcanoPoint) => (volcanoPoint.gene as Gene).feature_id)}
                     selectedGenesIds={selectedGeneVolcanoPoints.map(
                         (volcanoPoint) => volcanoPoint.point.geneId,
                     )}
