@@ -3,7 +3,8 @@ import _ from 'lodash';
 import { Relation } from '@genialis/resolwe/dist/api/types/rest';
 import { BasketAddSamplesResponse } from 'redux/models/rest';
 import createIsFetchingSlice from './fetch';
-import { RelationsById, BasketInfo } from '../models/internal';
+import { RelationsById, BasketInfo, GeneMapping } from '../models/internal';
+import { shallowEqual } from 'react-redux';
 
 // State slices.
 const timeSeriesByIdInitialState = {} as RelationsById;
@@ -13,6 +14,25 @@ const timeSeriesByIdSlice = createSlice({
     reducers: {
         fetchSucceeded: (_state, action: PayloadAction<Relation[]>): RelationsById => {
             return _.keyBy(action.payload, 'id');
+        },
+        genesMappingsFetchSucceeded: (
+            state,
+            {
+                payload: { timeSeriesId, genesMappings, basketInfo },
+            }: PayloadAction<{
+                timeSeriesId: Relation['id'];
+                genesMappings: GeneMapping[];
+                basketInfo: BasketInfo;
+            }>,
+        ) => {
+            state[timeSeriesId].genesMappings = [
+                ...(state[timeSeriesId].genesMappings ?? []),
+                ...genesMappings,
+            ];
+
+            if (state[timeSeriesId].basketInfo?.id !== basketInfo.id) {
+                state[timeSeriesId].basketInfo = basketInfo;
+            }
         },
     },
 });
@@ -87,6 +107,7 @@ const basketExpressionsIdsSlice = createSlice({
 
 const isFetchingSlice = createIsFetchingSlice('timeSeries');
 const isAddingToBasketSlice = createIsFetchingSlice('basket');
+const isFetchingComparisonGenesMappingsSlice = createIsFetchingSlice('genesMappings');
 
 const timeSeriesReducer = combineReducers({
     byId: timeSeriesByIdSlice.reducer,
@@ -94,6 +115,7 @@ const timeSeriesReducer = combineReducers({
     comparisonIds: comparisonIdsSlice.reducer,
     isFetching: isFetchingSlice.reducer,
     isAddingToBasket: isAddingToBasketSlice.reducer,
+    isFetchingGenesMappings: isFetchingComparisonGenesMappingsSlice.reducer,
     basketInfo: basketInfoSlice.reducer,
     basketExpressionsIds: basketExpressionsIdsSlice.reducer,
 });
@@ -101,13 +123,16 @@ const timeSeriesReducer = combineReducers({
 // Export actions.
 export const { selected: timeSeriesSelected, set: setTimeSeriesSelected } = selectedIdSlice.actions;
 export const { changed: comparisonTimeSeriesChanged } = comparisonIdsSlice.actions;
-export const { fetchSucceeded: timeSeriesFetchSucceeded } = timeSeriesByIdSlice.actions;
+export const { fetchSucceeded: timeSeriesFetchSucceeded, genesMappingsFetchSucceeded } =
+    timeSeriesByIdSlice.actions;
 export const { addSamplesToBasketSucceeded } = basketInfoSlice.actions;
 export const { fetchBasketExpressionsIdsSucceeded } = basketExpressionsIdsSlice.actions;
 export const { started: timeSeriesFetchStarted, ended: timeSeriesFetchEnded } =
     isFetchingSlice.actions;
 export const { started: addToBasketStarted, ended: addToBasketEnded } =
     isAddingToBasketSlice.actions;
+export const { started: genesMappingsFetchStarted, ended: genesMappingsFetchEnded } =
+    isFetchingComparisonGenesMappingsSlice.actions;
 
 export type TimeSeriesState = ReturnType<typeof timeSeriesReducer>;
 
@@ -115,13 +140,15 @@ export default timeSeriesReducer;
 
 // Selectors (expose the store to containers).
 const getTimeSeriesById = (state: TimeSeriesState): RelationsById => {
-    return state.byId; //
+    return state.byId;
 };
 const getSelectedTimeSeriesId = (state: TimeSeriesState): number | null => state.selectedId;
 const getComparisonTimeSeriesIds = (state: TimeSeriesState): number[] => state.comparisonIds ?? [];
 
 export const getTimeSeriesIsFetching = (state: TimeSeriesState): boolean => state.isFetching;
 export const getIsAddingToBasket = (state: TimeSeriesState): boolean => state.isAddingToBasket;
+export const getIsFetchingGenesMappings = (state: TimeSeriesState): boolean =>
+    state.isFetchingGenesMappings;
 export const getBasketExpressionsIds = (state: TimeSeriesState): number[] =>
     state.basketExpressionsIds;
 
@@ -167,6 +194,7 @@ export const getSelectedTimeSeriesSamplesIds = createSelector(
     (selectedTimeSeries) => {
         return selectedTimeSeries?.partitions.map((partition) => partition.entity) ?? [];
     },
+    { memoizeOptions: { resultEqualityCheck: shallowEqual } },
 );
 
 export const getComparisonTimeSeriesSamplesIds = createSelector(
@@ -176,6 +204,7 @@ export const getComparisonTimeSeriesSamplesIds = createSelector(
             timeSeries.partitions.map((partition) => partition.entity),
         );
     },
+    { memoizeOptions: { resultEqualityCheck: shallowEqual } },
 );
 
 export const getAllTimeSeriesSamplesIds = createSelector(

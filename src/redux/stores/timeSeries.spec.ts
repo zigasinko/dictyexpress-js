@@ -4,7 +4,7 @@ import {
     generateSingleTimeSeries,
     generateBasketExpression,
 } from 'tests/mock';
-import { BasketInfo } from 'redux/models/internal';
+import { BasketInfo, GeneMapping } from 'redux/models/internal';
 import _ from 'lodash';
 import timeSeriesReducer, {
     timeSeriesSelected,
@@ -12,6 +12,7 @@ import timeSeriesReducer, {
     timeSeriesFetchSucceeded,
     addSamplesToBasketSucceeded,
     fetchBasketExpressionsIdsSucceeded,
+    genesMappingsFetchSucceeded,
 } from './timeSeries';
 
 const timeSeriesById = generateTimeSeriesById(2);
@@ -25,6 +26,11 @@ const basketInfo: BasketInfo = {
 };
 const basketExpressions = [generateBasketExpression(), generateBasketExpression()];
 const basketExpressionsIds = basketExpressions.map((basketExpression) => basketExpression.id);
+const genesMappings: GeneMapping[] = [
+    { source_db: 'DICTYBASE', source_id: 'gene1', target_db: 'UniProtKB', target_id: 'Q55eR8' },
+    { source_db: 'DICTYBASE', source_id: 'gene2', target_db: 'UniProtKB', target_id: 'Q54PU2' },
+    { source_db: 'DICTYBASE', source_id: 'gene3', target_db: 'UniProtKB', target_id: 'Q54L63' },
+];
 
 describe('timeSeries store', () => {
     let initialState: TimeSeriesState;
@@ -37,6 +43,7 @@ describe('timeSeries store', () => {
                 comparisonIds: [],
                 isFetching: false,
                 isAddingToBasket: false,
+                isFetchingGenesMappings: false,
                 basketInfo: null,
                 basketExpressionsIds: [],
             };
@@ -47,6 +54,26 @@ describe('timeSeries store', () => {
             const expectedState = {
                 ...initialState,
                 byId: timeSeriesById,
+            };
+
+            expect(newState).toEqual(expectedState);
+        });
+
+        it('should set timeSeries geneMappings with timeSeriesFetchSucceeded action', () => {
+            const newState = timeSeriesReducer(
+                { ...initialState, byId: timeSeriesById },
+                genesMappingsFetchSucceeded({
+                    timeSeriesId: timeSeries[0].id,
+                    genesMappings,
+                    basketInfo,
+                }),
+            );
+            const expectedState = {
+                ...initialState,
+                byId: {
+                    ...timeSeriesById,
+                    [timeSeries[0].id]: { ...timeSeries[0], genesMappings, basketInfo },
+                },
             };
 
             expect(newState).toEqual(expectedState);
@@ -94,6 +121,7 @@ describe('timeSeries store', () => {
                 comparisonIds: [],
                 isFetching: false,
                 isAddingToBasket: false,
+                isFetchingGenesMappings: false,
                 basketInfo,
                 basketExpressionsIds,
             };

@@ -1,7 +1,7 @@
 import { Action } from '@reduxjs/toolkit';
 import { ofType, Epic, combineEpics } from 'redux-observable';
-import { map, mergeMap, startWith, endWith, catchError, filter } from 'rxjs/operators';
-import { of, from } from 'rxjs';
+import { map, mergeMap, startWith, endWith, catchError, filter, switchMap } from 'rxjs/operators';
+import { of, from, combineLatest } from 'rxjs';
 import {
     getSelectedTimeSeriesSamplesIds,
     addToBasketStarted,
@@ -15,12 +15,19 @@ import {
     getBasketExpressionsIds,
     timeSeriesSelected,
     getTimeSeries,
+    getComparisonTimeSeries,
+    genesMappingsFetchSucceeded,
+    genesMappingsFetchStarted,
+    genesMappingsFetchEnded,
 } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
 import { handleError } from 'utils/errorUtils';
 import { addToBasket, getTimeSeriesRelations, getBasketExpressions } from 'api';
 import { fetchTimeSeries, loginSucceeded, selectFirstTimeSeries } from './epicsActions';
 import { filterNullAndUndefined, mapStateSlice } from './rxjsCustomFilters';
+import { mapGeneIdsBetweenSources } from 'api/kbApi';
+import { getSelectedGenesIds } from 'redux/stores/genes';
+import { BasketInfo } from 'redux/models/internal';
 
 const fetchTimeSeriesEpic: Epic<Action, Action, RootState> = (action$) => {
     return action$.pipe(
@@ -28,7 +35,7 @@ const fetchTimeSeriesEpic: Epic<Action, Action, RootState> = (action$) => {
         mergeMap(() => {
             return from(getTimeSeriesRelations()).pipe(
                 map((response) => timeSeriesFetchSucceeded(response)),
-                catchError((error) => of(handleError(`Error retrieving time series.`, error))),
+                catchError((error) => of(handleError('Error retrieving time series.', error))),
                 startWith(timeSeriesFetchStarted()),
                 endWith(timeSeriesFetchEnded()),
             );
@@ -62,13 +69,113 @@ const timeSeriesSelectedEpic: Epic<Action, Action, RootState> = (action$, state$
                 catchError((error) =>
                     of(
                         handleError(
-                            `Error adding time series samples to visualization basket.`,
+                            'Error adding time series samples to visualization basket.',
                             error,
                         ),
                     ),
                 ),
                 startWith(addToBasketStarted()),
                 endWith(addToBasketEnded()),
+            );
+        }),
+    );
+};
+
+const comparisonTimeSeriesSelectedEpic: Epic<Action, Action, RootState> = (action$, state$) => {
+    return combineLatest([
+        state$.pipe(
+            mapStateSlice((state) => {
+                return getComparisonTimeSeries(state.timeSeries);
+            }),
+        ),
+        state$.pipe(
+            mapStateSlice((state) => {
+                return getSelectedGenesIds(state.genes);
+            }),
+        ),
+    ]).pipe(
+        filter(([allComparisonTimeSeries, selectedGenesIds]) => {
+            return allComparisonTimeSeries.length > 0 && selectedGenesIds.length > 0;
+        }),
+        switchMap(([allComparisonTimeSeries, selectedGenesIds]) => {
+            return from(allComparisonTimeSeries).pipe(
+                filter(
+                    (comparisonTimeSeries) =>
+                        comparisonTimeSeries.genesMappings == null ||
+                        selectedGenesIds.some(
+                            (geneId) =>
+                                comparisonTimeSeries.genesMappings?.find(
+                                    (geneMapping) => geneMapping.source_id === geneId,
+                                ) == null,
+                        ),
+                ),
+                switchMap((comparisonTimeSeries) => {
+                    if (comparisonTimeSeries.basketInfo == null) {
+                        return from(
+                            addToBasket(
+                                comparisonTimeSeries?.partitions.map(
+                                    (partition) => partition.entity,
+                                ) ?? [],
+                            ),
+                        ).pipe(
+                            map((response) => ({
+                                comparisonTimeSeries,
+                                comparisonTimeSeriesBasketInfo: {
+                                    id: response.id,
+                                    source: response.permitted_sources[0],
+                                    species: response.permitted_organisms[0],
+                                    type: 'gene',
+                                } as BasketInfo,
+                            })),
+                        );
+                    } else {
+                        return of({
+                            comparisonTimeSeries,
+                            comparisonTimeSeriesBasketInfo: comparisonTimeSeries.basketInfo,
+                        });
+                    }
+                }),
+                switchMap(({ comparisonTimeSeries, comparisonTimeSeriesBasketInfo }) => {
+                    // Fetch genes mappings only for genes that weren't mapped yet.
+                    return from(
+                        mapGeneIdsBetweenSources({
+                            sourceGenesIds: selectedGenesIds.filter(
+                                (geneId) =>
+                                    comparisonTimeSeries.genesMappings?.find(
+                                        (geneMapping) => geneMapping.source_id === geneId,
+                                    ) == null,
+                            ),
+                            targetDb: comparisonTimeSeriesBasketInfo.source,
+                            targetSpecies: comparisonTimeSeriesBasketInfo.species,
+                        }),
+                    ).pipe(
+                        map((genesMappings) => {
+                            return genesMappingsFetchSucceeded({
+                                timeSeriesId: comparisonTimeSeries.id,
+                                genesMappings,
+                                basketInfo: comparisonTimeSeriesBasketInfo,
+                            });
+                        }),
+                        catchError((error) =>
+                            of(
+                                handleError(
+                                    'Error fetching comparison time series genes mappings.',
+                                    error,
+                                ),
+                            ),
+                        ),
+                    );
+                }),
+                catchError((error) => {
+                    return of(
+                        handleError(
+                            'Error adding comparison time series samples to visualization basket.',
+                            error,
+                        ),
+                    );
+                }),
+                startWith(genesMappingsFetchStarted()),
+                endWith(genesMappingsFetchEnded()),
             );
         }),
     );
@@ -88,7 +195,7 @@ const fetchBasketExpressionsEpic: Epic<Action, Action, RootState> = (action$, st
                         basketExpressions.map((basketExpression) => basketExpression.id),
                     );
                 }),
-                catchError((error) => of(handleError(`Error fetching basket expressions.`, error))),
+                catchError((error) => of(handleError('Error fetching basket expressions.', error))),
             );
         }),
     );
@@ -99,4 +206,5 @@ export default combineEpics(
     fetchTimeSeriesEpic,
     selectFirstTimeSeriesEpic,
     fetchBasketExpressionsEpic,
+    comparisonTimeSeriesSelectedEpic,
 );

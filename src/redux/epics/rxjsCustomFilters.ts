@@ -27,7 +27,6 @@ export const mapStateSlice = <T>(
         state$.pipe(
             map((state) => selector(state)),
             distinctUntilChanged(),
-            // filterNullAndUndefined(),
             filter((value) => existenceFilter?.(value) ?? true),
         );
 };

@@ -19,7 +19,7 @@ import { combineReducers, createSelector } from '@reduxjs/toolkit';
 import _ from 'lodash';
 import { EMPTY_ARRAY } from 'components/genexpress/common/constants';
 import { Relation } from '@genialis/resolwe/dist/api/types/rest';
-import { Gene, GeneExpression, SamplesGenesExpressionsById } from './models/internal';
+import { Gene, GeneExpression, GeneMapping, SamplesGenesExpressionsById } from './models/internal';
 
 const rootReducer = combineReducers({
     layouts,
@@ -56,6 +56,7 @@ const getTimeSeriesGenesExpressions = (
     selectedGenes: Gene[],
     samplesExpressionsById: SamplesGenesExpressionsById,
     samplesExpressionsSamplesIds: number[],
+    genesMappings?: GeneMapping[],
 ): GeneExpression[] => {
     if (
         singleTimeSeries == null ||
@@ -82,10 +83,22 @@ const getTimeSeriesGenesExpressions = (
 
         selectedGenes.forEach((gene) => {
             const values: number[] = [];
+
             // Gene expressions in different samples must be averaged out (mean).
             timePointPartitions.forEach((partition) => {
                 if (samplesExpressionsById[partition.entity][gene.feature_id] != null) {
                     values.push(samplesExpressionsById[partition.entity][gene.feature_id]);
+                } else {
+                    const mappedGene = genesMappings?.find(
+                        (geneMapping) => geneMapping.source_id === gene.feature_id,
+                    );
+
+                    if (
+                        mappedGene != null &&
+                        samplesExpressionsById[partition.entity][mappedGene.target_id] != null
+                    ) {
+                        values.push(samplesExpressionsById[partition.entity][mappedGene.target_id]);
+                    }
                 }
             });
 
@@ -137,6 +150,7 @@ export const getSelectedGenesComparisonExpressions = createSelector(
                 selectedGenes,
                 samplesExpressionsById,
                 samplesExpressionsSamplesIds,
+                comparisonSingleTimeSeries.genesMappings,
             ),
         );
     },

@@ -26,9 +26,11 @@ import {
     highlightedLineStrokeWidth,
     lineStrokeWidth,
 } from './genesExpressionsLineChart';
+import { GeneMapping } from 'redux/models/internal';
 
 const genesById = generateGenesById(colorScaleLimit);
 const genes = _.flatMap(genesById);
+const comparisonGenes = _.flatMap(generateGenesById(colorScaleLimit));
 const samplesExpressionsById = generateSamplesExpressionsById(
     5,
     genes.map((gene) => gene.feature_id),
@@ -36,7 +38,7 @@ const samplesExpressionsById = generateSamplesExpressionsById(
 const samplesExpressionsIds = _.map(_.keys(samplesExpressionsById), Number);
 const comparisonsSamplesExpressionsById = generateSamplesExpressionsById(
     5,
-    genes.map((gene) => gene.feature_id),
+    comparisonGenes.map((gene) => gene.feature_id),
 );
 const comparisonsSamplesExpressionsIds = _.map(_.keys(comparisonsSamplesExpressionsById), Number);
 const timeSeriesById = generateTimeSeriesById(2);
@@ -51,6 +53,11 @@ const backendBookmark = generateBackendBookmark(selectedTimeSeries.id, [
     genes[1].feature_id,
 ]);
 _.set(backendBookmark.state, BookmarkStatePath.genesExpressionsShowLegend, true);
+
+const genesMappings: GeneMapping[] = comparisonGenes.map(
+    (gene, index) =>
+        ({ source_id: genes[index].feature_id, target_id: gene.feature_id } as GeneMapping),
+);
 
 describe('genesExpressions integration', () => {
     let initialState: RootState;
@@ -120,6 +127,10 @@ describe('genesExpressions integration', () => {
             }
             if (req.url.includes('app-state')) {
                 return resolveStringifiedObjectPromise(backendBookmark);
+            }
+
+            if (req.url.includes('mapping/search')) {
+                return resolveStringifiedObjectPromise(genesMappings);
             }
 
             return (
@@ -347,7 +358,7 @@ describe('genesExpressions integration', () => {
         beforeEach(async () => {
             initialState.timeSeries.selectedId = selectedTimeSeries.id;
             initialState.genes.byId = genesById;
-            initialState.genes.selectedGenesIds = genes.slice(0, -1).map((gene) => gene.feature_id);
+            initialState.genes.selectedGenesIds = genes.slice(0, -2).map((gene) => gene.feature_id);
             initialState.samplesExpressions.byId = {
                 ...samplesExpressionsById,
                 ...comparisonsSamplesExpressionsById,
@@ -373,9 +384,22 @@ describe('genesExpressions integration', () => {
 
             fireEvent.click(await screen.findByText(genes[genes.length - 1].name));
 
+            fireEvent.change(screen.getByPlaceholderText('Search for a gene'), {
+                target: { value: genes[genes.length - 2].name },
+            });
+
+            fireEvent.click(await screen.findByText(genes[genes.length - 2].name));
+
             await waitFor(() => {
                 const newLinesColors = getLinesColors();
                 expect(_.uniq(newLinesColors).length).toBe(1);
+            });
+
+            await waitFor(() => {
+                expect(getFetchMockCallsWithUrl('add_samples')).toHaveLength(2);
+            });
+            await waitFor(() => {
+                expect(getFetchMockCallsWithUrl('mapping/search')).toHaveLength(1);
             });
         });
 

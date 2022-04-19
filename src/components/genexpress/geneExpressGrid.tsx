@@ -1,8 +1,12 @@
-import React, { ReactElement, useEffect } from 'react';
+import { ReactElement, useEffect } from 'react';
 import { Layouts, Responsive, WidthProvider } from 'react-grid-layout';
 import { connect, ConnectedProps, useDispatch } from 'react-redux';
 import { RootState } from 'redux/rootReducer';
-import { getTimeSeriesIsFetching, getIsAddingToBasket } from 'redux/stores/timeSeries';
+import {
+    getTimeSeriesIsFetching,
+    getIsAddingToBasket,
+    getIsFetchingGenesMappings,
+} from 'redux/stores/timeSeries';
 import { getIsFetchingSamplesExpressions } from 'redux/stores/samplesExpressions';
 import { getIsLoggingOut } from 'redux/stores/authentication';
 import {
@@ -42,6 +46,7 @@ const mapStateToProps = (state: RootState) => {
         isFetchingTimeSeries: getTimeSeriesIsFetching(state.timeSeries),
         isAddingToBasket: getIsAddingToBasket(state.timeSeries),
         isFetchingSamplesExpressions: getIsFetchingSamplesExpressions(state.samplesExpressions),
+        isFetchingGenesMappings: getIsFetchingGenesMappings(state.timeSeries),
         isFetchingDifferentialExpressions: getIsFetchingDifferentialExpressions(
             state.differentialExpressions,
         ),
@@ -69,6 +74,7 @@ const GeneExpressGrid = ({
     isFetchingTimeSeries,
     isAddingToBasket,
     isFetchingSamplesExpressions,
+    isFetchingGenesMappings,
     isFetchingDifferentialExpressions,
     isFetchingDifferentialExpressionsData,
     isFetchingClusteringData,
@@ -88,6 +94,10 @@ const GeneExpressGrid = ({
         // Indicate that the app has started -> initialize WebSocket connection and
         dispatch(appStarted());
     }, [dispatch]);
+
+    useEffect(() => {
+        console.log({ isFetchingGenesMappings });
+    }, [isFetchingGenesMappings]);
 
     useEffect(() => {
         const appStateId = getUrlQueryParameter(location.search, DictyUrlQueryParameter.appState);
@@ -145,7 +155,7 @@ const GeneExpressGrid = ({
                     <div key={ModulesKeys.expressionTimeCourses}>
                         <DictyModule
                             title="Expression Time Courses"
-                            isLoading={isFetchingSamplesExpressions}
+                            isLoading={isFetchingSamplesExpressions || isFetchingGenesMappings}
                         >
                             <GenesExpressions />
                         </DictyModule>

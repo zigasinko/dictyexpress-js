@@ -67,7 +67,7 @@ const SelectComparisonTimeSeriesModal = ({
                             selectedTimeSeries={comparisonTimeSeries}
                             selectionMode="multiple"
                             onSelectionChanged={(selected): void => {
-                                if (_.xor(selected, comparisonTimeSeries)) {
+                                if (_.xor(selected, comparisonTimeSeries).length > 0) {
                                     connectedComparisonTimeSeriesChanged(
                                         selected.map((singleTimeSeries) => singleTimeSeries.id),
                                     );

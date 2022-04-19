@@ -676,6 +676,7 @@ export const testState = (): RootState => {
             comparisonIds: [],
             isFetching: false,
             isAddingToBasket: false,
+            isFetchingGenesMappings: false,
             basketInfo: generateBasketInfo('1'),
             basketExpressionsIds: [],
         },

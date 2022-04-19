@@ -15,9 +15,10 @@ export type Gene = Pick<
     'feature_id' | 'aliases' | 'name' | 'full_name' | 'description' | 'source' | 'species'
 >;
 
-export type RelationsById = {
-    [_: number]: Relation;
-};
+export type RelationsById = Record<
+    Relation['id'],
+    Relation & { genesMappings?: GeneMapping[]; basketInfo?: BasketInfo }
+>;
 
 export type GenesById = Record<Gene['feature_id'], Gene>;
 
