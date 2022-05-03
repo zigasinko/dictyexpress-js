@@ -3,10 +3,7 @@ import DictyGrid, { DictyGridProps } from 'components/genexpress/common/dictyGri
 import { Relation } from '@genialis/resolwe/dist/api/types/rest';
 import { TimeSeriesSelectorContainer } from './timeSeriesSelector.styles';
 
-const columnDefs = [
-    { field: 'id', headerName: 'Id', width: 20 },
-    { field: 'collection.name', headerName: 'Name' },
-];
+const columnDefs = [{ field: 'collection.name', headerName: 'Name' }];
 
 const multipleSelectionColumnDefs = [
     {
@@ -14,7 +11,6 @@ const multipleSelectionColumnDefs = [
         checkboxSelection: true,
         width: 25,
     },
-    { field: 'id', headerName: 'Id', width: 20 },
     { field: 'collection.name', headerName: 'Name' },
 ];
 

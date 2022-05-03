@@ -53,7 +53,7 @@ test.describe('Expression time courses', () => {
     }) => {
         const genes = 'eif3L fnkF_ps';
 
-        await (await getByRole('gridcell', { name: '307' })).click();
+        await (await getByRole('gridcell', { name: 'dictyExpress - D. discoideum data' })).click();
 
         await page.waitForResponse((response: { url: () => string | string[] }) => {
             return response.url().includes('/api/storage');
