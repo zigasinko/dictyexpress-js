@@ -70,7 +70,9 @@ const getTimeSeriesGenesExpressions = (
 
     labels.forEach((label) => {
         const timePointPartitions = _.flatten(
-            singleTimeSeries.partitions.filter((partition) => partition.label === label),
+            singleTimeSeries.partitions.filter(
+                (partition) => partition.label?.toLowerCase() === label.toLowerCase(),
+            ),
         );
 
         if (

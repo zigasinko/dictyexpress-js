@@ -96,10 +96,6 @@ const GeneExpressGrid = ({
     }, [dispatch]);
 
     useEffect(() => {
-        console.log({ isFetchingGenesMappings });
-    }, [isFetchingGenesMappings]);
-
-    useEffect(() => {
         const appStateId = getUrlQueryParameter(location.search, DictyUrlQueryParameter.appState);
         if (appStateId != null) {
             void loadBookmarkedState(appStateId, dispatch);
