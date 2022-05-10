@@ -124,7 +124,7 @@ const getVegaSpecification = (
     legends: showLegend
         ? [
               {
-                  title: 'Genes',
+                  title: colorByTimeSeries ? 'Time series' : 'Genes',
                   stroke: 'colorscale',
                   orient: 'right',
                   // 44 = offset of first gene in legend
