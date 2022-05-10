@@ -19,6 +19,7 @@ import {
     genesMappingsFetchSucceeded,
     genesMappingsFetchStarted,
     genesMappingsFetchEnded,
+    getComparisonTimeSeriesIds,
 } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
 import { handleError } from 'utils/errorUtils';
@@ -85,7 +86,7 @@ const comparisonTimeSeriesSelectedEpic: Epic<Action, Action, RootState> = (actio
     return combineLatest([
         state$.pipe(
             mapStateSlice((state) => {
-                return getComparisonTimeSeries(state.timeSeries);
+                return getComparisonTimeSeriesIds(state.timeSeries);
             }),
         ),
         state$.pipe(
@@ -94,10 +95,12 @@ const comparisonTimeSeriesSelectedEpic: Epic<Action, Action, RootState> = (actio
             }),
         ),
     ]).pipe(
-        filter(([allComparisonTimeSeries, selectedGenesIds]) => {
-            return allComparisonTimeSeries.length > 0 && selectedGenesIds.length > 0;
+        filter(([allComparisonTimeSeriesIds, selectedGenesIds]) => {
+            return allComparisonTimeSeriesIds.length > 0 && selectedGenesIds.length > 0;
         }),
-        switchMap(([allComparisonTimeSeries, selectedGenesIds]) => {
+        switchMap(([, selectedGenesIds]) => {
+            const allComparisonTimeSeries = getComparisonTimeSeries(state$.value.timeSeries);
+
             return from(allComparisonTimeSeries).pipe(
                 filter(
                     (comparisonTimeSeries) =>

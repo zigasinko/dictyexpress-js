@@ -143,8 +143,9 @@ const getTimeSeriesById = (state: TimeSeriesState): RelationsById => {
     return state.byId;
 };
 const getSelectedTimeSeriesId = (state: TimeSeriesState): number | null => state.selectedId;
-const getComparisonTimeSeriesIds = (state: TimeSeriesState): number[] => state.comparisonIds ?? [];
 
+export const getComparisonTimeSeriesIds = (state: TimeSeriesState): number[] =>
+    state.comparisonIds ?? [];
 export const getTimeSeriesIsFetching = (state: TimeSeriesState): boolean => state.isFetching;
 export const getIsAddingToBasket = (state: TimeSeriesState): boolean => state.isAddingToBasket;
 export const getIsFetchingGenesMappings = (state: TimeSeriesState): boolean =>
