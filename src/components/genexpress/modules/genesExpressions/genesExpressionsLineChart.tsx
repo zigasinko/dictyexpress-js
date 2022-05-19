@@ -138,16 +138,21 @@ const getVegaSpecification = (
                           name: 'legendSymbol',
                           interactive: true,
                           update: {
-                              stroke: [
-                                  {
-                                      test: `length(data('selectedGenesIds')) < ${colorScaleLimit}`,
-                                      scale: 'colorscale',
-                                      field: 'value',
-                                  },
-                                  {
-                                      value: color,
-                                  },
-                              ],
+                              stroke: colorByTimeSeries
+                                  ? {
+                                        scale: 'colorscale',
+                                        field: 'value',
+                                    }
+                                  : [
+                                        {
+                                            test: `length(data('selectedGenesIds')) < ${colorScaleLimit}`,
+                                            scale: 'colorscale',
+                                            field: 'value',
+                                        },
+                                        {
+                                            value: color,
+                                        },
+                                    ],
                           },
                       },
                       labels: {
@@ -194,20 +199,25 @@ const getVegaSpecification = (
                             strokeWidth: { value: lineStrokeWidth },
                         },
                         update: {
-                            stroke: [
-                                {
-                                    test: `length(data('selectedGenesIds')) < ${colorScaleLimit}`,
-                                    scale: 'colorscale',
-                                    field: colorByTimeSeries ? 'timeSeriesName' : 'geneId',
-                                },
-                                {
-                                    test: "indata('highlighted', 'data', datum.geneId)",
-                                    value: highlightedColor,
-                                },
-                                {
-                                    value: color,
-                                },
-                            ],
+                            stroke: colorByTimeSeries
+                                ? {
+                                      scale: 'colorscale',
+                                      field: 'timeSeriesName',
+                                  }
+                                : [
+                                      {
+                                          test: `length(data('selectedGenesIds')) < ${colorScaleLimit}`,
+                                          scale: 'colorscale',
+                                          field: 'geneId',
+                                      },
+                                      {
+                                          test: "indata('highlighted', 'data', datum.geneId)",
+                                          value: highlightedColor,
+                                      },
+                                      {
+                                          value: color,
+                                      },
+                                  ],
                             strokeWidth: [
                                 {
                                     test: "indata('highlighted', 'data', datum.geneId) || (indata('hovered', 'geneId', datum.geneId) && (data('hovered')[0].timeSeriesName == null || indata('hovered', 'timeSeriesName', datum.timeSeriesName)))",
@@ -250,20 +260,25 @@ const getVegaSpecification = (
                             cursor: { value: 'pointer' },
                         },
                         update: {
-                            fill: [
-                                {
-                                    test: `length(data('selectedGenesIds')) < ${colorScaleLimit}`,
-                                    scale: 'colorscale',
-                                    field: colorByTimeSeries ? 'timeSeriesName' : 'geneId',
-                                },
-                                {
-                                    test: "indata('highlighted', 'data', datum.geneId)",
-                                    value: highlightedColor,
-                                },
-                                {
-                                    value: color,
-                                },
-                            ],
+                            fill: colorByTimeSeries
+                                ? {
+                                      scale: 'colorscale',
+                                      field: 'timeSeriesName',
+                                  }
+                                : [
+                                      {
+                                          test: `length(data('selectedGenesIds')) < ${colorScaleLimit}`,
+                                          scale: 'colorscale',
+                                          field: 'geneId',
+                                      },
+                                      {
+                                          test: "indata('highlighted', 'data', datum.geneId)",
+                                          value: highlightedColor,
+                                      },
+                                      {
+                                          value: color,
+                                      },
+                                  ],
                             size: [
                                 {
                                     test: "indata('highlighted', 'data', datum.geneId) || (indata('hovered', 'geneId', datum.geneId) && (data('hovered')[0].timeSeriesName == null || indata('hovered', 'timeSeriesName', datum.timeSeriesName)))",
