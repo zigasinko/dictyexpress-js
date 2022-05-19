@@ -185,7 +185,11 @@ export const getSelectedTimeSeriesLabels = createSelector(
     getSelectedTimeSeries,
     (selectedTimeSeries) => {
         return _.uniq(
-            _.compact(selectedTimeSeries?.partitions?.map((partition) => partition.label)),
+            _.compact(
+                _.sortBy(selectedTimeSeries?.partitions, ['position']).map(
+                    (partition) => partition.label,
+                ),
+            ),
         );
     },
 );
