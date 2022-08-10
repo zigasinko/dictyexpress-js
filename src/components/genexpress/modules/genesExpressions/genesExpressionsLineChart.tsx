@@ -18,7 +18,7 @@ type GeneExpressionsLineChartProps = {
 };
 
 const color = GEN_GREY['500'];
-export const colorScaleLimit = 10;
+export const colorScaleLimit = 20;
 export const lineStrokeWidth = 1;
 export const highlightedLineStrokeWidth = 4;
 
