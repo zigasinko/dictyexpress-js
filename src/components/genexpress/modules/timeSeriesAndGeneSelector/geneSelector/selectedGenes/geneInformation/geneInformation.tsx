@@ -49,6 +49,10 @@ export const GeneInformation = ({
             </GeneInformationHeader>
             <p>{gene.name}</p>
             <div>
+                <GeneInformationLabel>Gene ID:</GeneInformationLabel>
+                <GeneInformationValue>{gene.feature_id}</GeneInformationValue>
+            </div>
+            <div>
                 <GeneInformationLabel>Alternatives:</GeneInformationLabel>
                 <GeneInformationValue>{gene.aliases?.join(', ')}</GeneInformationValue>
             </div>

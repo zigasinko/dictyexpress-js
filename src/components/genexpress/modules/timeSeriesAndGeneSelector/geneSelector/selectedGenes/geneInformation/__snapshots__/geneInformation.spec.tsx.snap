@@ -31,6 +31,18 @@ exports[`geneInformation should render as default snapshot 1`] = `
       <div
         class="sc-hKwDye cFGYGc"
       >
+        Gene ID:
+      </div>
+      <div
+        class="sc-eCImPb ktthGP"
+      >
+        0
+      </div>
+    </div>
+    <div>
+      <div
+        class="sc-hKwDye cFGYGc"
+      >
         Alternatives:
       </div>
       <div
