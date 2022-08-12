@@ -283,6 +283,7 @@ const GeneSelector = ({
             <Tooltip title={selectedTimeSeries == null ? 'First select a time series.' : ''}>
                 <Autocomplete
                     open={autocompleteOpen}
+                    autoHighlight={true}
                     noOptionsText="No genes were found"
                     renderOption={(props, option) => (
                         <ListItem {...props}>
