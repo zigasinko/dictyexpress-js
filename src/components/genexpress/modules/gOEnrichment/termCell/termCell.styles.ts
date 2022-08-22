@@ -1,5 +1,7 @@
-import { SubdirectoryArrowRight } from '@mui/icons-material';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import styled from 'styled-components';
+
+const indentSize = 15;
 
 export const TermCellContainer = styled.div`
     display: flex;
@@ -11,7 +13,15 @@ export const TermCellContainer = styled.div`
     height: 100%;
 `;
 
-export const TermIndentationIcon = styled(SubdirectoryArrowRight)<{ depth: number }>`
-    margin-left: ${(props): string => (props.depth * 15).toString()}px;
-    font-size: 0.75rem;
+export const TermIndentation = styled.span<{ $depth: number }>`
+    margin-left: ${(props) => props.$depth * indentSize}px;
+`;
+
+export const TermCollapseIcon = styled(ArrowDropDownIcon)<{
+    $collapsed: boolean;
+    $hasChildren: boolean;
+}>`
+    font-size: 0.85rem;
+    transform: rotate(${(props) => (props.$collapsed ? '-90deg' : '0deg')});
+    visibility: ${(props) => (props.$hasChildren ? 'visible' : 'hidden')};
 `;

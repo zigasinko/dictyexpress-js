@@ -19,7 +19,11 @@ import { ColDef, SortChangedEvent, ValueFormatterParams } from 'ag-grid-communit
 import useReport from 'components/genexpress/common/reportBuilder/useReport';
 import { objectsArrayToTsv } from 'utils/reportUtils';
 import { advancedJoin } from 'utils/arrayUtils';
-import { ontologyJsonToOntologyRows, ontologyJsonToTermsTable } from 'utils/gOEnrichmentUtils';
+import {
+    ontologyJsonToOntologyRows,
+    ontologyJsonToTermsTable,
+    getRowId,
+} from 'utils/gOEnrichmentUtils';
 import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
 import { AspectValue, BookmarkStatePath } from 'components/genexpress/common/constants';
 import useBookmarkableState from 'components/genexpress/common/useBookmarkableState';
@@ -77,6 +81,9 @@ const GOEnrichment = ({
     const [clickedGOEnrichmentRow, setClickedGOEnrichmentRow] = useState<GOEnrichmentRow>(
         {} as GOEnrichmentRow,
     );
+
+    type CollapsedData = Record<string, { hidden: boolean; manuallyCollapsed: boolean }>;
+    const [collapsedGOEnrichmentRows, setCollapsedGOEnrichmentRows] = useState<CollapsedData>({});
 
     useEffect(() => {
         if (gOEnrichmentJson == null) {
@@ -205,6 +212,55 @@ A list of all gene associations for each term is available in a separate file - 
         setGOEnrichmentAssociationsModalOpened(true);
     };
 
+    const onToggleCollapseClickHandler = (row: GOEnrichmentRow): void => {
+        setCollapsedGOEnrichmentRows((oldCollapsedRows) => {
+            const collapsedRows = { ...oldCollapsedRows };
+
+            const flattenChildrenIds = (
+                nodes: GOEnrichmentRow[] | undefined,
+                untilCollapsed: boolean,
+                path: string[],
+            ): string[] => {
+                if (!nodes || nodes.length === 0) return [];
+
+                return nodes.reduce((flattened: string[], node: GOEnrichmentRow) => {
+                    const newPath = [...path, node.term_name];
+                    const isCollapsed = collapsedRows[getRowId(node, newPath)]?.manuallyCollapsed;
+                    const subChildren =
+                        untilCollapsed && isCollapsed
+                            ? []
+                            : flattenChildrenIds(node.children, untilCollapsed, newPath);
+                    return [...flattened, getRowId(node, newPath), ...subChildren];
+                }, []);
+            };
+
+            const assureKeyExists = (key: string) => {
+                if (!(key in collapsedRows)) {
+                    collapsedRows[key] = { hidden: false, manuallyCollapsed: false };
+                }
+            };
+
+            // get own collapsed status
+            const rowId = getRowId(row, row.path);
+            assureKeyExists(rowId);
+            const isCollapsed = collapsedRows[rowId].manuallyCollapsed;
+
+            // hide children
+            if (row.children) {
+                const children = flattenChildrenIds(row.children, isCollapsed, row.path);
+                children.forEach((childId) => {
+                    assureKeyExists(childId);
+                    collapsedRows[childId].hidden = !isCollapsed;
+                });
+            }
+
+            // set own collapsed status
+            collapsedRows[rowId].manuallyCollapsed = !isCollapsed;
+
+            return collapsedRows;
+        });
+    };
+
     const columnDefs = useStateWithEffect(
         () =>
             [
@@ -239,9 +295,26 @@ A list of all gene associations for each term is available in a separate file - 
                     width: 400,
                     sortable: !treeView,
                     cellRenderer: treeView ? TermCell : null,
+                    cellRendererParams: {
+                        onToggleCollapseClick: onToggleCollapseClickHandler,
+                    },
+                    // Ag-grid will compare old and new values to determine if a re-render is needed.
+                    // By default, the value is just the term_name, so cells' icons wouldn't update on collapse.
+                    valueGetter: (row) => String(row.data.term_name) + String(row.data.collapsed),
                 },
             ] as ColDef[],
         [getSort, treeView],
+    );
+
+    const displayedRows = useStateWithEffect(
+        () =>
+            gOEnrichmentRows
+                .filter((el) => !collapsedGOEnrichmentRows[getRowId(el, el.path)]?.hidden)
+                .map((el) => ({
+                    ...el,
+                    collapsed: collapsedGOEnrichmentRows[getRowId(el, el.path)]?.manuallyCollapsed,
+                })),
+        [gOEnrichmentRows, collapsedGOEnrichmentRows],
     );
 
     return (
@@ -310,14 +383,12 @@ A list of all gene associations for each term is available in a separate file - 
                     {gOEnrichmentRows.length > 0 && (
                         <DictyGrid
                             isFetching={isFetchingGOEnrichmentJson}
-                            data={gOEnrichmentRows}
+                            data={displayedRows}
                             hideFilter
                             disableSizeColumnsToFit
                             columnDefs={columnDefs}
                             onSortChanged={onSortChangedHandler}
-                            // Path must also be included as a unique identifier because the same
-                            // term_id can be found in multiple tree branches.
-                            getRowId={(data): string => data.term_id + data.path.toString()}
+                            getRowId={(data) => getRowId(data, data.path)}
                         />
                     )}
                     {isFetchingGOEnrichmentJson &&

@@ -63,6 +63,12 @@ export const flattenGoEnrichmentTree = (
     );
 };
 
+export const getRowId = (data: GOEnrichmentRow, path: string[]) => {
+    // Path must also be included as a unique identifier because the same
+    // term_id can be found in multiple tree branches.
+    return data.term_id + String(path);
+};
+
 export const ontologyJsonToOntologyRows = (
     gOEnrichmentJson: GOEnrichmentJson,
     aspect: AspectValue,

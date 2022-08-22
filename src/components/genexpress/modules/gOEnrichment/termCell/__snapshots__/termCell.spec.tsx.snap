@@ -5,16 +5,18 @@ exports[`gOEnrichmentTermCell should render as default snapshot 1`] = `
   <div
     class="sc-bdvvtL XLmDp"
   >
+    <span
+      class="sc-gsDKAQ juZGKf"
+    />
     <svg
       aria-hidden="true"
-      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium sc-gsDKAQ kvzNaZ css-i4bv87-MuiSvgIcon-root"
-      data-testid="SubdirectoryArrowRightIcon"
-      depth="3"
+      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium sc-dkPtRN hnXFZl css-i4bv87-MuiSvgIcon-root"
+      data-testid="ArrowDropDownIcon"
       focusable="false"
       viewBox="0 0 24 24"
     >
       <path
-        d="m19 15-6 6-1.42-1.42L15.17 16H4V4h2v10h9.17l-3.59-3.58L13 9l6 6z"
+        d="m7 10 5 5 5-5z"
       />
     </svg>
     <span>
