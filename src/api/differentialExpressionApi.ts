@@ -12,7 +12,7 @@ export const getDifferentialExpressions = async (
         return [];
     }
     const getDifferentialExpressionsDataResponse = await get(baseUrl, {
-        basket: basketId,
+        tags: `community:${COMMUNITY_SLUG}`,
     });
 
     return deserializeResponse<DifferentialExpression[]>(getDifferentialExpressionsDataResponse);

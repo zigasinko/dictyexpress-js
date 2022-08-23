@@ -5,3 +5,6 @@ API_URL = null;
 REST_AUTH_URL = null;
 // Default: domain/ws
 WEBSOCKET_URL = null;
+
+// Default: bcm
+COMMUNITY_SLUG = 'bcm';
