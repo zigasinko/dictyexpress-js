@@ -9,7 +9,6 @@ import {
     getHighlightedGenesIds,
     genesSelected,
     genesFetchSucceeded,
-    allGenesDeselected,
 } from 'redux/stores/genes';
 import { Gene } from 'redux/models/internal';
 import SelectedGenes from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/selectedGenes/selectedGenes';
@@ -36,7 +35,6 @@ const mapStateToProps = (state: RootState) => {
 const connector = connect(mapStateToProps, {
     connectedGenesFetchSucceeded: genesFetchSucceeded,
     connectedGenesSelected: genesSelected,
-    connectedAllGenesDeselected: allGenesDeselected,
 });
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -48,7 +46,6 @@ const GeneSelector = ({
     selectedTimeSeries,
     connectedGenesFetchSucceeded,
     connectedGenesSelected,
-    connectedAllGenesDeselected,
 }: PropsFromRedux): ReactElement => {
     const {
         source: autocompleteSource,
@@ -169,8 +166,6 @@ const GeneSelector = ({
                     return;
                 }
 
-                connectedAllGenesDeselected();
-
                 setIsFetching(true);
                 const pastedGenes = await getPastedGenes(
                     autocompleteSource,
@@ -197,7 +192,6 @@ const GeneSelector = ({
             autocompleteSource,
             autocompleteSpecies,
             autocompleteType,
-            connectedAllGenesDeselected,
             connectedGenesFetchSucceeded,
             connectedGenesSelected,
             dispatch,
