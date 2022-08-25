@@ -1,6 +1,6 @@
 {
     "name": "dicty-express",
-    "version": "0.1.0b7",
+    "version": "0.1.0b8",
     "private": true,
     "dependencies": {
         "@emotion/react": "^11.8.2",
