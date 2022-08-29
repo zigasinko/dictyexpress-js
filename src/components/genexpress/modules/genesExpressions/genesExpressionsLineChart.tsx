@@ -7,9 +7,13 @@ import { GEN_GREY } from 'components/genexpress/common/theming/theming';
 import { useTheme } from '@mui/material';
 import useForwardedRef from 'components/genexpress/common/useForwardedRef';
 import Chart, { ChartHandle, DataDefinition, DataHandler } from '../../common/chart/chart';
+import { getComparisonTimeSeries } from 'redux/stores/timeSeries';
+
+type ComparisonTimeSeries = ReturnType<typeof getComparisonTimeSeries>;
 
 type GeneExpressionsLineChartProps = {
     genesExpressions: GeneExpression[];
+    comparisonTimeSeries: ComparisonTimeSeries;
     highlightedGenesIds: string[];
     selectedGenesIds: string[];
     onHighlight: (genesIds: string[]) => void;
@@ -20,10 +24,12 @@ type GeneExpressionsLineChartProps = {
 const color = GEN_GREY['500'];
 export const colorScaleLimit = 20;
 export const lineStrokeWidth = 1;
+export const lineStrokeDash = [8, 8]; // [stroke, space]
 export const highlightedLineStrokeWidth = 4;
 
 const getVegaSpecification = (
     genesExpressions: GeneExpression[],
+    comparisonTimeSeries: ComparisonTimeSeries,
     highlightedGenesIds: string[],
     selectedGenesIds: string[],
     highlightedColor: string,
@@ -92,6 +98,10 @@ const getVegaSpecification = (
         {
             name: 'table',
             values: genesExpressions,
+        },
+        {
+            name: 'comparison',
+            values: comparisonTimeSeries,
         },
         {
             name: 'hovered',
@@ -225,6 +235,15 @@ const getVegaSpecification = (
                                 },
                                 { value: lineStrokeWidth },
                             ],
+                            strokeDash: [
+                                {
+                                    test: "indata('comparison', 'timeSeriesName', datum.timeSeriesName)",
+                                    value: lineStrokeDash,
+                                },
+                                {
+                                    value: [1, 0],
+                                },
+                            ],
                         },
                     },
                 },
@@ -340,6 +359,7 @@ const GeneExpressionsLineChart = forwardRef<ChartHandle, GeneExpressionsLineChar
     (
         {
             genesExpressions,
+            comparisonTimeSeries,
             selectedGenesIds,
             highlightedGenesIds,
             onHighlight,
@@ -359,9 +379,10 @@ const GeneExpressionsLineChart = forwardRef<ChartHandle, GeneExpressionsLineChar
                     data: highlightedGenesIds,
                 },
                 { name: 'table', data: genesExpressions },
+                { name: 'comparison', data: comparisonTimeSeries },
                 { name: 'selectedGenesIds', data: selectedGenesIds },
             ],
-            [genesExpressions, highlightedGenesIds, selectedGenesIds],
+            [genesExpressions, comparisonTimeSeries, highlightedGenesIds, selectedGenesIds],
         );
 
         // Data handlers that is updated (and reattached) only if highlighted variable changes.
@@ -392,6 +413,7 @@ const GeneExpressionsLineChart = forwardRef<ChartHandle, GeneExpressionsLineChar
             () =>
                 getVegaSpecification(
                     genesExpressions,
+                    comparisonTimeSeries,
                     highlightedGenesIds,
                     selectedGenesIds,
                     theme.palette.secondary.main,

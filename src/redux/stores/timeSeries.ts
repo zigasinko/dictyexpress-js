@@ -174,7 +174,8 @@ export const getComparisonTimeSeries = createSelector(
     (timeSeriesById, comparisonTimeSeriesIds) => {
         return comparisonTimeSeriesIds
             .map((timeSeriesId) => timeSeriesById[timeSeriesId] ?? null)
-            .filter((timeSeries) => timeSeries != null);
+            .filter((timeSeries) => timeSeries != null)
+            .map((timeSeries) => ({ ...timeSeries, timeSeriesName: timeSeries.collection.name }));
     },
 );
 

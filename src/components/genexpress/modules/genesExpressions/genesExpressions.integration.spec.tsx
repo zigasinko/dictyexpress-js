@@ -355,6 +355,13 @@ describe('genesExpressions integration', () => {
             return linesElements.map((line) => line.attributes.getNamedItem('stroke')?.value);
         };
 
+        const getLinesDashArrays = (): (string | undefined)[] => {
+            const lines = Array.from(
+                container.querySelectorAll("g[role='graphics-symbol'].genesExpressionsLines path"),
+            ).map((line) => line.attributes.getNamedItem('stroke-dasharray')?.value);
+            return _.uniq(lines);
+        };
+
         beforeEach(async () => {
             initialState.timeSeries.selectedId = selectedTimeSeries.id;
             initialState.genes.byId = genesById;
@@ -410,6 +417,12 @@ describe('genesExpressions integration', () => {
                 const linesColors = getLinesColors();
                 expect(_.uniq(linesColors).length).toBe(2);
             });
+        });
+
+        it('should display comparison time series as dashed lines', () => {
+            const linesStrokeDashArrays = getLinesDashArrays();
+            expect(linesStrokeDashArrays[0]).toBe('1,0');
+            expect(linesStrokeDashArrays[1]).toBe('8,8');
         });
     });
 });

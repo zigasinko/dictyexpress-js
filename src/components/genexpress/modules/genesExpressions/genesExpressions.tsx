@@ -145,6 +145,7 @@ const GenesExpressionsWidget = ({
                     <GenesExpressionsLineChartContainer data-testid="genes-expressions-line-chart">
                         <GenesExpressionsLineChart
                             genesExpressions={allGenesExpressions}
+                            comparisonTimeSeries={comparisonTimeSeries}
                             selectedGenesIds={selectedGenesIds}
                             highlightedGenesIds={highlightedGenesIds}
                             onHighlight={handleOnHighlight}
