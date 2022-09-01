@@ -1,38 +1,53 @@
-import { QueryObserverResponse, Message } from '@genialis/resolwe/dist/api/connection';
 import _ from 'lodash';
 import { Action } from '@reduxjs/toolkit';
 import { deserializeResponse } from 'utils/apiUtils';
 import { logError } from 'utils/errorUtils';
-import { EMPTY, Observable } from 'rxjs';
+import { EMPTY, Observable, from, mergeMap } from 'rxjs';
 import { sessionId } from '../api/base';
-import { unsubscribe } from '../api/queryObserverApi';
+import { get, post, QueryParams } from '../api/fetch';
 
-const MESSAGE_ADDED = 'added';
-const MESSAGE_CHANGED = 'changed';
-const MESSAGE_REMOVED = 'removed';
+const MESSAGE_CREATE = 'CREATE';
+const MESSAGE_UPDATE = 'UPDATE';
 
-type QueryObserver = {
-    items: unknown[];
-    observerId: string;
-    webSocketMessageOutputObservable: (items: unknown[]) => Observable<Action | never>;
+export interface IdObject {
+    id: number;
+}
+
+export type QueryObserver = {
+    subscriptionId: string;
+    baseUrl: string;
+    refetch: (id: number) => Promise<unknown[]>;
+    itemsUpdateHandler: (items: unknown[]) => Observable<Action | never>;
 };
 
-export type DisposeFunction = () => Promise<void>;
-export type ItemsAndDisposeFunction<T> = {
+type QueryObserverResponse = {
+    subscription_id: string;
+};
+
+export type WebSocketMessage = {
+    change_type: string;
+    subscription_id: string;
+    object_id: number;
+};
+export type DisposeFunction = () => Promise<Response>;
+export type ItemsAndDisposeFunction<T extends IdObject> = {
     items: T[];
     disposeFunction: DisposeFunction;
 };
 
-let observers: QueryObserver[] = [];
+const observers: QueryObserver[] = [];
 
-const unsubscribeObserver = (observerId: string): Promise<void> => {
-    observers = _.remove(observers, { observerId });
-    return unsubscribe(observerId, sessionId);
+const unsubscribeObserver = (subscriptionId: string): Promise<Response> => {
+    const removed = _.remove(observers, { subscriptionId });
+
+    if (removed.length === 0) return new Promise((resolve) => resolve(new Response('')));
+
+    return post(`${removed[0].baseUrl}/unsubscribe`, { subscription_id: subscriptionId });
 };
 
 export const clearObservers = async (): Promise<void> => {
     const unsubscribePromises = observers.map((observer) =>
-        unsubscribeObserver(observer.observerId),
+        unsubscribeObserver(observer.subscriptionId),
     );
 
     try {
@@ -42,66 +57,60 @@ export const clearObservers = async (): Promise<void> => {
     }
 };
 
-export const reactiveRequest = async <T>(
-    query: () => Promise<Response>,
-    webSocketMessageOutputReduxAction: QueryObserver['webSocketMessageOutputObservable'],
+export const reactiveGet = async <T extends IdObject>(
+    baseUrl: string,
+    params: QueryParams,
+    webSocketMessageOutputReduxAction: (items: unknown[]) => Observable<Action | never>,
 ): Promise<ItemsAndDisposeFunction<T>> => {
-    const response = await query();
-    const observerResponse = await deserializeResponse<QueryObserverResponse>(response);
+    const items = await deserializeResponse<T[]>(await get(baseUrl, params));
+    const ids = items.map((item) => item.id);
+
+    const observerResponse = await post(`${baseUrl}/subscribe`, { ids, session_id: sessionId });
+    const { subscription_id: subscriptionId } = await deserializeResponse<QueryObserverResponse>(
+        observerResponse,
+    );
+
+    const refetch = (id: number): Promise<unknown[]> =>
+        new Promise((resolve, reject) => {
+            get(baseUrl, { id })
+                .then((resp) =>
+                    deserializeResponse<T[]>(resp)
+                        .then((objects) => resolve(objects))
+                        .catch(reject),
+                )
+                .catch(reject);
+        });
 
     observers.push({
-        observerId: observerResponse.observer,
-        items: observerResponse.items,
-        webSocketMessageOutputObservable: webSocketMessageOutputReduxAction,
+        subscriptionId,
+        baseUrl,
+        refetch,
+        itemsUpdateHandler: webSocketMessageOutputReduxAction,
     });
 
     return {
-        items: observerResponse.items as T[],
-        disposeFunction: (): Promise<void> => unsubscribeObserver(observerResponse.observer),
+        items,
+        disposeFunction: () => unsubscribeObserver(subscriptionId),
     };
 };
 
-const getObserver = (observerId: string): QueryObserver | undefined => {
-    return observers.find((observer) => observer.observerId === observerId);
+const getObserver = (subscriptionId: string): QueryObserver | undefined => {
+    return _.find(observers, { subscriptionId });
 };
 
-const update = (message: Message, currentItems: unknown[]): unknown[] => {
-    const { item: updatedItem } = message;
-
-    let items = [...currentItems];
-    switch (message.msg) {
-        case MESSAGE_ADDED: {
-            items = items.splice(message.order, 0, updatedItem);
-            break;
-        }
-        case MESSAGE_REMOVED: {
-            items = _.remove(items, {
-                [message.primary_key]: _.get(updatedItem, message.primary_key),
-            });
-            break;
-        }
-        case MESSAGE_CHANGED: {
-            // Remove item at previous index.
-            items = _.remove(items, {
-                [message.primary_key]: _.get(updatedItem, message.primary_key),
-            });
-            // Insert updated one at correct order index.
-            items.splice(message.order, 0, updatedItem);
-            break;
-        }
-        default: {
-            throw new Error(`Unknown message type ${message.msg}`);
-        }
-    }
-
-    return items;
-};
-
-export const handleWebSocketMessage = (message: Message): Observable<Action | never> => {
-    const observer = getObserver(message.observer);
+export const handleWebSocketMessage = (message: WebSocketMessage): Observable<Action | never> => {
+    const observer = getObserver(message.subscription_id);
     if (observer == null) {
         return EMPTY;
     }
-    observer.items = update(message, observer.items);
-    return observer.webSocketMessageOutputObservable(observer.items);
+    const { object_id: objectId, change_type: changeType } = message;
+    const { refetch } = observer;
+
+    let refetchPromise: Promise<unknown[]> = new Promise((resolve) => resolve([]));
+
+    if (changeType === MESSAGE_CREATE || changeType === MESSAGE_UPDATE) {
+        refetchPromise = refetchPromise.then(async () => refetch(objectId));
+    }
+
+    return from(refetchPromise).pipe(mergeMap((items) => observer.itemsUpdateHandler(items)));
 };

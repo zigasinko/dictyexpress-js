@@ -203,6 +203,7 @@ const GenexpressAppBar = ({
                     <MenuItem
                         onClick={(): void => {
                             connectedLogout();
+                            setUserMenuOpened(false);
                         }}
                     >
                         Logout

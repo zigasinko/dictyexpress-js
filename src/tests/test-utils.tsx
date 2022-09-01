@@ -103,8 +103,12 @@ export const handleCommonRequests = (request: Request, genes?: Gene[]): Promise<
         return Promise.resolve('');
     }
 
+    if (request.url.includes('subscribe')) {
+        return resolveStringifiedObjectPromise({ subscription_id: '' });
+    }
+
     if (request.url.includes('user?current_only')) {
-        return resolveStringifiedObjectPromise({ items: [] });
+        return resolveStringifiedObjectPromise([]);
     }
 
     if (request.url.includes('make_read_only')) {

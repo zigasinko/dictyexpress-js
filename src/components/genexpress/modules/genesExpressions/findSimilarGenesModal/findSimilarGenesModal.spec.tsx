@@ -84,19 +84,17 @@ describe('findSimilarGenesModal', () => {
                 }
 
                 if (req.url.includes('data') && req.url.includes(dataId.toString())) {
-                    return resolveStringifiedObjectPromise({
-                        items: [
-                            {
-                                ...generateData(1),
-                                ...{
-                                    status: DONE_DATA_STATUS,
-                                    output: {
-                                        similar_genes: storageId,
-                                    },
+                    return resolveStringifiedObjectPromise([
+                        {
+                            ...generateData(1),
+                            ...{
+                                status: DONE_DATA_STATUS,
+                                output: {
+                                    similar_genes: storageId,
                                 },
                             },
-                        ],
-                    });
+                        },
+                    ]);
                 }
 
                 if (req.url.includes('storage') && req.url.includes(storageId.toString())) {
@@ -259,19 +257,22 @@ describe('findSimilarGenesModal', () => {
                     });
                 }
 
-                if (req.url.includes('data') && req.url.includes(dataId.toString())) {
+                if (req.url.includes('subscribe')) {
                     return resolveStringifiedObjectPromise({
-                        items: [
-                            {
-                                ...generateData(1),
-                                ...{
-                                    status: WAITING_DATA_STATUS,
-                                    output: {},
-                                },
-                            },
-                        ],
-                        observer: observerId,
+                        subscription_id: observerId,
                     });
+                }
+
+                if (req.url.includes('data') && req.url.includes(dataId.toString())) {
+                    return resolveStringifiedObjectPromise([
+                        {
+                            ...generateData(1),
+                            ...{
+                                status: WAITING_DATA_STATUS,
+                                output: {},
+                            },
+                        },
+                    ]);
                 }
 
                 if (req.url.includes('basket_expressions')) {
@@ -320,24 +321,26 @@ describe('findSimilarGenesModal', () => {
 
             await screen.findByTestId('ScheduleIcon');
 
-            await waitFor(() => {
-                webSocketMock.send(
-                    JSON.stringify({
-                        item: {
-                            ...generateData(1),
-                            ...{
-                                status: DONE_DATA_STATUS,
-                                output: {
-                                    similar_genes: storageId,
-                                },
+            fetchMock.doMockOnce(() =>
+                resolveStringifiedObjectPromise([
+                    {
+                        ...generateData(1),
+                        ...{
+                            status: DONE_DATA_STATUS,
+                            output: {
+                                similar_genes: storageId,
                             },
                         },
-                        msg: 'changed',
-                        observer: observerId,
-                        primary_key: 'id',
-                    }),
-                );
-            });
+                    },
+                ]),
+            );
+            webSocketMock.send(
+                JSON.stringify({
+                    change_type: 'UPDATE',
+                    subscription_id: observerId,
+                    object_id: 'id',
+                }),
+            );
 
             await validateSimilarGenesGrid(genesSimilarities);
         });

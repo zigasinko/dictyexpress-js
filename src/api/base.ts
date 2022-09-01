@@ -6,7 +6,7 @@ export const authApiUrl = REST_AUTH_URL ?? `${baseUrl}/rest-auth`;
 
 const websocketHost =
     WEBSOCKET_URL ??
-    `ws${window.location.hostname === 'localhost' ? '' : 's'}://${window.location.host}/ws`;
+    `ws${window.location.hostname === 'localhost' ? '' : 's'}://${window.location.host}/ws/v2`;
 export const webSocketUrl = process.env.REACT_APP_TEST_WSS ?? websocketHost;
 
 export const sessionId = uuidv4();

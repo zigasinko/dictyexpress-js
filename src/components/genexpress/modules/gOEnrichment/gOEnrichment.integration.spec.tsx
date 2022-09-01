@@ -75,21 +75,19 @@ describe('goEnrichment integration', () => {
                 }
 
                 if (req.url.includes('data') && req.url.includes(dataObjectId.toString())) {
-                    return resolveStringifiedObjectPromise({
-                        items: [
-                            {
-                                ...generateData(1),
-                                ...{
-                                    status: DONE_DATA_STATUS,
-                                    output: {
-                                        terms: 1,
-                                        species: genes[0].species,
-                                        source: genes[0].source,
-                                    },
+                    return resolveStringifiedObjectPromise([
+                        {
+                            ...generateData(1),
+                            ...{
+                                status: DONE_DATA_STATUS,
+                                output: {
+                                    terms: 1,
+                                    species: genes[0].species,
+                                    source: genes[0].source,
                                 },
                             },
-                        ],
-                    });
+                        },
+                    ]);
                 }
 
                 if (req.url.includes('storage')) {
@@ -267,23 +265,26 @@ describe('goEnrichment integration', () => {
                     return resolveStringifiedObjectPromise([humanGaf, mouseMGIGaf, mouseUCSCGaf]);
                 }
 
+                if (req.url.includes('subscribe')) {
+                    return resolveStringifiedObjectPromise({
+                        subscription_id: observerId,
+                    });
+                }
+
                 if (req.url.includes('data') && req.url.includes('slug')) {
                     return resolveStringifiedObjectPromise(ontologyObo);
                 }
 
                 if (req.url.includes('data') && req.url.includes(dataObjectId.toString())) {
-                    return resolveStringifiedObjectPromise({
-                        items: [
-                            {
-                                ...generateData(1),
-                                ...{
-                                    status: WAITING_DATA_STATUS,
-                                    output: {},
-                                },
+                    return resolveStringifiedObjectPromise([
+                        {
+                            ...generateData(1),
+                            ...{
+                                status: WAITING_DATA_STATUS,
+                                output: {},
                             },
-                        ],
-                        observer: observerId,
-                    });
+                        },
+                    ]);
                 }
 
                 if (req.url.includes('storage')) {
@@ -335,11 +336,11 @@ describe('goEnrichment integration', () => {
 
             await screen.findByTestId('ScheduleIcon');
 
-            await waitFor(() => {
-                webSocketMock.send(
-                    JSON.stringify({
-                        item: {
-                            ...generateData(1),
+            fetchMock.doMockOnce(() =>
+                resolveStringifiedObjectPromise([
+                    {
+                        ...generateData(1),
+                        ...{
                             status: DONE_DATA_STATUS,
                             output: {
                                 terms: 1,
@@ -347,12 +348,17 @@ describe('goEnrichment integration', () => {
                                 source: genes[0].source,
                             },
                         },
-                        msg: 'changed',
-                        observer: observerId,
-                        primary_key: 'id',
-                    }),
-                );
-            });
+                    },
+                ]),
+            );
+
+            webSocketMock.send(
+                JSON.stringify({
+                    change_type: 'UPDATE',
+                    subscription_id: observerId,
+                    object_id: 'id',
+                }),
+            );
 
             // Mocked WebSocket needs almost a second to establish connection, that's why
             // increased timeout is used.

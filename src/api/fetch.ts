@@ -2,7 +2,7 @@ import { ResponseError } from 'redux/models/internal';
 import { getCookie } from '../utils/documentHelpers';
 import { sessionId } from './base';
 
-type QueryParams = { [key: string]: string | number };
+export type QueryParams = { [key: string]: string | number | string[] | number[] };
 type BodyParams = Record<string, unknown>;
 
 /**

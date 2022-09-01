@@ -126,19 +126,17 @@ describe('clustering integration', () => {
                 }
 
                 if (req.url.includes('data') && req.url.includes(dataId.toString())) {
-                    return resolveStringifiedObjectPromise({
-                        items: [
-                            {
-                                ...generateData(1),
-                                ...{
-                                    status: DONE_DATA_STATUS,
-                                    output: {
-                                        cluster: storageId,
-                                    },
+                    return resolveStringifiedObjectPromise([
+                        {
+                            ...generateData(1),
+                            ...{
+                                status: DONE_DATA_STATUS,
+                                output: {
+                                    cluster: storageId,
                                 },
                             },
-                        ],
-                    });
+                        },
+                    ]);
                 }
 
                 if (
@@ -570,7 +568,7 @@ describe('clustering integration', () => {
         const observerId = uuidv4();
         let webSocketMock: Client;
 
-        beforeAll(() => {
+        beforeEach(() => {
             fetchMock.resetMocks();
 
             fetchMock.mockResponse(async (req) => {
@@ -583,19 +581,22 @@ describe('clustering integration', () => {
                     });
                 }
 
-                if (req.url.includes('data') && req.url.includes(dataId.toString())) {
+                if (req.url.includes('subscribe')) {
                     return resolveStringifiedObjectPromise({
-                        items: [
-                            {
-                                ...generateData(1),
-                                ...{
-                                    status: WAITING_DATA_STATUS,
-                                    output: {},
-                                },
-                            },
-                        ],
-                        observer: observerId,
+                        subscription_id: observerId,
                     });
+                }
+
+                if (req.url.includes('data') && req.url.includes(dataId.toString())) {
+                    return resolveStringifiedObjectPromise([
+                        {
+                            ...generateData(1),
+                            ...{
+                                status: WAITING_DATA_STATUS,
+                                output: {},
+                            },
+                        },
+                    ]);
                 }
 
                 if (req.url.includes('basket_expressions')) {
@@ -618,9 +619,7 @@ describe('clustering integration', () => {
                     handleCommonRequests(req) ?? Promise.reject(new Error(`bad url: ${req.url}`))
                 );
             });
-        });
 
-        beforeEach(() => {
             const mockServer = new Server(`${webSocketUrl}/${sessionId}`);
             mockServer.on('connection', (socket) => {
                 webSocketMock = socket;
@@ -656,26 +655,29 @@ describe('clustering integration', () => {
 
             await screen.findByTestId('ScheduleIcon');
 
-            await waitFor(() => {
-                webSocketMock.send(
-                    JSON.stringify({
-                        item: {
-                            ...generateData(1),
-                            ...{
-                                status: DONE_DATA_STATUS,
-                                output: {
-                                    cluster: 1,
-                                    species: genes[0].species,
-                                    source: genes[0].source,
-                                },
+            fetchMock.doMockOnce(() => {
+                return resolveStringifiedObjectPromise([
+                    {
+                        ...generateData(1),
+                        ...{
+                            status: DONE_DATA_STATUS,
+                            output: {
+                                cluster: 1,
+                                species: genes[0].species,
+                                source: genes[0].source,
                             },
                         },
-                        msg: 'changed',
-                        observer: observerId,
-                        primary_key: 'id',
-                    }),
-                );
+                    },
+                ]);
             });
+
+            webSocketMock.send(
+                JSON.stringify({
+                    change_type: 'UPDATE',
+                    subscription_id: observerId,
+                    object_id: 'id',
+                }),
+            );
 
             // Mocked WebSocket needs almost a second to establish connection, that's why
             // increased timeout is used.

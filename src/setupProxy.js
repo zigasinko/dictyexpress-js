@@ -26,7 +26,7 @@ const wsProxyConfig = {
     },
     secure: false,
     pathRewrite: {
-        '^/ws-proxy': '/ws',
+        '^/ws-proxy': '/ws/v2',
     },
 };
 

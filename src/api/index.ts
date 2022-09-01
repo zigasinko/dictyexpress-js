@@ -1,7 +1,6 @@
 export { getGenes, getPastedGenes } from './kbApi';
 export { login, logout } from './authApi';
 export { addToBasket } from './basketApi';
-export { unsubscribe } from './queryObserverApi';
 export { getCSRFCookie } from './csrfApi';
 export { getDifferentialExpressions } from './differentialExpressionApi';
 export { getOrCreateData } from './getOrCreateApi';
