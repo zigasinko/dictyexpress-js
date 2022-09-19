@@ -35,7 +35,9 @@ const getVegaSpecification = (
             on: [
                 {
                     events: '@horizontalLines:click, @verticalLines:click, @genesExpressionsHeatmap:click, @genesNames:click',
-                    update: 'event.ctrlKey',
+                    // On Macintosh keyboards, metaKey is the ⌘ Command key.
+                    // At least as of Firefox 48, the ⊞ Windows key is no longer considered a metaKey.
+                    update: 'event.ctrlKey || event.metaKey',
                     force: true,
                 },
             ],
