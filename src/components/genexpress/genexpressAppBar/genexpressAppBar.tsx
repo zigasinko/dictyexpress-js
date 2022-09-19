@@ -161,7 +161,13 @@ const GenexpressAppBar = ({
                 >
                     {isExporting ? <CircularProgress size={20} /> : <DownloadIcon />}
                 </IconButtonWithTooltip>
-                <Button onClick={connectedLayoutsReset}>Default layout</Button>
+                <Button
+                    onClick={() => {
+                        connectedLayoutsReset();
+                    }}
+                >
+                    Default layout
+                </Button>
                 {isLoggedIn ? (
                     <Button onClick={(): void => setUserMenuOpened(true)} ref={userButtonElement}>
                         {user.first_name} {user.last_name}
