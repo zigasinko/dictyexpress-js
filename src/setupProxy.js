@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const targetDomain = 'qa2.genialis.com';
+const targetDomain = 'qa.genialis.io';
 const logLevel = 'debug';
 
 const proxyConfig = {
@@ -18,12 +18,13 @@ const proxyConfig = {
 };
 
 const wsProxyConfig = {
-    target: `wss://${targetDomain}`,
+    target: 'wss://ws.qa.genialis.io',
     clientLogLevel: logLevel,
     ws: true,
     headers: {
-        Host: targetDomain,
+        Host: 'ws.qa.genialis.io',
     },
+    secure: false,
     pathRewrite: {
         '^/ws-proxy': '/ws',
     },
