@@ -55,9 +55,9 @@ describe('selectComparisonTimeSeriesModal', () => {
         );
 
         await waitFor(() => {
-            expect(mockedStore.getActions()).toEqual([
+            expect(mockedStore.getActions()).toContainEqual(
                 comparisonTimeSeriesChanged([timeSeries[1].id]),
-            ]);
+            );
         });
     });
 

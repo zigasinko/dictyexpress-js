@@ -57,3 +57,7 @@ export enum BookmarkStatePath {
 }
 
 export const EMPTY_ARRAY = [];
+
+export enum DescriptorSchemaSlug {
+    DictyTimeSeries = 'dicty-time-series',
+}

@@ -109,6 +109,18 @@ export const generateSingleTimeSeries = (id: number): Relation => ({
     category: 'Time series',
     partitions: [{ id: 1, position: 1, entity: 1, label: 'Test label' }],
     unit: null,
+    descriptor: {
+        citation: {
+            name: 'Rosengarten et. al.',
+            url: 'http://www.biomedcentral.com/1471-2164/16/294',
+        },
+        details: 'Filter development',
+        growth: 'HL5',
+        project: '2. Filter Development vs. cAMP Pulsing; Frequent Sampling',
+        strain: 'AX4',
+        treatment: 'Filter development',
+    },
+    descriptor_schema: generateDescriptorSchema(3),
 });
 
 export const generateGene = (

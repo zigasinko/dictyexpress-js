@@ -1,18 +1,20 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import DictyGrid, { DictyGridProps } from 'components/genexpress/common/dictyGrid/dictyGrid';
-import { Relation } from '@genialis/resolwe/dist/api/types/rest';
+import { DescriptorSchema, Relation } from '@genialis/resolwe/dist/api/types/rest';
 import { TimeSeriesSelectorContainer } from './timeSeriesSelector.styles';
+import { useDispatch } from 'react-redux';
+import { getDictyDescriptorSchema } from 'api/descriptorSchemaApi';
+import { handleError } from 'utils/errorUtils';
+import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
+import { ColDef } from 'ag-grid-community';
+import _ from 'lodash';
+import CitationCell from './citationCell/citationCell';
 
-const columnDefs = [{ field: 'collection.name', headerName: 'Name' }];
-
-const multipleSelectionColumnDefs = [
-    {
-        headerCheckboxSelection: true,
-        checkboxSelection: true,
-        width: 25,
-    },
-    { field: 'collection.name', headerName: 'Name' },
-];
+const selectionCell = {
+    headerCheckboxSelection: true,
+    checkboxSelection: true,
+    width: 25,
+};
 
 type TimeSeriesSelectorProps = {
     timeSeries: Relation[];
@@ -23,6 +25,8 @@ type TimeSeriesSelectorProps = {
     isFetching?: boolean;
 };
 
+let descriptorSchemaCache: DescriptorSchema | undefined;
+
 const TimeSeriesSelector = ({
     timeSeries,
     selectedTimeSeries,
@@ -31,14 +35,85 @@ const TimeSeriesSelector = ({
     onSelectionChanged,
     isFetching,
 }: TimeSeriesSelectorProps): ReactElement => {
+    const [descriptorSchema, setDescriptorSchema] = useState<DescriptorSchema | undefined>(
+        descriptorSchemaCache,
+    );
+    const [isFetchingDescriptorSchema, setIsFetchingDescriptorSchema] = useState(false);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        const fetchAndSetDescriptorSchema = async () => {
+            try {
+                setIsFetchingDescriptorSchema(true);
+
+                descriptorSchemaCache = await getDictyDescriptorSchema();
+
+                if (descriptorSchemaCache != null) {
+                    setDescriptorSchema(descriptorSchemaCache);
+                }
+            } catch (error) {
+                dispatch(
+                    handleError(
+                        'Error fetching time series descriptor schema, limited metadata is displayed in Time series Selection.',
+                        error,
+                    ),
+                );
+            } finally {
+                setIsFetchingDescriptorSchema(false);
+            }
+        };
+
+        if (descriptorSchema == null) {
+            void fetchAndSetDescriptorSchema();
+        }
+    }, [descriptorSchema, dispatch]);
+
+    const columnDefs = useStateWithEffect(() => {
+        if (descriptorSchema == null) {
+            return [
+                ...(selectionMode === 'multiple' ? [selectionCell] : []),
+                { field: 'collection.name', headerName: 'Name' },
+            ];
+        }
+
+        return [
+            ...(selectionMode === 'multiple' ? [selectionCell] : []),
+            ...descriptorSchema.schema.map((fieldSchema, index) => {
+                if (fieldSchema.type.includes('url')) {
+                    return {
+                        field: `descriptor.${fieldSchema.name}`,
+                        headerName: fieldSchema.label,
+                        cellStyle: { padding: 0 },
+                        cellRenderer: CitationCell,
+                        getQuickFilterText: (params) => {
+                            return params.data.descriptor?.citation?.name;
+                        },
+                    } as ColDef;
+                }
+
+                return {
+                    field: `descriptor.${fieldSchema.name}`,
+                    headerName: fieldSchema.label,
+                    ...(index === 0 && {
+                        sort: 'asc',
+                        valueGetter: ({ data }) =>
+                            _.get(data, `descriptor.${fieldSchema.name}`) ??
+                            _.get(data, 'collection.name'),
+                    }),
+                } as ColDef;
+            }),
+        ];
+    }, [descriptorSchema, selectionMode]);
+
     return (
         <TimeSeriesSelectorContainer>
             <DictyGrid
-                isFetching={isFetching}
+                isFetching={isFetching || isFetchingDescriptorSchema}
                 data={timeSeries}
                 selectionMode={selectionMode}
                 filterLabel="Filter time series"
-                columnDefs={selectionMode === 'multiple' ? multipleSelectionColumnDefs : columnDefs}
+                disableSizeColumnsToFit
+                columnDefs={columnDefs}
                 getRowId={(data): string => data.id.toString()}
                 onRowSelected={onRowSelected}
                 onSelectionChanged={onSelectionChanged}

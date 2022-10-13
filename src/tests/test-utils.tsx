@@ -117,6 +117,9 @@ export const handleCommonRequests = (request: Request, genes?: Gene[]): Promise<
             genes.filter((gene) => (pasted as string[]).includes(gene.name)),
         );
     }
+    if (request.url.includes('descriptorschema')) {
+        return resolveStringifiedObjectPromise([]);
+    }
 
     return null;
 };

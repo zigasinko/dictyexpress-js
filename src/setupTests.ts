@@ -2,7 +2,6 @@
 import '@testing-library/jest-dom/extend-expect';
 import 'jest-canvas-mock';
 import fetchMock from 'jest-fetch-mock';
-// import { JSDOM } from 'jsdom';
 
 window.API_URL = null;
 window.REST_AUTH_URL = null;
@@ -23,18 +22,3 @@ window.matchMedia =
     });
 
 fetchMock.enableMocks();
-
-/**
- * Known issue with jsDom. Won't be needed once create-react-app updates jest to v26:
- * https://github.com/mui-org/material-ui/issues/15726
- */
-// @ts-ignore
-/* global.document.createRange = () => ({
-    setStart: jest.fn(),
-    setEnd: jest.fn(),
-    commonAncestorContainer: {
-        nodeName: 'BODY',
-        ownerDocument: document,
-    },
-    createContextualFragment: (str: string) => JSDOM.fragment(str),
-}); */

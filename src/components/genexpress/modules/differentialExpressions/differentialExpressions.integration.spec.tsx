@@ -84,8 +84,9 @@ describe('differentialExpressions integration', () => {
                 initialState,
             }));
 
-            await waitFor(() =>
-                expect(screen.getByLabelText('Differential expression')).toBeEnabled(),
+            await waitFor(
+                () => expect(screen.getByLabelText('Differential expression')).toBeEnabled(),
+                { timeout: 2000 },
             );
         });
 

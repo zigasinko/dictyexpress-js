@@ -46,11 +46,12 @@ const SelectComparisonTimeSeriesModal = ({
     connectedComparisonTimeSeriesChanged,
     handleOnClose,
 }: SelectComparisonTimeSeriesModalProps): ReactElement => {
-    const filteredSimeSeries = useStateWithEffect(
-        () =>
-            timeSeries.filter((singleTimeSeries) => singleTimeSeries.id !== selectedTimeSeries?.id),
-        [selectedTimeSeries, timeSeries],
-    );
+    const filteredTimeSeries = useStateWithEffect(() => {
+        return timeSeries.filter(
+            (singleTimeSeries) => singleTimeSeries.id !== selectedTimeSeries?.id,
+        );
+    }, [selectedTimeSeries, timeSeries]);
+
     return (
         <CenteredModal
             open
@@ -63,7 +64,7 @@ const SelectComparisonTimeSeriesModal = ({
                 <ModalBody>
                     <TimeSeriesGridWrapper>
                         <TimeSeriesSelector
-                            timeSeries={filteredSimeSeries}
+                            timeSeries={filteredTimeSeries}
                             selectedTimeSeries={comparisonTimeSeries}
                             selectionMode="multiple"
                             onSelectionChanged={(selected): void => {

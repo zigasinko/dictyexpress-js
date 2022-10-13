@@ -1,11 +1,11 @@
 {
     "name": "dicty-express",
-    "version": "0.1.0b9",
+    "version": "0.1.0b10",
     "private": true,
     "dependencies": {
         "@emotion/react": "^11.8.2",
         "@emotion/styled": "^11.8.1",
-        "@genialis/resolwe": "^17.0.0",
+        "@genialis/resolwe": "beta",
         "@mui/icons-material": "^5.5.1",
         "@mui/material": "^5.5.2",
         "@mui/styled-engine-sc": "^5.5.2",

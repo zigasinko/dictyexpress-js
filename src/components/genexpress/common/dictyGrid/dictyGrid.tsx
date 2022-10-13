@@ -198,6 +198,9 @@ const DictyGrid = <T,>({
                     onSortChanged={handleOnSortChanged}
                     columnDefs={columnDefs}
                     disableStaticMarkup
+                    onFilterChanged={() => {
+                        setOverlay();
+                    }}
                     rowSelection={selectionMode}
                     rowStyle={
                         selectionMode == null && onRowClicked == null ? { cursor: 'pointer' } : {}

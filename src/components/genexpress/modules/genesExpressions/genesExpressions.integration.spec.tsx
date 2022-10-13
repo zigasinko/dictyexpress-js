@@ -59,6 +59,7 @@ const genesMappings: GeneMapping[] = comparisonGenes.map(
         ({ source_id: genes[index].feature_id, target_id: gene.feature_id } as GeneMapping),
 );
 
+jest.setTimeout(10_000);
 describe('genesExpressions integration', () => {
     let initialState: RootState;
     let container: HTMLElement;

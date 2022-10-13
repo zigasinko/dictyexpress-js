@@ -49,19 +49,19 @@ test.describe('Expression time courses', () => {
 
     test('should draw Expression Time Courses graph', async ({
         page,
-        queries: { findByRole, getByPlaceholderText },
+        queries: { findAllByRole, getByPlaceholderText },
     }) => {
         const genes = 'eif3L fnkF_ps';
 
         await (
-            await findByRole(
+            await findAllByRole(
                 'gridcell',
                 {
-                    name: 'D. discoideum, AX4, Parikh et al. 2015 (Growth: K. pneumoniae, Treatment: Filter Development)',
+                    name: '1. D. discoideum vs. D. purpureum',
                 },
                 { timeout: 5000 },
             )
-        ).click();
+        )[0].click();
 
         await page.waitForResponse((response: { url: () => string | string[] }) => {
             return response.url().includes('/api/storage');
