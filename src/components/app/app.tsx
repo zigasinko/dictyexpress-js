@@ -20,6 +20,7 @@ import { getCSRFCookie } from 'api';
 import { GlobalStyle } from './globalStyle';
 import theme from './theme';
 import appStore from '../../redux/appStore';
+import CookieConsent from 'components/common/cookieConsent';
 
 void getCSRFCookie();
 
@@ -49,6 +50,7 @@ const App = (): ReactElement => {
                                         <Route path="*" element={<PageNotFound />} />
                                     </Routes>
                                 </BrowserRouter>
+                                <CookieConsent />
                             </StyledSnackbarProvider>
                         </StyledComponentsThemeProvider>
                     </MuiThemeProvider>

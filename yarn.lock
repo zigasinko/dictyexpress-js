@@ -6549,6 +6549,7 @@ __metadata:
     npm-run-all: ^4.1.5
     prettier: ^2.2.1
     react: ^17.0.1
+    react-cookie-consent: ^8.0.1
     react-dom: ^17.0.1
     react-grid-layout: ^1.2.0
     react-redux: ^7.2.2
@@ -10084,6 +10085,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"js-cookie@npm:^2.2.1":
+  version: 2.2.1
+  resolution: "js-cookie@npm:2.2.1"
+  checksum: 9b1fb980a1c5e624fd4b28ea4867bb30c71e04c4484bb3a42766344c533faa684de9498e443425479ec68609e96e27b60614bfe354877c449c631529b6d932f2
+  languageName: node
+  linkType: hard
+
 "js-tokens@npm:^3.0.0 || ^4.0.0, js-tokens@npm:^4.0.0":
   version: 4.0.0
   resolution: "js-tokens@npm:4.0.0"
@@ -13111,6 +13119,17 @@ __metadata:
     regenerator-runtime: ^0.13.9
     whatwg-fetch: ^3.6.2
   checksum: 1bb031080af15397d6eb9c69a0c2e93799991f7197a086e4409ba719398f1256b542a3d6c9a34673d516c684eef3e8226c99b335982593851f58f65f6e43571b
+  languageName: node
+  linkType: hard
+
+"react-cookie-consent@npm:^8.0.1":
+  version: 8.0.1
+  resolution: "react-cookie-consent@npm:8.0.1"
+  dependencies:
+    js-cookie: ^2.2.1
+  peerDependencies:
+    react: ">=16"
+  checksum: c99f3e40e3091c439956498158b5b8906cce170763836d6fade98a06ce667eca25aaf3bc407e10a6fb72fc44e5178a2ebf14cbbe4e1b5684a74b7d7f484bd359
   languageName: node
   linkType: hard
 
