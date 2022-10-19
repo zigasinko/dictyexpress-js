@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import './app.scss';
 import '../../../node_modules/react-grid-layout/css/styles.css';
@@ -33,6 +33,20 @@ const StyledSnackbarProvider = styled(SnackbarProvider)`
 `;
 
 const App = (): ReactElement => {
+    useEffect(() => {
+        window.dataLayer = window.dataLayer || [];
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        function gtag(..._args: unknown[]) {
+            // eslint-disable-next-line prefer-rest-params
+            window.dataLayer.push(arguments);
+        }
+
+        if (process.env.NODE_ENV === 'development') {
+            gtag('js', new Date());
+            gtag('config', 'G-VLE4FY5V5F');
+        }
+    }, []);
+
     return (
         <RendererContext.Provider value="svg">
             <StyledEngineProvider injectFirst>

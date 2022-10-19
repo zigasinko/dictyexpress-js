@@ -8,5 +8,6 @@ export declare global {
         REST_AUTH_URL?: string | null;
         WEBSOCKET_URL?: string | null;
         COMMUNITY_SLUG: string;
+        dataLayer: unknown[];
     }
 }
