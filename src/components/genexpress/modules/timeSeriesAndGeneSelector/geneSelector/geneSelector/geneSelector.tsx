@@ -114,11 +114,56 @@ const GeneSelector = ({
 
     useReport(
         (processFile) => {
-            processFile('Genes/selected_genes.tsv', objectsArrayToTsv(selectedGenes), false);
+            console.log({ selectedGenes });
+            processFile(
+                'Genes/selected_genes.tsv',
+                objectsArrayToTsv(
+                    selectedGenes.map(
+                        ({
+                            aliases,
+                            feature_id,
+                            description,
+                            full_name,
+                            name,
+                            source,
+                            species,
+                        }) => ({
+                            feature_id,
+                            full_name,
+                            name,
+                            aliases,
+                            description,
+                            source,
+                            species,
+                        }),
+                    ),
+                ),
+                false,
+            );
             processFile(
                 'Genes/highlighted_genes.tsv',
                 objectsArrayToTsv(
-                    selectedGenes.filter((gene) => highlightedGenesIds.includes(gene.feature_id)),
+                    selectedGenes
+                        .filter((gene) => highlightedGenesIds.includes(gene.feature_id))
+                        .map(
+                            ({
+                                aliases,
+                                feature_id,
+                                description,
+                                full_name,
+                                name,
+                                source,
+                                species,
+                            }) => ({
+                                feature_id,
+                                full_name,
+                                name,
+                                aliases,
+                                description,
+                                source,
+                                species,
+                            }),
+                        ),
                 ),
                 false,
             );

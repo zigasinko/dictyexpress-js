@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _, { isArray } from 'lodash';
 import * as vega from 'vega';
 
 export const objectsArrayToTsv = (data: Record<string, unknown>[]): string => {
@@ -9,7 +9,11 @@ export const objectsArrayToTsv = (data: Record<string, unknown>[]): string => {
     const headers = Object.keys(data[0]);
     return [headers, ...data]
         .map((item) => {
-            return Object.values(item).join('\t');
+            if (isArray(item)) {
+                return item.join('\t');
+            }
+
+            return headers.map((header) => item[header]).join('\t');
         })
         .join('\n');
 };
