@@ -41,7 +41,7 @@ const App = (): ReactElement => {
             window.dataLayer.push(arguments);
         }
 
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === 'production') {
             gtag('js', new Date());
             gtag('config', 'G-VLE4FY5V5F');
         }

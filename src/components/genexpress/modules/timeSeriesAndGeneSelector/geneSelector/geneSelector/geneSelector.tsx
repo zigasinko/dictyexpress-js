@@ -114,7 +114,6 @@ const GeneSelector = ({
 
     useReport(
         (processFile) => {
-            console.log({ selectedGenes });
             processFile(
                 'Genes/selected_genes.tsv',
                 objectsArrayToTsv(
