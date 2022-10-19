@@ -57,7 +57,7 @@ test.describe('Expression time courses', () => {
             await findAllByRole(
                 'gridcell',
                 {
-                    name: '1. D. discoideum vs. D. purpureum',
+                    name: '01. D. discoideum vs. D. purpureum',
                 },
                 { timeout: 5000 },
             )
