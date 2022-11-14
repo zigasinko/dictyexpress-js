@@ -94,8 +94,13 @@ const TimeSeriesSelector = ({
                 return {
                     field: `descriptor.${fieldSchema.name}`,
                     headerName: fieldSchema.label,
+                    ...(fieldSchema.name === 'details' && {
+                        sort: 'asc',
+                        sortIndex: 1,
+                    }),
                     ...(index === 0 && {
                         sort: 'asc',
+                        sortIndex: 0,
                         valueGetter: ({ data }) =>
                             _.get(data, `descriptor.${fieldSchema.name}`) ??
                             _.get(data, 'collection.name'),
