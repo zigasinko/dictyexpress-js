@@ -139,6 +139,10 @@ const getVegaSpecification = (
                   title: colorByTimeSeries ? 'Time series' : 'Genes',
                   stroke: 'colorscale',
                   orient: 'right',
+                  labelFontSize: 14,
+                  titleFontSize: 14,
+                  labelFont: 'FS Joey Web Regular',
+                  titleFont: 'FS Joey Web Regular',
                   // 44 = offset of first gene in legend
                   // 15.5 = gene name element height
                   columns:
@@ -347,12 +351,20 @@ const getVegaSpecification = (
             orient: 'bottom',
             title: 'Time [hrs]',
             tickOffset: 0,
+            labelFontSize: 14,
+            labelFont: 'FS Joey Web Regular',
+            titleFont: 'FS Joey Web Regular',
+            titleFontSize: 14,
         },
         {
             title: 'RPKM',
             grid: true,
             orient: 'left',
             scale: 'yscale',
+            labelFont: 'FS Joey Web Regular',
+            titleFont: 'FS Joey Web Regular',
+            labelFontSize: 14,
+            titleFontSize: 14,
         },
     ],
 });

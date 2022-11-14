@@ -6,7 +6,7 @@ export const GlobalStyle = createGlobalStyle`
     min-width: 360px;
     padding-top: 0px;
     font-family: "FS Joey Web Regular",Helvetica,Arial,Verdana,sans-serif;
-    font-size: 0.875rem;
+    font-size: 1rem;
     font-style: normal;
     font-weight: normal;
   }

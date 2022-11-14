@@ -15,6 +15,7 @@ type GridWrapperProps = {
 export const GridWrapper = styled.div<GridWrapperProps>`
     height: 100%;
     overflow: hidden;
+    font-size: 0.875rem;
 
     // sizeColumnsToFit action should set column widths so that horizontal scroll
     // isn't needed. Sometimes this doesn't work because of rounding pixels.

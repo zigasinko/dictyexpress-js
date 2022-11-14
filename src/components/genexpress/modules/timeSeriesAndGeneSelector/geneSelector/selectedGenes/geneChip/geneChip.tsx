@@ -36,6 +36,7 @@ export const GeneChip = ({
                 <GeneChipWrapper
                     label={gene.name}
                     onDelete={onRemove}
+                    sx={{ fontSize: '1rem' }}
                     ref={chipWrapperElement}
                     onClick={handleOnClick}
                     size="small"

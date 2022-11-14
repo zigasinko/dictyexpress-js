@@ -353,15 +353,19 @@ const getVegaSpecification = (
             orient: 'top',
             title: 'log2(Fold Change)',
             grid: true,
+            labelFontSize: 14,
+            titleFontSize: 14,
+            labelFont: 'FS Joey Web Regular',
+            titleFont: 'FS Joey Web Regular',
             encode: {
                 labels: {
                     update: {
-                        dy: { value: 5 },
+                        dy: { value: 4 },
                         align: { value: 'center' },
                     },
                 },
                 title: {
-                    update: { dy: { value: 9 } },
+                    update: { dy: { value: 0 } },
                 },
             },
         },
@@ -370,15 +374,19 @@ const getVegaSpecification = (
             orient: 'left',
             title: `-log10(${probField})`,
             grid: true,
+            labelFontSize: 14,
+            titleFontSize: 14,
+            labelFont: 'FS Joey Web Regular',
+            titleFont: 'FS Joey Web Regular',
             encode: {
                 labels: {
                     update: {
-                        dx: { value: -8 },
+                        dx: { value: -9 },
                         align: { value: 'center' },
                     },
                 },
                 title: {
-                    update: { dx: { value: -12 } },
+                    update: { dx: { value: -13 } },
                 },
             },
         },

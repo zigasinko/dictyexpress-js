@@ -4,7 +4,7 @@ exports[`geneChip should render as highlighted snapshot 1`] = `
 <DocumentFragment>
   <div>
     <div
-      class="MuiButtonBase-root MuiChip-root MuiChip-filled MuiChip-sizeSmall MuiChip-colorSecondary MuiChip-clickable MuiChip-clickableColorSecondary MuiChip-deletable MuiChip-deletableColorSecondary MuiChip-filledSecondary sc-gKclnd btFKwt css-1c4970f-MuiButtonBase-root-MuiChip-root"
+      class="MuiButtonBase-root MuiChip-root MuiChip-filled MuiChip-sizeSmall MuiChip-colorSecondary MuiChip-clickable MuiChip-clickableColorSecondary MuiChip-deletable MuiChip-deletableColorSecondary MuiChip-filledSecondary sc-gKclnd btFKwt css-h0mivt-MuiButtonBase-root-MuiChip-root"
       role="button"
       tabindex="0"
     >
@@ -33,7 +33,7 @@ exports[`geneChip should render the same as default snapshot 1`] = `
 <DocumentFragment>
   <div>
     <div
-      class="MuiButtonBase-root MuiChip-root MuiChip-filled MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-deletable MuiChip-deletableColorDefault MuiChip-filledDefault sc-gKclnd btFKwt css-m5fh7u-MuiButtonBase-root-MuiChip-root"
+      class="MuiButtonBase-root MuiChip-root MuiChip-filled MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-deletable MuiChip-deletableColorDefault MuiChip-filledDefault sc-gKclnd btFKwt css-11mrfpq-MuiButtonBase-root-MuiChip-root"
       role="button"
       tabindex="0"
     >
