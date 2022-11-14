@@ -28,7 +28,7 @@ const appTheme = createTheme(theme);
 
 const StyledSnackbarProvider = styled(SnackbarProvider)`
     &.SnackbarItem-variantSuccess {
-        background: ${theme.palette.secondary.main};
+        background: ${({ theme: styledTheme }) => styledTheme.palette.secondary.main};
     }
 `;
 

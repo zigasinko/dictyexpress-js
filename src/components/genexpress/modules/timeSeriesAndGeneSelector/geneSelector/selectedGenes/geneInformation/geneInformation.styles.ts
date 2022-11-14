@@ -4,8 +4,8 @@ export const GeneInformationContainer = styled.div`
     min-width: 240px;
     max-width: 300px;
     border: 1px solid;
-    padding: ${(props): string => props.theme.spacing(1)};
-    background-color: ${(props): string => props.theme.palette.background.paper};
+    padding: ${({ theme }): string => theme.spacing(1)};
+    background-color: ${({ theme }): string => theme.palette.background.paper};
 `;
 
 export const GeneInformationHeader = styled.div`

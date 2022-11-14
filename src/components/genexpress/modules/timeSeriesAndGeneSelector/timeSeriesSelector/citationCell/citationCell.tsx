@@ -1,5 +1,5 @@
 import React, { ReactElement, useCallback, useState } from 'react';
-import { Box, Button, List, ListItem } from '@mui/material';
+import { Box, Button, ButtonBase, Link, List, ListItem } from '@mui/material';
 import {
     CenteredModal,
     ModalContainer,
@@ -27,14 +27,8 @@ const CitationCell = ({
     }
 
     return (
-        <>
-            <Button
-                sx={{
-                    width: 1,
-                    height: 1,
-                    justifyContent: 'flex-start',
-                    textTransform: 'none',
-                }}
+        <Box sx={{ width: 1, height: 1, display: 'flex', alignItems: 'center' }}>
+            <ButtonBase
                 // To stop real event from bubbling to the row onSelect handler, we must stop propagation on the native event not the react synthetic one.
                 ref={(ref) => {
                     if (!ref) {
@@ -46,10 +40,8 @@ const CitationCell = ({
                     };
                 }}
             >
-                <Box component="span" sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {data.descriptor.citation.name}
-                </Box>
-            </Button>
+                <Link>{data.descriptor.citation.name}</Link>
+            </ButtonBase>
             {isCitationDialogOpened && (
                 <CenteredModal open aria-labelledby="modalTitle" onClose={onClose}>
                     <ModalContainer>
@@ -87,7 +79,7 @@ const CitationCell = ({
                     </ModalContainer>
                 </CenteredModal>
             )}
-        </>
+        </Box>
     );
 };
 
