@@ -203,7 +203,7 @@ const DictyGrid = <T,>({
                     }}
                     rowSelection={selectionMode}
                     rowStyle={
-                        selectionMode == null && onRowClicked == null ? { cursor: 'pointer' } : {}
+                        selectionMode == null && onRowClicked == null ? {} : { cursor: 'pointer' }
                     }
                     suppressRowClickSelection={suppressRowClickSelection}
                     onRowClicked={handleOnRowClicked}

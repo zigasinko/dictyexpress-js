@@ -11,6 +11,7 @@ export const TermCellContainer = styled.div`
     position: relative;
     width: 100%;
     height: 100%;
+    cursor: pointer;
 `;
 
 export const TermIndentation = styled.span<{ $depth: number }>`

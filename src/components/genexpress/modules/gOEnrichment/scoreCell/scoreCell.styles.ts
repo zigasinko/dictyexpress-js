@@ -21,5 +21,10 @@ export const ScoreLinearProgress = styled(LinearProgress)`
     && {
         width: 100%;
         height: 26px;
+        background-color: white;
+
+        & > .MuiLinearProgress-bar1Determinate {
+            background-color: rgb(185, 197, 211);
+        }
     }
 `;
