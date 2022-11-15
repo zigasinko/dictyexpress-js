@@ -1,4 +1,4 @@
-import { Severity } from '@sentry/browser';
+import { SeverityLevel } from '@sentry/browser';
 import * as Sentry from '@sentry/browser';
 import { User } from '@genialis/resolwe/dist/api/types/rest';
 import _ from 'lodash';
@@ -29,7 +29,7 @@ export const setSentryUser = (user: User | void): void => {
 export const sentryCapture = (
     message: string,
     associatedObject: Record<string, unknown> | Error | ResponseError = {},
-    severity: Severity = Severity.Error,
+    severity: SeverityLevel = 'error',
 ): string => {
     // If an error is attached, log the same error twice.
     // Once with a stack trace to errorLog and once with the stack trace of the appended error.

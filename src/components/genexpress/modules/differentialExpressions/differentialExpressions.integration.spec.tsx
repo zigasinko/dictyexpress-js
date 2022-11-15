@@ -35,6 +35,7 @@ const backendBookmark = generateBackendBookmark(1, [
 ]);
 backendBookmark.state.differentialExpressions.selectedId = differentialExpressions[0].id;
 
+jest.setTimeout(10000);
 describe('differentialExpressions integration', () => {
     let initialState: RootState;
     let container: HTMLElement;
@@ -135,25 +136,26 @@ describe('differentialExpressions integration', () => {
         });
 
         it('should load selected differential expression, genes and highlighted genes from bookmark', async () => {
-            jest.setTimeout(10000);
-
             ({ container } = customRender(<GeneExpressGrid />, {
                 initialState,
                 route: generateBookmarkQueryParameter(),
             }));
 
-            await waitFor(() => {
-                expect(
-                    container.querySelectorAll(
-                        "g[role='graphics-symbol'].volcanoPointSelected > path",
-                    ),
-                ).toHaveLength(backendBookmark.state.genes.selectedGenesIds.length);
-                expect(
-                    container.querySelectorAll(
-                        "g[role='graphics-symbol'].volcanoPointHighlighted > path[fill='#00BCD4']",
-                    ),
-                ).toHaveLength(backendBookmark.state.genes.highlightedGenesIds.length);
-            });
+            await waitFor(
+                () => {
+                    expect(
+                        container.querySelectorAll(
+                            "g[role='graphics-symbol'].volcanoPointSelected > path",
+                        ),
+                    ).toHaveLength(backendBookmark.state.genes.selectedGenesIds.length);
+                    expect(
+                        container.querySelectorAll(
+                            "g[role='graphics-symbol'].volcanoPointHighlighted > path[fill='#00BCD4']",
+                        ),
+                    ).toHaveLength(backendBookmark.state.genes.highlightedGenesIds.length);
+                },
+                { timeout: 3000 },
+            );
         });
 
         it('should display a warning that differential expression organism is different', async () => {

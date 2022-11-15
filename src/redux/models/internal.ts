@@ -6,7 +6,7 @@ import {
     Storage,
 } from '@genialis/resolwe/dist/api/types/rest';
 import { Feature } from '@genialis/resolwe/dist/api/types/modules';
-import { VariantType, SnackbarKey } from 'notistack';
+import { VariantType, SnackbarKey, SnackbarAction } from 'notistack';
 import { Renderers } from 'vega';
 import { LayoutBreakpoint, ProcessSlug } from 'components/genexpress/common/constants';
 
@@ -152,7 +152,7 @@ export type SnackbarNotificationContent = {
     key?: SnackbarKey;
     message: string;
     variant?: VariantType;
-    action?: (key: number) => void;
+    action?: SnackbarAction;
 };
 
 // TODO, is this the correct way of going about making only one property required?

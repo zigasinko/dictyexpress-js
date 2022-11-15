@@ -48,7 +48,7 @@ const App = (): ReactElement => {
     }, []);
 
     return (
-        <RendererContext.Provider value="svg">
+        <RendererContext.Provider value="canvas">
             <StyledEngineProvider injectFirst>
                 <ReduxProvider store={appStore}>
                     <MuiThemeProvider theme={appTheme}>

@@ -11,7 +11,7 @@ exports[`citationCell should render as default snapshot 1`] = `
       type="button"
     >
       <a
-        class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-1lor9af-MuiTypography-root-MuiLink-root"
+        class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-1bgv89w-MuiTypography-root-MuiLink-root"
       >
         Rosengarten et. al.
       </a>

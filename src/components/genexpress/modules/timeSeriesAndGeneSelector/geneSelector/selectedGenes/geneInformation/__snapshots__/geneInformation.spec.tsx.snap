@@ -3,18 +3,18 @@
 exports[`geneInformation should render as default snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="sc-bdvvtL bOrrjR"
+    class="sc-bcXHqe jNOcwz"
   >
     <div
-      class="sc-gsDKAQ hANdfg"
+      class="sc-gswNZR fJgLXn"
     >
       <h3
-        class="sc-dkPtRN fcJURJ"
+        class="sc-dkrFOg jxeFeE"
       >
         Gene information
       </h3>
       <button
-        class="MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButtonBase-root  css-bl1inz-MuiButtonBase-root-MuiButton-root"
+        class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeSmall MuiButton-containedSizeSmall MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeSmall MuiButton-containedSizeSmall css-bl1inz-MuiButtonBase-root-MuiButton-root"
         tabindex="0"
         type="button"
       >
@@ -29,36 +29,36 @@ exports[`geneInformation should render as default snapshot 1`] = `
     </p>
     <div>
       <div
-        class="sc-hKwDye cFGYGc"
+        class="sc-hLBbgP jSEqQq"
       >
         Gene ID:
       </div>
       <div
-        class="sc-eCImPb ktthGP"
+        class="sc-eDvSVe mGJtp"
       >
         0
       </div>
     </div>
     <div>
       <div
-        class="sc-hKwDye cFGYGc"
+        class="sc-hLBbgP jSEqQq"
       >
         Alternatives:
       </div>
       <div
-        class="sc-eCImPb ktthGP"
+        class="sc-eDvSVe mGJtp"
       >
         TestGene0_alias1, TestGene0_alias2
       </div>
     </div>
     <div>
       <div
-        class="sc-hKwDye cFGYGc"
+        class="sc-hLBbgP jSEqQq"
       >
         Database link:
       </div>
       <div
-        class="sc-eCImPb ktthGP"
+        class="sc-eDvSVe mGJtp"
       >
         <a
           href="http://dictybase.org/id/0"
@@ -68,7 +68,7 @@ exports[`geneInformation should render as default snapshot 1`] = `
           Open in dictyBase
           <img
             alt="Open in dictyBase."
-            class="sc-jRQBWg wLeYV"
+            class="sc-jSUZER jYafAW"
             src="dictybase_logo2.jpg"
           />
         </a>
@@ -76,12 +76,12 @@ exports[`geneInformation should render as default snapshot 1`] = `
     </div>
     <div>
       <div
-        class="sc-hKwDye cFGYGc"
+        class="sc-hLBbgP jSEqQq"
       >
         Description:
       </div>
       <div
-        class="sc-eCImPb ktthGP"
+        class="sc-eDvSVe mGJtp"
       >
         This is a test gene 0
       </div>
