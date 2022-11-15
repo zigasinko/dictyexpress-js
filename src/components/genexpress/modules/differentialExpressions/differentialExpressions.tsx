@@ -11,6 +11,7 @@ import {
     getSelectedDifferentialExpression,
 } from 'redux/stores/differentialExpressions';
 import {
+    Box,
     FormControlLabel,
     MenuItem,
     SelectChangeEvent,
@@ -20,7 +21,7 @@ import {
 } from '@mui/material';
 import { SwapHoriz } from '@mui/icons-material';
 import { withSize, SizeMeProps } from 'react-sizeme';
-import { getSelectedTimeSeries } from 'redux/stores/timeSeries';
+import { getBasketInfo, getSelectedTimeSeries } from 'redux/stores/timeSeries';
 import DictySelect from 'components/genexpress/common/dictySelect/dictySelect';
 import { objectsArrayToTsv } from 'utils/reportUtils';
 import useReport from 'components/genexpress/common/reportBuilder/useReport';
@@ -48,6 +49,7 @@ const mapStateToProps = (state: RootState) => {
         highlightedGenesIds: getHighlightedGenesIds(state.genes),
         selectedGenesIds: getSelectedGenesIds(state.genes),
         genesById: getGenesById(state.genes),
+        basket: getBasketInfo(state.timeSeries),
     };
 };
 
@@ -70,6 +72,7 @@ const DifferentialExpressions = ({
     selectedGenesIds,
     size: { width },
     genesById,
+    basket,
     connectedDifferentialExpressionSelected,
 }: DifferentialExpressionsProps): ReactElement => {
     const differentialExpressionsSelectElement = useRef<HTMLDivElement>(null);
@@ -398,6 +401,14 @@ positives.
                         </ThresholdFormControlsContainer>
                     )}
                 </DifferentialExpressionsControls>
+                {selectedDifferentialExpression != null &&
+                    (selectedDifferentialExpression.output.source !== basket?.source ||
+                        selectedDifferentialExpression.output.species !== basket?.species) && (
+                        <Box component="span" sx={{ fontWeight: 'bold' }}>
+                            The organism in Time series and Gene Selection does not match the
+                            organism in Differential Expression
+                        </Box>
+                    )}
                 {volcanoPoints.length > 0 && (
                     <VolcanoPlotContainer>
                         <DifferentialExpressionsVolcanoPlot

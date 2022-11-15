@@ -5,6 +5,7 @@ export const DifferentialExpressionsContainer = styled.div`
     display: flex;
     flex-flow: column nowrap;
     height: 100%;
+    gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const DifferentialExpressionsControls = styled.div`

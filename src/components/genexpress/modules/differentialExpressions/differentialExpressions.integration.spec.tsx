@@ -23,6 +23,7 @@ import { getSelectedDifferentialExpression } from 'redux/stores/differentialExpr
 
 const differentialExpressionsById = generateDifferentialExpressionsById(2);
 const differentialExpressions = _.flatMap(differentialExpressionsById);
+differentialExpressions[1].output.source = 'differentSource';
 const numberOfGenes = 5;
 const differentialExpressionJson = generateDifferentialExpressionJson(numberOfGenes);
 differentialExpressionsById[differentialExpressions[0].id].json = differentialExpressionJson;
@@ -153,6 +154,19 @@ describe('differentialExpressions integration', () => {
                     ),
                 ).toHaveLength(backendBookmark.state.genes.highlightedGenesIds.length);
             });
+        });
+
+        it('should display a warning that differential expression organism is different', async () => {
+            // Click on dropdown. MouseDown event has to be used, because material-ui Select component
+            // listens to mouseDown event to expand options menu.
+            fireEvent.mouseDown(screen.getByLabelText('Differential expression'));
+
+            // Click on dropdown item (first differential expression).
+            fireEvent.click(await screen.findByText(differentialExpressions[1].name));
+
+            screen.getByText(
+                'The organism in Time series and Gene Selection does not match the organism in Differential Expression',
+            );
         });
     });
 
