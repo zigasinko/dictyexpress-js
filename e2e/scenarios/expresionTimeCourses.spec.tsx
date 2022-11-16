@@ -2,10 +2,9 @@ import { test as baseTest } from '@playwright/test';
 import { fixtures, TestingLibraryFixtures } from '@playwright-testing-library/test/fixture';
 
 const test = baseTest.extend<TestingLibraryFixtures>(fixtures);
-const { expect } = test;
 
 enum Selectors {
-    expressionsGraph = '[data-testid=genes-expressions-line-chart] svg',
+    expressionsGraph = '[data-testid=genes-expressions-line-chart] canvas',
     option = '.MuiAutocomplete-popper [role="option"]',
     genesInputLabel = 'Search for a gene',
 }
@@ -97,10 +96,5 @@ test.describe('Expression time courses', () => {
         await page.$eval('header', (el: { remove: () => any }) => el.remove());
 
         await page.waitForSelector(Selectors.expressionsGraph);
-
-        const graphPoints = page.locator("g[role='graphics-symbol'].genesExpressionsPoints");
-        const graphLines = page.locator("g[role='graphics-symbol'].genesExpressionsLines");
-        await expect(graphPoints).toHaveCount(1);
-        await expect(graphLines).toHaveCount(1);
     });
 });

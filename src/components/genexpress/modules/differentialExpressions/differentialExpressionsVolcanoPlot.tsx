@@ -157,7 +157,7 @@ const getVegaSpecification = (
                         value: GEN_GREY['500'],
                     },
                     tooltip: {
-                        signal: `{'Gene': datum.geneId, 'log2(FS)': datum.logFcValue, '${probField}': datum.logProbValue}`,
+                        signal: `{'Gene': datum.geneId, 'log2(Fold Change)': datum.logFcValue, '-log10(${probField})': datum.logProbValue}`,
                     },
                 },
                 update: {
@@ -185,7 +185,7 @@ const getVegaSpecification = (
                     },
                     fill: { value: GEN_GREY['700'] },
                     tooltip: {
-                        signal: `{'Gene': datum.geneId, 'log2(FS)': datum.logFcValue, '${probField}': datum.logProbValue}`,
+                        signal: `{'Gene': datum.geneId, 'log2(Fold Change)': datum.logFcValue, '-log10(${probField})': datum.logProbValue}`,
                     },
                 },
                 update: {
@@ -215,7 +215,7 @@ const getVegaSpecification = (
                         value: GEN_CYAN['500'],
                     },
                     tooltip: {
-                        signal: `{'Gene': datum.geneId, 'log2(FS)': datum.logFcValue, '${probField}': datum.logProbValue}`,
+                        signal: `{'Gene': datum.geneId, 'log2(Fold Change)': datum.logFcValue, '-log10(${probField})': datum.logProbValue}`,
                     },
                 },
                 update: {
