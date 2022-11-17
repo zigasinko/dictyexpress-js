@@ -10,7 +10,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  NODE_VERSION: 16.x
+  NODE_VERSION: 18.x
   S3_BUCKET: genialis-share-ci-artifact-eu-west-1
   S3_BUCKET_PREFIX: dictyexpress-js
 
@@ -18,7 +18,7 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -26,7 +26,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Generate environment variables
