@@ -21,11 +21,11 @@ export const color = GEN_GREY['700'];
 export const highlightedColor = GEN_CYAN['500'];
 const heatmapRectWidth = 10;
 const heatmapRectHeight = 20;
+const genesNamesWidth = 100;
 
 const getVegaSpecification = (
     clusterNodes: ClusteringChartProps['clusterNodes'],
     genesExpressions: ClusteringChartProps['genesExpressions'],
-    getDendrogramWidth: () => number,
     wrappedHighlightedClusterNodesIds: WrappedNodeIndex[],
 ): Spec => ({
     signals: [
@@ -66,16 +66,15 @@ const getVegaSpecification = (
         },
         {
             name: 'dendrogramWidth',
-            value: [0, getDendrogramWidth()],
             on: [
                 {
                     events: { signal: 'width' },
-                    update: `[0, width - heatmapWidth - 30]`,
+                    update: `[0, width - heatmapWidth - ${genesNamesWidth}]`,
                     force: true,
                 },
                 {
                     events: { signal: 'heatmapWidth' },
-                    update: `[0, width - heatmapWidth - 30]`,
+                    update: `[0, width - heatmapWidth - ${genesNamesWidth}]`,
                     force: true,
                 },
             ],
@@ -263,6 +262,7 @@ const getVegaSpecification = (
                     text: { field: 'gene.name' },
                     fill: { value: color },
                     fontSize: { value: 14 },
+                    limit: { value: genesNamesWidth },
                     font: { value: 'FS Joey Web Regular' },
                 },
             },
@@ -328,15 +328,9 @@ const ClusteringChart = forwardRef<ChartHandle, ClusteringChartProps>(
         forwardedRef,
     ): ReactElement => {
         const chartRef = useForwardedRef<ChartHandle>(forwardedRef);
-        const [heatmapWidth, setHeatmapWidth] = useState(0);
         const [wrappedHighlightedClusterNodesIds, setWrappedHighlightedClusterNodesIds] = useState<
             WrappedNodeIndex[]
         >([]);
-
-        const getDendrogramWidth = (): number => {
-            const chartDivElement = chartRef.current?.getChartDivElement();
-            return chartDivElement != null ? chartDivElement.clientWidth - heatmapWidth : 0;
-        };
 
         /**
          * Because Vega ignores value 0, we must wrap cluster node indexes to an object.
@@ -349,15 +343,6 @@ const ClusteringChart = forwardRef<ChartHandle, ClusteringChartProps>(
                 })),
             );
         }, [highlightedClusterNodesIds]);
-
-        // HeatmapWidth must be calculated from rect width and number of labels to display.
-        useEffect(() => {
-            setHeatmapWidth(
-                (genesExpressions.filter(
-                    (geneExpression) => geneExpression.geneId === genesExpressions[0]?.geneId,
-                ).length ?? 0) * heatmapRectWidth,
-            );
-        }, [genesExpressions]);
 
         const updatableDataDefinitions: DataDefinition[] = useStateWithEffect(
             () => [
@@ -373,12 +358,17 @@ const ClusteringChart = forwardRef<ChartHandle, ClusteringChartProps>(
 
         const updatableSignalDefinitions: Array<SignalDefinition> = useStateWithEffect(
             () => [
+                // HeatmapWidth must be calculated from rect width and number of labels to display.
                 {
                     name: 'heatmapWidth',
-                    value: heatmapWidth,
+                    value:
+                        (genesExpressions.filter(
+                            (geneExpression) =>
+                                geneExpression.geneId === genesExpressions[0]?.geneId,
+                        ).length ?? 0) * heatmapRectWidth,
                 },
             ],
-            [heatmapWidth],
+            [genesExpressions],
         );
 
         const dataHandlers = useStateWithEffect(
@@ -407,12 +397,7 @@ const ClusteringChart = forwardRef<ChartHandle, ClusteringChartProps>(
         );
 
         const renderSpecification = useRef<Spec>(
-            getVegaSpecification(
-                clusterNodes,
-                genesExpressions,
-                getDendrogramWidth,
-                wrappedHighlightedClusterNodesIds,
-            ),
+            getVegaSpecification(clusterNodes, genesExpressions, wrappedHighlightedClusterNodesIds),
         );
 
         return (
