@@ -27,6 +27,7 @@ const getStore = (initialState?: RootState, defaultMiddlewareOptions?: MiddleWar
         reducer: rootReducer,
         middleware,
         preloadedState: initialState,
+        devTools: process.env.NODE_ENV === 'development',
     });
 
     const epic$ = new BehaviorSubject(rootEpic);
