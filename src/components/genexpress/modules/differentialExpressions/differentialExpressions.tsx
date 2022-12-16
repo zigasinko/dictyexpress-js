@@ -140,12 +140,14 @@ const DifferentialExpressions = ({
                         index
                     ];
 
-                return {
+                const volcanoDatum: Omit<VolcanoPoint, 'logProbFiniteValue'> = {
                     geneId,
                     logFcValue: selectedDifferentialExpression.json.logfc[index],
                     logProbValue: -logOfBase(probValue, 10),
                     probValue,
+                    geneName: genesById[geneId]?.name ?? geneId,
                 };
+                return volcanoDatum;
             });
 
         const logProbLimit = getLogProbLimit(tempVolcanoData);
@@ -157,7 +159,7 @@ const DifferentialExpressions = ({
         });
 
         setVolcanoPoints(volcanoData);
-    }, [selectedDifferentialExpression]);
+    }, [genesById, selectedDifferentialExpression]);
 
     /**
      * Check for outliers (if any points fall outside of logFcOutliersLimit) each time the data changes.
@@ -224,7 +226,7 @@ positives.
             }
             const dataTable = volcanoPoints.map((volcanoPoint) => ({
                 ...volcanoPoint,
-                gene_symbol: genesById[volcanoPoint.geneId] && genesById[volcanoPoint.geneId].name,
+                gene_symbol: volcanoPoint.geneName,
             }));
             processFile('Differential Expressions/table.tsv', objectsArrayToTsv(dataTable), false);
             if (chartRef.current != null) {
@@ -241,7 +243,7 @@ positives.
                 processFile('Differential Expressions/caption.txt', getCaption(), false);
             }
         },
-        [genesById, getCaption, selectedDifferentialExpression, volcanoPoints],
+        [getCaption, selectedDifferentialExpression, volcanoPoints],
     );
 
     const handleDifferentialExpressionsOnChange = (event: SelectChangeEvent<unknown>): void => {
@@ -325,6 +327,11 @@ positives.
         </ThresholdFormControl>
     );
 
+    const disableSelection =
+        selectedDifferentialExpression == null ||
+        selectedDifferentialExpression.output.source !== basket?.source ||
+        selectedDifferentialExpression.output.species !== basket?.species;
+
     return (
         <>
             <DifferentialExpressionsContainer>
@@ -401,25 +408,23 @@ positives.
                         </ThresholdFormControlsContainer>
                     )}
                 </DifferentialExpressionsControls>
-                {selectedDifferentialExpression != null &&
-                    (selectedDifferentialExpression.output.source !== basket?.source ||
-                        selectedDifferentialExpression.output.species !== basket?.species) && (
-                        <Box component="span" sx={{ fontWeight: 'bold' }}>
-                            The organism in Time series and Gene Selection does not match the
-                            organism in Differential Expression
-                        </Box>
-                    )}
+                {selectedDifferentialExpression != null && disableSelection && (
+                    <Box component="span" sx={{ fontWeight: 'bold' }}>
+                        The organism in Time series and Gene Selection does not match the organism
+                        in Differential Expression
+                    </Box>
+                )}
                 {volcanoPoints.length > 0 && (
                     <VolcanoPlotContainer>
                         <DifferentialExpressionsVolcanoPlot
-                            probField={probField}
+                            probField={probFieldLabel}
                             data={volcanoPoints}
                             thresholds={thresholds}
                             highlightedGenesIds={highlightedGenesIds}
                             selectedGenesIds={selectedGenesIds}
                             logFcOutliersLimit={logFcOutliersLimit}
                             displayOutliers={displayOutliers}
-                            onSelect={handlePlotOnSelect}
+                            onSelect={disableSelection ? undefined : handlePlotOnSelect}
                             ref={chartRef}
                         />
                     </VolcanoPlotContainer>

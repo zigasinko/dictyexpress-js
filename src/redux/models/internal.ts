@@ -82,7 +82,8 @@ export type GeneSet = {
 };
 
 export type VolcanoPoint = {
-    geneId: Gene['feature_id']; // Feature (gene) id
+    geneId: Gene['feature_id'];
+    geneName: Gene['feature_id'];
     logFcValue: number;
     logProbValue: number;
     logProbFiniteValue: number;

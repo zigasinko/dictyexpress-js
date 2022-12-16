@@ -15,7 +15,7 @@ type DifferentialExpressionsVolcanoPlotProps = {
     displayOutliers: boolean;
     thresholds: Thresholds;
     probField: string;
-    onSelect: (genesIds: string[]) => void;
+    onSelect: ((genesIds: string[]) => void) | undefined;
 };
 
 type Range = {
@@ -44,6 +44,10 @@ const getVegaSpecification = (
         {
             name: 'range',
             value: getRange(),
+        },
+        {
+            name: 'disableSelection',
+            value: false,
         },
         {
             name: 'brushing',
@@ -78,8 +82,8 @@ const getVegaSpecification = (
             value: { x: null, y: null },
             on: [
                 {
-                    events: 'mousedown',
-                    update: '{x: invert("xscale", clamp(x(item()), 0, width)), y: invert("yscale", clamp(y(item()), 0, height))}',
+                    events: 'mousedown, disableSelection',
+                    update: 'disableSelection ? {x: null, y: null} : {x: invert("xscale", clamp(x(item()), 0, width)), y: invert("yscale", clamp(y(item()), 0, height))}',
                 },
             ],
         },
@@ -157,7 +161,7 @@ const getVegaSpecification = (
                         value: GEN_GREY['500'],
                     },
                     tooltip: {
-                        signal: `{'Gene': datum.geneId, 'log2(Fold Change)': datum.logFcValue, '-log10(${probField})': datum.logProbValue}`,
+                        signal: `{'Gene': datum.geneName, 'log2(Fold Change)': datum.logFcValue, '-log10(${probField})': datum.logProbValue}`,
                     },
                 },
                 update: {
@@ -185,7 +189,7 @@ const getVegaSpecification = (
                     },
                     fill: { value: GEN_GREY['700'] },
                     tooltip: {
-                        signal: `{'Gene': datum.geneId, 'log2(Fold Change)': datum.logFcValue, '-log10(${probField})': datum.logProbValue}`,
+                        signal: `{'Gene': datum.geneName, 'log2(Fold Change)': datum.logFcValue, '-log10(${probField})': datum.logProbValue}`,
                     },
                 },
                 update: {
@@ -215,7 +219,7 @@ const getVegaSpecification = (
                         value: GEN_CYAN['500'],
                     },
                     tooltip: {
-                        signal: `{'Gene': datum.geneId, 'log2(Fold Change)': datum.logFcValue, '-log10(${probField})': datum.logProbValue}`,
+                        signal: `{'Gene': datum.geneName, 'log2(Fold Change)': datum.logFcValue, '-log10(${probField})': datum.logProbValue}`,
                     },
                 },
                 update: {
@@ -482,8 +486,12 @@ const DifferentialExpressionsVolcanoPlot = forwardRef(
                     name: 'range',
                     value: getRange(),
                 },
+                {
+                    name: 'disableSelection',
+                    value: onSelect == null,
+                },
             ],
-            [getRange],
+            [getRange, onSelect],
         );
 
         // Data handlers that is updated (and reattached) only if highlighted variable changes.
@@ -499,7 +507,7 @@ const DifferentialExpressionsVolcanoPlot = forwardRef(
                                 (volcanoPointObject: { geneId: string }) =>
                                     volcanoPointObject.geneId,
                             );
-                            onSelect(selectedVolcanoPoints);
+                            onSelect?.(selectedVolcanoPoints);
                         }
                     },
                 },

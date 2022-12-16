@@ -349,6 +349,7 @@ export const generateDifferentialExpression = (id: number): DifferentialExpressi
 
 export const generateVolcanoPoint = (geneId: number): VolcanoPoint => ({
     geneId: geneId.toString(),
+    geneName: geneId.toString(),
     logFcValue: Math.random(),
     logProbFiniteValue: Math.random(),
     logProbValue: Math.random(),
