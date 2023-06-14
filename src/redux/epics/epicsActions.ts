@@ -15,9 +15,8 @@ export const logout = createAction('authentication/logout');
 export const logoutSucceeded = createAction('authentication/logoutSucceeded');
 
 export const appStarted = createAction('appStarted');
+export const appFocused = createAction('appFocused');
 export const reconnectToServer = createAction('connectToServer/reconnect');
-export const disconnectFromServer = createAction('connectToServer/disconnect');
-export const connectionReady = createAction('connectToServer/connectionReady');
 
 export type TFetchGenesActionPayload = {
     geneIds: string[];

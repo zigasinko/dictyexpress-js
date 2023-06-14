@@ -18,6 +18,7 @@ import { defaultBreakpointCols, getLayouts, layoutsChanged } from 'redux/stores/
 import _ from 'lodash';
 import { getGOEnrichmentStatus, getIsFetchingGOEnrichmentJson } from 'redux/stores/gOEnrichment';
 import {
+    appFocused,
     appStarted,
     fetchAndSelectPredefinedGenes,
     selectFirstTimeSeries,
@@ -36,6 +37,7 @@ import Clustering from './modules/clustering/clustering';
 import GenesExpressions from './modules/genesExpressions/genesExpressions';
 import { DictyUrlQueryParameter, LayoutBreakpoint, ModulesKeys } from './common/constants';
 import { ResponsiveGridLayoutContainer } from './geneExpressGrid.styles';
+import useBrowserVisibility from './common/useBrowserVisibility';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -94,6 +96,12 @@ const GeneExpressGrid = ({
         // Indicate that the app has started -> initialize WebSocket connection and
         dispatch(appStarted());
     }, [dispatch]);
+
+    useBrowserVisibility({
+        onShow: () => {
+            dispatch(appFocused());
+        },
+    });
 
     useEffect(() => {
         const appStateId = getUrlQueryParameter(location.search, DictyUrlQueryParameter.appState);

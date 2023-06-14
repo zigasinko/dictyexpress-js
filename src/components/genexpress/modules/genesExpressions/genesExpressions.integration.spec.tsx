@@ -402,13 +402,6 @@ describe('genesExpressions integration', () => {
                 const newLinesColors = getLinesColors();
                 expect(_.uniq(newLinesColors).length).toBe(1);
             });
-
-            await waitFor(() => {
-                expect(getFetchMockCallsWithUrl('add_samples')).toHaveLength(2);
-            });
-            await waitFor(() => {
-                expect(getFetchMockCallsWithUrl('mapping/search')).toHaveLength(1);
-            });
         });
 
         it('should switch to color by time series when user clicks on the switch', async () => {

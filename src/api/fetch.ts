@@ -1,6 +1,5 @@
 import { ResponseError } from 'redux/models/internal';
 import { getCookie } from '../utils/documentHelpers';
-import { sessionId } from './base';
 
 export type QueryParams = { [key: string]: string | number | string[] | number[] };
 type BodyParams = Record<string, unknown>;
@@ -73,10 +72,6 @@ const request = async (
 
 export const get = (url: string, params?: QueryParams): Promise<Response> => {
     return request(url, params, 'GET');
-};
-
-export const getReactive = (url: string, params?: QueryParams): Promise<Response> => {
-    return request(url, { ...params, observe: sessionId }, 'GET');
 };
 
 export const post = (url: string, params?: BodyParams): Promise<Response> => {

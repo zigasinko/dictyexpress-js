@@ -1,43 +1,62 @@
 import { Action } from '@reduxjs/toolkit';
 import { ofType, Epic } from 'redux-observable';
 import {
-    startWith,
     catchError,
-    takeUntil,
     retryWhen,
     delay,
     mergeMap,
     filter,
     mergeWith,
+    endWith,
+    switchMap,
+    take,
 } from 'rxjs/operators';
-import { iif, of, throwError } from 'rxjs';
+import { defer, iif, of, throwError } from 'rxjs';
 import { RootState } from 'redux/rootReducer';
-import { webSocket } from 'rxjs/webSocket';
+import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { handleError } from 'utils/errorUtils';
 import { sessionId, webSocketUrl } from 'api/base';
 import { handleWebSocketMessage, WebSocketMessage } from 'managers/queryObserverManager';
 import { filterNullAndUndefined } from './rxjsCustomFilters';
-import {
-    appStarted,
-    connectionReady,
-    disconnectFromServer,
-    reconnectToServer,
-} from './epicsActions';
+import { appFocused, appStarted, reconnectToServer } from './epicsActions';
 
 const reconnectionTimeout = 6000;
 const reconnectionMaxAttempts = 3;
 
 class ConnectToWebSocketError extends Error {}
 
+let webSocketSubject: WebSocketSubject<WebSocketMessage>;
+
 const connectToServerEpic: Epic<Action, Action, RootState> = (action$) =>
     action$.pipe(
-        ofType(appStarted.toString(), reconnectToServer.toString()),
-        takeUntil(action$.pipe(ofType(disconnectFromServer))),
-        mergeMap(() =>
-            webSocket({
+        ofType(appStarted.toString()),
+        mergeWith(
+            action$.pipe(
+                filter(reconnectToServer.match),
+                switchMap(() => {
+                    // Reconnect to server when page is / becomes visible.
+                    if (document.visibilityState === 'visible') {
+                        return of(true);
+                    }
+
+                    return defer(() => {
+                        return action$.pipe(filter(appFocused.match), take(1));
+                    });
+                }),
+            ),
+        ),
+        mergeMap(() => {
+            webSocketSubject = webSocket({
                 url: `${webSocketUrl}/${sessionId}`,
                 WebSocketCtor: WebSocket,
-            }).pipe(
+                closeObserver: {
+                    next: () => {
+                        webSocketSubject?.complete();
+                    },
+                },
+            });
+
+            return webSocketSubject.pipe(
                 retryWhen((errors) => {
                     return errors.pipe(
                         mergeMap((e, i) => {
@@ -49,14 +68,8 @@ const connectToServerEpic: Epic<Action, Action, RootState> = (action$) =>
                         }),
                     );
                 }),
-                mergeMap((message) => handleWebSocketMessage(message as WebSocketMessage)),
-                takeUntil(
-                    action$.pipe(
-                        filter(reconnectToServer.match),
-                        mergeWith(action$.pipe(filter(disconnectFromServer.match))),
-                    ),
-                ),
-                startWith(connectionReady()),
+                mergeMap((message) => handleWebSocketMessage(message)),
+                endWith(reconnectToServer()),
                 catchError((err) => {
                     return of(
                         handleError(
@@ -67,8 +80,8 @@ const connectToServerEpic: Epic<Action, Action, RootState> = (action$) =>
                         ),
                     );
                 }),
-            ),
-        ),
+            );
+        }),
         filterNullAndUndefined(),
     );
 
