@@ -5,7 +5,7 @@
     "dependencies": {
         "@emotion/react": "^11.10.5",
         "@emotion/styled": "^11.10.5",
-        "@genialis/resolwe": "^17.1.0",
+        "@genialis/resolwe": "17.2.0",
         "@mui/icons-material": "^5.10.14",
         "@mui/material": "^5.10.14",
         "@mui/styled-engine-sc": "^5.10.14",

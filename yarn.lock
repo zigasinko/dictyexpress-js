@@ -1887,9 +1887,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@genialis/resolwe@npm:^17.1.0":
-  version: 17.1.0
-  resolution: "@genialis/resolwe@npm:17.1.0"
+"@genialis/resolwe@npm:17.2.0":
+  version: 17.2.0
+  resolution: "@genialis/resolwe@npm:17.2.0"
   dependencies:
     angular: ^1.6.6
     angular-mocks: ^1.6.6
@@ -1900,7 +1900,7 @@ __metadata:
     ng-file-upload: 12.2.13
     pako: ^1.0.11
     rx: 4.1.0
-  checksum: 130e2b527a4b24fbab81ff137f26e063148f9a352e9c646620950f2386d36c8aa48ad3972f7ad6a20cb793fbcf287491ea7bda3c1837482017b0da0d5ea09314
+  checksum: 64017128aff0dda429a8a01147ef1327e3360372f400eb49fed9e52df72f18efc841fb0d52888a3e3caef101c1b7b860058c71bd186bef1d3133a24ed92868e6
   languageName: node
   linkType: hard
 
@@ -6669,7 +6669,7 @@ __metadata:
   dependencies:
     "@emotion/react": ^11.10.5
     "@emotion/styled": ^11.10.5
-    "@genialis/resolwe": ^17.1.0
+    "@genialis/resolwe": 17.2.0
     "@jest/globals": ^29.3.1
     "@jest/types": ^29.3.1
     "@mui/icons-material": ^5.10.14
