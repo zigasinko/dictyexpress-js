@@ -1,4 +1,4 @@
-import { screen, fireEvent, waitFor, RenderResult } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
 import {
     customRender,
@@ -45,6 +45,7 @@ const timeSeriesById = generateTimeSeriesById(2);
 const timeSeries = _.flatMap(timeSeriesById);
 const selectedTimeSeries = timeSeries[0];
 selectedTimeSeries.partitions = generateRelationPartitions(samplesExpressionsIds);
+
 const comparisonTimeSeries = timeSeries[1];
 comparisonTimeSeries.partitions = generateRelationPartitions(comparisonsSamplesExpressionsIds);
 
@@ -167,24 +168,43 @@ describe('genesExpressions integration', () => {
     });
 
     describe('time series not selected', () => {
-        let unmount: RenderResult['unmount'];
-
         beforeEach(() => {
             initialState.timeSeries.selectedId = null;
             initialState.timeSeries.basketInfo = null;
+        });
 
-            ({ container, unmount } = customRender(<GeneExpressGrid />, {
+        it('should select time series specified in the config by default', async () => {
+            window.SELECTED_TIMESERIES_SLUG = timeSeries[1].slug;
+
+            customRender(<GeneExpressGrid />, {
+                initialState,
+            });
+
+            await waitFor(() => {
+                expect(
+                    screen.getAllByRole('row', { name: 'Press SPACE to deselect this row.' })[0],
+                ).toHaveAttribute('row-id', timeSeries[1].id.toString());
+            });
+        });
+
+        it('should select first time series if slug is not defined in the config', async () => {
+            window.SELECTED_TIMESERIES_SLUG = null;
+
+            customRender(<GeneExpressGrid />, {
+                initialState,
+            });
+
+            await waitFor(() => {
+                expect(
+                    screen.getAllByRole('row', { name: 'Press SPACE to deselect this row.' })[0],
+                ).toHaveAttribute('row-id', timeSeries[0].id.toString());
+            });
+        });
+
+        it('should show line graph after gene is pasted', async () => {
+            ({ container } = customRender(<GeneExpressGrid />, {
                 initialState,
             }));
-        });
-
-        it('should have "Search for a gene" input disabled', () => {
-            expect(screen.getByPlaceholderText('Search for a gene')).toBeDisabled();
-        });
-
-        it('should show line graph after time series is chosen and gene is pasted', async () => {
-            // Simulate time series click.
-            fireEvent.click(screen.getByText(selectedTimeSeries.collection.name));
 
             // Wait for "Search for a gene" input to get enabled.
             await waitFor(() =>
@@ -200,6 +220,10 @@ describe('genesExpressions integration', () => {
         });
 
         it('should not export Expression Time Courses/expression_time_courses.png file', async () => {
+            ({ container } = customRender(<GeneExpressGrid />, {
+                initialState,
+            }));
+
             await validateExportFile(
                 'Expression Time Courses/expression_time_courses.png',
                 (exportFile) => {
@@ -209,6 +233,9 @@ describe('genesExpressions integration', () => {
         });
 
         it('should not export Expression Time Courses/expression_time_courses.svg file', async () => {
+            customRender(<GeneExpressGrid />, {
+                initialState,
+            });
             await validateExportFile(
                 'Expression Time Courses/expression_time_courses.svg',
                 (exportFile) => {
@@ -218,8 +245,6 @@ describe('genesExpressions integration', () => {
         });
 
         it('should load selected time series, genes and genesExpressions controls values from bookmark', async () => {
-            unmount();
-
             ({ container } = customRender(<GeneExpressGrid />, {
                 initialState,
                 route: generateBookmarkQueryParameter(),

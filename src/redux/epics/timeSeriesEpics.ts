@@ -20,11 +20,12 @@ import {
     genesMappingsFetchStarted,
     genesMappingsFetchEnded,
     getComparisonTimeSeriesIds,
+    getSelectedTimeSeries,
 } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
 import { handleError } from 'utils/errorUtils';
 import { addToBasket, getTimeSeriesRelations, getBasketExpressions } from 'api';
-import { fetchTimeSeries, loginSucceeded, selectFirstTimeSeries } from './epicsActions';
+import { appStarted, loginSucceeded, logoutSucceeded } from './epicsActions';
 import { filterNullAndUndefined, mapStateSlice } from './rxjsCustomFilters';
 import { mapGeneIdsBetweenSources } from 'api/kbApi';
 import { getSelectedGenesIds } from 'redux/stores/genes';
@@ -32,7 +33,7 @@ import { BasketInfo } from 'redux/models/internal';
 
 const fetchTimeSeriesEpic: Epic<Action, Action, RootState> = (action$) => {
     return action$.pipe(
-        ofType(fetchTimeSeries.toString(), loginSucceeded.toString()),
+        ofType(appStarted.toString(), loginSucceeded.toString(), logoutSucceeded.toString()),
         mergeMap(() => {
             return from(getTimeSeriesRelations()).pipe(
                 map((response) => timeSeriesFetchSucceeded(response)),
@@ -44,17 +45,19 @@ const fetchTimeSeriesEpic: Epic<Action, Action, RootState> = (action$) => {
     );
 };
 
-const selectFirstTimeSeriesEpic: Epic<Action, Action, RootState> = (action$, state$) =>
-    action$.pipe(
-        ofType(selectFirstTimeSeries),
-        mergeMap(() => {
-            return state$.pipe(
-                mapStateSlice((state) => getTimeSeries(state.timeSeries)),
-                filter((timeSeries) => timeSeries.length > 0),
-                map((timeSeries) => {
-                    return timeSeriesSelected(timeSeries[0].id);
-                }),
-            );
+const selectDefaultTimeSeriesEpic: Epic<Action, Action, RootState> = (action$, state$) =>
+    state$.pipe(
+        mapStateSlice((state) => getTimeSeries(state.timeSeries)),
+        filter(
+            (timeSeries) =>
+                timeSeries.length > 0 && getSelectedTimeSeries(state$.value.timeSeries) == null,
+        ),
+        map((timeSeries) => {
+            const defaultTimeSeriesSlug =
+                typeof SELECTED_TIMESERIES_SLUG !== 'undefined' && SELECTED_TIMESERIES_SLUG != null
+                    ? timeSeries.find((relation) => relation.slug === SELECTED_TIMESERIES_SLUG)
+                    : undefined;
+            return timeSeriesSelected((defaultTimeSeriesSlug ?? timeSeries[0]).id);
         }),
     );
 
@@ -207,7 +210,7 @@ const fetchBasketExpressionsEpic: Epic<Action, Action, RootState> = (action$, st
 export default combineEpics(
     timeSeriesSelectedEpic,
     fetchTimeSeriesEpic,
-    selectFirstTimeSeriesEpic,
+    selectDefaultTimeSeriesEpic,
     fetchBasketExpressionsEpic,
     comparisonTimeSeriesSelectedEpic,
 );

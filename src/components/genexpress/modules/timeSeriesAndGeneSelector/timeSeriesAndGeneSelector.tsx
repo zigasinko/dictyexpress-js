@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect } from 'react';
+import React, { ReactElement } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { RootState } from 'redux/rootReducer';
 import {
@@ -8,7 +8,6 @@ import {
     timeSeriesSelected,
 } from 'redux/stores/timeSeries';
 import { Relation } from '@genialis/resolwe/dist/api/types/rest';
-import { fetchTimeSeries } from 'redux/epics/epicsActions';
 import useReport from 'components/genexpress/common/reportBuilder/useReport';
 import { objectsArrayToTsv } from 'utils/reportUtils';
 import GeneSelector from './geneSelector/geneSelector/geneSelector';
@@ -30,14 +29,12 @@ const mapStateToProps = (state: RootState) => {
 };
 
 const connector = connect(mapStateToProps, {
-    connectedFetchTimeSeries: fetchTimeSeries,
     connectedTimeSeriesSelected: timeSeriesSelected,
 });
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 const TimeSeriesAndGeneSelector = ({
-    connectedFetchTimeSeries,
     timeSeries,
     selectedTimeSeries,
     isFetching,
@@ -69,12 +66,6 @@ const TimeSeriesAndGeneSelector = ({
             connectedTimeSeriesSelected(newSelectedTimeSeries.id);
         }
     };
-
-    useEffect(() => {
-        if (timeSeries.length === 0) {
-            connectedFetchTimeSeries();
-        }
-    }, [connectedFetchTimeSeries, timeSeries.length]);
 
     return (
         <TimeSeriesAndGeneSelectorContainer>

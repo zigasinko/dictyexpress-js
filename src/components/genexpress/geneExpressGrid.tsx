@@ -17,12 +17,7 @@ import { breakpoints } from 'components/app/globalStyle';
 import { defaultBreakpointCols, getLayouts, layoutsChanged } from 'redux/stores/layouts';
 import _ from 'lodash';
 import { getGOEnrichmentStatus, getIsFetchingGOEnrichmentJson } from 'redux/stores/gOEnrichment';
-import {
-    appFocused,
-    appStarted,
-    fetchAndSelectPredefinedGenes,
-    selectFirstTimeSeries,
-} from 'redux/epics/epicsActions';
+import { appFocused, appStarted, fetchAndSelectPredefinedGenes } from 'redux/epics/epicsActions';
 import { getClusteringStatus, getIsFetchingClusteringData } from 'redux/stores/clustering';
 import { useLocation } from 'react-router-dom';
 import { loadBookmarkedState } from 'managers/bookmarkStateManager';
@@ -66,7 +61,6 @@ const mapStateToProps = (state: RootState) => {
 const connector = connect(mapStateToProps, {
     connectedLayoutsChanged: layoutsChanged,
     connectedFetchAndSelectPredefinedGenes: fetchAndSelectPredefinedGenes,
-    connectedSelectFirstTimeSeries: selectFirstTimeSeries,
 });
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -86,7 +80,6 @@ const GeneExpressGrid = ({
     gOEnrichmentStatus,
     connectedLayoutsChanged,
     connectedFetchAndSelectPredefinedGenes,
-    connectedSelectFirstTimeSeries,
 }: PropsFromRedux): ReactElement => {
     const dispatch = useDispatch();
     const location = useLocation();
@@ -111,7 +104,6 @@ const GeneExpressGrid = ({
 
         const genes = getUrlQueryParameter(location.search, DictyUrlQueryParameter.genes);
         if (genes != null && genes !== '') {
-            connectedSelectFirstTimeSeries();
             connectedFetchAndSelectPredefinedGenes({ geneIds: genes.split(',') });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps

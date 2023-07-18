@@ -8,6 +8,7 @@ import { getMinMax, logOfBase } from 'utils/math';
 import {
     differentialExpressionSelected,
     getDifferentialExpressions,
+    getIsFetchingDifferentialExpressions,
     getSelectedDifferentialExpression,
 } from 'redux/stores/differentialExpressions';
 import {
@@ -43,6 +44,9 @@ const mapStateToProps = (state: RootState) => {
     return {
         selectedTimeSeries: getSelectedTimeSeries(state.timeSeries),
         differentialExpressions: getDifferentialExpressions(state.differentialExpressions),
+        isFetchingDifferentialExpressions: getIsFetchingDifferentialExpressions(
+            state.differentialExpressions,
+        ),
         selectedDifferentialExpression: getSelectedDifferentialExpression(
             state.differentialExpressions,
         ),
@@ -68,6 +72,7 @@ const DifferentialExpressions = ({
     selectedTimeSeries,
     selectedDifferentialExpression,
     differentialExpressions,
+    isFetchingDifferentialExpressions,
     highlightedGenesIds,
     selectedGenesIds,
     size: { width },
@@ -357,7 +362,10 @@ positives.
                                         : ''
                                 }
                                 handleOnChange={handleDifferentialExpressionsOnChange}
-                                disabled={differentialExpressions.length === 0}
+                                disabled={
+                                    isFetchingDifferentialExpressions ||
+                                    differentialExpressions.length === 0
+                                }
                             >
                                 {differentialExpressions.map((differentialExpression) => (
                                     <MenuItem

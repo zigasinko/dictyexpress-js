@@ -101,6 +101,7 @@ export const generateCollection = (id: number): Collection => ({
 
 export const generateSingleTimeSeries = (id: number): Relation => ({
     id,
+    slug: `relation-${id}`,
     created: getDateISOString(),
     modified: getDateISOString(),
     contributor: generateContributor(1),

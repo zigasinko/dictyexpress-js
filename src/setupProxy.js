@@ -12,7 +12,7 @@ const proxyConfig = {
     changeOrigin: true,
     headers: {
         Host: targetDomain,
-        Origin: targetDomain,
+        Origin: `https://${targetDomain}`,
         Connection: 'keep-alive',
     },
 };

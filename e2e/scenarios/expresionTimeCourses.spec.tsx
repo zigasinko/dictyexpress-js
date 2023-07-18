@@ -48,19 +48,9 @@ test.describe('Expression time courses', () => {
 
     test('should draw Expression Time Courses graph', async ({
         page,
-        queries: { findAllByRole, getByPlaceholderText },
+        queries: { getByPlaceholderText },
     }) => {
         const genes = 'eif3L fnkF_ps';
-
-        await (
-            await findAllByRole(
-                'gridcell',
-                {
-                    name: '01. D. discoideum vs. D. purpureum',
-                },
-                { timeout: 5000 },
-            )
-        )[0].click();
 
         await page.waitForResponse((response: { url: () => string | string[] }) => {
             return response.url().includes('/api/storage');

@@ -1,7 +1,6 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
-import DifferentialExpressions from 'components/genexpress/modules/differentialExpressions/differentialExpressions';
 import {
     customRender,
     handleCommonRequests,
@@ -16,6 +15,7 @@ import {
     generateGenesByIdPredefinedIds,
     generateBookmarkQueryParameter,
     generateBackendBookmark,
+    generateBasketInfo,
 } from 'tests/mock';
 import _ from 'lodash';
 import { RootState } from 'redux/rootReducer';
@@ -24,6 +24,7 @@ import { getSelectedDifferentialExpression } from 'redux/stores/differentialExpr
 const differentialExpressionsById = generateDifferentialExpressionsById(2);
 const differentialExpressions = _.flatMap(differentialExpressionsById);
 differentialExpressions[1].output.source = 'differentSource';
+differentialExpressions[1].output.species = 'differentSpecies';
 const numberOfGenes = 5;
 const differentialExpressionJson = generateDifferentialExpressionJson(numberOfGenes);
 differentialExpressionsById[differentialExpressions[0].id].json = differentialExpressionJson;
@@ -40,17 +41,7 @@ describe('differentialExpressions integration', () => {
     let initialState: RootState;
     let container: HTMLElement;
 
-    it('should have differential expressions dropdown disabled without data', async () => {
-        customRender(<DifferentialExpressions />);
-
-        await waitFor(() => expect(screen.getByLabelText('Differential expression')).toBeEnabled());
-
-        await waitFor(() =>
-            expect(screen.getByLabelText('Differential expression')).toHaveClass('Mui-disabled'),
-        );
-    });
-
-    beforeAll(() => {
+    beforeEach(() => {
         fetchMock.resetMocks();
 
         fetchMock.mockResponse((req) => {
@@ -71,13 +62,58 @@ describe('differentialExpressions integration', () => {
 
             return handleCommonRequests(req) ?? Promise.reject(new Error(`bad url: ${req.url}`));
         });
-    });
 
-    beforeEach(() => {
         initialState = testState();
         initialState.genes.byId = genesById;
+    });
 
-        fetchMock.mockClear();
+    it('should have differential expressions dropdown disabled without data', async () => {
+        fetchMock.resetMocks();
+
+        fetchMock.mockResponse((req) => {
+            if (req.url.includes('differential_expression/list')) {
+                return resolveStringifiedObjectPromise([]);
+            }
+
+            return handleCommonRequests(req) ?? Promise.reject(new Error(`bad url: ${req.url}`));
+        });
+
+        customRender(<GeneExpressGrid />, { initialState });
+
+        expect(
+            await screen.findByRole(
+                'button',
+                { name: 'Differential expression' },
+                { timeout: 3000 },
+            ),
+        ).toHaveClass('Mui-disabled');
+    });
+
+    it('should select differential expression if only one is available', async () => {
+        fetchMock.resetMocks();
+
+        fetchMock.mockResponse((req) => {
+            if (req.url.includes('differential_expression/list')) {
+                return resolveStringifiedObjectPromise([differentialExpressions[0]]);
+            }
+
+            return handleCommonRequests(req) ?? Promise.reject(new Error(`bad url: ${req.url}`));
+        });
+
+        initialState.timeSeries.basketInfo = generateBasketInfo('1');
+        customRender(<GeneExpressGrid />, { initialState });
+
+        await screen.findByText(differentialExpressions[0].name);
+    });
+
+    it('should select differential expression with the same species as the basketInfo', async () => {
+        initialState.timeSeries.basketInfo = {
+            ...generateBasketInfo('1'),
+            species: differentialExpressions[1].output.species,
+        };
+        customRender(<GeneExpressGrid />, { initialState });
+
+        await screen.findByText(differentialExpressions[1].name);
     });
 
     describe('differentialExpression not selected', () => {

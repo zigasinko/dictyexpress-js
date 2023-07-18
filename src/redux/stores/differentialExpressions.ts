@@ -3,7 +3,6 @@ import { createSlice, PayloadAction, createSelector, combineReducers } from '@re
 import _ from 'lodash';
 import { DifferentialExpression, DifferentialExpressionsById } from '../models/internal';
 import createIsFetchingSlice from './fetch';
-import { timeSeriesSelected } from './timeSeries';
 
 const differentialExpressionsByIdInitialState = {} as DifferentialExpressionsById;
 const differentialExpressionsByIdSlice = createSlice({
@@ -37,11 +36,6 @@ const differentialExpressionsByIdSlice = createSlice({
                 .keyBy('id')
                 .value();
         },
-    },
-    extraReducers: (builder) => {
-        builder.addCase(timeSeriesSelected, (): DifferentialExpressionsById => {
-            return differentialExpressionsByIdInitialState;
-        });
     },
 });
 

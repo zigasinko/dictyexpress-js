@@ -109,6 +109,7 @@ const GenexpressAppBar = ({
     const handleBookmarkClick = async (): Promise<void> => {
         const url = new URL(window.location.href);
 
+        url.searchParams.delete(DictyUrlQueryParameter.genes);
         url.searchParams.set(
             DictyUrlQueryParameter.appState,
             await saveBookmarkState(store.getState()),

@@ -7,6 +7,7 @@ window.API_URL = null;
 window.REST_AUTH_URL = null;
 window.WEBSOCKET_URL = null;
 window.COMMUNITY_SLUG = 'test';
+window.SELECTED_TIMESERIES_SLUG = 'test';
 
 /**
  * Fix `matchMedia` not present, legacy browsers require a polyfill.

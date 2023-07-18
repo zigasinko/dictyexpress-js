@@ -1,8 +1,8 @@
 import { Action } from '@reduxjs/toolkit';
-import { Epic, combineEpics } from 'redux-observable';
+import { Epic, combineEpics, ofType } from 'redux-observable';
 import { mergeMap, startWith, endWith, catchError } from 'rxjs/operators';
-import { of, from, merge } from 'rxjs';
-import { getBasketId } from 'redux/stores/timeSeries';
+import { combineLatest, of, from, merge, EMPTY } from 'rxjs';
+import { getBasketInfo } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
 import { handleError } from 'utils/errorUtils';
 import {
@@ -17,35 +17,63 @@ import {
     differentialExpressionSelected,
 } from 'redux/stores/differentialExpressions';
 import { getDifferentialExpressions, getStorage } from 'api';
-import { fetchDifferentialExpressionGenes } from './epicsActions';
+import {
+    appStarted,
+    fetchDifferentialExpressionGenes,
+    loginSucceeded,
+    logoutSucceeded,
+} from './epicsActions';
 import { filterNullAndUndefined, mapStateSlice } from './rxjsCustomFilters';
 
-const fetchDifferentialExpressionsEpic: Epic<Action, Action, RootState> = (action$, state$) => {
-    return state$.pipe(
-        mapStateSlice(
-            (state) => getBasketId(state.timeSeries),
-            () =>
-                getStoreDifferentialExpressions(state$.value.differentialExpressions).length === 0,
-        ),
-        filterNullAndUndefined(),
-        mergeMap((basketId) => {
-            return from(getDifferentialExpressions(basketId)).pipe(
-                mergeMap((differentialExpressions) => {
-                    if (differentialExpressions.length === 1) {
-                        return merge(
-                            of(differentialExpressionsFetchSucceeded(differentialExpressions)),
-                            of(differentialExpressionSelected(differentialExpressions[0].id)),
-                        );
-                    }
-
-                    return of(differentialExpressionsFetchSucceeded(differentialExpressions));
-                }),
+const fetchDifferentialExpressionsEpic: Epic<Action, Action, RootState> = (action$) => {
+    return action$.pipe(
+        ofType(appStarted.toString(), loginSucceeded.toString(), logoutSucceeded.toString()),
+        mergeMap(() => {
+            return from(getDifferentialExpressions()).pipe(
+                mergeMap((differentialExpressions) =>
+                    of(differentialExpressionsFetchSucceeded(differentialExpressions)),
+                ),
                 catchError((error) =>
                     of(handleError(`Error retrieving differential expressions.`, error)),
                 ),
                 startWith(differentialExpressionsFetchStarted()),
                 endWith(differentialExpressionsFetchEnded()),
             );
+        }),
+    );
+};
+
+const selectDifferentialExpressionEpic: Epic<Action, Action, RootState> = (action$, state$) => {
+    return combineLatest([
+        state$.pipe(
+            mapStateSlice((state) =>
+                getStoreDifferentialExpressions(state.differentialExpressions),
+            ),
+        ),
+        state$.pipe(
+            mapStateSlice((state) => {
+                return getBasketInfo(state.timeSeries);
+            }),
+            filterNullAndUndefined(),
+        ),
+    ]).pipe(
+        mergeMap(([differentialExpressions, basketInfo]) => {
+            if (differentialExpressions.length === 1) {
+                return of(differentialExpressionSelected(differentialExpressions[0].id));
+            }
+
+            // Select differential expression for the species in the basket.
+            const basketSpecies = basketInfo.species;
+            if (basketSpecies != null) {
+                const speciesDifferentialExpression = differentialExpressions.find(
+                    (de) => de.output.species === basketSpecies,
+                );
+                if (speciesDifferentialExpression != null) {
+                    return of(differentialExpressionSelected(speciesDifferentialExpression.id));
+                }
+            }
+
+            return EMPTY;
         }),
     );
 };
@@ -86,4 +114,8 @@ const fetchDifferentialExpressionsDataEpic: Epic<Action, Action, RootState> = (a
     );
 };
 
-export default combineEpics(fetchDifferentialExpressionsEpic, fetchDifferentialExpressionsDataEpic);
+export default combineEpics(
+    fetchDifferentialExpressionsEpic,
+    fetchDifferentialExpressionsDataEpic,
+    selectDifferentialExpressionEpic,
+);

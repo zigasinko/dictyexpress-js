@@ -8,3 +8,5 @@ WEBSOCKET_URL = null;
 
 // Default: bcm
 COMMUNITY_SLUG = 'bcm';
+// Default: first timeseries fetched from the backend
+SELECTED_TIMESERIES_SLUG = null;

@@ -5,12 +5,7 @@ import { get } from './fetch';
 
 const baseUrl = `${apiUrl}/_modules/differential_expression/list`;
 
-export const getDifferentialExpressions = async (
-    basketId: string | undefined,
-): Promise<DifferentialExpression[]> => {
-    if (basketId == null) {
-        return [];
-    }
+export const getDifferentialExpressions = async (): Promise<DifferentialExpression[]> => {
     const getDifferentialExpressionsDataResponse = await get(baseUrl, {
         tags: `community:${COMMUNITY_SLUG}`,
     });

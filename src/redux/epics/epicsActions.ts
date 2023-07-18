@@ -6,8 +6,6 @@ import { ClusteringData, FindSimilarGenesData } from 'redux/models/rest';
 // Export all epic-specific actions to omit dependency-cycles for reactive queries.
 export const selectGenes = createAction<Gene[]>('genes/selectGenes');
 export const pasteGenesNames = createAction<string[]>('genes/pasteGenesNames');
-export const fetchTimeSeries = createAction('timeSeries/fetchTimeSeries');
-export const selectFirstTimeSeries = createAction('timeSeries/selectFirstTimeSeries');
 
 export const login = createAction<{ email: string; password: string }>('authentication/login');
 export const loginSucceeded = createAction('authentication/loginSucceeded');
