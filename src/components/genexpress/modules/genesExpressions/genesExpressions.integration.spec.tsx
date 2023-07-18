@@ -57,7 +57,7 @@ _.set(backendBookmark.state, BookmarkStatePath.genesExpressionsShowLegend, true)
 
 const genesMappings: GeneMapping[] = comparisonGenes.map(
     (gene, index) =>
-        ({ source_id: genes[index].feature_id, target_id: gene.feature_id } as GeneMapping),
+        ({ source_id: genes[index].feature_id, target_id: gene.feature_id }) as GeneMapping,
 );
 
 jest.setTimeout(10_000);
