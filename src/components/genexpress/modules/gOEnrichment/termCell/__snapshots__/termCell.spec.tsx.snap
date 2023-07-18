@@ -3,14 +3,14 @@
 exports[`gOEnrichmentTermCell should render as default snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="sc-bcXHqe joyjYF"
+    class="sc-bqWxrE humzUX"
   >
     <span
-      class="sc-gswNZR hqfnjA"
+      class="sc-ksBlkl eyAxZE"
     />
     <svg
       aria-hidden="true"
-      class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium sc-dkrFOg hvrzVA css-i4bv87-MuiSvgIcon-root"
+      class="MuiSvgIcon-root-ffjXHZ fQQvfO MuiSvgIcon-root MuiSvgIcon-fontSizeMedium sc-hBxehG HUEyD"
       data-testid="ArrowDropDownIcon"
       focusable="false"
       viewBox="0 0 24 24"
