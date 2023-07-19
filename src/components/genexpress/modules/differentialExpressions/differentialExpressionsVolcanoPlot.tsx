@@ -5,7 +5,7 @@ import { getMinMax, logOfBase } from 'utils/math';
 import { GEN_CYAN, GEN_GREY } from 'components/genexpress/common/theming/theming';
 import { Thresholds, VolcanoPoint } from 'redux/models/internal';
 import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
-import Chart, { DataDefinition, SignalDefinition } from '../../common/chart/chart';
+import Chart, { ChartHandle, DataDefinition, SignalDefinition } from '../../common/chart/chart';
 
 type DifferentialExpressionsVolcanoPlotProps = {
     data: VolcanoPoint[];
@@ -397,7 +397,10 @@ const getVegaSpecification = (
     ],
 });
 
-const DifferentialExpressionsVolcanoPlot = forwardRef(
+const DifferentialExpressionsVolcanoPlot = forwardRef<
+    ChartHandle,
+    DifferentialExpressionsVolcanoPlotProps
+>(
     (
         {
             data,
@@ -408,7 +411,7 @@ const DifferentialExpressionsVolcanoPlot = forwardRef(
             thresholds,
             probField,
             onSelect,
-        }: DifferentialExpressionsVolcanoPlotProps,
+        },
         ref,
     ): ReactElement => {
         const [highlightedGenePoints, setHighlightedGenePoints] = useState<VolcanoPoint[]>([]);

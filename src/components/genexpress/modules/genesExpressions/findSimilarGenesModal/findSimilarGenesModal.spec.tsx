@@ -56,7 +56,7 @@ const validateSimilarGenesGrid = async (
 
     for (let i = 0; i < genesSimilaritiesToValidate.length; i += 1) {
         const geneToValidate = genesById[genesSimilaritiesToValidate[i].gene];
-        screen.getByText(geneToValidate.description);
+        await screen.findByText(geneToValidate.description);
         screen.getByRole('gridcell', {
             name: geneToValidate.name,
         });

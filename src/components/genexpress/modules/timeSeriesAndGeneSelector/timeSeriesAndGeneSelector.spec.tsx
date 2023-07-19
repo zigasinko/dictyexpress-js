@@ -58,7 +58,7 @@ describe('timeSeriesAndGeneSelector', () => {
                 ).name,
             });
         }
-        screen.getByText(_.flatMap(initialState.timeSeries.byId)[1].collection.name);
+        await screen.findByText(_.flatMap(initialState.timeSeries.byId)[1].collection.name);
     });
 
     it('should export Collection/selectedCollection.tsv file', async () => {

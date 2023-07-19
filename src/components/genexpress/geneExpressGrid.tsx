@@ -86,7 +86,6 @@ const GeneExpressGrid = ({
 
     // This page is the entry point for geneExpress. Handle app initialization here.
     useEffect(() => {
-        // Indicate that the app has started -> initialize WebSocket connection and
         dispatch(appStarted());
     }, [dispatch]);
 

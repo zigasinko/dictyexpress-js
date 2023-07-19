@@ -21,7 +21,6 @@ import {
     Tooltip,
 } from '@mui/material';
 import { SwapHoriz } from '@mui/icons-material';
-import { withSize, SizeMeProps } from 'react-sizeme';
 import { getBasketInfo, getSelectedTimeSeries } from 'redux/stores/timeSeries';
 import DictySelect from 'components/genexpress/common/dictySelect/dictySelect';
 import { objectsArrayToTsv } from 'utils/reportUtils';
@@ -38,6 +37,7 @@ import {
     VolcanoPlotContainer,
 } from './differentialExpressions.styles';
 import VolcanoPointSelectionModal from './volcanoPointsSelectionModal/volcanoPointsSelectionModal';
+import useSize from 'components/genexpress/common/useSize';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const mapStateToProps = (state: RootState) => {
@@ -62,7 +62,7 @@ const connector = connect(mapStateToProps, {
 });
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
-type DifferentialExpressionsProps = PropsFromRedux & SizeMeProps;
+type DifferentialExpressionsProps = PropsFromRedux;
 
 const logFcOutliersLimit = 7;
 const ROUND_PRECISION = 2;
@@ -75,7 +75,6 @@ const DifferentialExpressions = ({
     isFetchingDifferentialExpressions,
     highlightedGenesIds,
     selectedGenesIds,
-    size: { width },
     genesById,
     basket,
     connectedDifferentialExpressionSelected,
@@ -83,7 +82,10 @@ const DifferentialExpressions = ({
     const differentialExpressionsSelectElement = useRef<HTMLDivElement>(null);
     const [volcanoPointSelectionModalOpened, setVolcanoPointSelectionModalOpened] = useState(false);
 
-    const chartRef = useRef<ChartHandle>();
+    const chartRef = useRef<ChartHandle>(null);
+
+    const containerRef = useRef<HTMLDivElement>(null);
+    const { width } = useSize(containerRef);
 
     const [volcanoPoints, setVolcanoPoints] = useState<VolcanoPoint[]>([]);
     const [selectedVolcanoPoints, setSelectedVolcanoPoints] = useState<VolcanoPoint[]>([]);
@@ -339,7 +341,7 @@ positives.
 
     return (
         <>
-            <DifferentialExpressionsContainer>
+            <DifferentialExpressionsContainer ref={containerRef}>
                 <DifferentialExpressionsControls>
                     <Tooltip
                         title={
@@ -452,9 +454,4 @@ positives.
     );
 };
 
-export default withSize({
-    monitorHeight: true,
-    monitorWidth: true,
-    refreshRate: 100,
-    refreshMode: 'debounce',
-})(connector(DifferentialExpressions));
+export default connector(DifferentialExpressions);

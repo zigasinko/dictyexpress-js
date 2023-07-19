@@ -66,14 +66,17 @@ describe('genesExpressions integration', () => {
     let container: HTMLElement;
 
     const validateChart = async (numberOfGenes: number): Promise<void> =>
-        waitFor(() => {
-            expect(
-                container.querySelectorAll("g[role='graphics-symbol'].genesExpressionsPoints"),
-            ).toHaveLength(numberOfGenes);
-            expect(
-                container.querySelectorAll("g[role='graphics-symbol'].genesExpressionsLines"),
-            ).toHaveLength(numberOfGenes);
-        });
+        waitFor(
+            () => {
+                expect(
+                    container.querySelectorAll("g[role='graphics-symbol'].genesExpressionsPoints"),
+                ).toHaveLength(numberOfGenes);
+                expect(
+                    container.querySelectorAll("g[role='graphics-symbol'].genesExpressionsLines"),
+                ).toHaveLength(numberOfGenes);
+            },
+            { timeout: 5000 },
+        );
 
     // Configure fetchMock data and fixed time series data.
     beforeAll(() => {

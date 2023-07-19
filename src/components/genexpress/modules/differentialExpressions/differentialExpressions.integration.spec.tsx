@@ -56,6 +56,15 @@ describe('differentialExpressions integration', () => {
                 });
             }
 
+            if (req.url.includes('feature')) {
+                return resolveStringifiedObjectPromise({
+                    results: [
+                        genesById[differentialExpressionJson.gene_id[0]],
+                        genesById[differentialExpressionJson.gene_id[1]],
+                    ],
+                });
+            }
+
             if (req.url.includes('app-state')) {
                 return resolveStringifiedObjectPromise(backendBookmark);
             }
@@ -116,6 +125,29 @@ describe('differentialExpressions integration', () => {
         await screen.findByText(differentialExpressions[1].name);
     });
 
+    it('should load selected differential expression, genes and highlighted genes from bookmark', async () => {
+        ({ container } = customRender(<GeneExpressGrid />, {
+            initialState,
+            route: generateBookmarkQueryParameter(),
+        }));
+
+        await waitFor(
+            () => {
+                expect(
+                    container.querySelectorAll(
+                        "g[role='graphics-symbol'].volcanoPointSelected > path",
+                    ),
+                ).toHaveLength(backendBookmark.state.genes.selectedGenesIds.length);
+                expect(
+                    container.querySelectorAll(
+                        "g[role='graphics-symbol'].volcanoPointHighlighted > path[fill='#00BCD4']",
+                    ),
+                ).toHaveLength(backendBookmark.state.genes.highlightedGenesIds.length);
+            },
+            { timeout: 3000 },
+        );
+    });
+
     describe('differentialExpression not selected', () => {
         beforeEach(async () => {
             ({ container } = customRender(<GeneExpressGrid />, {
@@ -169,29 +201,6 @@ describe('differentialExpressions integration', () => {
             await validateExportFile('Differential Expressions/table.tsv', (exportFile) => {
                 expect(exportFile).toBeUndefined();
             });
-        });
-
-        it('should load selected differential expression, genes and highlighted genes from bookmark', async () => {
-            ({ container } = customRender(<GeneExpressGrid />, {
-                initialState,
-                route: generateBookmarkQueryParameter(),
-            }));
-
-            await waitFor(
-                () => {
-                    expect(
-                        container.querySelectorAll(
-                            "g[role='graphics-symbol'].volcanoPointSelected > path",
-                        ),
-                    ).toHaveLength(backendBookmark.state.genes.selectedGenesIds.length);
-                    expect(
-                        container.querySelectorAll(
-                            "g[role='graphics-symbol'].volcanoPointHighlighted > path[fill='#00BCD4']",
-                        ),
-                    ).toHaveLength(backendBookmark.state.genes.highlightedGenesIds.length);
-                },
-                { timeout: 3000 },
-            );
         });
 
         it('should display a warning that differential expression organism is different', async () => {

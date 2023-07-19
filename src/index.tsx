@@ -1,6 +1,6 @@
 /* eslint-disable global-require */
-import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
+import React, { StrictMode } from 'react';
 import { initializeSentry } from 'utils/sentryUtils';
 import { createBrowserHistory } from 'history';
 import App from 'components/app/app';
@@ -13,6 +13,11 @@ if (process.env.NODE_ENV === 'production') {
     }
 }
 const rootElement = document.getElementById('root');
+
+if (!rootElement) {
+    throw new Error('container not found!');
+}
+const root = createRoot(rootElement);
 
 /*
  * S3 bucket has limitations for client side routing. A special rule was
@@ -28,17 +33,16 @@ if (path) {
     history.replace(path);
 }
 
-ReactDOM.render(
-    <React.StrictMode>
+root.render(
+    <StrictMode>
         <App />
-    </React.StrictMode>,
-    rootElement,
+    </StrictMode>,
 );
 
 if (module.hot) {
     module.hot.accept('./components/app/app', () => {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const NextApp = require('./components/app/app').default;
-        ReactDOM.render(<NextApp />, rootElement);
+        root.render(<NextApp />);
     });
 }

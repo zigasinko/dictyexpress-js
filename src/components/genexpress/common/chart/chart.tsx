@@ -10,7 +10,6 @@ import React, {
 } from 'react';
 import * as vega from 'vega';
 import * as vegaTooltip from 'vega-tooltip';
-import { SizeMeProps } from 'react-sizeme';
 import { SignalValue, Spec } from 'vega';
 import { useDispatch } from 'react-redux';
 import { handleError } from 'utils/errorUtils';
@@ -18,7 +17,7 @@ import { RendererContext } from 'components/common/rendererContext';
 import { useTheme } from '@mui/material';
 import { vegaTheme } from '../theming/vegaTheme';
 import useUpdateEffect from '../useUpdateEffect';
-import withSizeme from '../withSizeme';
+import useSize from '../useSize';
 
 export type DataHandler = {
     name: string;
@@ -71,7 +70,7 @@ const chartPadding = { top: 20, left: 15, bottom: 15, right: 15 };
  *
  * Setting `renderer` to 'svg' will help with debugging, because it's more descriptive.
  */
-const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
+const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps> = (
     {
         vegaSpecification,
         updatableDataDefinitions,
@@ -79,8 +78,7 @@ const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
         dataHandlers,
         signalHandlers,
         onChartResized,
-        size: { width, height },
-    }: ChartProps & SizeMeProps,
+    },
     ref,
 ): ReactElement => {
     const dispatch = useDispatch();
@@ -93,6 +91,8 @@ const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
 
     const chartElement = useRef<HTMLDivElement>(null);
     const chartView = useRef<vega.View | null>(null);
+
+    const { width, height } = useSize(chartElement);
 
     useImperativeHandle(ref, () => ({
         getChartView: (): vega.View | null => {
@@ -276,4 +276,4 @@ const Chart: ForwardRefRenderFunction<ChartHandle, ChartProps & SizeMeProps> = (
     );
 };
 
-export default withSizeme(forwardRef(Chart));
+export default forwardRef(Chart);
