@@ -14,6 +14,7 @@ const selectionCell = {
     headerCheckboxSelection: true,
     checkboxSelection: true,
     width: 25,
+    field: 'selection',
 };
 
 type TimeSeriesSelectorProps = {
@@ -24,6 +25,17 @@ type TimeSeriesSelectorProps = {
     onSelectionChanged?: DictyGridProps<Relation>['onSelectionChanged'];
     isFetching?: boolean;
 };
+
+const descriptorFieldsOrder = [
+    'selection',
+    'descriptor.project',
+    'collection.name',
+    'descriptor.details',
+    'descriptor.strain',
+    'descriptor.treatment',
+    'descriptor.growth',
+    'descriptor.citation',
+];
 
 let descriptorSchemaCache: DescriptorSchema | undefined;
 
@@ -107,7 +119,18 @@ const TimeSeriesSelector = ({
                     }),
                 } as ColDef;
             }),
-        ];
+        ].sort((a: ColDef, b: ColDef) => {
+            if (descriptorFieldsOrder.indexOf(a.field ?? '') < 0) {
+                return 1;
+            }
+            if (descriptorFieldsOrder.indexOf(b.field ?? '') < 0) {
+                return -1;
+            }
+            return (
+                descriptorFieldsOrder.indexOf(a.field ?? '') -
+                descriptorFieldsOrder.indexOf(b.field ?? '')
+            );
+        });
     }, [descriptorSchema, selectionMode]);
 
     return (
