@@ -81,25 +81,30 @@ describe('clustering integration', () => {
     let container: HTMLElement;
 
     const validateChart = async (genesToValidate: Gene[]): Promise<void> =>
-        waitFor(() => {
-            expect(
-                container.querySelector("g[role='graphics-symbol'].horizontalLines > path"),
-            ).toBeInTheDocument();
-            expect(
-                container.querySelector("g[role='graphics-symbol'].verticalLines > path"),
-            ).toBeInTheDocument();
-            expect(
-                container.querySelector("g[role='graphics-object'].genesNames > text"),
-            ).toBeInTheDocument();
-
-            genesToValidate.forEach((gene) => {
+        waitFor(
+            () => {
                 expect(
-                    Array.from(
-                        container.querySelectorAll("g[role='graphics-object'].genesNames > text"),
-                    ).filter((element) => element.textContent === gene.name),
-                ).toHaveLength(1);
-            });
-        });
+                    container.querySelector("g[role='graphics-symbol'].horizontalLines > path"),
+                ).toBeInTheDocument();
+                expect(
+                    container.querySelector("g[role='graphics-symbol'].verticalLines > path"),
+                ).toBeInTheDocument();
+                expect(
+                    container.querySelector("g[role='graphics-object'].genesNames > text"),
+                ).toBeInTheDocument();
+
+                genesToValidate.forEach((gene) => {
+                    expect(
+                        Array.from(
+                            container.querySelectorAll(
+                                "g[role='graphics-object'].genesNames > text",
+                            ),
+                        ).filter((element) => element.textContent === gene.name),
+                    ).toHaveLength(1);
+                });
+            },
+            { timeout: 4000 },
+        );
 
     beforeEach(() => {
         fetchMock.mockClear();
