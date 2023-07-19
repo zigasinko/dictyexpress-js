@@ -4,18 +4,18 @@ exports[`geneChip should render as highlighted snapshot 1`] = `
 <DocumentFragment>
   <div>
     <div
-      class="MuiButtonBase-root-JvZdr clbaxI MuiButtonBase-root MuiChip-root-bqCTsu bZhlXl MuiChip-root MuiChip-filled MuiChip-sizeSmall MuiChip-colorSecondary MuiChip-clickable MuiChip-clickableColorSecondary MuiChip-deletable MuiChip-deletableColorSecondary MuiChip-filledSecondary sc-idXgbr gUCTUD"
+      class="MuiButtonBase-root-iLYEZ iYGEdV MuiButtonBase-root MuiChip-root-jPqSCQ duWcGX MuiChip-root MuiChip-filled MuiChip-sizeSmall MuiChip-colorSecondary MuiChip-clickable MuiChip-clickableColorSecondary MuiChip-deletable MuiChip-deletableColorSecondary MuiChip-filledSecondary sc-gFqAkR bkbVoX"
       role="button"
       tabindex="0"
     >
       <span
-        class="MuiChip-label-dLpyCC jNfjda MuiChip-label MuiChip-labelSmall"
+        class="MuiChip-label-jTUTHw kXuwQt MuiChip-label MuiChip-labelSmall"
       >
         TestGene0
       </span>
       <svg
         aria-hidden="true"
-        class="MuiSvgIcon-root-ffjXHZ fQQvfO MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiChip-deleteIcon MuiChip-deleteIconSmall MuiChip-deleteIconColorSecondary MuiChip-deleteIconFilledColorSecondary"
+        class="MuiSvgIcon-root-ksXwJf cGToQP MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiChip-deleteIcon MuiChip-deleteIconSmall MuiChip-deleteIconColorSecondary MuiChip-deleteIconFilledColorSecondary"
         data-testid="CancelIcon"
         focusable="false"
         viewBox="0 0 24 24"
@@ -33,18 +33,18 @@ exports[`geneChip should render the same as default snapshot 1`] = `
 <DocumentFragment>
   <div>
     <div
-      class="MuiButtonBase-root-JvZdr clbaxI MuiButtonBase-root MuiChip-root-bqCTsu fFpKgo MuiChip-root MuiChip-filled MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-deletable MuiChip-deletableColorDefault MuiChip-filledDefault sc-idXgbr gUCTUD"
+      class="MuiButtonBase-root-iLYEZ iYGEdV MuiButtonBase-root MuiChip-root-jPqSCQ kHVjFC MuiChip-root MuiChip-filled MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-deletable MuiChip-deletableColorDefault MuiChip-filledDefault sc-gFqAkR bkbVoX"
       role="button"
       tabindex="0"
     >
       <span
-        class="MuiChip-label-dLpyCC jNfjda MuiChip-label MuiChip-labelSmall"
+        class="MuiChip-label-jTUTHw kXuwQt MuiChip-label MuiChip-labelSmall"
       >
         TestGene0
       </span>
       <svg
         aria-hidden="true"
-        class="MuiSvgIcon-root-ffjXHZ fQQvfO MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiChip-deleteIcon MuiChip-deleteIconSmall MuiChip-deleteIconColorDefault MuiChip-deleteIconFilledColorDefault"
+        class="MuiSvgIcon-root-ksXwJf cGToQP MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiChip-deleteIcon MuiChip-deleteIconSmall MuiChip-deleteIconColorDefault MuiChip-deleteIconFilledColorDefault"
         data-testid="CancelIcon"
         focusable="false"
         viewBox="0 0 24 24"

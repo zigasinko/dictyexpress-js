@@ -1,21 +1,18 @@
 $primary: #49688d;
 
-@import '~ag-grid-community/src/styles/ag-grid.scss';
-@import '~ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham-mixin';
+@use '~ag-grid-community/styles' as ag;
 
-.ag-theme-balham {
-    @include ag-theme-balham(
-        (
-            balham-active-color: #49688d,
-        )
-    );
-
-    font-family: ('FS Joey Web Regular', 'Helvetica', 'Arial', 'Verdana', 'sans-serif');
-}
+@include ag.grid-styles(
+    (
+        theme: balham,
+        alpine-active-color: $primary,
+    )
+);
 
 @font-face {
     font-family: 'FS Joey Web Bold';
-    src: url('../../fonts/FSJoeyBold.eot') format('embedded-opentype'),
+    src:
+        url('../../fonts/FSJoeyBold.eot') format('embedded-opentype'),
         url('../../fonts/FSJoeyBold.woff') format('woff'),
         url('../../fonts/FSJoeyBold.ttf') format('opentype');
     font-weight: bold;
@@ -25,7 +22,8 @@ $primary: #49688d;
 
 @font-face {
     font-family: 'FS Joey Web Regular';
-    src: url('../../fonts/FSJoeyRegular.eot') format('embedded-opentype'),
+    src:
+        url('../../fonts/FSJoeyRegular.eot') format('embedded-opentype'),
         url('../../fonts/FSJoeyRegular.woff') format('woff'),
         url('../../fonts/FSJoeyRegular.ttf') format('opentype');
     font-weight: normal;
@@ -35,7 +33,8 @@ $primary: #49688d;
 
 @font-face {
     font-family: 'FS Joey Web Heavy';
-    src: url('../../fonts/FSJoeyHeavy.eot') format('embedded-opentype'),
+    src:
+        url('../../fonts/FSJoeyHeavy.eot') format('embedded-opentype'),
         url('../../fonts/FSJoeyHeavy.woff') format('woff'),
         url('../../fonts/FSJoeyHeavy.ttf') format('opentype');
     font-weight: 800;

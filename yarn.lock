@@ -4385,23 +4385,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ag-grid-community@npm:^28.2.1":
-  version: 28.2.1
-  resolution: "ag-grid-community@npm:28.2.1"
-  checksum: f94acfd8f4f815e4f5028c8bc40f6cd06463f81eee9ea5a3450e9e580f5b682adbee86a1cec466aaa1e8c780e2606b1f1ab06455d38b62a83e768d4e479fcb38
+"ag-grid-community@npm:29.3.5":
+  version: 29.3.5
+  resolution: "ag-grid-community@npm:29.3.5"
+  checksum: ad071f6ea80ebfa96e79d3e9e77947a52182c783bcee5f7ed377f5de2758f0e88bbf3dbace9272c80e7fb566931fe6a56227dd1e2526670a7e17dd1152d854d6
   languageName: node
   linkType: hard
 
-"ag-grid-react@npm:^28.2.1":
-  version: 28.2.1
-  resolution: "ag-grid-react@npm:28.2.1"
+"ag-grid-react@npm:29.3.5":
+  version: 29.3.5
+  resolution: "ag-grid-react@npm:29.3.5"
   dependencies:
     prop-types: ^15.8.1
   peerDependencies:
-    ag-grid-community: ~28.2.1
+    ag-grid-community: ~29.3.5
     react: ^16.3.0 || ^17.0.0 || ^18.0.0
     react-dom: ^16.3.0 || ^17.0.0 || ^18.0.0
-  checksum: 75b6cfd891a0fd6dcd065fc69e80c9b7b20c6efee4f659714b5748f28b9d646868602770401cf840efd866b65e9e0683850842c70a95924aa6209c09bf849c15
+  checksum: e22371250461069096c3528ff1e9a4310e44d2167467729776b9ff1af0b63827f034069a791240fa2d2e69f22dfa2d1a846d7d490b0beb9814fd085d25b19426
   languageName: node
   linkType: hard
 
@@ -6831,8 +6831,8 @@ __metadata:
     "@types/webpack-env": ^1.18.1
     "@typescript-eslint/eslint-plugin": 5.62.0
     "@typescript-eslint/parser": 5.62.0
-    ag-grid-community: ^28.2.1
-    ag-grid-react: ^28.2.1
+    ag-grid-community: 29.3.5
+    ag-grid-react: 29.3.5
     browser-sync: ^2.29.3
     cross-env: ^7.0.3
     env-cmd: ^10.1.0
