@@ -52,10 +52,6 @@ test.describe('Expression time courses', () => {
     }) => {
         const genes = 'eif3L fnkF_ps';
 
-        await page.waitForResponse((response: { url: () => string | string[] }) => {
-            return response.url().includes('/api/storage');
-        });
-
         await (await getByPlaceholderText(Selectors.genesInputLabel)).fill('a');
         await page.click(Selectors.option);
 

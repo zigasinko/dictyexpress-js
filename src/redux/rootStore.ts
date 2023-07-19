@@ -1,5 +1,5 @@
-import { configureStore, getDefaultMiddleware, Action } from '@reduxjs/toolkit';
-import { createEpicMiddleware, Epic } from 'redux-observable';
+import { configureStore, Action } from '@reduxjs/toolkit';
+import { createEpicMiddleware } from 'redux-observable';
 import { switchMap } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
 import rootReducer, { RootState } from './rootReducer';
@@ -20,12 +20,12 @@ type MiddleWareProps = {
 const getStore = (initialState?: RootState, defaultMiddlewareOptions?: MiddleWareProps) => {
     const epicMiddleware = createEpicMiddleware<Action, Action, RootState>();
 
-    const defaultMiddleware = getDefaultMiddleware(defaultMiddlewareOptions);
-    const middleware = [...defaultMiddleware, epicMiddleware];
-
     const store = configureStore({
         reducer: rootReducer,
-        middleware,
+        middleware: (getDefaultMiddleware) => [
+            ...getDefaultMiddleware(defaultMiddlewareOptions),
+            epicMiddleware,
+        ],
         preloadedState: initialState,
         devTools: process.env.NODE_ENV === 'development',
     });
@@ -35,10 +35,9 @@ const getStore = (initialState?: RootState, defaultMiddlewareOptions?: MiddleWar
     // will unsubscribe from the previous one then
     // call and subscribe to the new one because of
     // how switchMap works
-    const hotReloadingEpic: Epic<Action, Action, RootState> = (actionIn, actionOut, state) =>
-        epic$.pipe(switchMap((epic) => epic(actionIn, actionOut, state)));
-
-    epicMiddleware.run(hotReloadingEpic);
+    epicMiddleware.run((actionIn, actionOut, state) =>
+        epic$.pipe(switchMap((epic) => epic(actionIn, actionOut, state))),
+    );
 
     if (module.hot) {
         module.hot.accept('./rootReducer', () => {
