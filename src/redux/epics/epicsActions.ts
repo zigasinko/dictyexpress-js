@@ -7,11 +7,6 @@ import { ClusteringData, FindSimilarGenesData } from 'redux/models/rest';
 export const selectGenes = createAction<Gene[]>('genes/selectGenes');
 export const pasteGenesNames = createAction<string[]>('genes/pasteGenesNames');
 
-export const login = createAction<{ email: string; password: string }>('authentication/login');
-export const loginSucceeded = createAction('authentication/loginSucceeded');
-export const logout = createAction('authentication/logout');
-export const logoutSucceeded = createAction('authentication/logoutSucceeded');
-
 export const appStarted = createAction('appStarted');
 export const appFocused = createAction('appFocused');
 export const reconnectToServer = createAction('connectToServer/reconnect');

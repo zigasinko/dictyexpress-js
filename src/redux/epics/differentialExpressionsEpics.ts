@@ -26,17 +26,12 @@ import {
     differentialExpressionSelected,
 } from 'redux/stores/differentialExpressions';
 import { getDifferentialExpressions, getStorage } from 'api';
-import {
-    appStarted,
-    fetchDifferentialExpressionGenes,
-    loginSucceeded,
-    logoutSucceeded,
-} from './epicsActions';
+import { appStarted, fetchDifferentialExpressionGenes } from './epicsActions';
 import { filterNullAndUndefined, mapStateSlice } from './rxjsCustomFilters';
 
 const fetchDifferentialExpressionsEpic: Epic<Action, Action, RootState> = (action$) => {
     return action$.pipe(
-        ofType(appStarted.toString(), loginSucceeded.toString(), logoutSucceeded.toString()),
+        ofType(appStarted.toString()),
         switchMap(() => {
             return from(getDifferentialExpressions()).pipe(
                 map((differentialExpressions) =>

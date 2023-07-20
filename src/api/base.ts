@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const baseUrl = window.location.origin;
 export const apiUrl = API_URL ?? `${baseUrl}/api`;
-export const authApiUrl = REST_AUTH_URL ?? `${baseUrl}/rest-auth`;
+export const authApiUrl = SAML_AUTH_URL ?? `${baseUrl}/saml-auth`;
 
 const websocketHost =
     WEBSOCKET_URL ??

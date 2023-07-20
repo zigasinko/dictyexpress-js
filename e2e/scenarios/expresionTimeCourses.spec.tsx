@@ -10,41 +10,26 @@ enum Selectors {
 }
 
 test.describe('Expression time courses', () => {
-    test.beforeEach(
-        async ({
-            browser,
-            context,
-            page,
-            queries: { getByLabelText, getByRole, queryAllByRole },
-        }) => {
-            // Create a new context with the saved localStorageDatastate
-            await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-            if (process.env.DICTY_STORAGE) {
-                const storageState = JSON.parse(process.env.DICTY_STORAGE);
-                context = await browser.newContext({ storageState });
-            } else {
-                await page.goto('http://localhost:3000');
-                await (await queryAllByRole('button', { name: 'Run dictyExpress' }))[0].click();
-                await (await getByRole('button', { name: 'Login' })).click();
-                await (
-                    await getByLabelText('E-mail *')
-                ).fill(process.env.LOGIN_EMAIL ?? 'not-provided');
-                await (
-                    await getByLabelText('Password *')
-                ).fill(process.env.LOGIN_PASSWORD ?? 'not-provided');
-                await (await getByRole('button', { name: 'SIGN IN' })).click();
-                await page.waitForResponse(
-                    (response: { url: () => string | string[] }) => {
-                        return response.url().includes('/relation?category=Time+series');
-                    },
-                    { timeout: 30000 },
-                );
+    test.beforeEach(async ({ browser, context, page, queries: { queryAllByRole } }) => {
+        // Create a new context with the saved localStorageDatastate
+        await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+        if (process.env.DICTY_STORAGE) {
+            const storageState = JSON.parse(process.env.DICTY_STORAGE);
+            context = await browser.newContext({ storageState });
+        } else {
+            await page.goto('http://localhost:3000');
+            await (await queryAllByRole('button', { name: 'Run dictyExpress' }))[0].click();
+            await page.waitForResponse(
+                (response: { url: () => string | string[] }) => {
+                    return response.url().includes('/relation?category=Time+series');
+                },
+                { timeout: 30000 },
+            );
 
-                const localStorageData = await context.storageState();
-                process.env.DICTY_STORAGE = JSON.stringify(localStorageData);
-            }
-        },
-    );
+            const localStorageData = await context.storageState();
+            process.env.DICTY_STORAGE = JSON.stringify(localStorageData);
+        }
+    });
 
     test('should draw Expression Time Courses graph', async ({
         page,

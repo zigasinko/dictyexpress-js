@@ -1,13 +1,12 @@
-import { authApiUrl } from './base';
-import { post } from './fetch';
+import { authApiUrl, baseUrl } from './base';
 
-const loginUrl = `${authApiUrl}/login/`;
-const logoutUrl = `${authApiUrl}/logout/`;
+const loginUrl = `${authApiUrl}/login/?next=${baseUrl}`;
+const logoutUrl = `${authApiUrl}/logout/?next=${baseUrl}`;
 
-export const login = async (email: string, password: string): Promise<Response> => {
-    return post(loginUrl, { email, password });
+export const login = () => {
+    window.location.href = loginUrl;
 };
 
-export const logout = async (): Promise<Response> => {
-    return post(logoutUrl);
+export const logout = () => {
+    window.location.href = logoutUrl;
 };

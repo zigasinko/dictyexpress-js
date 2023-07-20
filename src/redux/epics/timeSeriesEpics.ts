@@ -25,7 +25,7 @@ import {
 import { RootState } from 'redux/rootReducer';
 import { handleError } from 'utils/errorUtils';
 import { addToBasket, getTimeSeriesRelations, getBasketExpressions } from 'api';
-import { appStarted, loginSucceeded, logoutSucceeded } from './epicsActions';
+import { appStarted } from './epicsActions';
 import { filterNullAndUndefined, mapStateSlice } from './rxjsCustomFilters';
 import { mapGeneIdsBetweenSources } from 'api/kbApi';
 import { getSelectedGenesIds } from 'redux/stores/genes';
@@ -33,7 +33,7 @@ import { BasketInfo } from 'redux/models/internal';
 
 const fetchTimeSeriesEpic: Epic<Action, Action, RootState> = (action$) => {
     return action$.pipe(
-        ofType(appStarted.toString(), loginSucceeded.toString(), logoutSucceeded.toString()),
+        ofType(appStarted.toString()),
         mergeMap(() => {
             return from(getTimeSeriesRelations()).pipe(
                 map((response) => timeSeriesFetchSucceeded(response)),

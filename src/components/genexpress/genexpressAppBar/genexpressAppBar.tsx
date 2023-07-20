@@ -1,4 +1,4 @@
-import React, { ReactElement, useState, useEffect, useRef } from 'react';
+import { ReactElement, useState, useRef } from 'react';
 import { Button, CircularProgress, Popover, Menu, MenuItem } from '@mui/material';
 import { Bookmark as BookmarkIcon } from '@mui/icons-material';
 import dictyLogo from 'images/favicon.ico';
@@ -7,7 +7,6 @@ import { RootState } from 'redux/rootReducer';
 import { getUser, getIsLoggedIn } from 'redux/stores/authentication';
 import DictyAppBar from 'components/common/dictyAppBar/dictyAppBar';
 import { layoutsReset } from 'redux/stores/layouts';
-import { logout } from 'redux/epics/epicsActions';
 import {
     getIsFetchingDifferentialExpressions,
     getIsFetchingDifferentialExpressionsData,
@@ -28,7 +27,6 @@ import {
     BookmarkLinkContainer,
     BookmarkUrl,
 } from './genexpressAppBar.styles';
-import Login from '../login/login';
 import { LoadingBar } from '../common/dictyModule/dictyModule.styles';
 import * as reportBuilder from '../common/reportBuilder/reportBuilder';
 import IconButtonWithTooltip from '../common/iconButtonWithTooltip/iconButtonWithTooltip';
@@ -37,6 +35,7 @@ import { ModalHeader } from '../common/dictyModal/dictyModal.styles';
 import { DictyUrlQueryParameter } from '../common/constants';
 import { Version } from '../../common/version';
 import { Link } from 'react-router-dom';
+import { login, logout } from 'api/authApi';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const mapStateToProps = (state: RootState) => {
@@ -57,7 +56,6 @@ const mapStateToProps = (state: RootState) => {
 };
 
 const connector = connect(mapStateToProps, {
-    connectedLogout: logout,
     connectedLayoutsReset: layoutsReset,
 });
 
@@ -71,7 +69,6 @@ const GenexpressAppBar = ({
     user,
     isLoggedIn,
     isLoading,
-    connectedLogout,
     connectedLayoutsReset,
     isFetchingDifferentialExpressions,
     isFetchingDifferentialExpressionsData,
@@ -80,7 +77,6 @@ const GenexpressAppBar = ({
     isFetchingSamplesExpressions,
     isFetchingGOEnrichmentJson,
 }: GenexpressAppBarProps): ReactElement => {
-    const [loginModalOpened, setLoginModalOpened] = useState(false);
     const [userMenuOpened, setUserMenuOpened] = useState(false);
     const [exportPrefixModalOpened, setExportPrefixModalOpened] = useState(false);
     const [bookmarkPopoverOpened, setBookmarkPopoverOpened] = useState(false);
@@ -89,12 +85,6 @@ const GenexpressAppBar = ({
     const userButtonElement = useRef<HTMLButtonElement>(null);
     const [bookmark, setBookmark] = useState('');
     const [isExporting, setIsExporting] = useState(false);
-
-    useEffect(() => {
-        if (isLoggedIn) {
-            setLoginModalOpened(false);
-        }
-    }, [isLoggedIn]);
 
     /**
      * Execute export once user clicks on Export button in export prefix modal.
@@ -174,13 +164,7 @@ const GenexpressAppBar = ({
                         {user.first_name} {user.last_name}
                     </Button>
                 ) : (
-                    <Button
-                        onClick={(): void => {
-                            setLoginModalOpened(true);
-                        }}
-                    >
-                        Login
-                    </Button>
+                    <Button onClick={login}>Login</Button>
                 )}
             </ActionsContainer>
             {isLoading && <LoadingBar />}
@@ -201,17 +185,9 @@ const GenexpressAppBar = ({
                     disableScrollLock
                     onClose={() => setUserMenuOpened(false)}
                 >
-                    <MenuItem
-                        onClick={(): void => {
-                            connectedLogout();
-                            setUserMenuOpened(false);
-                        }}
-                    >
-                        Logout
-                    </MenuItem>
+                    <MenuItem onClick={logout}>Logout</MenuItem>
                 </Menu>
             )}
-            {loginModalOpened && <Login closeModal={(): void => setLoginModalOpened(false)} />}
             {exportPrefixModalOpened && (
                 <TextInputModal
                     title="Export"
