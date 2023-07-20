@@ -338,15 +338,15 @@ const GeneSelector = ({
                         <ListItem {...props}>
                             <Box
                                 sx={{
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
+                                    display: 'grid',
+                                    gridTemplateColumns: '1fr 1fr 2fr',
+                                    gridGap: 3,
                                     width: 1,
                                 }}
                             >
                                 <span>{option.name}</span>
-                                <span>
-                                    {option.source}, <i>{option.species}</i>
-                                </span>
+                                <span>{option.feature_id}</span>
+                                <span>{option.description}</span>
                             </Box>
                         </ListItem>
                     )}

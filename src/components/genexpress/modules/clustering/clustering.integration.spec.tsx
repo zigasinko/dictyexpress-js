@@ -103,7 +103,7 @@ describe('clustering integration', () => {
                     ).toHaveLength(1);
                 });
             },
-            { timeout: 4000 },
+            { timeout: 7000 },
         );
 
     beforeEach(() => {

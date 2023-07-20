@@ -120,6 +120,16 @@ describe('geneSelector', () => {
             );
         });
 
+        it('should display gene name, ID and description in the autocomplete', async () => {
+            fireEvent.change(screen.getByPlaceholderText('Search for a gene'), {
+                target: { value: genes[1].name.slice(0, 1) },
+            });
+
+            await screen.findByText(genes[1].name);
+            screen.getByText(genes[1].feature_id);
+            screen.getByText(genes[1].description);
+        });
+
         it('should export empty Genes/selected_genes.tsv file', async () => {
             await validateExportFile('Genes/selected_genes.tsv', (exportFile) => {
                 expect(exportFile).toBeDefined();
