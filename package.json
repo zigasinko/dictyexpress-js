@@ -1,6 +1,6 @@
 {
     "name": "dicty-express",
-    "version": "1.0.0b1",
+    "version": "1.0.0b2",
     "private": true,
     "dependencies": {
         "@genialis/resolwe": "17.2.0",
