@@ -7,7 +7,7 @@ import createIsFetchingSlice from './fetch';
 import { allGenesDeselected, geneDeselected, genesSelected } from './genes';
 import { timeSeriesSelected } from './timeSeries';
 
-const distanceMeasureInitialState = DistanceMeasure.spearman;
+const distanceMeasureInitialState = DistanceMeasure.euclidean;
 const distanceMeasureSlice = createSlice({
     name: 'clustering',
     initialState: distanceMeasureInitialState,

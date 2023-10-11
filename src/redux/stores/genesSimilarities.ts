@@ -26,7 +26,7 @@ const queryGeneIdSlice = createSlice({
     },
 });
 
-const distanceMeasureInitialState = 'spearman' as DistanceMeasure;
+const distanceMeasureInitialState = DistanceMeasure.euclidean;
 const distanceMeasureSlice = createSlice({
     name: 'genesSimilarities',
     initialState: distanceMeasureInitialState,

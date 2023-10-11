@@ -169,7 +169,7 @@ describe('findSimilarGenesModal', () => {
                 // Click on dropdown. MouseDown event has to be used, because material-ui Select component
                 // listens to mouseDown event to expand options menu.
                 fireEvent.mouseDown(screen.getByLabelText('Distance Measure'));
-                fireEvent.click(await screen.findByText(distanceMeasureOptions[1].label));
+                fireEvent.click(await screen.findByText(distanceMeasureOptions[2].label));
 
                 fireEvent.click(screen.getByRole('button', { name: 'Find' }));
 

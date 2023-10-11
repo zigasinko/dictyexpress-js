@@ -47,6 +47,7 @@ const connector = connect(mapStateToProps, {
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 export const distanceMeasureOptions: Option<DistanceMeasure>[] = [
+    { value: DistanceMeasure.euclidean, label: 'Euclidean' },
     { value: DistanceMeasure.pearson, label: 'Pearson' },
     { value: DistanceMeasure.spearman, label: 'Spearman' },
 ];

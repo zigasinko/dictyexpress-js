@@ -24,6 +24,7 @@ export enum ClusteringLinkageFunction {
 }
 
 export enum DistanceMeasure {
+    euclidean = 'euclidean',
     spearman = 'spearman',
     pearson = 'pearson',
 }

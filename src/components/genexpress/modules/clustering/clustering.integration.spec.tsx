@@ -69,7 +69,7 @@ const backendBookmark = generateBackendBookmark(selectedTimeSeriesId, [
     genes[0].feature_id,
     genes[1].feature_id,
 ]);
-backendBookmark.state.clustering.distanceMeasure = distanceMeasureOptions[1].value;
+backendBookmark.state.clustering.distanceMeasure = distanceMeasureOptions[2].value;
 backendBookmark.state.clustering.linkageFunction = linkageFunctionOptions[2].value;
 
 const dataId = 123;

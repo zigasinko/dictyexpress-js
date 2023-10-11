@@ -26,7 +26,7 @@ describe('clusteringStore store', () => {
             initialState = {
                 status: null,
                 mergedData: null,
-                distanceMeasure: DistanceMeasure.spearman,
+                distanceMeasure: DistanceMeasure.euclidean,
                 linkageFunction: ClusteringLinkageFunction.average,
                 isFetchingClusteringData: false,
             };
@@ -77,7 +77,7 @@ describe('clusteringStore store', () => {
             initialState = {
                 status: DONE_DATA_STATUS,
                 mergedData: mergedClusteringData,
-                distanceMeasure: DistanceMeasure.spearman,
+                distanceMeasure: DistanceMeasure.euclidean,
                 linkageFunction: ClusteringLinkageFunction.average,
                 isFetchingClusteringData: false,
             };

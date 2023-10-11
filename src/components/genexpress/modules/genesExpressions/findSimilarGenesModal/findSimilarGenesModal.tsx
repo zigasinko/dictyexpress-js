@@ -37,6 +37,7 @@ import { LoadingBar } from 'components/genexpress/common/dictyModule/dictyModule
 import { StatusIcon } from 'components/genexpress/common/statusIcon';
 
 export const distanceMeasureOptions: Option<DistanceMeasure>[] = [
+    { value: DistanceMeasure.euclidean, label: 'Euclidean' },
     { value: DistanceMeasure.spearman, label: 'Spearman' },
     { value: DistanceMeasure.pearson, label: 'Pearson' },
 ];

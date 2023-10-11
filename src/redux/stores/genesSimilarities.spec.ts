@@ -21,7 +21,7 @@ describe('genesSimilarities store', () => {
                 status: null,
                 data: null,
                 queryGeneId: null,
-                distanceMeasure: DistanceMeasure.pearson,
+                distanceMeasure: DistanceMeasure.euclidean,
                 isFetchingGenesSimilarities: false,
             };
         });
