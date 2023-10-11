@@ -1,15 +1,6 @@
 import { Action } from '@reduxjs/toolkit';
 import { Epic, combineEpics, ofType } from 'redux-observable';
-import {
-    mergeMap,
-    startWith,
-    endWith,
-    catchError,
-    map,
-    switchMap,
-    filter,
-    take,
-} from 'rxjs/operators';
+import { mergeMap, startWith, endWith, catchError, map, switchMap, filter } from 'rxjs/operators';
 import { combineLatest, of, from, merge, EMPTY } from 'rxjs';
 import { getBasketInfo } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
@@ -106,7 +97,6 @@ const fetchDifferentialExpressionsDataEpic: Epic<Action, Action, RootState> = (a
                         ),
                     );
                 }),
-                take(1),
                 catchError((error) =>
                     of(
                         handleError(
