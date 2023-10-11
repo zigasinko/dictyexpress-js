@@ -300,7 +300,9 @@ A list of all gene associations for each term is available in a separate file - 
                     },
                     // Ag-grid will compare old and new values to determine if a re-render is needed.
                     // By default, the value is just the term_name, so cells' icons wouldn't update on collapse.
-                    valueGetter: (row) => String(row.data.term_name) + String(row.data.collapsed),
+                    valueGetter: treeView
+                        ? (row) => String(row.data.term_name) + String(row.data.collapsed)
+                        : null,
                 },
             ] as ColDef[],
         [getSort, treeView],
