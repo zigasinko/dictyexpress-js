@@ -13,6 +13,7 @@ export const addToBasket = async (samplesIds: number[]): Promise<BasketAddSample
     const addSamplesResponse = await post(`${baseUrl}/_/add_samples`, {
         samples: samplesIds,
         only_existing_organism: true,
+        annotation_version: 'v2',
     });
 
     return deserializeResponse<BasketAddSamplesResponse>(addSamplesResponse);
