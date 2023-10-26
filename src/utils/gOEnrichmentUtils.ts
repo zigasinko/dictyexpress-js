@@ -112,7 +112,7 @@ export const ontologyJsonToTermsTable = async (
         const geneIds = _.uniq(rows.flatMap((row) => row.selected_gene_associations));
         const { source, species } = rows[0];
 
-        const genes = await listByIds(source ?? '', geneIds, species);
+        const genes = await listByIds(source ?? '', geneIds, species ?? '');
         return { sourceSpeciesKey: key, values: _.keyBy(genes, 'feature_id') };
     });
 

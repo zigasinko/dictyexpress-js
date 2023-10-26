@@ -8,7 +8,7 @@ const baseUrl = `${apiUrl}/_modules/gene_list/list_by_ids?hydrate_full_feature=1
 export const listByIds = async (
     source: string,
     geneIds: string[],
-    species?: string,
+    species: string,
 ): Promise<Gene[]> => {
     if (geneIds.length === 0) {
         return [];
@@ -17,7 +17,7 @@ export const listByIds = async (
     const payload = {
         source,
         gene_ids: geneIds,
-        ...(species != null && { species }),
+        species,
     };
 
     const getGenesResponse = await post(baseUrl, payload);

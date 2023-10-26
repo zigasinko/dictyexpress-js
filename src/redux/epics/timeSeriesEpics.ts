@@ -30,6 +30,7 @@ import { filterNullAndUndefined, mapStateSlice } from './rxjsCustomFilters';
 import { mapGeneIdsBetweenSources } from 'api/kbApi';
 import { getSelectedGenesIds } from 'redux/stores/genes';
 import { BasketInfo } from 'redux/models/internal';
+import { isEmpty, compact } from 'lodash';
 
 const fetchTimeSeriesEpic: Epic<Action, Action, RootState> = (action$) => {
     return action$.pipe(
@@ -69,7 +70,17 @@ const timeSeriesSelectedEpic: Epic<Action, Action, RootState> = (action$, state$
         ),
         mergeMap((timeSeriesSamplesIds) => {
             return from(addToBasket(timeSeriesSamplesIds)).pipe(
-                map((response) => addSamplesToBasketSucceeded(response)),
+                map((response) => {
+                    if (
+                        isEmpty(compact(response.permitted_sources)) ||
+                        isEmpty(compact(response.permitted_organisms))
+                    ) {
+                        throw new Error(
+                            'Selected time series are missing source and species information.',
+                        );
+                    }
+                    return addSamplesToBasketSucceeded(response);
+                }),
                 catchError((error) =>
                     of(
                         handleError(

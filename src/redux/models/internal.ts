@@ -25,7 +25,7 @@ export type GenesById = Record<Gene['feature_id'], Gene>;
 export type BasketInfo = {
     id: string;
     source: string;
-    species?: string;
+    species: string;
     type: 'gene';
 };
 
