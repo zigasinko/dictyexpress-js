@@ -15,6 +15,7 @@ import {
     filter,
     switchMap,
     first,
+    bufferCount,
 } from 'rxjs/operators';
 import { of, from, EMPTY, Observable, merge } from 'rxjs';
 import { getBasketInfo } from 'redux/stores/timeSeries';
@@ -44,6 +45,7 @@ import {
     TFetchGenesActionPayload,
 } from './epicsActions';
 
+const listByIdsLimit = 5000;
 const fetchGenesActionObservable = (
     geneIds: string[],
     state$: StateObservable<RootState>,
@@ -63,16 +65,21 @@ const fetchGenesActionObservable = (
         filterNullAndUndefined(),
         first(),
         switchMap((basketInfo) => {
-            return from(
-                listByIds(
-                    source ?? basketInfo.source,
-                    geneIdsToFetch,
-                    species ?? basketInfo.species,
-                ),
-            ).pipe(
-                map((response) => {
-                    return genesFetchSucceeded(response);
-                }),
+            return from(geneIdsToFetch).pipe(
+                bufferCount(listByIdsLimit),
+                mergeMap((bufferedGeneIds) => {
+                    return from(
+                        listByIds(
+                            source ?? basketInfo.source,
+                            bufferedGeneIds,
+                            species ?? basketInfo.species,
+                        ),
+                    ).pipe(
+                        map((response) => {
+                            return genesFetchSucceeded(response);
+                        }),
+                    );
+                }, 1),
             );
         }),
     );
