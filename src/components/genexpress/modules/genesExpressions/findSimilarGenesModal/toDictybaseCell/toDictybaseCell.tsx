@@ -11,7 +11,7 @@ const ToDictybaseCell = ({
     <CellContainer>
         <span>{value}</span>
         <a
-            href={`http://dictybase.org/id/${data.feature_id}`}
+            href={`http://dictybase.org/gene/${data.feature_id}`}
             rel="noopener noreferrer"
             target="_blank"
         >

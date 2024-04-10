@@ -61,7 +61,7 @@ exports[`geneInformation should render as default snapshot 1`] = `
         class="sc-eldPxv keZwRn"
       >
         <a
-          href="http://dictybase.org/id/0"
+          href="http://dictybase.org/gene/0"
           rel="noopener noreferrer"
           target="_blank"
         >

@@ -60,7 +60,7 @@ export const GeneInformation = ({
                 <GeneInformationLabel>Database link:</GeneInformationLabel>
                 <GeneInformationValue>
                     <a
-                        href={`http://dictybase.org/id/${gene.feature_id}`}
+                        href={`http://dictybase.org/gene/${gene.feature_id}`}
                         rel="noopener noreferrer"
                         target="_blank"
                     >
