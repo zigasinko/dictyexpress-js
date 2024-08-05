@@ -13,7 +13,7 @@ import {
     generateBasketInfo,
     generateBasketAddSamplesResponse,
 } from 'tests/mock';
-import { genesFetchSucceeded, genesSelected } from 'redux/stores/genes';
+import { allGenesDeselected, genesFetchSucceeded, genesSelected } from 'redux/stores/genes';
 import { MockStoreEnhanced } from 'redux-mock-store';
 import { RootState } from 'redux/rootReducer';
 import { AppDispatch } from 'redux/appStore';
@@ -80,6 +80,7 @@ describe('geneSelector', () => {
             await waitFor(() => {
                 expect(mockedStore.getActions()).toEqual([
                     genesFetchSucceeded(genes),
+                    allGenesDeselected(),
                     genesSelected(genes.map((gene) => gene.feature_id)),
                 ]);
             });
@@ -100,6 +101,7 @@ describe('geneSelector', () => {
             await waitFor(() => {
                 expect(mockedStore.getActions()).toEqual([
                     genesFetchSucceeded(genes),
+                    allGenesDeselected(),
                     genesSelected(genes.map((gene) => gene.feature_id)),
                 ]);
             });

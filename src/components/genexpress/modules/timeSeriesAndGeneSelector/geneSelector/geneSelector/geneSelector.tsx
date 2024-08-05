@@ -222,6 +222,7 @@ const GeneSelector = ({
                 );
 
                 connectedGenesFetchSucceeded(pastedGenes);
+                connectedAllGenesDeselected();
                 connectedGenesSelected(pastedGenes.map((gene) => gene.feature_id));
 
                 // Get and display not found genes.
@@ -239,6 +240,7 @@ const GeneSelector = ({
             autocompleteSource,
             autocompleteSpecies,
             autocompleteType,
+            connectedAllGenesDeselected,
             connectedGenesFetchSucceeded,
             connectedGenesSelected,
             dispatch,
@@ -258,7 +260,6 @@ const GeneSelector = ({
             autocompleteType != null
         ) {
             if (selectedGenesRef.current.length > 0 || inputValue !== '') {
-                connectedAllGenesDeselected();
                 void handleImportedGenesNames([
                     ...selectedGenesRef.current.map((gene) => gene.name),
                     ...splitAndCleanGenesString(inputValue),
@@ -270,7 +271,6 @@ const GeneSelector = ({
     }, [
         autocompleteSource,
         autocompleteType,
-        connectedAllGenesDeselected,
         handleImportedGenesNames,
         inputValue,
         selectedTimeSeries,
