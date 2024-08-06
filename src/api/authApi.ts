@@ -1,12 +1,9 @@
-import { authApiUrl, baseUrl } from './base';
+import { authApiUrl } from './base';
 
-const loginUrl = `${authApiUrl}/login/?next=${baseUrl}`;
-const logoutUrl = `${authApiUrl}/logout/?next=${baseUrl}`;
-
-export const login = () => {
-    window.location.href = loginUrl;
+export const login = (nextPath: string) => {
+    window.location.href = `${authApiUrl}/login/?next=${nextPath}`;
 };
 
-export const logout = () => {
-    window.location.href = logoutUrl;
+export const logout = (nextPath: string) => {
+    window.location.href = `${authApiUrl}/logout/?next=${nextPath}`;
 };

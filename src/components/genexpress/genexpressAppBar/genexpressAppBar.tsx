@@ -34,7 +34,7 @@ import TextInputModal from '../common/textInputModal/textInputModal';
 import { ModalHeader } from '../common/dictyModal/dictyModal.styles';
 import { DictyUrlQueryParameter } from '../common/constants';
 import { Version } from '../../common/version';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { login, logout } from 'api/authApi';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -77,6 +77,8 @@ const GenexpressAppBar = ({
     isFetchingSamplesExpressions,
     isFetchingGOEnrichmentJson,
 }: GenexpressAppBarProps): ReactElement => {
+    const location = useLocation();
+
     const [userMenuOpened, setUserMenuOpened] = useState(false);
     const [exportPrefixModalOpened, setExportPrefixModalOpened] = useState(false);
     const [bookmarkPopoverOpened, setBookmarkPopoverOpened] = useState(false);
@@ -164,7 +166,13 @@ const GenexpressAppBar = ({
                         {user.first_name} {user.last_name}
                     </Button>
                 ) : (
-                    <Button onClick={login}>Login</Button>
+                    <Button
+                        onClick={() => {
+                            login(location.pathname);
+                        }}
+                    >
+                        Login
+                    </Button>
                 )}
             </ActionsContainer>
             {isLoading && <LoadingBar />}
@@ -185,7 +193,13 @@ const GenexpressAppBar = ({
                     disableScrollLock
                     onClose={() => setUserMenuOpened(false)}
                 >
-                    <MenuItem onClick={logout}>Logout</MenuItem>
+                    <MenuItem
+                        onClick={() => {
+                            logout(location.pathname);
+                        }}
+                    >
+                        Logout
+                    </MenuItem>
                 </Menu>
             )}
             {exportPrefixModalOpened && (
