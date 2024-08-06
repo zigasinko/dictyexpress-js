@@ -134,6 +134,9 @@ export const getSelectedGenes = createSelector(
     },
     { memoizeOptions: { resultEqualityCheck: shallowEqual } },
 );
+export const getSelectedGenesSortedById = createSelector(getSelectedGenes, (selectedGenes) =>
+    _.sortBy(selectedGenes, (gene) => gene.feature_id),
+);
 
 export const getGenes = createSelector(getGenesById, (genesById) => _.flatMap(genesById));
 export const getGenesIdsInStore = createSelector(getGenes, (genes) =>

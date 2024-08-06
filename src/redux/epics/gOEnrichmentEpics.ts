@@ -1,6 +1,6 @@
 import { combineLatest, of } from 'rxjs';
 import { RootState } from 'redux/rootReducer';
-import { getSelectedGenes } from 'redux/stores/genes';
+import { getSelectedGenesSortedById } from 'redux/stores/genes';
 import { filter, switchMap } from 'rxjs/operators';
 import {
     getGaf,
@@ -38,7 +38,7 @@ const processParametersObservable: ProcessDataEpicsFactoryProps<DataGOEnrichment
             ),
             state$.pipe(
                 mapStateSlice((state) => {
-                    return getSelectedGenes(state.genes);
+                    return getSelectedGenesSortedById(state.genes);
                 }),
             ),
             state$.pipe(
