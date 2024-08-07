@@ -170,10 +170,6 @@ const GeneSelector = ({
         [highlightedGenesIds, selectedGenes],
     );
 
-    const closeDropDown = (): void => {
-        setAutocompleteOpen(false);
-    };
-
     const openDropDown = (): void => {
         if (inputValue !== '') {
             setAutocompleteOpen(true);
@@ -193,11 +189,8 @@ const GeneSelector = ({
 
     const handleOnChange = (_event: unknown, newValue: Gene[]): void => {
         setValue(newValue);
-        setInputValue('');
         connectedGenesFetchSucceeded(newValue);
         connectedGenesSelected(newValue.map((gene) => gene.feature_id));
-
-        closeDropDown();
     };
 
     /**
@@ -358,7 +351,12 @@ const GeneSelector = ({
                     multiple
                     clearOnBlur={false}
                     onOpen={openDropDown}
-                    onClose={closeDropDown}
+                    onClose={(_event, reason): void => {
+                        // Keep autocomplete open, unless user clicks outside of it or presses escape.
+                        if (reason === 'escape' || reason === 'blur') {
+                            setAutocompleteOpen(false);
+                        }
+                    }}
                     filterSelectedOptions
                     forcePopupIcon={false}
                     disableClearable
