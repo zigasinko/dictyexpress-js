@@ -1,19 +1,27 @@
 import { Gene, GeneMapping } from '../redux/models/internal';
 import { deserializeResponse } from '../utils/apiUtils';
 import { apiUrl } from './base';
-import { post } from './fetch';
+import { get, post } from './fetch';
 
 const autocompleteUrl = `${apiUrl}/kb/feature`;
 const searchUrl = `${apiUrl}/kb/feature/paste`;
 const mappingUrl = `${apiUrl}/kb/mapping/search`;
 
-export const getGenes = async (
-    source: string,
-    type: string,
-    value: string,
-    species?: string,
-    limit?: number,
-): Promise<Gene[] | null> => {
+export const getGenes = async ({
+    source,
+    type,
+    value,
+    species,
+    limit,
+    orderBy,
+}: {
+    source: string;
+    type: string;
+    value: string;
+    species?: string;
+    limit?: number;
+    orderBy?: string;
+}): Promise<Gene[] | null> => {
     if (source === '' || value === '') {
         return null;
     }
@@ -22,11 +30,12 @@ export const getGenes = async (
         source: [source],
         type,
         query: value,
-        limit,
+        ...(limit != null && { limit }),
+        ...(orderBy != null && { ordering: orderBy }),
         ...(species != null && { species: [species] }),
     };
 
-    const getGenesResponse = await post(autocompleteUrl, payload);
+    const getGenesResponse = await get(autocompleteUrl, payload);
     return deserializeResponse<Gene[]>(getGenesResponse);
 };
 

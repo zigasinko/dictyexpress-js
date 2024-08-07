@@ -76,13 +76,14 @@ const GeneSelector = ({
                 return;
             }
             setIsFetching(true);
-            const genesResults = await getGenes(
-                autocompleteSource,
-                autocompleteType,
-                queryValue,
-                autocompleteSpecies,
-                20,
-            );
+            const genesResults = await getGenes({
+                source: autocompleteSource,
+                species: autocompleteSpecies,
+                type: autocompleteType,
+                value: queryValue,
+                limit: 20,
+                orderBy: 'name',
+            });
 
             if (genesResults != null) {
                 setGenes(genesResults);

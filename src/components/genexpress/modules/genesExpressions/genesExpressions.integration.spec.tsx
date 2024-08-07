@@ -118,17 +118,15 @@ describe('genesExpressions integration', () => {
                     },
                 });
             }
-
-            if (req.url.endsWith('feature')) {
-                return resolveStringifiedObjectPromise({
-                    results: genes,
-                });
-            }
-
             if (req.url.includes('list_by_ids')) {
                 return resolveStringifiedObjectPromise(
                     backendBookmark.state.genes.selectedGenesIds.map((geneId) => genesById[geneId]),
                 );
+            }
+            if (req.method === 'GET' && req.url.includes('feature')) {
+                return resolveStringifiedObjectPromise({
+                    results: genes,
+                });
             }
             if (req.url.includes('app-state')) {
                 return resolveStringifiedObjectPromise(backendBookmark);
