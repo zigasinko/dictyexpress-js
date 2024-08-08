@@ -13,7 +13,6 @@ import {
     Data,
     Process,
     Storage,
-    GeneClustering,
 } from '@genialis/resolwe/dist/api/types/rest';
 import { BackendAppState, BasketAddSamplesResponse } from 'redux/models/rest';
 import { v4 as uuidv4 } from 'uuid';
@@ -23,11 +22,7 @@ import { AppDispatch } from 'redux/appStore';
 import { generateRandomString, generateRandomStrings } from 'utils/stringUtils';
 import { generateRandomNumbers } from 'utils/numberUtils';
 import { flattenGoEnrichmentTree } from 'utils/gOEnrichmentUtils';
-import {
-    DistanceMeasure,
-    ClusteringLinkageFunction,
-    DictyUrlQueryParameter,
-} from 'components/genexpress/common/constants';
+import { DistanceMeasure, DictyUrlQueryParameter } from 'components/genexpress/common/constants';
 import { pValueThresholdsOptions } from 'redux/stores/gOEnrichment';
 import {
     RelationsById,
@@ -476,33 +471,6 @@ export const generateGeneOntologyStorageJson = (genesIds: string[]): EnhancedGOE
     return json;
 };
 
-export const generateHierarchicalClusteringJson = (): GeneClustering => ({
-    gene_symbols: {
-        0: { gene: '0' },
-        1: { gene: '1' },
-        2: { gene: '2' },
-        3: { gene: '3' },
-        4: { gene: '4' },
-        5: { gene: '5' },
-        6: { gene: '6' },
-        7: { gene: '7' },
-        8: { gene: '8' },
-        9: { gene: '9' },
-    },
-    order: [5, 7, 0, 9, 6, 2, 3, 1, 4, 8],
-    linkage: [
-        [5, 7, 0.9915330047411279, 2],
-        [0, 9, 0.991637162935653, 2],
-        [2, 3, 0.9942398675865292, 2],
-        [6, 12, 0.9960644853043414, 3],
-        [4, 8, 0.9978522707762737, 2],
-        [10, 11, 0.9981767213801558, 4],
-        [1, 14, 1.0013150593721503, 3],
-        [13, 16, 1.001429036046999, 6],
-        [15, 17, 1.002131717343846, 10],
-    ],
-});
-
 export const generateGaf = (
     id: number,
 ): {
@@ -590,10 +558,6 @@ export const generateBackendBookmark = (
             highlightedGenesIds: [],
             source: 'DICTYBASE',
             species: 'Dictyostelium purpureum',
-        },
-        clustering: {
-            distanceMeasure: DistanceMeasure.pearson,
-            linkageFunction: ClusteringLinkageFunction.average,
         },
         differentialExpressions: { selectedId: null },
         gOEnrichment: { pValueThreshold: 0.01 },
@@ -729,13 +693,6 @@ export const testState = (): RootState => {
             pValueThreshold: pValueThresholdsOptions[0],
             isFetchingJson: false,
             ontologyObo: { id: 24330 } as Data,
-        },
-        clustering: {
-            status: null,
-            distanceMeasure: DistanceMeasure.pearson,
-            isFetchingClusteringData: false,
-            linkageFunction: ClusteringLinkageFunction.average,
-            mergedData: null,
         },
         notifications: { notifications: [] as SnackbarNotifications },
     };

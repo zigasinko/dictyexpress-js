@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState, useRef, useCallback } from 'react';
+import { ReactElement, useEffect, useState, useRef, useCallback } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import _ from 'lodash';
 import { getSelectedGenesExpressions, RootState } from 'redux/rootReducer';
@@ -6,18 +6,14 @@ import { genesHighlighted, getHighlightedGenesIds, getSelectedGenes } from 'redu
 import { ClusterNode, Option } from 'redux/models/internal';
 import { MenuItem, SelectChangeEvent, Tooltip } from '@mui/material';
 import DictySelect from 'components/genexpress/common/dictySelect/dictySelect';
-import { objectsArrayToTsv } from 'utils/reportUtils';
 import useReport from 'components/genexpress/common/reportBuilder/useReport';
-import {
-    clusteringDistanceMeasureChanged,
-    getClusteringDistanceMeasure,
-    getClusteringLinkageFunction,
-    getMergedClusteringData,
-    clusteringLinkageFunctionChanged,
-} from 'redux/stores/clustering';
 import { advancedJoin } from 'utils/arrayUtils';
 import { ChartHandle } from 'components/genexpress/common/chart/chart';
-import { DistanceMeasure, ClusteringLinkageFunction } from 'components/genexpress/common/constants';
+import {
+    DistanceMeasure,
+    ClusteringLinkageFunction,
+    BookmarkStatePath,
+} from 'components/genexpress/common/constants';
 import {
     ClusteringChartContainer,
     ClusteringContainer,
@@ -25,13 +21,12 @@ import {
     ClusteringControls,
 } from './clustering.styles';
 import ClusteringChart from './clusteringChart';
+import { clusterByGenes } from './utils';
+import useBookmarkableState from 'components/genexpress/common/useBookmarkableState';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const mapStateToProps = (state: RootState) => {
     return {
-        mergedData: getMergedClusteringData(state.clustering),
-        distanceMeasure: getClusteringDistanceMeasure(state.clustering),
-        linkageFunction: getClusteringLinkageFunction(state.clustering),
         highlightedGenesIds: getHighlightedGenesIds(state.genes),
         selectedGenes: getSelectedGenes(state.genes),
         genesExpressions: getSelectedGenesExpressions(state),
@@ -40,8 +35,6 @@ const mapStateToProps = (state: RootState) => {
 
 const connector = connect(mapStateToProps, {
     connectedGenesHighlighted: genesHighlighted,
-    connectedDistanceMeasureChanged: clusteringDistanceMeasureChanged,
-    connectedLinkageFunctionChanged: clusteringLinkageFunctionChanged,
 });
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -59,69 +52,41 @@ export const linkageFunctionOptions: Option<ClusteringLinkageFunction>[] = [
 ];
 
 const Clustering = ({
-    mergedData,
     genesExpressions,
-    distanceMeasure,
-    linkageFunction,
     selectedGenes,
     highlightedGenesIds,
     connectedGenesHighlighted,
-    connectedDistanceMeasureChanged,
-    connectedLinkageFunctionChanged,
 }: PropsFromRedux): ReactElement => {
     const chartRef = useRef<ChartHandle>(null);
 
-    const [clusterNodes, setClusterNodes] = useState<ClusterNode[]>([]);
+    const [distanceMeasure, setDistanceMeasure] = useBookmarkableState<DistanceMeasure>(
+        DistanceMeasure.euclidean,
+        BookmarkStatePath.clusteringDistanceMeasure,
+    );
+    const [linkageFunction, setLinkageFunction] = useBookmarkableState<ClusteringLinkageFunction>(
+        ClusteringLinkageFunction.average,
+        BookmarkStatePath.clusteringLinkageFunction,
+    );
+    const [clusterByGenesResult, setClusterByGenesResult] =
+        useState<ReturnType<typeof clusterByGenes>>();
     const [highlightedClusterNodesIds, setHighlightedClusterNodesIds] = useState<number[]>([]);
 
     useEffect(() => {
-        if (mergedData == null) {
-            setClusterNodes([]);
-            return;
-        }
+        const mergedData = clusterByGenes(genesExpressions, distanceMeasure, linkageFunction);
 
-        const intermediateTable: { [nodeIndex: number]: ClusterNode } = {};
-        const max = (_.max(mergedData.linkage.map((linkage) => linkage.distance)) as number) * 100;
-
-        // Leaf nodes (with genes).
-        _.each(mergedData.order, ({ nodeIndex, order, gene }) => {
-            intermediateTable[nodeIndex] = {
-                nodeIndex,
-                x: max,
-                // First element has order=0, that's why order value needs to be inverted
-                // so that first element is shown at the top.
-                y: (mergedData.order.length - order) * 100,
-                gene,
-                expressions: genesExpressions.filter(
-                    (geneExpression) => geneExpression.geneId === gene.feature_id,
-                ),
-            };
-        });
-
-        _.each(mergedData.linkage, ({ nodeIndex, node1, node2, distance }) => {
-            const middle = (intermediateTable[node1].y + intermediateTable[node2].y) / 2;
-            intermediateTable[nodeIndex] = {
-                nodeIndex,
-                x: max - distance * 100,
-                y: middle,
-                gene: undefined,
-            };
-            intermediateTable[node1].parent = intermediateTable[nodeIndex];
-            intermediateTable[node2].parent = intermediateTable[nodeIndex];
-        });
-
-        // Remove last parentless element and set cluster nodes to chart.
-        setClusterNodes(
-            _.reject(_.values(intermediateTable), (item) => _.isUndefined(item.parent)),
-        );
-    }, [genesExpressions, mergedData]);
+        setClusterByGenesResult(mergedData);
+    }, [distanceMeasure, genesExpressions, linkageFunction]);
 
     useEffect(() => {
         /* ClusterNode is highlighted if:
          * - all it's children lead to leafs with highlighted genes.
          * - it's gene is among highlighted genes (if node has a gene, it's a leaf node).
          */
-        if (!_.isEmpty(clusterNodes)) {
+        if (
+            clusterByGenesResult != null &&
+            clusterByGenesResult.clusterNodes != null &&
+            !_.isEmpty(clusterByGenesResult.clusterNodes)
+        ) {
             const getAllHighlighted = (
                 highlightedNodes: ClusterNode[],
                 allHighlightedNodes = [...highlightedNodes],
@@ -135,7 +100,7 @@ const Clustering = ({
                 // For each highlighted node, check if all it's siblings are also highlighted
                 // and mark parent.
                 _.map(groupedByParent, (highlightedSiblings, highlightedParentNodeIndex) => {
-                    const siblings = clusterNodes.filter(
+                    const siblings = clusterByGenesResult.clusterNodes.filter(
                         (clusterNode) =>
                             clusterNode.parent?.nodeIndex.toString() === highlightedParentNodeIndex,
                     );
@@ -152,10 +117,9 @@ const Clustering = ({
             };
 
             // Get highlighted leaf cluster nodes (with gene).
-            const leafHighlightedClusterNodes = clusterNodes.filter(
+            const leafHighlightedClusterNodes = clusterByGenesResult.clusterNodes.filter(
                 (clusterNode) =>
-                    clusterNode.gene != null &&
-                    highlightedGenesIds.includes(clusterNode.gene.feature_id),
+                    clusterNode.geneId != null && highlightedGenesIds.includes(clusterNode.geneId),
             );
 
             // Get all highlighted ancestor nodes.
@@ -164,18 +128,13 @@ const Clustering = ({
                 allHighlightedNodes.map((clusterNode) => clusterNode.nodeIndex),
             );
         }
-    }, [clusterNodes, highlightedGenesIds]);
-
-    const handleDistanceMeasureChange = (event: SelectChangeEvent<unknown>): void => {
-        connectedDistanceMeasureChanged(event.target.value as DistanceMeasure);
-    };
-
-    const handleLinkageFunctionChange = (event: SelectChangeEvent<unknown>): void => {
-        connectedLinkageFunctionChanged(event.target.value as ClusteringLinkageFunction);
-    };
+    }, [clusterByGenesResult, highlightedGenesIds]);
 
     const getClusterNodeChildren = (parentClusterNode: ClusterNode): ClusterNode[] => {
-        const childrenNodes = clusterNodes.filter(
+        if (clusterByGenesResult?.clusterNodes == null) {
+            return [];
+        }
+        const childrenNodes = clusterByGenesResult.clusterNodes.filter(
             (clusterNode) => clusterNode.parent === parentClusterNode,
         );
 
@@ -192,8 +151,11 @@ const Clustering = ({
     };
 
     const handleOnHighlightedChanged = (chartHighlightedClusterNodesIds: number[]): void => {
-        const chartHighlightedClusterNodes = clusterNodes.filter((clusterNode) =>
-            chartHighlightedClusterNodesIds.includes(clusterNode.nodeIndex),
+        if (clusterByGenesResult?.clusterNodes == null) {
+            return;
+        }
+        const chartHighlightedClusterNodes = clusterByGenesResult.clusterNodes.filter(
+            (clusterNode) => chartHighlightedClusterNodesIds.includes(clusterNode.nodeIndex),
         );
 
         const highlightedClusterNodes = [
@@ -206,8 +168,8 @@ const Clustering = ({
 
         connectedGenesHighlighted(
             highlightedClusterNodes
-                .filter((clusterNode) => clusterNode.gene != null)
-                .map((clusterNode) => clusterNode.gene?.feature_id) as string[],
+                .filter((clusterNode) => clusterNode.geneId != null)
+                .map((clusterNode) => clusterNode.geneId) as string[],
         );
     };
 
@@ -232,25 +194,8 @@ Clustering was done on ${selectedGenes.length === 0 ? 'all genes' : `selected ge
 
     useReport(
         async (processFile) => {
-            if (clusterNodes.length === 0) {
+            if (clusterByGenesResult?.clusterNodes?.length === 0) {
                 return;
-            }
-            if (mergedData != null) {
-                processFile(
-                    'Sample Hierarchical Clustering/clustering_table/linkage.tsv',
-                    objectsArrayToTsv(mergedData.linkage),
-                    false,
-                );
-                processFile(
-                    'Sample Hierarchical Clustering/clustering_table/order.tsv',
-                    objectsArrayToTsv(
-                        mergedData.order.map((datum) => ({
-                            ...datum,
-                            gene: datum.gene.name,
-                        })),
-                    ),
-                    false,
-                );
             }
 
             if (chartRef.current != null) {
@@ -267,7 +212,7 @@ Clustering was done on ${selectedGenes.length === 0 ? 'all genes' : `selected ge
                 processFile('Sample Hierarchical Clustering/caption.txt', getCaption(), false);
             }
         },
-        [clusterNodes.length, getCaption, mergedData],
+        [clusterByGenesResult?.clusterNodes?.length, getCaption],
     );
 
     return (
@@ -287,7 +232,9 @@ Clustering was done on ${selectedGenes.length === 0 ? 'all genes' : `selected ge
                                     disabled={selectedGenes.length < 2}
                                     label="Distance Measure"
                                     value={distanceMeasure}
-                                    handleOnChange={handleDistanceMeasureChange}
+                                    handleOnChange={(event: SelectChangeEvent<unknown>): void => {
+                                        setDistanceMeasure(event.target.value as DistanceMeasure);
+                                    }}
                                 >
                                     {distanceMeasureOptions.map((distanceMeasureOption) => (
                                         <MenuItem
@@ -304,7 +251,11 @@ Clustering was done on ${selectedGenes.length === 0 ? 'all genes' : `selected ge
                                     disabled={selectedGenes.length < 2}
                                     label="Clustering Linkage"
                                     value={linkageFunction}
-                                    handleOnChange={handleLinkageFunctionChange}
+                                    handleOnChange={(event: SelectChangeEvent<unknown>): void => {
+                                        setLinkageFunction(
+                                            event.target.value as ClusteringLinkageFunction,
+                                        );
+                                    }}
                                 >
                                     {linkageFunctionOptions.map((linkageFunctionOption) => (
                                         <MenuItem
@@ -319,21 +270,58 @@ Clustering was done on ${selectedGenes.length === 0 ? 'all genes' : `selected ge
                         </ClusteringControls>
                     </Tooltip>
                 </ClusteringControls>
-                {clusterNodes.length > 0 && (
-                    <ClusteringChartContainer>
-                        <ClusteringChart
-                            clusterNodes={clusterNodes}
-                            genesExpressions={genesExpressions}
-                            highlightedClusterNodesIds={highlightedClusterNodesIds}
-                            onHighlightedChanged={handleOnHighlightedChanged}
-                            ref={chartRef}
-                        />
-                    </ClusteringChartContainer>
-                )}
+                {clusterByGenesResult != null &&
+                    clusterByGenesResult.clusterNodes != null &&
+                    clusterByGenesResult.clusterNodes.length > 0 && (
+                        <ClusteringChartContainer>
+                            <ClusteringChart
+                                clusterNodes={clusterByGenesResult?.clusterNodes}
+                                genesExpressions={genesExpressions}
+                                highlightedClusterNodesIds={highlightedClusterNodesIds}
+                                onHighlightedChanged={handleOnHighlightedChanged}
+                                ref={chartRef}
+                            />
+                        </ClusteringChartContainer>
+                    )}
                 {selectedGenes.length === 0 && `Select two or more genes.`}
                 {selectedGenes.length === 1 &&
                     `The {Pearson/Spearman} correlation between samples can not be computed on a single gene.
                     Select more genes.`}
+                {clusterByGenesResult?.withoutValues != null &&
+                    clusterByGenesResult.withoutValues.length > 0 && (
+                        <>
+                            ({clusterByGenesResult.withoutValues.length} of the selected genes (
+                            {advancedJoin(
+                                clusterByGenesResult.withoutValues
+                                    .slice(0, 3)
+                                    .map(
+                                        (geneId) =>
+                                            selectedGenes.find((gene) => gene.feature_id === geneId)
+                                                ?.name,
+                                    ),
+                            )}
+                            ) are missing in at least one of the selected samples. Those genes are
+                            excluded from the computation of hierarchical clustering of genes.)
+                        </>
+                    )}
+                {clusterByGenesResult?.allConstantValues != null &&
+                    clusterByGenesResult.allConstantValues.length > 0 && (
+                        <>
+                            {clusterByGenesResult.allConstantValues.length} of the selected genes (
+                            {advancedJoin(
+                                clusterByGenesResult.allConstantValues
+                                    .slice(0, 3)
+                                    .map(
+                                        (geneId) =>
+                                            selectedGenes.find((gene) => gene.feature_id === geneId)
+                                                ?.name,
+                                    ),
+                            )}
+                            ) have constant expression across samples. Those genes are excluded from
+                            the computation of hierarchical clustering of genes with correlation
+                            distance metric.
+                        </>
+                    )}
             </ClusteringContainer>
         </>
     );

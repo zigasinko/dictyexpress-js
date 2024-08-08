@@ -25,12 +25,6 @@ import {
     differentialExpressionSelected,
     getSelectedDifferentialExpression,
 } from 'redux/stores/differentialExpressions';
-import {
-    clusteringDistanceMeasureChanged,
-    clusteringLinkageFunctionChanged,
-    getClusteringDistanceMeasure,
-    getClusteringLinkageFunction,
-} from 'redux/stores/clustering';
 import { BookmarkStatePath } from 'components/genexpress/common/constants';
 
 type BookmarkableState<T> = {
@@ -71,10 +65,6 @@ const getBookmarkReduxState = (state: RootState): BookmarkReduxState => {
         },
         gOEnrichment: {
             pValueThreshold: getPValueThreshold(state.gOEnrichment),
-        },
-        clustering: {
-            distanceMeasure: getClusteringDistanceMeasure(state.clustering),
-            linkageFunction: getClusteringLinkageFunction(state.clustering),
         },
         genesSimilarities: {
             distanceMeasure: getGenesSimilaritiesDistanceMeasure(state.genesSimilarities),
@@ -147,9 +137,6 @@ export const loadBookmarkedState = async (
     }
 
     dispatch(pValueThresholdChanged(bookmarkedState.gOEnrichment.pValueThreshold));
-
-    dispatch(clusteringDistanceMeasureChanged(bookmarkedState.clustering.distanceMeasure));
-    dispatch(clusteringLinkageFunctionChanged(bookmarkedState.clustering.linkageFunction));
 
     dispatch(
         genesSimilaritiesDistanceMeasureChanged(bookmarkedState.genesSimilarities.distanceMeasure),

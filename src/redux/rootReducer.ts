@@ -14,7 +14,6 @@ import authentication from 'redux/stores/authentication';
 import differentialExpressions from 'redux/stores/differentialExpressions';
 import layouts from 'redux/stores/layouts';
 import gOEnrichment from 'redux/stores/gOEnrichment';
-import clustering from 'redux/stores/clustering';
 import { combineReducers, createSelector } from '@reduxjs/toolkit';
 import _ from 'lodash';
 import { EMPTY_ARRAY } from 'components/genexpress/common/constants';
@@ -30,7 +29,6 @@ const rootReducer = combineReducers({
     samplesExpressions,
     differentialExpressions,
     gOEnrichment,
-    clustering,
     notifications,
 });
 
@@ -43,7 +41,6 @@ export type BookmarkReduxState = {
         species: string;
     };
     gOEnrichment: Pick<RootState['gOEnrichment'], 'pValueThreshold'>;
-    clustering: Pick<RootState['clustering'], 'distanceMeasure' | 'linkageFunction'>;
     genesSimilarities: Pick<RootState['genesSimilarities'], 'distanceMeasure' | 'queryGeneId'>;
     differentialExpressions: Pick<RootState['differentialExpressions'], 'selectedId'>;
 };

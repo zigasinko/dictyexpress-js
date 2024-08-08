@@ -72,7 +72,8 @@ export type Coordinates = {
 export type ClusterNode = {
     nodeIndex: number;
     parent?: ClusterNode;
-    gene?: Gene;
+    geneName?: Gene['name'];
+    geneId?: Gene['feature_id'];
     expressions?: Pick<GeneExpression, 'label' | 'value'>[];
 } & Coordinates;
 

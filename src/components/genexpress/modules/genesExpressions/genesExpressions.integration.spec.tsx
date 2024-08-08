@@ -163,7 +163,8 @@ describe('genesExpressions integration', () => {
         it('should select first time series and genes from url query parameter "genes"', async () => {
             await validateChart(backendBookmark.state.genes.selectedGenesIds.length);
             backendBookmark.state.genes.selectedGenesIds.forEach((geneId) => {
-                expect(screen.getAllByText(genesById[geneId].name)).toHaveLength(1);
+                // One in geneExpressions chart and one in clustering.
+                expect(screen.getAllByText(genesById[geneId].name)).toHaveLength(2);
             });
         });
     });

@@ -137,7 +137,7 @@ const getVegaSpecification = (
             transform: [
                 {
                     type: 'filter',
-                    expr: 'datum.gene != null',
+                    expr: 'datum.geneName != null',
                 },
             ],
         },
@@ -259,7 +259,7 @@ const getVegaSpecification = (
                     },
                     y: { field: 'y', scale: 'yscale', offset: 4 },
                     align: { value: 'left' },
-                    text: { field: 'gene.name' },
+                    text: { field: 'geneName' },
                     fill: { value: color },
                     fontSize: { value: 14 },
                     limit: { value: genesNamesWidth },

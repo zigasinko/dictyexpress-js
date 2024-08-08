@@ -55,6 +55,8 @@ export enum BookmarkStatePath {
     genesExpressionsShowLegend = 'GenesExpressions.showLegend',
     genesExpressionsColorByTimeSeries = 'GenesExpressions.colorByTimeSeries',
     gOEnrichmentSelectedAspect = 'GOEnrichment.selectedAspect',
+    clusteringLinkageFunction = 'Clustering.linkageFunction',
+    clusteringDistanceMeasure = 'Clustering.distanceMeasure',
 }
 
 export const EMPTY_ARRAY = [];

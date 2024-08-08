@@ -11,7 +11,6 @@ import timeSeriesEpics from './timeSeriesEpics';
 import layoutsEpics from './layoutsEpics';
 import gOEnrichmentEpics from './gOEnrichmentEpics';
 import gafEpics from './gafEpics';
-import clusteringEpics from './clusteringEpics';
 import findSimilarGenesEpics from './findSimilarGenesEpics';
 import samplesExpressionsEpics from './samplesExpressionsEpics';
 import differentialExpressionsEpics from './differentialExpressionsEpics';
@@ -30,7 +29,6 @@ const rootEpic: Epic<Action, Action, RootState> = (
         gafEpics,
         genesEpics,
         gOEnrichmentEpics,
-        clusteringEpics,
         findSimilarGenesEpics,
         samplesExpressionsEpics,
         differentialExpressionsEpics,

@@ -18,7 +18,6 @@ import { defaultBreakpointCols, getLayouts, layoutsChanged } from 'redux/stores/
 import _ from 'lodash';
 import { getGOEnrichmentStatus, getIsFetchingGOEnrichmentJson } from 'redux/stores/gOEnrichment';
 import { appFocused, appStarted, fetchAndSelectPredefinedGenes } from 'redux/epics/epicsActions';
-import { getClusteringStatus, getIsFetchingClusteringData } from 'redux/stores/clustering';
 import { useLocation } from 'react-router-dom';
 import { loadBookmarkedState } from 'managers/bookmarkStateManager';
 import { getUrlQueryParameter } from 'utils/url';
@@ -52,8 +51,6 @@ const mapStateToProps = (state: RootState) => {
         ),
         isLoggingOut: getIsLoggingOut(state.authentication),
         isFetchingGOEnrichmentJson: getIsFetchingGOEnrichmentJson(state.gOEnrichment),
-        isFetchingClusteringData: getIsFetchingClusteringData(state.clustering),
-        clusteringStatus: getClusteringStatus(state.clustering),
         gOEnrichmentStatus: getGOEnrichmentStatus(state.gOEnrichment),
     };
 };
@@ -73,10 +70,8 @@ const GeneExpressGrid = ({
     isFetchingGenesMappings,
     isFetchingDifferentialExpressions,
     isFetchingDifferentialExpressionsData,
-    isFetchingClusteringData,
     isLoggingOut,
     isFetchingGOEnrichmentJson,
-    clusteringStatus,
     gOEnrichmentStatus,
     connectedLayoutsChanged,
     connectedFetchAndSelectPredefinedGenes,
@@ -178,8 +173,7 @@ const GeneExpressGrid = ({
                     <div key={ModulesKeys.clustering}>
                         <DictyModule
                             title="Hierarchical Clustering"
-                            isLoading={isFetchingClusteringData}
-                            status={clusteringStatus}
+                            isLoading={isFetchingSamplesExpressions || isFetchingGenesMappings}
                         >
                             <Clustering />
                         </DictyModule>
