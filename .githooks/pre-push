@@ -8,6 +8,7 @@ protected_branch='master'
 current_branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
 
 z40=0000000000000000000000000000000000000000
+start_commit="1c698e2"
 
 while read local_ref local_sha remote_ref remote_sha
 do
@@ -20,11 +21,11 @@ do
 		then
 			if [ "$remote_sha" = $z40 ]
 			then
-				# New branch, examine all commits
-				range="$local_sha"
+				# New branch, examine all commits from the start_commit onwards
+				range="$start_commit..$local_sha"
 			else
-				# Update to existing branch, examine new commits
-				range="$remote_sha..$local_sha"
+				# Update to existing branch, examine new commits from the start_commit onwards
+				range="$start_commit..$local_sha"
 			fi
 		
 			# Throw error when git and changelog can't be validated
