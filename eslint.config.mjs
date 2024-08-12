@@ -21,6 +21,8 @@ export default [
             '.prettierrc.js',
             'public/config.js',
             'public/mockServiceWorker.js',
+            'config',
+            'scripts',
         ],
     },
     ...tsEslint.config(
