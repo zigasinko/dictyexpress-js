@@ -1,4 +1,4 @@
-import styled, { css, FlattenSimpleInterpolation } from 'styled-components';
+import styled, { css } from 'styled-components';
 import { breakpoints } from 'components/app/globalStyle';
 
 type ContainerProps = {
@@ -35,7 +35,7 @@ export const SectionContentContainer = styled(ContentContainer)<ContainerProps>`
     padding-top: ${(props): string => `${props.paddingTop ?? 35}px`};
     padding-bottom: ${(props): string => `${props.paddingBottom ?? 35}px`};
 
-    ${(props): FlattenSimpleInterpolation | null =>
+    ${(props) =>
         props.centerText
             ? css`
                   text-align: center;

@@ -1,4 +1,4 @@
-import styled, { css, FlattenSimpleInterpolation } from 'styled-components';
+import styled, { css } from 'styled-components';
 import { IconButton } from '@mui/material';
 
 export type StyledIconButtonProps = {
@@ -7,7 +7,7 @@ export type StyledIconButtonProps = {
 
 export const StyledIconButton = styled(IconButton)<StyledIconButtonProps>`
     && {
-        ${(props): FlattenSimpleInterpolation | null =>
+        ${(props) =>
             props.$disablePadding
                 ? css`
                       padding: 0;

@@ -1,4 +1,4 @@
-import styled, { FlattenSimpleInterpolation, css } from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Toolbar } from '@mui/material';
 import { breakpoints } from 'components/app/globalStyle';
 
@@ -19,7 +19,7 @@ export type DesktopSectionProps = {
 
 export const DesktopSection = styled.div<DesktopSectionProps>`
     && {
-        ${(props): FlattenSimpleInterpolation | null =>
+        ${(props) =>
             props.alwaysVisible
                 ? css`
                       display: inline-flex;

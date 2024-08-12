@@ -1,4 +1,4 @@
-import styled, { css, FlattenSimpleInterpolation } from 'styled-components';
+import styled, { css } from 'styled-components';
 import { TextField } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -21,7 +21,7 @@ export const GridWrapper = styled.div<GridWrapperProps>`
     // isn't needed. Sometimes this doesn't work because of rounding pixels.
     // That's why we remove horizontal scroll manually with this css.
     && {
-        ${(props): FlattenSimpleInterpolation | null =>
+        ${(props) =>
             props.suppressHorizontalScroll
                 ? css`
                       .ag-center-cols-viewport {

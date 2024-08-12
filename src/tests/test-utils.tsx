@@ -94,10 +94,7 @@ export const resolveStringifiedObjectPromise = (object: unknown): Promise<string
  * in integration tests).
  * @param request - Request that was intercepted by fetch-mock.
  */
-export const handleCommonRequests = async (
-    request: Request,
-    genes?: Gene[],
-): Promise<Promise<string> | null> => {
+export const handleCommonRequests = (request: Request, genes?: Gene[]): Promise<string> | null => {
     if (request.url.includes('csrf')) {
         return Promise.resolve('');
     }
@@ -119,10 +116,12 @@ export const handleCommonRequests = async (
     }
 
     if (genes != null && request.url.includes('paste')) {
-        const { pasted } = request.body && (await request.json());
-        return resolveStringifiedObjectPromise(
-            genes.filter((gene) => (pasted as string[]).includes(gene.name)),
-        );
+        return (async () => {
+            const { pasted } = request.body && (await request.json());
+            return resolveStringifiedObjectPromise(
+                genes.filter((gene) => (pasted as string[]).includes(gene.name)),
+            );
+        })();
     }
     if (request.url.includes('descriptorschema')) {
         return resolveStringifiedObjectPromise([]);

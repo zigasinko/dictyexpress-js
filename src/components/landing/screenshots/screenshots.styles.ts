@@ -1,4 +1,4 @@
-import styled, { css, FlattenSimpleInterpolation } from 'styled-components';
+import styled, { css } from 'styled-components';
 import Slider from 'react-slick';
 import { SliderArrowProps } from './screenshots';
 import { breakpoints } from 'components/app/globalStyle';
@@ -23,7 +23,7 @@ export const Arrow = styled.span<SliderArrowProps>`
     position: absolute;
     top: calc(50% - 24px);
 
-    ${(props): FlattenSimpleInterpolation =>
+    ${(props) =>
         props.type === 'next'
             ? css`
                   right: -48px;
