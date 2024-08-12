@@ -2,6 +2,7 @@ import React, { ReactElement } from 'react';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import { Arrow, Screenshot, SliderContainer } from './screenshots.styles';
 import experimentAndGeneSelection from 'images/modules/ExperimentAndGeneSelection.png';
 import expressionTC from 'images/modules/ExpressionTC.png';
 import hierarchicalClusteringImage from 'images/modules/HierarchicalClustering.png';
@@ -16,8 +17,6 @@ import {
     DarkSectionContainer,
 } from 'components/landing/common/layout.styles';
 import SectionNames from 'components/landing/common/constants';
-// eslint-disable-next-line import/no-cycle
-import { Arrow, Screenshot, SliderContainer } from './screenshots.styles';
 
 const SliderArrow = ({ onClick, type }: SliderArrowProps): JSX.Element => (
     <Arrow onClick={onClick} type={type}>
@@ -26,7 +25,7 @@ const SliderArrow = ({ onClick, type }: SliderArrowProps): JSX.Element => (
 );
 
 export type SliderArrowProps = {
-    onClick?: (event: React.MouseEvent<HTMLSpanElement>) => void | undefined;
+    onClick?: (event: React.MouseEvent<HTMLSpanElement>) => undefined;
     type: 'previous' | 'next';
 };
 

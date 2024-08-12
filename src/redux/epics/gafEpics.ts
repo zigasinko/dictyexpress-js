@@ -1,15 +1,15 @@
 import { Epic, combineEpics } from 'redux-observable';
 import { map, catchError, filter, switchMap } from 'rxjs/operators';
 import { of, from } from 'rxjs';
-import { RootState } from 'redux/rootReducer';
 import { DataGafAnnotation } from '@genialis/resolwe/dist/api/types/rest';
 import _ from 'lodash';
+import { Action } from '@reduxjs/toolkit';
+import { filterNullAndUndefined, mapStateSlice } from './rxjsCustomFilters';
+import { RootState } from 'redux/rootReducer';
 import { gafFetchSucceeded, getGaf } from 'redux/stores/gOEnrichment';
 import { getSelectedGenes } from 'redux/stores/genes';
-import { Action } from '@reduxjs/toolkit';
 import { handleError } from 'utils/errorUtils';
 import { getGafs } from 'api';
-import { filterNullAndUndefined, mapStateSlice } from './rxjsCustomFilters';
 
 const findAppropriateGaf = (
     source: string,

@@ -1,6 +1,14 @@
-/* eslint-disable no-await-in-loop */
 import React from 'react';
 import { screen, fireEvent, waitFor, RenderResult } from '@testing-library/react';
+import _ from 'lodash';
+import {
+    DataGafAnnotation,
+    DONE_DATA_STATUS,
+    WAITING_DATA_STATUS,
+} from '@genialis/resolwe/dist/api/types/rest';
+import { v4 as uuidv4 } from 'uuid';
+import { Client, Server } from 'mock-socket';
+import { aspectOptions } from './gOEnrichment';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
 import {
     customRender,
@@ -18,20 +26,11 @@ import {
     generateBackendBookmark,
     generateBookmarkQueryParameter,
 } from 'tests/mock';
-import _ from 'lodash';
 import { RootState } from 'redux/rootReducer';
-import {
-    DataGafAnnotation,
-    DONE_DATA_STATUS,
-    WAITING_DATA_STATUS,
-} from '@genialis/resolwe/dist/api/types/rest';
-import { v4 as uuidv4 } from 'uuid';
-import { Client, Server } from 'mock-socket';
 import { sessionId, webSocketUrl } from 'api/base';
 import { appendMissingAttributesToJson } from 'utils/gOEnrichmentUtils';
 import { ProcessSlug, BookmarkStatePath } from 'components/genexpress/common/constants';
 import { pValueThresholdsOptions } from 'redux/stores/gOEnrichment';
-import { aspectOptions } from './gOEnrichment';
 
 const genesById = generateGenesById(2);
 const genes = _.flatMap(genesById);
@@ -44,7 +43,7 @@ appendMissingAttributesToJson(differentGOEnrichmentJson, genes[0].source, genes[
 const { humanGaf, mouseMGIGaf, mouseUCSCGaf } = generateGaf(1);
 
 const backendBookmark = generateBackendBookmark(undefined, [genes[0].feature_id]);
-// eslint-disable-next-line prefer-destructuring
+
 backendBookmark.state.gOEnrichment.pValueThreshold = pValueThresholdsOptions[2];
 backendBookmark.state.GOEnrichment = { selectedAspect: aspectOptions[1] };
 

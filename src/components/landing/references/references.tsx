@@ -1,9 +1,9 @@
 import React, { ReactElement } from 'react';
+import { ReferencesContainer } from './references.styles';
+import Reference from './reference';
 import { SectionContentContainer } from 'components/landing/common/layout.styles';
 import { Title } from 'components/landing/common/title.styles';
 import SectionNames from 'components/landing/common/constants';
-import { ReferencesContainer } from './references.styles';
-import Reference from './reference';
 
 const References = (): ReactElement => (
     <SectionContentContainer id={SectionNames.REFERENCES}>

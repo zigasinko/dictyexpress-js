@@ -1,4 +1,6 @@
 import React, { ReactElement } from 'react';
+import { FeaturesWrapper } from './features.styles';
+import Feature from './feature';
 import timeSeriesImage from 'images/feature1.png';
 import dendrogramImage from 'images/feature2.png';
 import dnkImage from 'images/feature3.png';
@@ -6,8 +8,6 @@ import mouseClickImage from 'images/feature4.png';
 import { Title } from 'components/landing/common/title.styles';
 import { SectionContentContainer } from 'components/landing/common/layout.styles';
 import SectionNames from 'components/landing/common/constants';
-import { FeaturesWrapper } from './features.styles';
-import Feature from './feature';
 
 const Features = (): ReactElement => (
     <SectionContentContainer id={SectionNames.FEATURES}>

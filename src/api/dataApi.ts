@@ -1,15 +1,15 @@
 import { Data, DONE_DATA_STATUS } from '@genialis/resolwe/dist/api/types/rest';
-import { handleError } from 'utils/errorUtils';
-import {
-    DisposeFunction as QueryObserverDisposeFunction,
-    reactiveGet,
-    IdObject,
-} from 'managers/queryObserverManager';
 import { Action } from '@reduxjs/toolkit';
 import { Observable } from 'rxjs';
 import { deserializeResponse } from '../utils/apiUtils';
 import { apiUrl } from './base';
 import { get } from './fetch';
+import {
+    DisposeFunction as QueryObserverDisposeFunction,
+    reactiveGet,
+    IdObject,
+} from 'managers/queryObserverManager';
+import { handleError } from 'utils/errorUtils';
 
 const baseUrl = `${apiUrl}/data`;
 
@@ -45,11 +45,11 @@ export const getDataBySamplesIds = async (samplesIds: number[]): Promise<Data[]>
 
 export const getDataReactive = async <T extends IdObject>(
     dataId: number,
-    handleDataResponse: (items: T) => Observable<Action | never>,
+    handleDataResponse: (items: T) => Observable<Action>,
 ): Promise<{ item: T; disposeFunction: QueryObserverDisposeFunction }> => {
     const webSocketMessageOutputReduxAction = (
         items: unknown[],
-    ): Observable<ReturnType<typeof handleError> | Action | never> => {
+    ): Observable<ReturnType<typeof handleError> | Action> => {
         return handleDataResponse(items[0] as T);
     };
 

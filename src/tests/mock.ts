@@ -14,16 +14,9 @@ import {
     Process,
     Storage,
 } from '@genialis/resolwe/dist/api/types/rest';
-import { BackendAppState, BasketAddSamplesResponse } from 'redux/models/rest';
 import { v4 as uuidv4 } from 'uuid';
 import _ from 'lodash';
 import { createEpicMiddleware } from 'redux-observable';
-import { AppDispatch } from 'redux/appStore';
-import { generateRandomString, generateRandomStrings } from 'utils/stringUtils';
-import { generateRandomNumbers } from 'utils/numberUtils';
-import { flattenGoEnrichmentTree } from 'utils/gOEnrichmentUtils';
-import { DistanceMeasure, DictyUrlQueryParameter } from 'components/genexpress/common/constants';
-import { pValueThresholdsOptions } from 'redux/stores/gOEnrichment';
 import {
     RelationsById,
     GenesById,
@@ -44,6 +37,13 @@ import {
     BookmarkComponentsState,
 } from '../redux/models/internal';
 import { BookmarkReduxState, RootState } from '../redux/rootReducer';
+import { BackendAppState, BasketAddSamplesResponse } from 'redux/models/rest';
+import { AppDispatch } from 'redux/appStore';
+import { generateRandomString, generateRandomStrings } from 'utils/stringUtils';
+import { generateRandomNumbers } from 'utils/numberUtils';
+import { flattenGoEnrichmentTree } from 'utils/gOEnrichmentUtils';
+import { DistanceMeasure, DictyUrlQueryParameter } from 'components/genexpress/common/constants';
+import { pValueThresholdsOptions } from 'redux/stores/gOEnrichment';
 
 const getDateISOString = (): string => new Date().toISOString();
 

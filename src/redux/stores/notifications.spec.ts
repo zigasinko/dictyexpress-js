@@ -1,10 +1,10 @@
-import { SnackbarNotificationContent } from 'redux/models/internal';
-import { generateNotification } from 'tests/mock';
 import notificationsReducer, {
     NotificationsState,
     addSnackbar,
     removeSnackbar,
 } from './notifications';
+import { SnackbarNotificationContent } from 'redux/models/internal';
+import { generateNotification } from 'tests/mock';
 
 describe('notifications store', () => {
     let initialState: NotificationsState;

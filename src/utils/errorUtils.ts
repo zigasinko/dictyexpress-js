@@ -1,6 +1,6 @@
+import { sentryCapture } from './sentryUtils';
 import { ResponseError } from 'redux/models/internal';
 import { addErrorSnackbar } from 'redux/stores/notifications';
-import { sentryCapture } from './sentryUtils';
 
 export const handleError = (
     message: string,

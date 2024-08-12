@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import { ICellRendererParams } from 'ag-grid-community';
-import { GOEnrichmentRow } from 'redux/models/internal';
 import { MatchedButton, MatchedCellContainer } from './matchedCell.styles';
+import { GOEnrichmentRow } from 'redux/models/internal';
 
 const MatchedCell = ({
     value,

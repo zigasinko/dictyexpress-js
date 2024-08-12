@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import * as bookmarkStateManager from 'managers/bookmarkStateManager';
 import { BookmarkStatePath } from './constants';
+import * as bookmarkStateManager from 'managers/bookmarkStateManager';
 
 const useBookmarkableState = <T>(
     initialValue: T | (() => T),

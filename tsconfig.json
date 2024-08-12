@@ -18,5 +18,5 @@
         "noFallthroughCasesInSwitch": true,
         "useUnknownInCatchVariables": false
     },
-    "include": ["src", "e2e", "public/config.js", "playwright.config.ts"]
+    "include": ["src", "e2e", "public/config.js", "playwright.config.ts", "eslint.config.mjs"]
 }

@@ -1,15 +1,15 @@
 import _ from 'lodash';
-import {
-    generateDifferentialExpressionJson,
-    generateDifferentialExpressionsById,
-    generateStorage,
-} from 'tests/mock';
 import differentialExpressionsReducer, {
     differentialExpressionSelected,
     differentialExpressionsFetchSucceeded,
     DifferentialExpressionsState,
     differentialExpressionStorageFetchSucceeded,
 } from './differentialExpressions';
+import {
+    generateDifferentialExpressionJson,
+    generateDifferentialExpressionsById,
+    generateStorage,
+} from 'tests/mock';
 
 const differentialExpressionsById = generateDifferentialExpressionsById(2);
 const differentialExpressions = _.flatMap(differentialExpressionsById);

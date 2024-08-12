@@ -6,12 +6,12 @@ import {
     GOEnrichmentJson,
 } from '@genialis/resolwe/dist/api/types/rest';
 import { combineReducers, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { gOEnrichmentDataFetchSucceeded } from 'redux/epics/epicsActions';
-import { EnhancedGOEnrichmentJson } from 'redux/models/internal';
 import { clearStateOnActions } from './common';
 import createIsFetchingSlice from './fetch';
 import { allGenesDeselected, geneDeselected, genesSelected } from './genes';
 import { timeSeriesSelected } from './timeSeries';
+import { EnhancedGOEnrichmentJson } from 'redux/models/internal';
+import { gOEnrichmentDataFetchSucceeded } from 'redux/epics/epicsActions';
 
 // State slices.
 export const pValueThresholdsOptions = [0.1, 0.05, 0.01, 0.001, 0.0001];

@@ -1,8 +1,20 @@
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
+import { Button, MenuItem, Tooltip, SelectChangeEvent } from '@mui/material';
+import _ from 'lodash';
+import { ColDef, SortChangedEvent, ValueFormatterParams } from 'ag-grid-community';
+import {
+    GOEnrichmentContainer,
+    GOEnrichmentControl,
+    GOEnrichmentControls,
+    GOEnrichmentGridContainer,
+} from './gOEnrichment.styles';
+import ScoreCell from './scoreCell/scoreCell';
+import GOEnrichmentMatchedCell from './matchedCell/matchedCell';
+import TermCell from './termCell/termCell';
+import GOEnrichmentAssociationsModal from './associationsModal/associationsModal';
 import { RootState } from 'redux/rootReducer';
 import { getSelectedGenes } from 'redux/stores/genes';
-import { Button, MenuItem, Tooltip } from '@mui/material';
 import {
     getGOEnrichmentJson,
     getIsFetchingGOEnrichmentJson,
@@ -11,11 +23,9 @@ import {
     pValueThresholdsOptions,
 } from 'redux/stores/gOEnrichment';
 import { Option, GOEnrichmentRow } from 'redux/models/internal';
-import _ from 'lodash';
 import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
 import DictySelect from 'components/genexpress/common/dictySelect/dictySelect';
 import { formatNumber } from 'utils/math';
-import { ColDef, SortChangedEvent, ValueFormatterParams } from 'ag-grid-community';
 import useReport from 'components/genexpress/common/reportBuilder/useReport';
 import { objectsArrayToTsv } from 'utils/reportUtils';
 import { advancedJoin } from 'utils/arrayUtils';
@@ -27,19 +37,7 @@ import {
 import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
 import { AspectValue, BookmarkStatePath } from 'components/genexpress/common/constants';
 import useBookmarkableState from 'components/genexpress/common/useBookmarkableState';
-import {
-    GOEnrichmentContainer,
-    GOEnrichmentControl,
-    GOEnrichmentControls,
-    GOEnrichmentGridContainer,
-} from './gOEnrichment.styles';
-import ScoreCell from './scoreCell/scoreCell';
-import GOEnrichmentMatchedCell from './matchedCell/matchedCell';
-import TermCell from './termCell/termCell';
-import GOEnrichmentAssociationsModal from './associationsModal/associationsModal';
-import { SelectChangeEvent } from '@mui/material';
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const mapStateToProps = (state: RootState) => {
     return {
         pValueThreshold: getPValueThreshold(state.gOEnrichment),

@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const targetDomain = 'qa.genialis.io';
@@ -30,7 +30,7 @@ const wsProxyConfig = {
     },
 };
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+// eslint-disable-next-line no-undef
 module.exports = (app) => {
     app.use(createProxyMiddleware('/api', proxyConfig));
     app.use(createProxyMiddleware('/saml-auth', proxyConfig));

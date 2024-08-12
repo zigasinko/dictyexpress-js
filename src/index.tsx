@@ -1,8 +1,7 @@
-/* eslint-disable global-require */
 import { createRoot } from 'react-dom/client';
 import React, { StrictMode } from 'react';
-import { initializeSentry } from 'utils/sentryUtils';
 import { createBrowserHistory } from 'history';
+import { initializeSentry } from 'utils/sentryUtils';
 import App from 'components/app/app';
 
 const history = createBrowserHistory();
@@ -27,7 +26,7 @@ const root = createRoot(rootElement);
  * Basically S3 bucket redirects all not found paths to a path with a "#!" prefix.
  * Application has to remove this special character and fix URL in browser.
  */
-// eslint-disable-next-line no-restricted-globals
+
 const path = (/#!(.*)$/.exec(location.hash) || [])[1];
 if (path) {
     history.replace(path);
@@ -41,7 +40,7 @@ root.render(
 
 if (module.hot) {
     module.hot.accept('./components/app/app', () => {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const NextApp = require('./components/app/app').default;
         root.render(<NextApp />);
     });

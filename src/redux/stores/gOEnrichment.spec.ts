@@ -1,13 +1,5 @@
 import { DONE_DATA_STATUS } from '@genialis/resolwe/dist/api/types/rest';
 import _ from 'lodash';
-import { gOEnrichmentDataFetchSucceeded } from 'redux/epics/epicsActions';
-import {
-    generateGenesById,
-    generateGeneOntologyStorageJson,
-    generateData,
-    generateGaf,
-} from 'tests/mock';
-import { appendMissingAttributesToJson } from 'utils/gOEnrichmentUtils';
 import { geneDeselected, genesSelected } from './genes';
 import gOEnrichmentReducer, {
     gafFetchSucceeded,
@@ -18,6 +10,14 @@ import gOEnrichmentReducer, {
     pValueThresholdsOptions,
 } from './gOEnrichment';
 import { timeSeriesSelected } from './timeSeries';
+import { gOEnrichmentDataFetchSucceeded } from 'redux/epics/epicsActions';
+import {
+    generateGenesById,
+    generateGeneOntologyStorageJson,
+    generateData,
+    generateGaf,
+} from 'tests/mock';
+import { appendMissingAttributesToJson } from 'utils/gOEnrichmentUtils';
 
 const genesById = generateGenesById(2);
 const genes = _.flatMap(genesById);

@@ -12,12 +12,12 @@ import * as vega from 'vega';
 import * as vegaTooltip from 'vega-tooltip';
 import { SignalValue, Spec } from 'vega';
 import { useDispatch } from 'react-redux';
-import { handleError } from 'utils/errorUtils';
-import { RendererContext } from 'components/common/rendererContext';
 import { useTheme } from '@mui/material';
 import { vegaTheme } from '../theming/vegaTheme';
 import useUpdateEffect from '../useUpdateEffect';
 import useSize from '../useSize';
+import { RendererContext } from 'components/common/rendererContext';
+import { handleError } from 'utils/errorUtils';
 
 export type DataHandler = {
     name: string;

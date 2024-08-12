@@ -1,5 +1,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
+import _ from 'lodash';
+import ConnectedTimeSeriesAndGeneSelector from './timeSeriesAndGeneSelector';
 import { generateDescriptorSchema, testState } from 'tests/mock';
 import {
     customRender,
@@ -7,10 +9,8 @@ import {
     resolveStringifiedObjectPromise,
     validateExportFile,
 } from 'tests/test-utils';
-import _ from 'lodash';
 import { RootState } from 'redux/rootReducer';
 import { getSelectedTimeSeries } from 'redux/stores/timeSeries';
-import ConnectedTimeSeriesAndGeneSelector from './timeSeriesAndGeneSelector';
 import { UrlDescriptor } from 'types/application';
 import { DescriptorSchemaSlug } from 'components/genexpress/common/constants';
 

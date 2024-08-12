@@ -1,10 +1,10 @@
 import React from 'react';
-import { customRender } from 'tests/test-utils';
 import { fireEvent, screen } from '@testing-library/react';
+import GOEnrichmentScoreCell from './scoreCell';
+import { customRender } from 'tests/test-utils';
 import { generateGOEnrichmentRow } from 'tests/mock';
 import { GOEnrichmentRow } from 'redux/models/internal';
 import { formatNumber } from 'utils/math';
-import GOEnrichmentScoreCell from './scoreCell';
 
 describe('gOEnrichmentScoreCell', () => {
     let goEnrichmentRow: GOEnrichmentRow;

@@ -1,9 +1,5 @@
 import React, { ReactElement } from 'react';
-import dictyLogo from 'images/logo_dicty.1.png';
-import dictyDemo1 from 'images/main-ss1.png';
-import dictyDemo2 from 'images/main-ss2.png';
-import { SectionContentContainer } from 'components/landing/common/layout.styles';
-import { Version } from 'components/common/version';
+import { Link } from 'react-router-dom';
 import {
     HomeContainer,
     HomeWrapper,
@@ -11,7 +7,11 @@ import {
     HomeDescription,
     HomeDemo,
 } from './home.styles';
-import { Link } from 'react-router-dom';
+import dictyLogo from 'images/logo_dicty.1.png';
+import dictyDemo1 from 'images/main-ss1.png';
+import dictyDemo2 from 'images/main-ss2.png';
+import { SectionContentContainer } from 'components/landing/common/layout.styles';
+import { Version } from 'components/common/version';
 
 const Home = (): ReactElement => (
     <HomeContainer id="home">

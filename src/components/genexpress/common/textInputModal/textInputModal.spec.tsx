@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen, fireEvent } from '@testing-library/react';
-import { customRender } from 'tests/test-utils';
 import TextInputModal from './textInputModal';
+import { customRender } from 'tests/test-utils';
 
 const validationRegex = /^[A-Za-z0-9 .\-_()[\]]*$/;
 const buttonLabel = 'Confirm';
@@ -54,7 +54,7 @@ describe('textInputModal', () => {
         fireEvent.click(screen.getByRole('button', { name: buttonLabel }));
 
         expect(mockedOnConfirm.mock.calls.length).toBe(1);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+
         expect(mockedOnConfirm.mock.calls[0][0]).toEqual(testValue);
     });
 

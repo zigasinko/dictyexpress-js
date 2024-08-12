@@ -1,5 +1,9 @@
 import React, { ReactElement } from 'react';
 import { Button } from '@mui/material';
+import { connect, ConnectedProps } from 'react-redux';
+import _ from 'lodash';
+import TimeSeriesSelector from '../../timeSeriesAndGeneSelector/timeSeriesSelector/timeSeriesSelector';
+import { TimeSeriesGridWrapper } from './selectComparisonTimeSeriesModal.style';
 import {
     CenteredModal,
     ModalBody,
@@ -7,7 +11,6 @@ import {
     ModalFooter,
     ModalHeader,
 } from 'components/genexpress/common/dictyModal/dictyModal.styles';
-import { connect, ConnectedProps } from 'react-redux';
 import {
     comparisonTimeSeriesChanged,
     getComparisonTimeSeries,
@@ -15,12 +18,8 @@ import {
     getTimeSeries,
 } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
-import _ from 'lodash';
 import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
-import TimeSeriesSelector from '../../timeSeriesAndGeneSelector/timeSeriesSelector/timeSeriesSelector';
-import { TimeSeriesGridWrapper } from './selectComparisonTimeSeriesModal.style';
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const mapStateToProps = (state: RootState) => {
     return {
         timeSeries: getTimeSeries(state.timeSeries),

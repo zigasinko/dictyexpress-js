@@ -1,13 +1,13 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { MockStoreEnhanced } from 'redux-mock-store';
+import _ from 'lodash';
+import VolcanoPointsSelectionModal from './volcanoPointsSelectionModal';
 import { customRender } from 'tests/test-utils';
 import { testState, mockStore, generateGenesById, generateVolcanoPoints } from 'tests/mock';
 import { allGenesDeselected, genesSelected } from 'redux/stores/genes';
-import { MockStoreEnhanced } from 'redux-mock-store';
 import { RootState } from 'redux/rootReducer';
 import { AppDispatch } from 'redux/appStore';
-import _ from 'lodash';
-import VolcanoPointsSelectionModal from './volcanoPointsSelectionModal';
 
 const genesById = generateGenesById(5);
 const genes = _.flatMap(genesById);

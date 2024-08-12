@@ -16,7 +16,6 @@ type MiddleWareProps = {
     serializableCheck?: boolean;
 };
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const getStore = (initialState?: RootState, defaultMiddlewareOptions?: MiddleWareProps) => {
     const epicMiddleware = createEpicMiddleware<Action, Action, RootState>();
 

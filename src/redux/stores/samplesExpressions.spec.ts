@@ -1,10 +1,10 @@
-import { generateSamplesExpressionsById } from 'tests/mock';
 import samplesExpressionsReducer, {
     SamplesExpressionsState,
     samplesExpressionsFetchSucceeded,
     samplesExpressionsComparisonFetchSucceeded,
 } from './samplesExpressions';
 import { timeSeriesSelected } from './timeSeries';
+import { generateSamplesExpressionsById } from 'tests/mock';
 
 const samplesExpressionsById = generateSamplesExpressionsById(2, []);
 

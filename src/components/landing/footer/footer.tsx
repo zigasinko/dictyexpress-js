@@ -6,9 +6,9 @@ import {
     LinkedIn as LinkedInIcon,
 } from '@mui/icons-material';
 
+import { FooterContainer, FooterWrapper, FooterTitle, SocialNetworkLink } from './footer.styles';
 import { SectionContentContainer } from 'components/landing/common/layout.styles';
 import SectionNames from 'components/landing/common/constants';
-import { FooterContainer, FooterWrapper, FooterTitle, SocialNetworkLink } from './footer.styles';
 
 const Footer = (): ReactElement => (
     <FooterContainer>

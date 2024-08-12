@@ -1,9 +1,9 @@
 import React from 'react';
-import { customRender } from 'tests/test-utils';
 import { fireEvent, screen } from '@testing-library/react';
+import GOEnrichmentMatchedCell from './matchedCell';
+import { customRender } from 'tests/test-utils';
 import { generateGOEnrichmentRow } from 'tests/mock';
 import { GOEnrichmentRow } from 'redux/models/internal';
-import GOEnrichmentMatchedCell from './matchedCell';
 
 describe('gOEnrichmentMatchedCell', () => {
     let goEnrichmentRow: GOEnrichmentRow;

@@ -1,5 +1,7 @@
-/* eslint-disable no-await-in-loop */
 import { screen, fireEvent, waitFor } from '@testing-library/react';
+import _ from 'lodash';
+import { distanceMeasureOptions, linkageFunctionOptions } from './clustering';
+import { highlightedColor } from './clusteringChart';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
 import {
     customRender,
@@ -19,7 +21,6 @@ import {
     generateGenesById,
 } from 'tests/mock';
 import * as reportBuilder from 'components/genexpress/common/reportBuilder/reportBuilder';
-import _ from 'lodash';
 import { RootState } from 'redux/rootReducer';
 import { Gene } from 'redux/models/internal';
 import {
@@ -27,8 +28,6 @@ import {
     ClusteringLinkageFunction,
     DistanceMeasure,
 } from 'components/genexpress/common/constants';
-import { distanceMeasureOptions, linkageFunctionOptions } from './clustering';
-import { highlightedColor } from './clusteringChart';
 
 const timeSeriesById = generateTimeSeriesById(1);
 const selectedTimeSeriesId = parseInt(_.keys(timeSeriesById)[0], 10);

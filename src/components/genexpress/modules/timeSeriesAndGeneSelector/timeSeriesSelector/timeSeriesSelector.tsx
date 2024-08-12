@@ -1,14 +1,14 @@
 import React, { ReactElement, useEffect, useState } from 'react';
-import DictyGrid, { DictyGridProps } from 'components/genexpress/common/dictyGrid/dictyGrid';
 import { DescriptorSchema, Relation } from '@genialis/resolwe/dist/api/types/rest';
-import { TimeSeriesSelectorContainer } from './timeSeriesSelector.styles';
 import { useDispatch } from 'react-redux';
+import { ColDef } from 'ag-grid-community';
+import _ from 'lodash';
+import { TimeSeriesSelectorContainer } from './timeSeriesSelector.styles';
+import CitationCell from './citationCell/citationCell';
 import { getDictyDescriptorSchema } from 'api/descriptorSchemaApi';
 import { handleError } from 'utils/errorUtils';
 import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
-import { ColDef } from 'ag-grid-community';
-import _ from 'lodash';
-import CitationCell from './citationCell/citationCell';
+import DictyGrid, { DictyGridProps } from 'components/genexpress/common/dictyGrid/dictyGrid';
 
 const selectionCell = {
     headerCheckboxSelection: true,

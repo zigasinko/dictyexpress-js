@@ -1,3 +1,7 @@
+import { combineReducers, createSelector } from '@reduxjs/toolkit';
+import _ from 'lodash';
+import { Relation } from '@genialis/resolwe/dist/api/types/rest';
+import { Gene, GeneExpression, GeneMapping, SamplesGenesExpressionsById } from './models/internal';
 import timeSeries, {
     getComparisonTimeSeries,
     getSelectedTimeSeries,
@@ -14,11 +18,7 @@ import authentication from 'redux/stores/authentication';
 import differentialExpressions from 'redux/stores/differentialExpressions';
 import layouts from 'redux/stores/layouts';
 import gOEnrichment from 'redux/stores/gOEnrichment';
-import { combineReducers, createSelector } from '@reduxjs/toolkit';
-import _ from 'lodash';
 import { EMPTY_ARRAY } from 'components/genexpress/common/constants';
-import { Relation } from '@genialis/resolwe/dist/api/types/rest';
-import { Gene, GeneExpression, GeneMapping, SamplesGenesExpressionsById } from './models/internal';
 
 const rootReducer = combineReducers({
     layouts,

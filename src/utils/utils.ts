@@ -29,8 +29,6 @@
 
 import { logError } from './errorUtils';
 
-export const assertExhaustive = (
-    unexpectedValue: never | { [descriptiveKey: string]: never },
-): void => {
+export const assertExhaustive = (unexpectedValue: { [descriptiveKey: string]: never }): void => {
     logError(`Value ${JSON.stringify(unexpectedValue)} not handled despite type-exhaustive check`);
 };

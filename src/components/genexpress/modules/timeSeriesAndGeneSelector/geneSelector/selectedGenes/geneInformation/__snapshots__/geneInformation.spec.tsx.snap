@@ -3,13 +3,13 @@
 exports[`geneInformation should render as default snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="sc-jEACwC esnkBF"
+    class="sc-gEvEer gQIGdO"
   >
     <div
-      class="sc-cPiKLX fRoGXt"
+      class="sc-eqUAAy jNGYNU"
     >
       <h3
-        class="sc-dLMFU jGmbiD"
+        class="sc-fqkvVR XCebb"
       >
         Gene information
       </h3>
@@ -29,36 +29,36 @@ exports[`geneInformation should render as default snapshot 1`] = `
     </p>
     <div>
       <div
-        class="sc-eDPEul mFrbm"
+        class="sc-dcJsrY dTxJSi"
       >
         Gene ID:
       </div>
       <div
-        class="sc-eldPxv keZwRn"
+        class="sc-iGgWBj korZYu"
       >
         0
       </div>
     </div>
     <div>
       <div
-        class="sc-eDPEul mFrbm"
+        class="sc-dcJsrY dTxJSi"
       >
         Alternatives:
       </div>
       <div
-        class="sc-eldPxv keZwRn"
+        class="sc-iGgWBj korZYu"
       >
         TestGene0_alias1, TestGene0_alias2
       </div>
     </div>
     <div>
       <div
-        class="sc-eDPEul mFrbm"
+        class="sc-dcJsrY dTxJSi"
       >
         Database link:
       </div>
       <div
-        class="sc-eldPxv keZwRn"
+        class="sc-iGgWBj korZYu"
       >
         <a
           href="http://dictybase.org/gene/0"
@@ -68,7 +68,7 @@ exports[`geneInformation should render as default snapshot 1`] = `
           Open in dictyBase
           <img
             alt="Open in dictyBase."
-            class="sc-fPXMVe jjYCLl"
+            class="sc-gsFSXq hrvyHJ"
             src="dictybase_logo2.jpg"
           />
         </a>
@@ -76,12 +76,12 @@ exports[`geneInformation should render as default snapshot 1`] = `
     </div>
     <div>
       <div
-        class="sc-eDPEul mFrbm"
+        class="sc-dcJsrY dTxJSi"
       >
         Description:
       </div>
       <div
-        class="sc-eldPxv keZwRn"
+        class="sc-iGgWBj korZYu"
       >
         This is a test gene 0
       </div>

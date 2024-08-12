@@ -2,6 +2,8 @@ import { Action } from '@reduxjs/toolkit';
 import { Epic, combineEpics, ofType } from 'redux-observable';
 import { mergeMap, startWith, endWith, catchError, map, switchMap, filter } from 'rxjs/operators';
 import { combineLatest, of, from, merge, EMPTY } from 'rxjs';
+import { appStarted, fetchDifferentialExpressionGenes } from './epicsActions';
+import { filterNullAndUndefined, mapStateSlice } from './rxjsCustomFilters';
 import { getBasketInfo } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
 import { handleError } from 'utils/errorUtils';
@@ -17,8 +19,6 @@ import {
     differentialExpressionSelected,
 } from 'redux/stores/differentialExpressions';
 import { getDifferentialExpressions, getStorage } from 'api';
-import { appStarted, fetchDifferentialExpressionGenes } from './epicsActions';
-import { filterNullAndUndefined, mapStateSlice } from './rxjsCustomFilters';
 
 const fetchDifferentialExpressionsEpic: Epic<Action, Action, RootState> = (action$) => {
     return action$.pipe(

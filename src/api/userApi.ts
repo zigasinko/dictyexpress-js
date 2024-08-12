@@ -1,7 +1,7 @@
 import { User } from '@genialis/resolwe/dist/api/types/rest';
-import { userFetchSucceeded } from 'redux/stores/authentication';
-import { apiUrl } from './base';
 import { get } from '../api/fetch';
+import { apiUrl } from './base';
+import { userFetchSucceeded } from 'redux/stores/authentication';
 import { deserializeResponse } from 'utils/apiUtils';
 
 const baseUrl = `${apiUrl}/user`;

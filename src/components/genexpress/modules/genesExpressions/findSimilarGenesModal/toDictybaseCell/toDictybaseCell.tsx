@@ -1,8 +1,8 @@
 import React, { ReactElement } from 'react';
 import { ICellRendererParams } from 'ag-grid-community';
+import { CellContainer, CellLogo } from './toDictybaseCell.styles';
 import dictyBaseLogo from 'images/dictybase_logo2.jpg';
 import sacgbLogo from 'images/sacgb_logo.png';
-import { CellContainer, CellLogo } from './toDictybaseCell.styles';
 
 const ToDictybaseCell = ({
     value,

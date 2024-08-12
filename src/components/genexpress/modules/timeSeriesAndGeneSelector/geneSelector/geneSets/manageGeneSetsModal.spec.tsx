@@ -1,8 +1,8 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
+import ManageGeneSetsModal from './manageGeneSetsModal';
 import { generateGeneSets } from 'tests/mock';
 import { customRender, waitForButtonEnabled } from 'tests/test-utils';
-import ManageGeneSetsModal from './manageGeneSetsModal';
 
 // GeneSets have to be sorted so that first element in array is also first row in grid.
 // Needed to assert selected item with '~toggle Row Selection' (first row).

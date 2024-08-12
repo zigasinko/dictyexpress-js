@@ -1,8 +1,8 @@
 import { DescriptorSchema } from '@genialis/resolwe/dist/api/types/rest';
-import { DescriptorSchemaSlug } from 'components/genexpress/common/constants';
-import { deserializeResponse } from 'utils/apiUtils';
 import { apiUrl } from './base';
 import { get } from './fetch';
+import { DescriptorSchemaSlug } from 'components/genexpress/common/constants';
+import { deserializeResponse } from 'utils/apiUtils';
 
 const baseUrl = `${apiUrl}/descriptorschema`;
 

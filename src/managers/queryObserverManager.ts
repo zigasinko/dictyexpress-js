@@ -1,10 +1,10 @@
 import _ from 'lodash';
 import { Action } from '@reduxjs/toolkit';
-import { deserializeResponse } from 'utils/apiUtils';
-import { logError } from 'utils/errorUtils';
 import { EMPTY, Observable, from, mergeMap } from 'rxjs';
 import { sessionId } from '../api/base';
 import { get, post, QueryParams } from '../api/fetch';
+import { logError } from 'utils/errorUtils';
+import { deserializeResponse } from 'utils/apiUtils';
 
 const MESSAGE_CREATE = 'CREATE';
 const MESSAGE_UPDATE = 'UPDATE';
@@ -17,7 +17,7 @@ export type QueryObserver = {
     subscriptionId: string;
     baseUrl: string;
     refetch: (id: number) => Promise<unknown[]>;
-    itemsUpdateHandler: (items: unknown[]) => Observable<Action | never>;
+    itemsUpdateHandler: (items: unknown[]) => Observable<Action>;
 };
 
 type QueryObserverResponse = {
@@ -60,7 +60,7 @@ export const clearObservers = async (): Promise<void> => {
 export const reactiveGet = async <T extends IdObject>(
     baseUrl: string,
     params: QueryParams,
-    webSocketMessageOutputReduxAction: (items: unknown[]) => Observable<Action | never>,
+    webSocketMessageOutputReduxAction: (items: unknown[]) => Observable<Action>,
 ): Promise<ItemsAndDisposeFunction<T>> => {
     const items = await deserializeResponse<T[]>(await get(baseUrl, params));
     const ids = items.map((item) => item.id);
@@ -98,7 +98,7 @@ const getObserver = (subscriptionId: string): QueryObserver | undefined => {
     return _.find(observers, { subscriptionId });
 };
 
-export const handleWebSocketMessage = (message: WebSocketMessage): Observable<Action | never> => {
+export const handleWebSocketMessage = (message: WebSocketMessage): Observable<Action> => {
     const observer = getObserver(message.subscription_id);
     if (observer == null) {
         return EMPTY;

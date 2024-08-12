@@ -1,10 +1,18 @@
 import { ReactElement, useEffect, useState, useRef, useCallback } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import _ from 'lodash';
+import { MenuItem, SelectChangeEvent, Tooltip } from '@mui/material';
+import {
+    ClusteringChartContainer,
+    ClusteringContainer,
+    ClusteringControl,
+    ClusteringControls,
+} from './clustering.styles';
+import ClusteringChart from './clusteringChart';
+import { clusterByGenes } from './utils';
 import { getSelectedGenesExpressions, RootState } from 'redux/rootReducer';
 import { genesHighlighted, getHighlightedGenesIds, getSelectedGenes } from 'redux/stores/genes';
 import { ClusterNode, Option } from 'redux/models/internal';
-import { MenuItem, SelectChangeEvent, Tooltip } from '@mui/material';
 import DictySelect from 'components/genexpress/common/dictySelect/dictySelect';
 import useReport from 'components/genexpress/common/reportBuilder/useReport';
 import { advancedJoin } from 'utils/arrayUtils';
@@ -14,17 +22,8 @@ import {
     ClusteringLinkageFunction,
     BookmarkStatePath,
 } from 'components/genexpress/common/constants';
-import {
-    ClusteringChartContainer,
-    ClusteringContainer,
-    ClusteringControl,
-    ClusteringControls,
-} from './clustering.styles';
-import ClusteringChart from './clusteringChart';
-import { clusterByGenes } from './utils';
 import useBookmarkableState from 'components/genexpress/common/useBookmarkableState';
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const mapStateToProps = (state: RootState) => {
     return {
         highlightedGenesIds: getHighlightedGenesIds(state.genes),

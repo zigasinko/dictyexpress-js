@@ -1,7 +1,13 @@
 import { combineLatest, of } from 'rxjs';
-import { RootState } from 'redux/rootReducer';
-import { getSelectedGenesSortedById } from 'redux/stores/genes';
 import { filter, switchMap } from 'rxjs/operators';
+import { DataGOEnrichmentAnalysis, Storage } from '@genialis/resolwe/dist/api/types/rest';
+import { fetchGOEnrichmentData, gOEnrichmentDataFetchSucceeded } from './epicsActions';
+import getProcessDataEpicsFactory, {
+    ProcessDataEpicsFactoryProps,
+    ProcessesInfo,
+} from './getProcessDataEpicsFactory';
+import { filterNullAndUndefined, mapStateSlice } from './rxjsCustomFilters';
+import { appendMissingAttributesToJson } from 'utils/gOEnrichmentUtils';
 import {
     getGaf,
     getGOEnrichmentJson,
@@ -14,14 +20,8 @@ import {
     gOEnrichmentJsonFetchSucceeded,
     gOEnrichmentStatusUpdated,
 } from 'redux/stores/gOEnrichment';
-import { appendMissingAttributesToJson } from 'utils/gOEnrichmentUtils';
-import { DataGOEnrichmentAnalysis, Storage } from '@genialis/resolwe/dist/api/types/rest';
-import { fetchGOEnrichmentData, gOEnrichmentDataFetchSucceeded } from './epicsActions';
-import getProcessDataEpicsFactory, {
-    ProcessDataEpicsFactoryProps,
-    ProcessesInfo,
-} from './getProcessDataEpicsFactory';
-import { filterNullAndUndefined, mapStateSlice } from './rxjsCustomFilters';
+import { getSelectedGenesSortedById } from 'redux/stores/genes';
+import { RootState } from 'redux/rootReducer';
 
 const processParametersObservable: ProcessDataEpicsFactoryProps<DataGOEnrichmentAnalysis>['processParametersObservable'] =
     (_action$, state$) => {

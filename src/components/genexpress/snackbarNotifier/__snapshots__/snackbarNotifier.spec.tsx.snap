@@ -3,7 +3,7 @@
 exports[`snackbarNotifier should render as snapshot with notifications in all different variants 1`] = `
 <DocumentFragment>
   <div
-    class="sc-cwHptR JLytL SnackbarContainer-bottom SnackbarContainer-left SnackbarContainer-root"
+    class="sc-fqkvVR fXnpRz SnackbarContainer-bottom SnackbarContainer-left SnackbarContainer-root"
   >
     <div
       class="MuiCollapse-root-ffDPiZ dtLKsk MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered"
@@ -16,11 +16,11 @@ exports[`snackbarNotifier should render as snapshot with notifications in all di
           class="MuiCollapse-wrapperInner-iZXWlS fMumHJ MuiCollapse-wrapperInner MuiCollapse-vertical"
         >
           <div
-            class="sc-jlZhew ftKBEX SnackbarItem-wrappedRoot"
+            class="sc-eqUAAy cBKXDZ SnackbarItem-wrappedRoot"
           >
             <div
               aria-describedby="notistack-snackbar"
-              class="sc-dAlyuH HMsqF SnackbarContent-root SnackbarItem-contentRoot"
+              class="sc-gEvEer fMaMWu SnackbarContent-root SnackbarItem-contentRoot"
               role="alert"
               style="webkit-transform: none; transform: none; webkit-transition: -webkit-transform 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms; transition: transform 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;"
             >
@@ -46,11 +46,11 @@ exports[`snackbarNotifier should render as snapshot with notifications in all di
           class="MuiCollapse-wrapperInner-iZXWlS fMumHJ MuiCollapse-wrapperInner MuiCollapse-vertical"
         >
           <div
-            class="sc-jlZhew ftKBEX SnackbarItem-wrappedRoot"
+            class="sc-eqUAAy cBKXDZ SnackbarItem-wrappedRoot"
           >
             <div
               aria-describedby="notistack-snackbar"
-              class="sc-dAlyuH HMsqF SnackbarContent-root SnackbarItem-contentRoot SnackbarItem-variantError SnackbarItem-lessPadding"
+              class="sc-gEvEer fMaMWu SnackbarContent-root SnackbarItem-contentRoot SnackbarItem-variantError SnackbarItem-lessPadding"
               role="alert"
               style="webkit-transform: none; transform: none; webkit-transition: -webkit-transform 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms; transition: transform 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;"
             >
@@ -89,11 +89,11 @@ exports[`snackbarNotifier should render as snapshot with notifications in all di
           class="MuiCollapse-wrapperInner-iZXWlS fMumHJ MuiCollapse-wrapperInner MuiCollapse-vertical"
         >
           <div
-            class="sc-jlZhew ftKBEX SnackbarItem-wrappedRoot"
+            class="sc-eqUAAy cBKXDZ SnackbarItem-wrappedRoot"
           >
             <div
               aria-describedby="notistack-snackbar"
-              class="sc-dAlyuH HMsqF SnackbarContent-root SnackbarItem-contentRoot SnackbarItem-variantSuccess SnackbarItem-lessPadding"
+              class="sc-gEvEer fMaMWu SnackbarContent-root SnackbarItem-contentRoot SnackbarItem-variantSuccess SnackbarItem-lessPadding"
               role="alert"
               style="webkit-transform: none; transform: none; webkit-transition: -webkit-transform 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms; transition: transform 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;"
             >

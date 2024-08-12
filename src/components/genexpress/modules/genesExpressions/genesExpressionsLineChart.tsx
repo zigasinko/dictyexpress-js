@@ -1,12 +1,12 @@
 import React, { ReactElement, forwardRef, useState } from 'react';
 import _ from 'lodash';
 import { Spec } from 'vega';
+import { useTheme } from '@mui/material';
+import Chart, { ChartHandle, DataDefinition, DataHandler } from '../../common/chart/chart';
 import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
 import { GeneExpression } from 'redux/models/internal';
 import { GEN_GREY } from 'components/genexpress/common/theming/theming';
-import { useTheme } from '@mui/material';
 import useForwardedRef from 'components/genexpress/common/useForwardedRef';
-import Chart, { ChartHandle, DataDefinition, DataHandler } from '../../common/chart/chart';
 import { getComparisonTimeSeries } from 'redux/stores/timeSeries';
 
 type ComparisonTimeSeries = ReturnType<typeof getComparisonTimeSeries>;

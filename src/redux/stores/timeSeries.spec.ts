@@ -1,10 +1,3 @@
-import {
-    generateTimeSeriesById,
-    generateBasketAddSamplesResponse,
-    generateSingleTimeSeries,
-    generateBasketExpression,
-} from 'tests/mock';
-import { BasketInfo, GeneMapping } from 'redux/models/internal';
 import _ from 'lodash';
 import timeSeriesReducer, {
     timeSeriesSelected,
@@ -14,6 +7,13 @@ import timeSeriesReducer, {
     fetchBasketExpressionsIdsSucceeded,
     genesMappingsFetchSucceeded,
 } from './timeSeries';
+import {
+    generateTimeSeriesById,
+    generateBasketAddSamplesResponse,
+    generateSingleTimeSeries,
+    generateBasketExpression,
+} from 'tests/mock';
+import { BasketInfo, GeneMapping } from 'redux/models/internal';
 
 const timeSeriesById = generateTimeSeriesById(2);
 const timeSeries = _.flatMap(timeSeriesById);

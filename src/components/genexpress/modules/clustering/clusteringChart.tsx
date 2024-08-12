@@ -1,11 +1,11 @@
 import React, { ReactElement, useRef, forwardRef, useState, useEffect } from 'react';
 import { Spec } from 'vega';
+import _ from 'lodash';
+import Chart, { ChartHandle, DataDefinition, SignalDefinition } from '../../common/chart/chart';
 import { GEN_CYAN, GEN_GREY } from 'components/genexpress/common/theming/theming';
 import { ClusterNode, GeneExpression } from 'redux/models/internal';
 import useForwardedRef from 'components/genexpress/common/useForwardedRef';
-import _ from 'lodash';
 import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
-import Chart, { ChartHandle, DataDefinition, SignalDefinition } from '../../common/chart/chart';
 
 type ClusteringChartProps = {
     clusterNodes: ClusterNode[];

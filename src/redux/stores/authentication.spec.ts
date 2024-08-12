@@ -1,6 +1,6 @@
-import { generateUser } from 'tests/mock';
 import { User } from '@genialis/resolwe/dist/api/types/rest';
 import authenticationReducer, { AuthenticationState, userFetchSucceeded } from './authentication';
+import { generateUser } from 'tests/mock';
 
 const user = generateUser(1);
 

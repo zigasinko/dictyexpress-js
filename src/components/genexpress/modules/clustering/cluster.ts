@@ -106,13 +106,13 @@ export const agnes = (
 
     if (typeof method === 'string') {
         switch (method.toLowerCase()) {
-            case ClusteringLinkageFunction.complete:
+            case ClusteringLinkageFunction.complete.toString():
                 updateFunc = completeLink;
                 break;
-            case ClusteringLinkageFunction.average:
+            case ClusteringLinkageFunction.average.toString():
                 updateFunc = averageLink;
                 break;
-            case ClusteringLinkageFunction.single:
+            case ClusteringLinkageFunction.single.toString():
                 updateFunc = singleLink;
                 break;
             default:

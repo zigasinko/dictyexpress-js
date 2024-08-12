@@ -10,10 +10,7 @@ import {
     filter,
 } from 'rxjs/operators';
 import { of, from, Observable, merge, isObservable, EMPTY } from 'rxjs';
-import { RootState } from 'redux/rootReducer';
-import { handleError } from 'utils/errorUtils';
 import { Action, ActionCreatorWithoutPayload, ActionCreatorWithPayload } from '@reduxjs/toolkit';
-import { DisposeFunction as QueryObserverDisposeFunction } from 'managers/queryObserverManager';
 import {
     Data,
     DataStatus,
@@ -21,8 +18,11 @@ import {
     ERROR_DATA_STATUS,
     Storage,
 } from '@genialis/resolwe/dist/api/types/rest';
-import { ProcessInfo } from 'redux/models/internal';
 import _ from 'lodash';
+import { RootState } from 'redux/rootReducer';
+import { handleError } from 'utils/errorUtils';
+import { DisposeFunction as QueryObserverDisposeFunction } from 'managers/queryObserverManager';
+import { ProcessInfo } from 'redux/models/internal';
 import { getDataReactive, getStorage, getOrCreateData } from 'api';
 import { ProcessSlug } from 'components/genexpress/common/constants';
 
@@ -76,7 +76,7 @@ const getProcessDataEpicsFactory = <DataType extends Data>({
         return merge(of(handleError(message, error)), of(processEndedActionCreator()));
     };
 
-    const handleAnalysisDataResponse = (response: DataType): Observable<Action | never> => {
+    const handleAnalysisDataResponse = (response: DataType): Observable<Action> => {
         let resultAction = EMPTY as Observable<Action<unknown>> | Observable<never>;
         if (response.status === ERROR_DATA_STATUS) {
             resultAction = handleProcessEndedWithError(

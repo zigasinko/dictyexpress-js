@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import { CreditsLogos } from './credits.styles';
 import SectionNames from 'components/landing/common/constants';
 import {
     SectionContentContainer,
@@ -8,7 +9,6 @@ import { Title } from 'components/landing/common/title.styles';
 import baylorLogo from 'images/bcmLogo.png';
 import friLogo from 'images/ulfriLogo.png';
 import genialisLogo from 'images/genialisLogo.png';
-import { CreditsLogos } from './credits.styles';
 
 const Credits = (): ReactElement => (
     <DarkSectionContainer>

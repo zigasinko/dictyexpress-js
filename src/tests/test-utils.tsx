@@ -5,20 +5,20 @@ import { ThemeProvider as StyledComponentsThemeProvider } from 'styled-component
 import { createTheme } from '@mui/material';
 import { SnackbarProvider } from 'notistack';
 import { MockStoreEnhanced } from 'redux-mock-store';
-import { AppDispatch } from 'redux/appStore';
 import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
-import { RendererContext } from 'components/common/rendererContext';
-import {
-    ExportFile,
-    getRegisteredComponentsExportFiles,
-} from 'components/genexpress/common/reportBuilder/reportBuilder';
 import { MemoryRouter } from 'react-router-dom';
-import { BackendAppState } from 'redux/models/rest';
-import { BookmarkComponentsState, Gene } from 'redux/models/internal';
 import { BookmarkReduxState, RootState } from '../redux/rootReducer';
 import theme from '../components/app/theme';
 import { GlobalStyle } from '../components/app/globalStyle';
 import getStore from '../redux/rootStore';
+import { BookmarkComponentsState, Gene } from 'redux/models/internal';
+import { BackendAppState } from 'redux/models/rest';
+import {
+    ExportFile,
+    getRegisteredComponentsExportFiles,
+} from 'components/genexpress/common/reportBuilder/reportBuilder';
+import { RendererContext } from 'components/common/rendererContext';
+import { AppDispatch } from 'redux/appStore';
 
 const appTheme = createTheme(theme);
 
@@ -94,7 +94,10 @@ export const resolveStringifiedObjectPromise = (object: unknown): Promise<string
  * in integration tests).
  * @param request - Request that was intercepted by fetch-mock.
  */
-export const handleCommonRequests = (request: Request, genes?: Gene[]): Promise<string> | null => {
+export const handleCommonRequests = async (
+    request: Request,
+    genes?: Gene[],
+): Promise<Promise<string> | null> => {
     if (request.url.includes('csrf')) {
         return Promise.resolve('');
     }
@@ -116,7 +119,7 @@ export const handleCommonRequests = (request: Request, genes?: Gene[]): Promise<
     }
 
     if (genes != null && request.url.includes('paste')) {
-        const { pasted } = request.body && JSON.parse(request.body.toString());
+        const { pasted } = request.body && (await request.json());
         return resolveStringifiedObjectPromise(
             genes.filter((gene) => (pasted as string[]).includes(gene.name)),
         );

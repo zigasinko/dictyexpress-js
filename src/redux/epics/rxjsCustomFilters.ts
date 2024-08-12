@@ -1,6 +1,6 @@
-import { RootState } from 'redux/rootReducer';
 import { Observable } from 'rxjs';
 import { distinctUntilChanged, filter, map } from 'rxjs/operators';
+import { RootState } from 'redux/rootReducer';
 
 const inputIsNotNullOrUndefined = <T>(input: null | undefined | T): input is T => {
     return input !== null && input !== undefined;

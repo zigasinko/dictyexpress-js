@@ -1,5 +1,6 @@
 import React, { ReactElement, useCallback, useState } from 'react';
 import { Box, Button, ButtonBase, Link, List, ListItem } from '@mui/material';
+import { Relation } from '@genialis/resolwe/dist/api/types/rest';
 import {
     CenteredModal,
     ModalContainer,
@@ -7,7 +8,6 @@ import {
     ModalBody,
     ModalFooter,
 } from 'components/genexpress/common/dictyModal/dictyModal.styles';
-import { Relation } from '@genialis/resolwe/dist/api/types/rest';
 import { Descriptor } from 'types/application';
 import { DescriptorSchemaSlug } from 'components/genexpress/common/constants';
 

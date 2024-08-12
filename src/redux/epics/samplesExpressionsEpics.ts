@@ -2,6 +2,8 @@ import { Action } from '@reduxjs/toolkit';
 import { Epic, combineEpics } from 'redux-observable';
 import { map, mergeMap, startWith, endWith, catchError } from 'rxjs/operators';
 import { of, from, forkJoin, EMPTY } from 'rxjs';
+import { Data, Storage } from '@genialis/resolwe/dist/api/types/rest';
+import { mapStateSlice } from './rxjsCustomFilters';
 import { getAllTimeSeriesSamplesIds } from 'redux/stores/timeSeries';
 import { RootState } from 'redux/rootReducer';
 import { handleError } from 'utils/errorUtils';
@@ -13,8 +15,6 @@ import {
     samplesExpressionsFetchStarted,
     samplesExpressionsFetchSucceeded,
 } from 'redux/stores/samplesExpressions';
-import { Data, Storage } from '@genialis/resolwe/dist/api/types/rest';
-import { mapStateSlice } from './rxjsCustomFilters';
 
 const getSampleStorage = async (
     sampleData: Data,

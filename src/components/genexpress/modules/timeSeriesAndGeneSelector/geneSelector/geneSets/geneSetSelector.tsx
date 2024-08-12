@@ -1,12 +1,12 @@
 import React, { ReactElement, useState } from 'react';
 import { Button } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
+import { useDispatch } from 'react-redux';
+import ManageGeneSetsModal from './manageGeneSetsModal';
 import { GeneSet, Gene } from 'redux/models/internal';
 import { LocalStorageKey } from 'components/genexpress/common/constants';
 import useLocalStorage from 'components/genexpress/common/useLocalStorage';
 import IconButtonWithTooltip from 'components/genexpress/common/iconButtonWithTooltip/iconButtonWithTooltip';
-import ManageGeneSetsModal from './manageGeneSetsModal';
-import { useDispatch } from 'react-redux';
 import { addInfoSnackbar } from 'redux/stores/notifications';
 
 type SelectGeneSetProps = {

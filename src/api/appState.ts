@@ -1,9 +1,9 @@
-import { BookmarkComponentsState } from 'redux/models/internal';
-import { BookmarkReduxState } from 'redux/rootReducer';
 import { BackendAppState } from '../redux/models/rest';
 import { deserializeResponse } from '../utils/apiUtils';
 import { apiUrl } from './base';
 import { get, post } from './fetch';
+import { BookmarkReduxState } from 'redux/rootReducer';
+import { BookmarkComponentsState } from 'redux/models/internal';
 
 const baseUrl = `${apiUrl}/app-state`;
 

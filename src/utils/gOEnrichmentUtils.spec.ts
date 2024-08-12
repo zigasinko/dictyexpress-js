@@ -1,13 +1,13 @@
-import { AspectValue } from 'components/genexpress/common/constants';
 import _ from 'lodash';
-import { GOEnrichmentTerm } from 'redux/models/internal';
-import { generateGeneOntologyStorageJson, generateGenes } from 'tests/mock';
-import { resolveStringifiedObjectPromise } from 'tests/test-utils';
 import {
     appendMissingAttributesToJson,
     ontologyJsonToOntologyRows,
     ontologyJsonToTermsTable,
 } from './gOEnrichmentUtils';
+import { AspectValue } from 'components/genexpress/common/constants';
+import { GOEnrichmentTerm } from 'redux/models/internal';
+import { generateGeneOntologyStorageJson, generateGenes } from 'tests/mock';
+import { resolveStringifiedObjectPromise } from 'tests/test-utils';
 
 const genesAA = generateGenes(['0', '1'], 'A', 'A');
 const genesAB = generateGenes(['0', '1'], 'A', 'B');

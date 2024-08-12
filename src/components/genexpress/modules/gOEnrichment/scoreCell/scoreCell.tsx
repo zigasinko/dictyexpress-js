@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import { ICellRendererParams } from 'ag-grid-community';
-import { formatNumber } from 'utils/math';
 import { ScoreCellContainer, ScoreSpan, ScoreLinearProgress } from './scoreCell.styles';
+import { formatNumber } from 'utils/math';
 
 const ScoreCell = ({ value, data }: Pick<ICellRendererParams, 'value' | 'data'>): ReactElement => (
     <ScoreCellContainer>

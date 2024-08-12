@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction, createSelector, combineReducers } from '@reduxjs/toolkit';
 import _ from 'lodash';
 import { Relation } from '@genialis/resolwe/dist/api/types/rest';
-import { BasketAddSamplesResponse } from 'redux/models/rest';
-import createIsFetchingSlice from './fetch';
-import { RelationsById, BasketInfo, GeneMapping } from '../models/internal';
 import { shallowEqual } from 'react-redux';
+import { RelationsById, BasketInfo, GeneMapping } from '../models/internal';
+import createIsFetchingSlice from './fetch';
+import { BasketAddSamplesResponse } from 'redux/models/rest';
 
 // State slices.
 const timeSeriesByIdInitialState = {} as RelationsById;

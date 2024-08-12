@@ -1,9 +1,9 @@
 import { Data } from '@genialis/resolwe/dist/api/types/rest';
-import { ClusteringData } from 'redux/models/rest';
-import { ProcessInfo } from 'redux/models/internal';
 import { deserializeResponse } from '../utils/apiUtils';
 import { post } from './fetch';
 import { apiUrl } from './base';
+import { ProcessInfo } from 'redux/models/internal';
+import { ClusteringData } from 'redux/models/rest';
 
 const baseUrl = `${apiUrl}/data/get_or_create`;
 

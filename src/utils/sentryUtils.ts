@@ -3,8 +3,8 @@ import * as Sentry from '@sentry/browser';
 import { User } from '@genialis/resolwe/dist/api/types/rest';
 import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
-import { ResponseError } from 'redux/models/internal';
 import { getUsername } from './user';
+import { ResponseError } from 'redux/models/internal';
 
 export const initializeSentry = (sentryUrl: string): void => {
     Sentry.init({
@@ -14,7 +14,7 @@ export const initializeSentry = (sentryUrl: string): void => {
     });
 };
 
-export const setSentryUser = (user: User | void): void => {
+export const setSentryUser = (user: User | undefined): void => {
     if (user != null) {
         Sentry.setUser({
             id: `${user.id}`,

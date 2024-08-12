@@ -1,13 +1,13 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { MockStoreEnhanced } from 'redux-mock-store';
+import _ from 'lodash';
+import SelectComparisonTimeSeriesModal from './selectComparisonTimeSeriesModal';
 import { generateTimeSeriesById, mockStore, testState } from 'tests/mock';
 import { customRender } from 'tests/test-utils';
-import { MockStoreEnhanced } from 'redux-mock-store';
 import { RootState } from 'redux/rootReducer';
 import { AppDispatch } from 'redux/appStore';
-import _ from 'lodash';
 import { comparisonTimeSeriesChanged } from 'redux/stores/timeSeries';
-import SelectComparisonTimeSeriesModal from './selectComparisonTimeSeriesModal';
 
 const timeSeriesById = generateTimeSeriesById(3);
 const timeSeries = _.flatMap(timeSeriesById);

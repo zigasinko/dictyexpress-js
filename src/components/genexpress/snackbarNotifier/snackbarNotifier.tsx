@@ -6,7 +6,6 @@ import { getNotifications, removeSnackbar } from 'redux/stores/notifications';
 
 let displayedKeys: SnackbarKey[] = [];
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const mapStateToProps = (state: RootState) => {
     return {
         notifications: getNotifications(state.notifications),

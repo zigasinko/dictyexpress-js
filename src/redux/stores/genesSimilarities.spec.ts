@@ -1,12 +1,12 @@
-import { DistanceMeasure } from 'components/genexpress/common/constants';
 import _ from 'lodash';
-import { generateGenesById, generateGeneSimilarity } from 'tests/mock';
 import genesSimilaritiesReducer, {
     genesSimilaritiesDistanceMeasureChanged,
     genesSimilaritiesQueryGeneSelected,
     genesSimilaritiesFetchSucceeded,
     GenesSimilaritiesState,
 } from './genesSimilarities';
+import { DistanceMeasure } from 'components/genexpress/common/constants';
+import { generateGenesById, generateGeneSimilarity } from 'tests/mock';
 
 const genesById = generateGenesById(5);
 const genes = _.flatMap(genesById);

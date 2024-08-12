@@ -61,17 +61,23 @@ export const getPastedGenes = async (
 };
 
 type GetGenesMappings = {
-    (params: {
-        sourceGenesIds: Gene['feature_id'][];
-        targetDb: string;
-        targetSpecies?: string;
-    }): Promise<GeneMapping[]>;
-
-    (params: {
-        targetGenesIds: Gene['feature_id'][];
-        sourceDb: string;
-        sourceSpecies?: string;
-    }): Promise<GeneMapping[]>;
+    (
+        params:
+            | {
+                  sourceGenesIds?: Gene['feature_id'][];
+                  targetDb?: string;
+                  targetSpecies?: string;
+                  sourceDb?: string;
+                  sourceSpecies?: string;
+              }
+            | {
+                  targetGenesIds?: Gene['feature_id'][];
+                  sourceDb?: string;
+                  sourceSpecies?: string;
+                  targetDb?: string;
+                  targetSpecies?: string;
+              },
+    ): Promise<GeneMapping[]>;
 };
 
 export const mapGeneIdsBetweenSources: GetGenesMappings = async ({

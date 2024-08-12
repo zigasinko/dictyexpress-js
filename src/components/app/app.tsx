@@ -12,14 +12,14 @@ import {
     StyledEngineProvider,
 } from '@mui/material';
 import { SnackbarProvider } from 'notistack';
+import appStore from '../../redux/appStore';
+import { GlobalStyle } from './globalStyle';
+import theme from './theme';
 import LandingPage from 'components/landing/landingPage';
 import PageNotFound from 'components/pageNotFound';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
 import { RendererContext } from 'components/common/rendererContext';
 import { getCSRFCookie } from 'api';
-import { GlobalStyle } from './globalStyle';
-import theme from './theme';
-import appStore from '../../redux/appStore';
 import CookieConsent from 'components/common/cookieConsent';
 
 void getCSRFCookie();
@@ -35,7 +35,7 @@ const StyledSnackbarProvider = styled(SnackbarProvider)`
 const App = (): ReactElement => {
     useEffect(() => {
         window.dataLayer = window.dataLayer || [];
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
         function gtag(..._args: unknown[]) {
             // eslint-disable-next-line prefer-rest-params
             window.dataLayer.push(arguments);

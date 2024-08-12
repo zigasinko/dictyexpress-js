@@ -2,6 +2,9 @@ import { Action } from '@reduxjs/toolkit';
 import { ofType, Epic, combineEpics } from 'redux-observable';
 import { map, mergeMap, startWith, endWith, catchError, filter, switchMap } from 'rxjs/operators';
 import { of, from, combineLatest } from 'rxjs';
+import { isEmpty, compact } from 'lodash';
+import { appStarted } from './epicsActions';
+import { filterNullAndUndefined, mapStateSlice } from './rxjsCustomFilters';
 import {
     getSelectedTimeSeriesSamplesIds,
     addToBasketStarted,
@@ -25,12 +28,9 @@ import {
 import { RootState } from 'redux/rootReducer';
 import { handleError } from 'utils/errorUtils';
 import { addToBasket, getTimeSeriesRelations, getBasketExpressions } from 'api';
-import { appStarted } from './epicsActions';
-import { filterNullAndUndefined, mapStateSlice } from './rxjsCustomFilters';
 import { mapGeneIdsBetweenSources } from 'api/kbApi';
 import { getSelectedGenesIds } from 'redux/stores/genes';
 import { BasketInfo } from 'redux/models/internal';
-import { isEmpty, compact } from 'lodash';
 
 const fetchTimeSeriesEpic: Epic<Action, Action, RootState> = (action$) => {
     return action$.pipe(

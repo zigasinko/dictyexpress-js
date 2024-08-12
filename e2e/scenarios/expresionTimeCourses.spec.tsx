@@ -15,6 +15,7 @@ test.describe('Expression time courses', () => {
         await context.grantPermissions(['clipboard-read', 'clipboard-write']);
         if (process.env.DICTY_STORAGE) {
             const storageState = JSON.parse(process.env.DICTY_STORAGE);
+            // eslint-disable-next-line no-param-reassign
             context = await browser.newContext({ storageState });
         } else {
             await page.goto('http://localhost:3000');

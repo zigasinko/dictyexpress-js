@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Layout, Layouts } from 'react-grid-layout';
 import {
     LocalStorageKey,
     ModulesKeys,
     LayoutBreakpoint,
 } from 'components/genexpress/common/constants';
-import { Layout, Layouts } from 'react-grid-layout';
 import { BreakpointsCols } from 'redux/models/internal';
 import { logError } from 'utils/errorUtils';
 import { readFromLocalStorage } from 'utils/localStorageUtils';
@@ -35,9 +35,8 @@ export const generateModuleLayout = (
 
     // If there's no more space in current row, move module to the next row.
     if (currentRowInfo.availableSpaceInCols < widthInCols) {
-        // eslint-disable-next-line no-param-reassign
         currentRowInfo.rowIndex += 1;
-        // eslint-disable-next-line no-param-reassign
+
         currentRowInfo.availableSpaceInCols = breakpointCols[breakpoint];
 
         x = 0;
@@ -48,7 +47,6 @@ export const generateModuleLayout = (
         y = currentRowInfo.rowIndex * heightInCols;
     }
 
-    // eslint-disable-next-line no-param-reassign
     currentRowInfo.availableSpaceInCols -= widthInCols;
 
     return {

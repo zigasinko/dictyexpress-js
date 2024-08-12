@@ -1,8 +1,8 @@
 import React from 'react';
+import SnackbarNotifier from './snackbarNotifier';
 import { customRender } from 'tests/test-utils';
 import { mockStore, testState } from 'tests/mock';
 import { SnackbarNotifications } from 'redux/models/internal';
-import SnackbarNotifier from './snackbarNotifier';
 
 const initialTestState = testState();
 const testNotifications: SnackbarNotifications = [

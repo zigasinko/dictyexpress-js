@@ -1,11 +1,11 @@
 import React, { ReactElement, useRef, useCallback, useState, useEffect, forwardRef } from 'react';
 import _ from 'lodash';
 import { Spec } from 'vega';
+import Chart, { ChartHandle, DataDefinition, SignalDefinition } from '../../common/chart/chart';
 import { getMinMax, logOfBase } from 'utils/math';
 import { GEN_CYAN, GEN_GREY } from 'components/genexpress/common/theming/theming';
 import { Thresholds, VolcanoPoint } from 'redux/models/internal';
 import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
-import Chart, { ChartHandle, DataDefinition, SignalDefinition } from '../../common/chart/chart';
 
 type DifferentialExpressionsVolcanoPlotProps = {
     data: VolcanoPoint[];
@@ -506,7 +506,6 @@ const DifferentialExpressionsVolcanoPlot = forwardRef<
                     handler: (_name: string, value: any): void => {
                         if (value != null && value.length > 0) {
                             const selectedVolcanoPoints = value.map(
-                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                 (volcanoPointObject: { geneId: string }) =>
                                     volcanoPointObject.geneId,
                             );

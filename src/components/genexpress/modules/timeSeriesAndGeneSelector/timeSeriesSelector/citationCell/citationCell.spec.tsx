@@ -1,8 +1,8 @@
-import { customRender } from 'tests/test-utils';
 import { fireEvent, screen } from '@testing-library/react';
-import { generateSingleTimeSeries } from 'tests/mock';
-import CitationCell from './citationCell';
 import { Relation } from '@genialis/resolwe/dist/api/types/rest';
+import CitationCell from './citationCell';
+import { customRender } from 'tests/test-utils';
+import { generateSingleTimeSeries } from 'tests/mock';
 import { DescriptorSchemaSlug } from 'components/genexpress/common/constants';
 import { Descriptor } from 'types/application';
 

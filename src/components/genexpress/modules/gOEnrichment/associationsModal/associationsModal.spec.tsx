@@ -1,5 +1,8 @@
 import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
+import { MockStoreEnhanced } from 'redux-mock-store';
+import _ from 'lodash';
+import GOEnrichmentAssociationsModal from './associationsModal';
 import {
     customRender,
     handleCommonRequests,
@@ -11,15 +14,12 @@ import {
     generateGeneOntologyStorageJson,
     generateGenesByIdPredefinedIds,
 } from 'tests/mock';
-import { MockStoreEnhanced } from 'redux-mock-store';
 import { RootState } from 'redux/rootReducer';
 import { AppDispatch } from 'redux/appStore';
-import _ from 'lodash';
 import { genesSelected } from 'redux/stores/genes';
 import { fetchAssociationsGenes } from 'redux/epics/epicsActions';
 import { GeneMapping, GOEnrichmentRow } from 'redux/models/internal';
 import { appendMissingAttributesToJson } from 'utils/gOEnrichmentUtils';
-import GOEnrichmentAssociationsModal from './associationsModal';
 
 const genesById = generateGenesByIdPredefinedIds(['gene1', 'gene2', 'gene3']);
 const genes = _.flatMap(genesById);
@@ -81,7 +81,6 @@ describe('associationsModal', () => {
 
         it('should fetch associated genes data and display it in grid', async () => {
             for (let i = 0; i < genesMappings.length; i += 1) {
-                // eslint-disable-next-line no-await-in-loop
                 await screen.findByText(genesById[genesMappings[i].source_id].name);
             }
         });
@@ -127,7 +126,7 @@ describe('associationsModal', () => {
         it('should display associated genes data in grid', async () => {
             for (let i = 0; i < gOEnrichmentRow.gene_associations.length; i += 1) {
                 const geneId = gOEnrichmentRow.gene_associations[i];
-                // eslint-disable-next-line no-await-in-loop
+
                 await screen.findByText(initialState.genes.byId[geneId].name);
             }
         });

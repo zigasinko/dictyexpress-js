@@ -1,6 +1,11 @@
-/* eslint-disable no-await-in-loop */
 import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
+import _ from 'lodash';
+import { DONE_DATA_STATUS, WAITING_DATA_STATUS } from '@genialis/resolwe/dist/api/types/rest';
+import { v4 as uuidv4 } from 'uuid';
+import { Client, Server } from 'mock-socket';
+import { MockStoreEnhanced } from 'redux-mock-store';
+import FindSimilarGenesModal, { distanceMeasureOptions } from './findSimilarGenesModal';
 import {
     customRender,
     getFetchMockCallsWithUrl,
@@ -16,19 +21,13 @@ import {
     generateBasketExpression,
 } from 'tests/mock';
 import { RootState } from 'redux/rootReducer';
-import _ from 'lodash';
-import { DONE_DATA_STATUS, WAITING_DATA_STATUS } from '@genialis/resolwe/dist/api/types/rest';
 import { formatNumber } from 'utils/math';
-import { v4 as uuidv4 } from 'uuid';
-import { Client, Server } from 'mock-socket';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
 import { sessionId, webSocketUrl } from 'api/base';
 import { GeneSimilarity } from 'redux/models/internal';
-import { MockStoreEnhanced } from 'redux-mock-store';
 import { AppDispatch } from 'redux/appStore';
 import { genesSelected } from 'redux/stores/genes';
 import { ProcessSlug } from 'components/genexpress/common/constants';
-import FindSimilarGenesModal, { distanceMeasureOptions } from './findSimilarGenesModal';
 
 const genesById = generateGenesById(4);
 const genes = _.flatMap(genesById);

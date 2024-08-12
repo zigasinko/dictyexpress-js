@@ -1,4 +1,14 @@
 import React, { ReactElement, useEffect, useState } from 'react';
+import { connect, ConnectedProps } from 'react-redux';
+import { ColDef, ValueGetterParams } from 'ag-grid-community';
+import { Tooltip } from '@mui/material';
+import {
+    TermInfo,
+    TermName,
+    AssociationsGridWrapper,
+    AmigoLink,
+    AmigoLinkImage,
+} from './associationsModal.style';
 import {
     ModalBody,
     ModalHeader,
@@ -8,7 +18,6 @@ import {
 import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
 import GeneSelectorModalControls from 'components/genexpress/common/geneSelectorModalControls/geneSelectorModalControls';
 import { BasketInfo, Gene, GOEnrichmentRow } from 'redux/models/internal';
-import { connect, ConnectedProps } from 'react-redux';
 import amigoLogo from 'images/amigo_logo.png';
 import {
     getGenesById,
@@ -16,20 +25,10 @@ import {
     getSelectedGenesIds,
 } from 'redux/stores/genes';
 import { RootState } from 'redux/rootReducer';
-import { ColDef, ValueGetterParams } from 'ag-grid-community';
 import { fetchAssociationsGenes } from 'redux/epics/epicsActions';
-import { Tooltip } from '@mui/material';
-import {
-    TermInfo,
-    TermName,
-    AssociationsGridWrapper,
-    AmigoLink,
-    AmigoLinkImage,
-} from './associationsModal.style';
 import { mapGeneIdsBetweenSources } from 'api/kbApi';
 import { getBasketInfo } from 'redux/stores/timeSeries';
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const mapStateToProps = (state: RootState) => {
     return {
         genesById: getGenesById(state.genes),

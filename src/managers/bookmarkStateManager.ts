@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+import _ from 'lodash';
 import { BookmarkReduxState, RootState } from 'redux/rootReducer';
 import {
     comparisonTimeSeriesChanged,
@@ -6,13 +8,11 @@ import {
     getSelectedTimeSeries,
     setTimeSeriesSelected,
 } from 'redux/stores/timeSeries';
-import { v4 as uuidv4 } from 'uuid';
 import { createAppState, getAppState } from 'api/appState';
 import { makeBasketReadOnly } from 'api/basketApi';
 import { AppDispatch } from 'redux/appStore';
 import { genesHighlighted, getHighlightedGenesIds, getSelectedGenes } from 'redux/stores/genes';
 import { fetchAndSelectPredefinedGenes } from 'redux/epics/epicsActions';
-import _ from 'lodash';
 import { BookmarkComponentsState } from 'redux/models/internal';
 import { getPValueThreshold, pValueThresholdChanged } from 'redux/stores/gOEnrichment';
 import {

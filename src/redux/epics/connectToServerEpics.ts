@@ -12,13 +12,13 @@ import {
     take,
 } from 'rxjs/operators';
 import { defer, iif, of, throwError } from 'rxjs';
-import { RootState } from 'redux/rootReducer';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { filterNullAndUndefined } from './rxjsCustomFilters';
+import { appFocused, appStarted, reconnectToServer } from './epicsActions';
+import { RootState } from 'redux/rootReducer';
 import { handleError } from 'utils/errorUtils';
 import { sessionId, webSocketUrl } from 'api/base';
 import { handleWebSocketMessage, WebSocketMessage } from 'managers/queryObserverManager';
-import { filterNullAndUndefined } from './rxjsCustomFilters';
-import { appFocused, appStarted, reconnectToServer } from './epicsActions';
 
 const reconnectionTimeout = 6000;
 const reconnectionMaxAttempts = 3;

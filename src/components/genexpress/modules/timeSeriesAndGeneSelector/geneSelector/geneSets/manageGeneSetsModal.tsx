@@ -1,6 +1,7 @@
 import React, { ReactElement, useState } from 'react';
 import Button from '@mui/material/Button';
 import { ColDef, ValueFormatterParams } from 'ag-grid-community';
+import { ManageGeneSetsGridWrapper } from './manageGeneSetsModal.styles';
 import {
     ModalFooter,
     ModalBody,
@@ -10,7 +11,6 @@ import {
 } from 'components/genexpress/common/dictyModal/dictyModal.styles';
 import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
 import { GeneSet } from 'redux/models/internal';
-import { ManageGeneSetsGridWrapper } from './manageGeneSetsModal.styles';
 import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
 
 type ManageGeneSetsModalProps = {

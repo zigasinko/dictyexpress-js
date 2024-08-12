@@ -1,19 +1,5 @@
-import { RootState } from 'redux/rootReducer';
-import { getSelectedGenesIds } from 'redux/stores/genes';
 import _ from 'lodash';
-import { getBasketExpressionsIds } from 'redux/stores/timeSeries';
 import { DataStatus, Storage } from '@genialis/resolwe/dist/api/types/rest';
-import { FindSimilarGenesData } from 'redux/models/rest';
-import {
-    getGenesSimilaritiesDistanceMeasure,
-    getGenesSimilarities,
-    getGenesSimilaritiesQueryGeneId,
-    genesSimilaritiesFetchEnded,
-    genesSimilaritiesFetchStarted,
-    genesSimilaritiesFetchSucceeded,
-    genesSimilaritiesQueryGeneSet,
-    genesSimilaritiesStatusUpdated,
-} from 'redux/stores/genesSimilarities';
 import { combineEpics, Epic, ofType } from 'redux-observable';
 import { filter, map, mergeMap, switchMap, withLatestFrom } from 'rxjs/operators';
 import { Action } from '@reduxjs/toolkit';
@@ -28,6 +14,20 @@ import getProcessDataEpicsFactory, {
     ProcessesInfo,
 } from './getProcessDataEpicsFactory';
 import { mapStateSlice } from './rxjsCustomFilters';
+import {
+    getGenesSimilaritiesDistanceMeasure,
+    getGenesSimilarities,
+    getGenesSimilaritiesQueryGeneId,
+    genesSimilaritiesFetchEnded,
+    genesSimilaritiesFetchStarted,
+    genesSimilaritiesFetchSucceeded,
+    genesSimilaritiesQueryGeneSet,
+    genesSimilaritiesStatusUpdated,
+} from 'redux/stores/genesSimilarities';
+import { FindSimilarGenesData } from 'redux/models/rest';
+import { getBasketExpressionsIds } from 'redux/stores/timeSeries';
+import { getSelectedGenesIds } from 'redux/stores/genes';
+import { RootState } from 'redux/rootReducer';
 
 const processParametersObservable: ProcessDataEpicsFactoryProps<FindSimilarGenesData>['processParametersObservable'] =
     (action$, state$) => {
@@ -48,7 +48,7 @@ const processParametersObservable: ProcessDataEpicsFactoryProps<FindSimilarGenes
                 switchMap(
                     // Unused _fetchGenesSimilarities var is necessary to keep rxjs from piping before
                     // fetchGenesSimilarities action is emitted (after find similar genes modal is opened).
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
                     ({ expressionsIds, queryGeneId, distanceMeasure }) => {
                         // The {Pearson/Spearman} correlation between genes must be computed on at least
                         // two genes.

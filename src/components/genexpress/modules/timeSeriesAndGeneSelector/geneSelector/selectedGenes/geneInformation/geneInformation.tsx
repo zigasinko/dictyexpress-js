@@ -1,7 +1,5 @@
 import React, { ReactElement } from 'react';
 import Button from '@mui/material/Button';
-import { Gene } from 'redux/models/internal';
-import dictyBaseLogo from 'images/dictybase_logo2.jpg';
 import {
     GeneInformationContainer,
     GeneInformationTitle,
@@ -10,6 +8,8 @@ import {
     DictyBaseLogo,
     GeneInformationHeader,
 } from './geneInformation.styles';
+import { Gene } from 'redux/models/internal';
+import dictyBaseLogo from 'images/dictybase_logo2.jpg';
 
 export type GeneInformationProps = {
     gene: Gene;

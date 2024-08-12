@@ -4,6 +4,7 @@ import { connect, ConnectedProps, useDispatch } from 'react-redux';
 import TextField from '@mui/material/TextField';
 import { Autocomplete, Box, CircularProgress, ListItem, Tooltip } from '@mui/material';
 import { useSnackbar } from 'notistack';
+import { TitleSection } from './geneSelector.styles';
 import {
     getSelectedGenes,
     getHighlightedGenesIds,
@@ -21,9 +22,7 @@ import { handleError } from 'utils/errorUtils';
 import { getGenes, getPastedGenes } from 'api';
 import { objectsArrayToTsv } from 'utils/reportUtils';
 import useReport from 'components/genexpress/common/reportBuilder/useReport';
-import { TitleSection } from './geneSelector.styles';
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const mapStateToProps = (state: RootState) => {
     return {
         selectedGenes: getSelectedGenes(state.genes),
@@ -292,7 +291,7 @@ const GeneSelector = ({
 
     const handleDragOver = (event: React.DragEvent<HTMLDivElement>): void => {
         event.stopPropagation();
-        // eslint-disable-next-line no-param-reassign
+
         event.dataTransfer.dropEffect = 'copy';
     };
 
@@ -326,9 +325,10 @@ const GeneSelector = ({
             <Tooltip title={selectedTimeSeries == null ? 'First select a time series.' : ''}>
                 <Autocomplete
                     open={autocompleteOpen}
-                    autoHighlight={true}
+                    autoHighlight
                     noOptionsText="No genes were found"
                     renderOption={(props, option) => (
+                        // eslint-disable-next-line react/jsx-props-no-spreading
                         <ListItem {...props}>
                             <Box
                                 sx={{

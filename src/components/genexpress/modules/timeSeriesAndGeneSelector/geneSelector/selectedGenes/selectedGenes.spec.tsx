@@ -1,12 +1,12 @@
 import React from 'react';
 import { screen, fireEvent } from '@testing-library/react';
+import { MockStoreEnhanced } from 'redux-mock-store';
+import SelectedGenes from './selectedGenes';
 import { customRender } from 'tests/test-utils';
 import { generateBasketInfo, generateGene, mockStore, testState } from 'tests/mock';
 import { allGenesDeselected } from 'redux/stores/genes';
-import { MockStoreEnhanced } from 'redux-mock-store';
 import { RootState } from 'redux/rootReducer';
 import { AppDispatch } from 'redux/appStore';
-import SelectedGenes from './selectedGenes';
 
 const initialState = testState();
 const genes = [generateGene(0), generateGene(1)];

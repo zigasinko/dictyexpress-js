@@ -18,6 +18,13 @@ import {
     bufferCount,
 } from 'rxjs/operators';
 import { of, from, EMPTY, Observable, merge } from 'rxjs';
+import { filterNullAndUndefined, mapStateSlice } from './rxjsCustomFilters';
+import {
+    fetchAssociationsGenes,
+    fetchAndSelectPredefinedGenes,
+    fetchDifferentialExpressionGenes,
+    TFetchGenesActionPayload,
+} from './epicsActions';
 import { getBasketInfo } from 'redux/stores/timeSeries';
 import { getGenesSimilaritiesQueryGene, RootState } from 'redux/rootReducer';
 import {
@@ -37,13 +44,6 @@ import { handleError } from 'utils/errorUtils';
 import { Gene } from 'redux/models/internal';
 import { listByIds } from 'api';
 import { getGenesSimilarities } from 'redux/stores/genesSimilarities';
-import { filterNullAndUndefined, mapStateSlice } from './rxjsCustomFilters';
-import {
-    fetchAssociationsGenes,
-    fetchAndSelectPredefinedGenes,
-    fetchDifferentialExpressionGenes,
-    TFetchGenesActionPayload,
-} from './epicsActions';
 
 const listByIdsLimit = 5000;
 const fetchGenesActionObservable = (

@@ -1,12 +1,12 @@
 import React, { ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MenuItem } from '@mui/material';
+import { ShortDescription, LandingAppBarWrapper, NavButton } from './landingAppBar.styles';
 import SectionNames from 'components/landing/common/constants';
 import { scrollToTargetAdjusted } from 'utils/documentHelpers';
 import { appBarHeight } from 'components/app/globalStyle';
 import { ContentContainer } from 'components/landing/common/layout.styles';
 import DictyAppBar from 'components/common/dictyAppBar/dictyAppBar';
-import { ShortDescription, LandingAppBarWrapper, NavButton } from './landingAppBar.styles';
 
 const scrollButtonsData = [
     {

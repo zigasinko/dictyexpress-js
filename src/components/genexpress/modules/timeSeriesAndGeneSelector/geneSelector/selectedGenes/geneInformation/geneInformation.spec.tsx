@@ -1,8 +1,8 @@
 import React from 'react';
 import { screen, fireEvent } from '@testing-library/react';
+import { GeneInformation } from './geneInformation';
 import { customRender } from 'tests/test-utils';
 import { generateGene } from 'tests/mock';
-import { GeneInformation } from './geneInformation';
 
 const gene = generateGene(0);
 

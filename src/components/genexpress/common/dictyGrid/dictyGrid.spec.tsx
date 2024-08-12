@@ -1,9 +1,9 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
-import { generateTimeSeriesById } from 'tests/mock';
-import { customRender } from 'tests/test-utils';
 import _ from 'lodash';
 import DictyGrid from './dictyGrid';
+import { generateTimeSeriesById } from 'tests/mock';
+import { customRender } from 'tests/test-utils';
 
 const timeSeriesById = generateTimeSeriesById(2);
 const timeSeries = _.flatMap(timeSeriesById);

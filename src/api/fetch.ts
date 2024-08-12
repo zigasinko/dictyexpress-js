@@ -1,5 +1,5 @@
-import { ResponseError } from 'redux/models/internal';
 import { getCookie } from '../utils/documentHelpers';
+import { ResponseError } from 'redux/models/internal';
 
 export type QueryParams = { [key: string]: string | number | string[] | number[] };
 type BodyParams = Record<string, unknown>;

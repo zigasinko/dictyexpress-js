@@ -1,8 +1,8 @@
 import React from 'react';
+import GOEnrichmentTermCell from './termCell';
 import { customRender } from 'tests/test-utils';
 import { generateGOEnrichmentRow } from 'tests/mock';
 import { GOEnrichmentRow } from 'redux/models/internal';
-import GOEnrichmentTermCell from './termCell';
 
 describe('gOEnrichmentTermCell', () => {
     let goEnrichmentRow: GOEnrichmentRow;

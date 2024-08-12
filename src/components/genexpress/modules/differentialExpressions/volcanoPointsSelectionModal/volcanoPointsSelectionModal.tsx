@@ -1,4 +1,10 @@
 import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import { connect, ConnectedProps } from 'react-redux';
+import { ColDef, ValueGetterParams } from 'ag-grid-community';
+import {
+    DifferentialExpressionInfo,
+    GeneVolcanoPointsGridWrapper,
+} from './volcanoPointsSelectionModal.styles';
 import {
     ModalBody,
     ModalHeader,
@@ -8,16 +14,9 @@ import {
 import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
 import GeneSelectorModalControls from 'components/genexpress/common/geneSelectorModalControls/geneSelectorModalControls';
 import { Gene, VolcanoPoint } from 'redux/models/internal';
-import { connect, ConnectedProps } from 'react-redux';
 import { getGenes, getSelectedGenesIds } from 'redux/stores/genes';
 import { RootState } from 'redux/rootReducer';
-import { ColDef, ValueGetterParams } from 'ag-grid-community';
-import {
-    DifferentialExpressionInfo,
-    GeneVolcanoPointsGridWrapper,
-} from './volcanoPointsSelectionModal.styles';
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const mapStateToProps = (state: RootState) => {
     return {
         genes: getGenes(state.genes),

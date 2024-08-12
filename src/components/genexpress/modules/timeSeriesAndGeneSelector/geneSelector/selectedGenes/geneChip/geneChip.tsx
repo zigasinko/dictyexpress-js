@@ -1,9 +1,9 @@
 import React, { ReactElement, useRef, useState } from 'react';
 import Popper from '@mui/material/Popper';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
+import { GeneChipWrapper } from './geneChip.styles';
 import { Gene } from 'redux/models/internal';
 import ConnectedGeneInformation from 'components/genexpress/modules/timeSeriesAndGeneSelector/geneSelector/selectedGenes/geneInformation/geneInformation';
-import { GeneChipWrapper } from './geneChip.styles';
 
 export type GeneChipProps = {
     gene: Gene;

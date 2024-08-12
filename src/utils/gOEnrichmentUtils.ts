@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { GOEnrichmentJson } from '@genialis/resolwe/dist/api/types/rest';
 import _ from 'lodash';
 import {

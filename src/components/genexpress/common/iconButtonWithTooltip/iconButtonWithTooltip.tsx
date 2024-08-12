@@ -1,7 +1,7 @@
 import React, { ReactNode, ReactElement, forwardRef } from 'react';
 import { Tooltip } from '@mui/material';
-import { StyledIconButton, StyledIconButtonProps } from './iconButtonWithTooltip.styles';
 import useForwardedRef from '../useForwardedRef';
+import { StyledIconButton, StyledIconButtonProps } from './iconButtonWithTooltip.styles';
 
 type IconButtonWithTooltipProps = {
     title: string;

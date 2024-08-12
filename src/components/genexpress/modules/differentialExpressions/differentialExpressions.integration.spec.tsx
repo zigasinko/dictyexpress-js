@@ -1,5 +1,6 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
+import _ from 'lodash';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
 import {
     customRender,
@@ -17,7 +18,6 @@ import {
     generateBackendBookmark,
     generateBasketInfo,
 } from 'tests/mock';
-import _ from 'lodash';
 import { RootState } from 'redux/rootReducer';
 import { getSelectedDifferentialExpression } from 'redux/stores/differentialExpressions';
 

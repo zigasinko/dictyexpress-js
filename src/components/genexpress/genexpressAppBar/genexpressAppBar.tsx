@@ -1,8 +1,27 @@
 import { ReactElement, useState, useRef } from 'react';
 import { Button, CircularProgress, Popover, Menu, MenuItem } from '@mui/material';
 import { Bookmark as BookmarkIcon } from '@mui/icons-material';
-import dictyLogo from 'images/favicon.ico';
 import { connect, ConnectedProps, useStore } from 'react-redux';
+import { Link, useLocation } from 'react-router-dom';
+import { LoadingBar } from '../common/dictyModule/dictyModule.styles';
+import * as reportBuilder from '../common/reportBuilder/reportBuilder';
+import IconButtonWithTooltip from '../common/iconButtonWithTooltip/iconButtonWithTooltip';
+import TextInputModal from '../common/textInputModal/textInputModal';
+import { ModalHeader } from '../common/dictyModal/dictyModal.styles';
+import { DictyUrlQueryParameter } from '../common/constants';
+import { Version } from '../../common/version';
+import {
+    GenexpressAppBarWrapper,
+    DictyLogo,
+    TitleContainer,
+    GenexpressTitle,
+    DesktopSectionContainer,
+    ActionsContainer,
+    DownloadIcon,
+    BookmarkLinkContainer,
+    BookmarkUrl,
+} from './genexpressAppBar.styles';
+import dictyLogo from 'images/favicon.ico';
 import { RootState } from 'redux/rootReducer';
 import { getUser, getIsLoggedIn } from 'redux/stores/authentication';
 import DictyAppBar from 'components/common/dictyAppBar/dictyAppBar';
@@ -16,28 +35,8 @@ import { getIsFetchingSamplesExpressions } from 'redux/stores/samplesExpressions
 import { getIsFetchingGOEnrichmentJson } from 'redux/stores/gOEnrichment';
 import { saveBookmarkState } from 'managers/bookmarkStateManager';
 import { setClipboardText } from 'utils/documentHelpers';
-import {
-    GenexpressAppBarWrapper,
-    DictyLogo,
-    TitleContainer,
-    GenexpressTitle,
-    DesktopSectionContainer,
-    ActionsContainer,
-    DownloadIcon,
-    BookmarkLinkContainer,
-    BookmarkUrl,
-} from './genexpressAppBar.styles';
-import { LoadingBar } from '../common/dictyModule/dictyModule.styles';
-import * as reportBuilder from '../common/reportBuilder/reportBuilder';
-import IconButtonWithTooltip from '../common/iconButtonWithTooltip/iconButtonWithTooltip';
-import TextInputModal from '../common/textInputModal/textInputModal';
-import { ModalHeader } from '../common/dictyModal/dictyModal.styles';
-import { DictyUrlQueryParameter } from '../common/constants';
-import { Version } from '../../common/version';
-import { Link, useLocation } from 'react-router-dom';
 import { login, logout } from 'api/authApi';
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const mapStateToProps = (state: RootState) => {
     return {
         user: getUser(state.authentication),

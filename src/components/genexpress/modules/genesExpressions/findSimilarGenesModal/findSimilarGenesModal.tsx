@@ -1,4 +1,13 @@
 import React, { ReactElement, useEffect, useState } from 'react';
+import { connect, ConnectedProps } from 'react-redux';
+import { ColDef, ValueGetterParams } from 'ag-grid-community';
+import { Box, Button, MenuItem, SelectChangeEvent } from '@mui/material';
+import {
+    QueryGeneSelectFormControl,
+    SimilarGenesGridWrapper,
+    DistanceMeasureFormControl,
+} from './findSimilarGenesModal.styles';
+import ToDictybaseCell from './toDictybaseCell/toDictybaseCell';
 import {
     ModalBody,
     ModalHeader,
@@ -8,11 +17,8 @@ import {
 import DictyGrid from 'components/genexpress/common/dictyGrid/dictyGrid';
 import GeneSelectorModalControls from 'components/genexpress/common/geneSelectorModalControls/geneSelectorModalControls';
 import { Gene, Option } from 'redux/models/internal';
-import { connect, ConnectedProps } from 'react-redux';
 import { getGenesById, getIsFetchingSimilarGenes, getSelectedGenes } from 'redux/stores/genes';
 import { RootState } from 'redux/rootReducer';
-import { ColDef, ValueGetterParams } from 'ag-grid-community';
-import { Box, Button, MenuItem } from '@mui/material';
 import DictySelect from 'components/genexpress/common/dictySelect/dictySelect';
 import { fetchGenesSimilarities } from 'redux/epics/epicsActions';
 import {
@@ -26,13 +32,6 @@ import {
 } from 'redux/stores/genesSimilarities';
 import { formatNumber } from 'utils/math';
 import { DistanceMeasure } from 'components/genexpress/common/constants';
-import {
-    QueryGeneSelectFormControl,
-    SimilarGenesGridWrapper,
-    DistanceMeasureFormControl,
-} from './findSimilarGenesModal.styles';
-import ToDictybaseCell from './toDictybaseCell/toDictybaseCell';
-import { SelectChangeEvent } from '@mui/material';
 import { LoadingBar } from 'components/genexpress/common/dictyModule/dictyModule.styles';
 import { StatusIcon } from 'components/genexpress/common/statusIcon';
 
@@ -42,7 +41,6 @@ export const distanceMeasureOptions: Option<DistanceMeasure>[] = [
     { value: DistanceMeasure.pearson, label: 'Pearson' },
 ];
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const mapStateToProps = (state: RootState) => {
     return {
         genesById: getGenesById(state.genes),

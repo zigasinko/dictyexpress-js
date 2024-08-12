@@ -1,16 +1,6 @@
 import React, { ReactElement, useEffect, useState, ChangeEvent, useRef, useCallback } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import _ from 'lodash';
-import { RootState } from 'redux/rootReducer';
-import { getGenesById, getHighlightedGenesIds, getSelectedGenesIds } from 'redux/stores/genes';
-import { DifferentialExpression, Thresholds, VolcanoPoint } from 'redux/models/internal';
-import { getMinMax, logOfBase } from 'utils/math';
-import {
-    differentialExpressionSelected,
-    getDifferentialExpressions,
-    getIsFetchingDifferentialExpressions,
-    getSelectedDifferentialExpression,
-} from 'redux/stores/differentialExpressions';
 import {
     Box,
     FormControlLabel,
@@ -21,13 +11,8 @@ import {
     Tooltip,
 } from '@mui/material';
 import { SwapHoriz } from '@mui/icons-material';
-import { getBasketInfo, getSelectedTimeSeries } from 'redux/stores/timeSeries';
-import DictySelect from 'components/genexpress/common/dictySelect/dictySelect';
-import { objectsArrayToTsv } from 'utils/reportUtils';
-import useReport from 'components/genexpress/common/reportBuilder/useReport';
-import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
-import DifferentialExpressionsVolcanoPlot from './differentialExpressionsVolcanoPlot';
 import { ChartHandle } from '../../common/chart/chart';
+import DifferentialExpressionsVolcanoPlot from './differentialExpressionsVolcanoPlot';
 import {
     DifferentialExpressionsContainer,
     DifferentialExpressionsControls,
@@ -37,9 +22,23 @@ import {
     VolcanoPlotContainer,
 } from './differentialExpressions.styles';
 import VolcanoPointSelectionModal from './volcanoPointsSelectionModal/volcanoPointsSelectionModal';
+import { RootState } from 'redux/rootReducer';
+import { getGenesById, getHighlightedGenesIds, getSelectedGenesIds } from 'redux/stores/genes';
+import { DifferentialExpression, Thresholds, VolcanoPoint } from 'redux/models/internal';
+import { getMinMax, logOfBase } from 'utils/math';
+import {
+    differentialExpressionSelected,
+    getDifferentialExpressions,
+    getIsFetchingDifferentialExpressions,
+    getSelectedDifferentialExpression,
+} from 'redux/stores/differentialExpressions';
+import { getBasketInfo, getSelectedTimeSeries } from 'redux/stores/timeSeries';
+import DictySelect from 'components/genexpress/common/dictySelect/dictySelect';
+import { objectsArrayToTsv } from 'utils/reportUtils';
+import useReport from 'components/genexpress/common/reportBuilder/useReport';
+import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
 import useSize from 'components/genexpress/common/useSize';
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const mapStateToProps = (state: RootState) => {
     return {
         selectedTimeSeries: getSelectedTimeSeries(state.timeSeries),
@@ -345,7 +344,6 @@ positives.
                 <DifferentialExpressionsControls>
                     <Tooltip
                         title={
-                            // eslint-disable-next-line no-nested-ternary
                             selectedTimeSeries == null
                                 ? 'No time series selected'
                                 : differentialExpressions.length === 0

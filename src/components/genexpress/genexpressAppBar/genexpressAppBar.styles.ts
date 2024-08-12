@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { AppBar } from '@mui/material';
-import { Title } from 'components/landing/common/title.styles';
 import { GetApp } from '@mui/icons-material';
+import { Title } from 'components/landing/common/title.styles';
 
 export const GenexpressAppBarWrapper = styled(AppBar)`
     background-color: #fff;

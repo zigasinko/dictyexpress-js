@@ -1,5 +1,14 @@
 import React, { ReactElement, useRef, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
+import { Button, FormControlLabel, Switch } from '@mui/material';
+import GenesExpressionsLineChart from './genesExpressionsLineChart';
+import {
+    GenesExpressionsContainer,
+    GenesExpressionsControls,
+    GenesExpressionsLineChartContainer,
+} from './genesExpressions.style';
+import FindSimilarGenesModal from './findSimilarGenesModal/findSimilarGenesModal';
+import SelectComparisonTimeSeriesModal from './selectComparisonTimeSeriesModal/selectComparisonTimeSeriesModal';
 import {
     getSelectedGenesComparisonExpressions,
     getSelectedGenesExpressions,
@@ -9,21 +18,11 @@ import { getHighlightedGenesIds, genesHighlighted, getSelectedGenesIds } from 'r
 import { getBasketExpressionsIds, getComparisonTimeSeries } from 'redux/stores/timeSeries';
 import { ChartHandle } from 'components/genexpress/common/chart/chart';
 import useReport from 'components/genexpress/common/reportBuilder/useReport';
-import { Button, FormControlLabel, Switch } from '@mui/material';
 import { GeneExpression } from 'redux/models/internal';
 import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
 import useBookmarkableState from 'components/genexpress/common/useBookmarkableState';
 import { BookmarkStatePath } from 'components/genexpress/common/constants';
-import GenesExpressionsLineChart from './genesExpressionsLineChart';
-import {
-    GenesExpressionsContainer,
-    GenesExpressionsControls,
-    GenesExpressionsLineChartContainer,
-} from './genesExpressions.style';
-import FindSimilarGenesModal from './findSimilarGenesModal/findSimilarGenesModal';
-import SelectComparisonTimeSeriesModal from './selectComparisonTimeSeriesModal/selectComparisonTimeSeriesModal';
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const mapStateToProps = (state: RootState) => {
     return {
         genesExpressions: getSelectedGenesExpressions(state),

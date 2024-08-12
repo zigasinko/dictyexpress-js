@@ -1,8 +1,8 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { GeneChip } from './geneChip';
 import { customRender } from 'tests/test-utils';
 import { generateGene } from 'tests/mock';
-import { GeneChip } from './geneChip';
 
 const gene = generateGene(0);
 

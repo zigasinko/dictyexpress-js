@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction, createSelector, combineReducers } from '@reduxjs/toolkit';
 import _ from 'lodash';
-import { Gene, GenesById } from 'redux/models/internal';
+import { shallowEqual } from 'react-redux';
 import createIsFetchingSlice from './fetch';
 import { clearStateOnActions } from './common';
-import { shallowEqual } from 'react-redux';
+import { Gene, GenesById } from 'redux/models/internal';
 
 // State slices.
 const genesByIdInitialState = {} as GenesById;

@@ -1,10 +1,10 @@
 import { DataStatus } from '@genialis/resolwe/dist/api/types/rest';
 import { createSlice, PayloadAction, combineReducers } from '@reduxjs/toolkit';
-import { DistanceMeasure } from 'components/genexpress/common/constants';
-import { GeneSimilarity } from 'redux/models/internal';
 import { clearStateOnActions } from './common';
 import createIsFetchingSlice from './fetch';
 import { timeSeriesSelected } from './timeSeries';
+import { GeneSimilarity } from 'redux/models/internal';
+import { DistanceMeasure } from 'components/genexpress/common/constants';
 
 // State slices.
 const queryGeneIdInitialState = null;

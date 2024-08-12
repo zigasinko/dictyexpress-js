@@ -1,11 +1,11 @@
-import { LayoutBreakpoint, ModulesKeys } from 'components/genexpress/common/constants';
-import { BreakpointsCols } from 'redux/models/internal';
 import layoutsReducer, {
     generateModuleLayout,
     layoutsChanged,
     layoutsInitialState,
     LayoutsState,
 } from './layouts';
+import { LayoutBreakpoint, ModulesKeys } from 'components/genexpress/common/constants';
+import { BreakpointsCols } from 'redux/models/internal';
 
 const widthInCols = 3;
 const minWidthInCols = 2;

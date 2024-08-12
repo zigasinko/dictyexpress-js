@@ -1,26 +1,8 @@
 import { ReactElement, useEffect } from 'react';
 import { Layouts, Responsive, WidthProvider } from 'react-grid-layout';
 import { connect, ConnectedProps, useDispatch } from 'react-redux';
-import { RootState } from 'redux/rootReducer';
-import {
-    getTimeSeriesIsFetching,
-    getIsAddingToBasket,
-    getIsFetchingGenesMappings,
-} from 'redux/stores/timeSeries';
-import { getIsFetchingSamplesExpressions } from 'redux/stores/samplesExpressions';
-import { getIsLoggingOut } from 'redux/stores/authentication';
-import {
-    getIsFetchingDifferentialExpressions,
-    getIsFetchingDifferentialExpressionsData,
-} from 'redux/stores/differentialExpressions';
-import { breakpoints } from 'components/app/globalStyle';
-import { defaultBreakpointCols, getLayouts, layoutsChanged } from 'redux/stores/layouts';
 import _ from 'lodash';
-import { getGOEnrichmentStatus, getIsFetchingGOEnrichmentJson } from 'redux/stores/gOEnrichment';
-import { appFocused, appStarted, fetchAndSelectPredefinedGenes } from 'redux/epics/epicsActions';
 import { useLocation } from 'react-router-dom';
-import { loadBookmarkedState } from 'managers/bookmarkStateManager';
-import { getUrlQueryParameter } from 'utils/url';
 import TimeSeriesAndGeneSelector from './modules/timeSeriesAndGeneSelector/timeSeriesAndGeneSelector';
 import DictyModule from './common/dictyModule/dictyModule';
 import SnackbarNotifier from './snackbarNotifier/snackbarNotifier';
@@ -32,10 +14,27 @@ import GenesExpressions from './modules/genesExpressions/genesExpressions';
 import { DictyUrlQueryParameter, LayoutBreakpoint, ModulesKeys } from './common/constants';
 import { ResponsiveGridLayoutContainer } from './geneExpressGrid.styles';
 import useBrowserVisibility from './common/useBrowserVisibility';
+import { getUrlQueryParameter } from 'utils/url';
+import { loadBookmarkedState } from 'managers/bookmarkStateManager';
+import { appFocused, appStarted, fetchAndSelectPredefinedGenes } from 'redux/epics/epicsActions';
+import { getGOEnrichmentStatus, getIsFetchingGOEnrichmentJson } from 'redux/stores/gOEnrichment';
+import { defaultBreakpointCols, getLayouts, layoutsChanged } from 'redux/stores/layouts';
+import { breakpoints } from 'components/app/globalStyle';
+import {
+    getIsFetchingDifferentialExpressions,
+    getIsFetchingDifferentialExpressionsData,
+} from 'redux/stores/differentialExpressions';
+import { getIsLoggingOut } from 'redux/stores/authentication';
+import { getIsFetchingSamplesExpressions } from 'redux/stores/samplesExpressions';
+import {
+    getTimeSeriesIsFetching,
+    getIsAddingToBasket,
+    getIsFetchingGenesMappings,
+} from 'redux/stores/timeSeries';
+import { RootState } from 'redux/rootReducer';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const mapStateToProps = (state: RootState) => {
     return {
         layouts: getLayouts(state.layouts),

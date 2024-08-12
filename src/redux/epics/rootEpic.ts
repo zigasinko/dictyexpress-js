@@ -1,9 +1,7 @@
 import { Action } from '@reduxjs/toolkit';
 import { combineEpics, Epic } from 'redux-observable';
-import { RootState } from 'redux/rootReducer';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { logError } from 'utils/errorUtils';
 import authenticationEpics from './authenticationEpics';
 import connectToServerEpics from './connectToServerEpics';
 import genesEpics from './genesEpics';
@@ -15,6 +13,8 @@ import findSimilarGenesEpics from './findSimilarGenesEpics';
 import samplesExpressionsEpics from './samplesExpressionsEpics';
 import differentialExpressionsEpics from './differentialExpressionsEpics';
 import ontologyOboEpics from './ontologyOboEpics';
+import { logError } from 'utils/errorUtils';
+import { RootState } from 'redux/rootReducer';
 
 const rootEpic: Epic<Action, Action, RootState> = (
     action$,

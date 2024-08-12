@@ -1,5 +1,8 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { MockStoreEnhanced } from 'redux-mock-store';
+import _ from 'lodash';
+import GeneSelector from './geneSelector';
 import {
     customRender,
     handleCommonRequests,
@@ -14,11 +17,8 @@ import {
     generateBasketAddSamplesResponse,
 } from 'tests/mock';
 import { allGenesDeselected, genesFetchSucceeded, genesSelected } from 'redux/stores/genes';
-import { MockStoreEnhanced } from 'redux-mock-store';
 import { RootState } from 'redux/rootReducer';
 import { AppDispatch } from 'redux/appStore';
-import _ from 'lodash';
-import GeneSelector from './geneSelector';
 
 const genesById = generateGenesById(2);
 const genes = _.flatMap(genesById);

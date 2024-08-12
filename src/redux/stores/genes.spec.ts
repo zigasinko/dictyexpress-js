@@ -1,6 +1,4 @@
 import _ from 'lodash';
-import { Gene, GenesById } from 'redux/models/internal';
-import { generateGenesById, generateGene } from 'tests/mock';
 import genesReducer, {
     genesSelected,
     GenesState,
@@ -11,6 +9,8 @@ import genesReducer, {
     geneUnhighlighted,
     genesFetchSucceeded,
 } from './genes';
+import { Gene, GenesById } from 'redux/models/internal';
+import { generateGenesById, generateGene } from 'tests/mock';
 
 describe('genes store', () => {
     let initialState: GenesState;

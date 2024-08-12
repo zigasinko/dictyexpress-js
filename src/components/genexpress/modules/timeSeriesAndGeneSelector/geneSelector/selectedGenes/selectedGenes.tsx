@@ -1,6 +1,8 @@
 import React, { ReactElement } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Clear as ClearIcon, ContentCopy as ContentCopyIcon } from '@mui/icons-material';
+import { GeneChip } from './geneChip/geneChip';
+import { SelectedGenesContainer, ActionsContainer } from './selectedGenes.styles';
 import { Gene } from 'redux/models/internal';
 import {
     geneDeselected,
@@ -10,8 +12,6 @@ import {
 } from 'redux/stores/genes';
 import IconButtonWithTooltip from 'components/genexpress/common/iconButtonWithTooltip/iconButtonWithTooltip';
 import { setClipboardText } from 'utils/documentHelpers';
-import { GeneChip } from './geneChip/geneChip';
-import { SelectedGenesContainer, ActionsContainer } from './selectedGenes.styles';
 
 const connector = connect(null, {
     connectedGeneDeselected: geneDeselected,

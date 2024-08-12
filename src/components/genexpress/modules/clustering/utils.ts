@@ -1,6 +1,6 @@
-import { ClusteringLinkageFunction, DistanceMeasure } from 'components/genexpress/common/constants';
-import { agnes, indices, Cluster } from './cluster';
 import { groupBy, reverse, round, sum } from 'lodash';
+import { agnes, indices, Cluster } from './cluster';
+import { ClusteringLinkageFunction, DistanceMeasure } from 'components/genexpress/common/constants';
 import { ClusterNode, GeneExpression } from 'redux/models/internal';
 
 export const euclidean = (v1: number[], v2: number[]) => {

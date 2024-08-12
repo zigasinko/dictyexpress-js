@@ -1,5 +1,6 @@
 import React, { ReactElement, useState } from 'react';
 import Button from '@mui/material/Button';
+import { TextField } from '@mui/material';
 import {
     ModalFooter,
     ModalBody,
@@ -7,7 +8,6 @@ import {
     ModalContainer,
     CenteredModal,
 } from 'components/genexpress/common/dictyModal/dictyModal.styles';
-import { TextField } from '@mui/material';
 
 type TextInputModalProps = {
     title: string;

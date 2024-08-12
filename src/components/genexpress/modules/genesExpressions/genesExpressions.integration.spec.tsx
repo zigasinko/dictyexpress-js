@@ -1,4 +1,10 @@
 import { screen, fireEvent, waitFor } from '@testing-library/react';
+import _ from 'lodash';
+import {
+    colorScaleLimit,
+    highlightedLineStrokeWidth,
+    lineStrokeWidth,
+} from './genesExpressionsLineChart';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
 import {
     customRender,
@@ -19,13 +25,7 @@ import {
     generateGenesQueryParameter,
 } from 'tests/mock';
 import { RootState } from 'redux/rootReducer';
-import _ from 'lodash';
 import { BookmarkStatePath } from 'components/genexpress/common/constants';
-import {
-    colorScaleLimit,
-    highlightedLineStrokeWidth,
-    lineStrokeWidth,
-} from './genesExpressionsLineChart';
 import { GeneMapping } from 'redux/models/internal';
 
 const genesById = generateGenesById(colorScaleLimit);

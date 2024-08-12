@@ -1,5 +1,8 @@
 import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
+import _ from 'lodash';
+import { MockStoreEnhanced } from 'redux-mock-store';
+import GOEnrichment, { aspectOptions } from './gOEnrichment';
 import {
     customRender,
     handleCommonRequests,
@@ -14,13 +17,10 @@ import {
     generateGOEnrichmentRow,
 } from 'tests/mock';
 import { RootState } from 'redux/rootReducer';
-import _ from 'lodash';
 import { EnhancedGOEnrichmentJson } from 'redux/models/internal';
 import * as reportBuilder from 'components/genexpress/common/reportBuilder/reportBuilder';
-import { MockStoreEnhanced } from 'redux-mock-store';
 import { AppDispatch } from 'redux/appStore';
 import { appendMissingAttributesToJson } from 'utils/gOEnrichmentUtils';
-import GOEnrichment, { aspectOptions } from './gOEnrichment';
 
 const genesById = generateGenesById(2);
 const genes = _.flatMap(genesById);
