@@ -14,13 +14,13 @@ export const MobileSection = styled.div`
 `;
 
 export type DesktopSectionProps = {
-    alwaysVisible?: boolean;
+    $alwaysVisible?: boolean;
 };
 
 export const DesktopSection = styled.div<DesktopSectionProps>`
     && {
         ${(props) =>
-            props.alwaysVisible
+            props.$alwaysVisible
                 ? css`
                       display: inline-flex;
                       align-items: center;

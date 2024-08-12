@@ -1,6 +1,6 @@
 $primary: #49688d;
 
-@use '~ag-grid-community/styles' as ag;
+@use 'ag-grid-community/styles' as ag;
 
 @include ag.grid-styles(
     (

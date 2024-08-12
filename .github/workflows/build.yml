@@ -49,8 +49,8 @@ jobs:
         run: yarn
       - name: Build bundle
         env:
-          REACT_APP_DEPLOY_ENV: "staging"
-          REACT_APP_COMMIT_SHA: ${{ github.sha }}
+          VITE_APP_DEPLOY_ENV: "staging"
+          VITE_APP_COMMIT_SHA: ${{ github.sha }}
         run: yarn build
       - name: Compress the build folder
         run: tar -czf ${{ env.FILENAME }} ./build/

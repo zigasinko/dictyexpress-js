@@ -89,13 +89,7 @@ describe('differentialExpressions integration', () => {
 
         customRender(<GeneExpressGrid />, { initialState });
 
-        expect(
-            await screen.findByRole(
-                'button',
-                { name: 'Differential expression' },
-                { timeout: 3000 },
-            ),
-        ).toHaveClass('Mui-disabled');
+        expect(await screen.findByLabelText('Differential expression')).toHaveClass('Mui-disabled');
     });
 
     it('should select differential expression if only one is available', async () => {

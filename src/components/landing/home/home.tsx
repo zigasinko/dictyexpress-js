@@ -20,7 +20,7 @@ const Home = (): ReactElement => (
                 <HomeDescription>
                     <section className="title">
                         <img src={dictyLogo} className="logo" alt="dictyExpress logo" />
-                        <h1 className="header">{process.env.REACT_APP_NAME}</h1>
+                        <h1 className="header">{import.meta.env.VITE_APP_NAME}</h1>
                         <Version />
                     </section>
                     <p>

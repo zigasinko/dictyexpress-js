@@ -4,7 +4,7 @@ import SectionNames from 'components/landing/common/constants';
 import { Title } from 'components/landing/common/title.styles';
 
 const Citing = (): ReactElement => (
-    <SectionContentContainer id={SectionNames.CITING} centerText paddingBottom={35}>
+    <SectionContentContainer id={SectionNames.CITING} $centerText $paddingBottom={35}>
         <Title>Citing dictyExpress</Title>
         <p>
             Stajdohar M, Rosengarten RD, Kokosar J, Jeran L, Blenkus D, Shaulsky G, Zupan B.{' '}

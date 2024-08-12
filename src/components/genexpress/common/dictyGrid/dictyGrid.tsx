@@ -184,7 +184,7 @@ const DictyGrid = <T,>({
             )}
             <GridWrapper
                 className="ag-theme-balham"
-                suppressHorizontalScroll={!disableSizeColumnsToFit}
+                $suppressHorizontalScroll={!disableSizeColumnsToFit}
             >
                 <AgGridReact
                     key={gridKey}

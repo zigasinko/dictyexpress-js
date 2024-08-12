@@ -38,7 +38,7 @@ const DictyAppBar = ({ desktopSection, mobileMenu }: AppBarProps): ReactElement 
     return (
         <>
             <DictyToolbar disableGutters>
-                <DesktopSection alwaysVisible={alwaysDesktop}>{desktopSection}</DesktopSection>
+                <DesktopSection $alwaysVisible={alwaysDesktop}>{desktopSection}</DesktopSection>
                 {!alwaysDesktop && (
                     <MobileSection>
                         <IconButton

@@ -3,20 +3,20 @@
 exports[`citationCell should render as default snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="sc-gEvEer hobwdv MuiBox-root"
+    class="sc-gJhJTp fonkkw MuiBox-root"
   >
     <button
-      class="MuiButtonBase-root-iLYEZ iYGEdV MuiButtonBase-root"
+      class="MuiButtonBase-root-ocQuz kiSjtm MuiButtonBase-root"
       tabindex="0"
       type="button"
     >
       <a
-        class="MuiTypography-root-hjKMqV kVVMva MuiTypography-root MuiTypography-inherit MuiLink-root-ekVuru dLpwMQ MuiLink-root MuiLink-underlineAlways"
+        class="MuiTypography-root-hJQhZH cagcOC MuiTypography-root MuiTypography-inherit MuiLink-root-efECBU drMBtS MuiLink-root MuiLink-underlineAlways"
       >
         Rosengarten et. al.
       </a>
       <span
-        class="MuiTouchRipple-root-gUFkdJ hmrPgQ MuiTouchRipple-root"
+        class="MuiTouchRipple-root-huKFMv dxeyKA MuiTouchRipple-root"
       />
     </button>
   </div>

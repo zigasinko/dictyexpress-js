@@ -26,7 +26,7 @@ const getStore = (initialState?: RootState, defaultMiddlewareOptions?: MiddleWar
             epicMiddleware,
         ],
         preloadedState: initialState,
-        devTools: process.env.NODE_ENV === 'development',
+        devTools: import.meta.env.NODE_ENV === 'development',
     });
 
     const epic$ = new BehaviorSubject(rootEpic);
@@ -38,12 +38,12 @@ const getStore = (initialState?: RootState, defaultMiddlewareOptions?: MiddleWar
         epic$.pipe(switchMap((epic) => epic(actionIn, actionOut, state))),
     );
 
-    if (module.hot) {
-        module.hot.accept('./rootReducer', () => {
+    if (import.meta.hot) {
+        import.meta.hot.accept('./rootReducer', () => {
             store.replaceReducer(rootReducer);
         });
 
-        module.hot.accept('./epics/rootEpic', () => {
+        import.meta.hot.accept('./epics/rootEpic', () => {
             epic$.next(rootEpic);
         });
     }

@@ -12,7 +12,7 @@ import genialisLogo from 'images/genialisLogo.png';
 
 const Credits = (): ReactElement => (
     <DarkSectionContainer>
-        <SectionContentContainer id={SectionNames.CREDITS} centerText>
+        <SectionContentContainer id={SectionNames.CREDITS} $centerText>
             <Title>Credits</Title>
             <p>
                 dictyExpress was built in collaboration with

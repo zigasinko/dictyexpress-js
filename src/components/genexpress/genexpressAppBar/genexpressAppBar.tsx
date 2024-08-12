@@ -124,7 +124,7 @@ const GenexpressAppBar = ({
                 <Link to="/">
                     <DictyLogo src={dictyLogo} alt="dictyExpress logo" />
                 </Link>
-                <GenexpressTitle>{process.env.REACT_APP_NAME}</GenexpressTitle>
+                <GenexpressTitle>{import.meta.env.VITE_APP_NAME}</GenexpressTitle>
                 <Version />
             </TitleContainer>
             <ActionsContainer>

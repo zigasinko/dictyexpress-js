@@ -2,9 +2,9 @@ import styled, { css } from 'styled-components';
 import { breakpoints } from 'components/app/globalStyle';
 
 type ContainerProps = {
-    centerText?: boolean;
-    paddingTop?: number;
-    paddingBottom?: number;
+    $centerText?: boolean;
+    $paddingTop?: number;
+    $paddingBottom?: number;
 };
 
 export const DarkSectionContainer = styled.div`
@@ -32,11 +32,11 @@ export const ContentContainer = styled.div`
 export const SectionContentContainer = styled(ContentContainer)<ContainerProps>`
     padding-left: 15px;
     padding-right: 15px;
-    padding-top: ${(props): string => `${props.paddingTop ?? 35}px`};
-    padding-bottom: ${(props): string => `${props.paddingBottom ?? 35}px`};
+    padding-top: ${(props): string => `${props.$paddingTop ?? 35}px`};
+    padding-bottom: ${(props): string => `${props.$paddingBottom ?? 35}px`};
 
     ${(props) =>
-        props.centerText
+        props.$centerText
             ? css`
                   text-align: center;
               `

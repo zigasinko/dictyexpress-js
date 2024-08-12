@@ -6,9 +6,9 @@ import App from 'components/app/app';
 
 const history = createBrowserHistory();
 
-if (process.env.NODE_ENV === 'production') {
-    if (process.env.REACT_APP_SENTRY_URL) {
-        initializeSentry(process.env.REACT_APP_SENTRY_URL);
+if (import.meta.env.PROD) {
+    if (import.meta.env.VITE_APP_SENTRY_URL) {
+        initializeSentry(import.meta.env.VITE_APP_SENTRY_URL);
     }
 }
 const rootElement = document.getElementById('root');
@@ -38,8 +38,8 @@ root.render(
     </StrictMode>,
 );
 
-if (module.hot) {
-    module.hot.accept('./components/app/app', () => {
+if (import.meta.hot) {
+    import.meta.hot.accept('./components/app/app', () => {
         // eslint-disable-next-line @typescript-eslint/no-require-imports
         const NextApp = require('./components/app/app').default;
         root.render(<NextApp />);

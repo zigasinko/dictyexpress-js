@@ -7,6 +7,6 @@ export const authApiUrl = SAML_AUTH_URL ?? `${baseUrl}/saml-auth`;
 const websocketHost =
     WEBSOCKET_URL ??
     `ws${window.location.hostname === 'localhost' ? '' : 's'}://${window.location.host}/ws/v2`;
-export const webSocketUrl = process.env.REACT_APP_TEST_WSS ?? websocketHost;
+export const webSocketUrl = import.meta.env.VITE_APP_TEST_WSS ?? websocketHost;
 
 export const sessionId = uuidv4();

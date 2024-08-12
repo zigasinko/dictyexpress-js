@@ -49,7 +49,7 @@ const request = async (
     /* Development is usually done via proxy, that's why cookies aren't sent through (not same origin).
      *  That's why credentials are set to "include" in development mode.
      */
-    if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+    if (import.meta.env.DEV) {
         options.credentials = 'include';
     }
 

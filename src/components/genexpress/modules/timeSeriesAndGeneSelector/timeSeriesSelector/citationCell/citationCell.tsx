@@ -62,7 +62,7 @@ const CitationCell = ({
                                     </a>
                                 </ListItem>
                             </List>
-                            Please cite the {process.env.REACT_APP_NAME} app as well:
+                            Please cite the {import.meta.env.VITE_APP_NAME} app as well:
                             <Box sx={{ marginTop: 1 }}>
                                 M. Stajdohar, R. D. Rosengarten, J. Kokosar, L. Jeran, D. Blenkus,
                                 G. Shaulsky & B. Zupan,{' '}

@@ -32,7 +32,7 @@ export type SliderArrowProps = {
 const Screenshots = (): ReactElement => {
     return (
         <DarkSectionContainer>
-            <SectionContentContainer id={SectionNames.SCREENSHOTS} centerText>
+            <SectionContentContainer id={SectionNames.SCREENSHOTS} $centerText>
                 <Title>Screenshots</Title>
                 <AlignCenter>
                     <SliderContainer

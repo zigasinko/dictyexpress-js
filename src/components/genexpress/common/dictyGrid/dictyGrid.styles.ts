@@ -9,7 +9,7 @@ export const DictyGridContainer = styled.div`
 `;
 
 type GridWrapperProps = {
-    suppressHorizontalScroll?: boolean;
+    $suppressHorizontalScroll?: boolean;
 };
 
 export const GridWrapper = styled.div<GridWrapperProps>`
@@ -22,7 +22,7 @@ export const GridWrapper = styled.div<GridWrapperProps>`
     // That's why we remove horizontal scroll manually with this css.
     && {
         ${(props) =>
-            props.suppressHorizontalScroll
+            props.$suppressHorizontalScroll
                 ? css`
                       .ag-center-cols-viewport {
                           overflow-x: hidden;
