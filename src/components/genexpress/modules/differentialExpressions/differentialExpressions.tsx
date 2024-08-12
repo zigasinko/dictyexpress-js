@@ -347,8 +347,8 @@ positives.
                             selectedTimeSeries == null
                                 ? 'No time series selected'
                                 : differentialExpressions.length === 0
-                                ? "Selected time series doesn't have any differential expressions."
-                                : ''
+                                  ? "Selected time series doesn't have any differential expressions."
+                                  : ''
                         }
                     >
                         <DifferentialExpressionsSelectWrapper

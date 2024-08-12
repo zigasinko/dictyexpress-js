@@ -140,8 +140,8 @@ export const validateCreateStateRequest = async (
     ) => void,
 ): Promise<void> => {
     return waitFor(() => {
-        const createAppStateCalls = fetchMock.mock.calls.filter(
-            (call) => call[0]?.toString().includes('app-state'),
+        const createAppStateCalls = fetchMock.mock.calls.filter((call) =>
+            call[0]?.toString().includes('app-state'),
         );
 
         expect(createAppStateCalls).toHaveLength(1);

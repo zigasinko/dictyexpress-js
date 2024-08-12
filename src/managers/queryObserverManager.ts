@@ -66,9 +66,8 @@ export const reactiveGet = async <T extends IdObject>(
     const ids = items.map((item) => item.id);
 
     const observerResponse = await post(`${baseUrl}/subscribe`, { ids, session_id: sessionId });
-    const { subscription_id: subscriptionId } = await deserializeResponse<QueryObserverResponse>(
-        observerResponse,
-    );
+    const { subscription_id: subscriptionId } =
+        await deserializeResponse<QueryObserverResponse>(observerResponse);
 
     const refetch = (id: number): Promise<unknown[]> =>
         new Promise((resolve, reject) => {

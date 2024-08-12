@@ -143,8 +143,8 @@ const GenexpressAppBar = ({
                         areExportingModulesLoading
                             ? 'Export will be available when all modules are loaded.'
                             : isExporting
-                            ? 'Exporting'
-                            : 'Export'
+                              ? 'Exporting'
+                              : 'Export'
                     }
                     disabled={areExportingModulesLoading || isExporting}
                     onClick={(): void => {

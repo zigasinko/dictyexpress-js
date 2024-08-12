@@ -164,7 +164,7 @@ export const getSelectedTimeSeries = createSelector(
     getTimeSeriesById,
     getSelectedTimeSeriesId,
     (timeSeriesById, selectedId): Relation | null => {
-        return selectedId != null ? timeSeriesById[selectedId] ?? null : null;
+        return selectedId != null ? (timeSeriesById[selectedId] ?? null) : null;
     },
 );
 
