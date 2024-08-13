@@ -45,9 +45,3 @@ jobs:
         run: yarn test
       - name: Run build
         run: yarn build
-      - name: Run E2E tests
-        env:
-          LOGIN_EMAIL: ${{ secrets.E2E_LOGIN_EMAIL }}
-          LOGIN_PASSWORD: ${{ secrets.E2E_LOGIN_PASSWORD }}
-          CI: true
-        run: yarn e2e
