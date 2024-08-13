@@ -1,5 +1,5 @@
 import { Action } from '@reduxjs/toolkit';
-import { ofType, Epic } from 'redux-observable';
+import { Epic } from 'redux-observable';
 import {
     catchError,
     retryWhen,
@@ -29,7 +29,7 @@ let webSocketSubject: WebSocketSubject<WebSocketMessage>;
 
 const connectToServerEpic: Epic<Action, Action, RootState> = (action$) =>
     action$.pipe(
-        ofType(appStarted.toString()),
+        filter(appStarted.match),
         mergeWith(
             action$.pipe(
                 filter(reconnectToServer.match),

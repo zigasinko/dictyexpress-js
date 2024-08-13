@@ -1,5 +1,5 @@
 import { Action } from '@reduxjs/toolkit';
-import { Epic, combineEpics, ofType } from 'redux-observable';
+import { Epic, combineEpics } from 'redux-observable';
 import { mergeMap, startWith, endWith, catchError, map, switchMap, filter } from 'rxjs/operators';
 import { combineLatest, of, from, merge, EMPTY } from 'rxjs';
 import { appStarted, fetchDifferentialExpressionGenes } from './epicsActions';
@@ -22,7 +22,7 @@ import { getDifferentialExpressions, getStorage } from 'api';
 
 const fetchDifferentialExpressionsEpic: Epic<Action, Action, RootState> = (action$) => {
     return action$.pipe(
-        ofType(appStarted.toString()),
+        filter(appStarted.match),
         switchMap(() => {
             return from(getDifferentialExpressions()).pipe(
                 map((differentialExpressions) =>

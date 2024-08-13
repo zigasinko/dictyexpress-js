@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { DataStatus, Storage } from '@genialis/resolwe/dist/api/types/rest';
-import { combineEpics, Epic, ofType } from 'redux-observable';
+import { combineEpics, Epic } from 'redux-observable';
 import { filter, map, mergeMap, switchMap, withLatestFrom } from 'rxjs/operators';
 import { Action } from '@reduxjs/toolkit';
 import { combineLatest, merge, of } from 'rxjs';
@@ -33,7 +33,7 @@ const processParametersObservable: ProcessDataEpicsFactoryProps<FindSimilarGenes
     (action$, state$) => {
         return merge(
             action$.pipe(
-                ofType(fetchGenesSimilarities),
+                filter(fetchGenesSimilarities.match),
                 withLatestFrom(state$),
                 mergeMap(([, state]) => {
                     return of({

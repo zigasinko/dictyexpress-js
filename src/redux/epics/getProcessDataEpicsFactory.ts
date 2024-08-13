@@ -77,7 +77,7 @@ const getProcessDataEpicsFactory = <DataType extends Data>({
     };
 
     const handleAnalysisDataResponse = (response: DataType): Observable<Action> => {
-        let resultAction = EMPTY as Observable<Action<unknown>> | Observable<never>;
+        let resultAction = EMPTY as Observable<Action> | Observable<never>;
         if (response.status === ERROR_DATA_STATUS) {
             resultAction = handleProcessEndedWithError(
                 `${processInfo.name} analysis ended with an error ${

@@ -21,12 +21,21 @@ const getStore = (initialState?: RootState, defaultMiddlewareOptions?: MiddleWar
 
     const store = configureStore({
         reducer: rootReducer,
-        middleware: (getDefaultMiddleware) => [
-            ...getDefaultMiddleware(defaultMiddlewareOptions),
-            epicMiddleware,
-        ],
+        middleware: (getDefaultMiddleware) => {
+            return getDefaultMiddleware({
+                serializableCheck: {
+                    // Ignore these action types
+                    // ignoredActions: ['your/action/type'],
+                    // Ignore these field paths in all actions
+                    ignoredActionPaths: ['payload.navigate'],
+                    // Ignore these paths in the state
+                    // ignoredPaths: ['items.dates'],
+                },
+                ...defaultMiddlewareOptions,
+            }).concat(epicMiddleware);
+        },
         preloadedState: initialState,
-        devTools: import.meta.env.NODE_ENV === 'development',
+        devTools: import.meta.env.DEV,
     });
 
     const epic$ = new BehaviorSubject(rootEpic);

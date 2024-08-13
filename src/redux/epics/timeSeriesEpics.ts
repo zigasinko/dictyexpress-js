@@ -1,5 +1,5 @@
 import { Action } from '@reduxjs/toolkit';
-import { ofType, Epic, combineEpics } from 'redux-observable';
+import { Epic, combineEpics } from 'redux-observable';
 import { map, mergeMap, startWith, endWith, catchError, filter, switchMap } from 'rxjs/operators';
 import { of, from, combineLatest } from 'rxjs';
 import { isEmpty, compact } from 'lodash';
@@ -34,7 +34,7 @@ import { BasketInfo } from 'redux/models/internal';
 
 const fetchTimeSeriesEpic: Epic<Action, Action, RootState> = (action$) => {
     return action$.pipe(
-        ofType(appStarted.toString()),
+        filter(appStarted.match),
         mergeMap(() => {
             return from(getTimeSeriesRelations()).pipe(
                 map((response) => timeSeriesFetchSucceeded(response)),

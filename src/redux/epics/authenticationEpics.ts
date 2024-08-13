@@ -1,6 +1,6 @@
 import { Action } from '@reduxjs/toolkit';
-import { ofType, Epic, combineEpics } from 'redux-observable';
-import { map, startWith, endWith, catchError, mergeMap } from 'rxjs/operators';
+import { Epic, combineEpics } from 'redux-observable';
+import { map, startWith, endWith, catchError, mergeMap, filter } from 'rxjs/operators';
 import { of, from } from 'rxjs';
 import { appStarted } from './epicsActions';
 import { RootState } from 'redux/rootReducer';
@@ -11,7 +11,7 @@ import { setSentryUser } from 'utils/sentryUtils';
 
 const getCurrentUserEpic: Epic<Action, Action, RootState> = (action$) =>
     action$.pipe(
-        ofType(appStarted.toString()),
+        filter(appStarted.match),
         mergeMap(() => {
             return from(getCurrentUser()).pipe(
                 map((user) => {
