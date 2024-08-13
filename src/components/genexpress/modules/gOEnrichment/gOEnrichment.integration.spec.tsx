@@ -359,14 +359,9 @@ describe('goEnrichment integration', () => {
                 }),
             );
 
-            // Mocked WebSocket needs almost a second to establish connection, that's why
-            // increased timeout is used.
-            await waitFor(
-                () => {
-                    screen.getByText(gOEnrichmentJson.tree.BP[0].term_name);
-                },
-                { timeout: 1500 },
-            );
+            await screen.findByText(gOEnrichmentJson.tree.BP[0].term_name, undefined, {
+                timeout: 2000,
+            });
         });
     });
 });

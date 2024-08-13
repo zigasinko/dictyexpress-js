@@ -4,7 +4,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 Minimum requirements:
 
--   Node.js of version 18 LTS
+-   Node.js of version 20 LTS
 -   yarn 1.22
 
 ## GIT

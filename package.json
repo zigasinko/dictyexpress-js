@@ -77,6 +77,10 @@
         "modulePaths": [
             "C:\\Genialis\\git\\dictyexpress-js\\src"
         ],
+        "moduleDirectories": [
+            "node_modules",
+            "src"
+        ],
         "moduleNameMapper": {
             "^react-native$": "react-native-web",
             "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy"
@@ -186,7 +190,7 @@
     },
     "packageManager": "yarn@3.2.4",
     "engines": {
-        "node": ">=18"
+        "node": ">=20"
     },
     "babel": {
         "presets": [
