@@ -1,4 +1,5 @@
 import React from 'react';
+import { Mock, vi } from 'vitest';
 import GOEnrichmentTermCell from './termCell';
 import { customRender } from 'tests/test-utils';
 import { generateGOEnrichmentRow } from 'tests/mock';
@@ -7,11 +8,10 @@ import { GOEnrichmentRow } from 'redux/models/internal';
 describe('gOEnrichmentTermCell', () => {
     let goEnrichmentRow: GOEnrichmentRow;
     let asFragment: () => DocumentFragment;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let mockedOnToggleCollapseClick: jest.Mock<any, any>;
+    let mockedOnToggleCollapseClick: Mock;
 
     beforeEach(() => {
-        mockedOnToggleCollapseClick = jest.fn();
+        mockedOnToggleCollapseClick = vi.fn();
         goEnrichmentRow = generateGOEnrichmentRow(1);
         goEnrichmentRow.term_name = 'Test term';
         goEnrichmentRow.depth = 3;

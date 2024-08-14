@@ -1,5 +1,6 @@
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import _ from 'lodash';
+import { vi } from 'vitest';
 import { distanceMeasureOptions, linkageFunctionOptions } from './clustering';
 import { highlightedColor } from './clusteringChart';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
@@ -53,7 +54,7 @@ backendBookmark.state.Clustering = {
     linkageFunction: linkageFunctionOptions[2].value,
 };
 
-jest.setTimeout(10000);
+vi.setConfig({ testTimeout: 10000 });
 describe('clustering integration', () => {
     let initialState: RootState;
     let container: HTMLElement;
@@ -228,7 +229,7 @@ describe('clustering integration', () => {
             await waitFor(() => {
                 expect(
                     container.querySelector("g[role='graphics-symbol'].horizontalLines > path"),
-                ).toHaveAttribute('d', 'M-150,0h150v2h-150Z');
+                ).toHaveAttribute('d', 'M-151,0h151v2h-151Z');
             });
         });
 
@@ -248,7 +249,7 @@ describe('clustering integration', () => {
                     container.querySelector(
                         "g[role='graphics-symbol'].horizontalLines > path:nth-child(1)",
                     ),
-                ).toHaveAttribute('d', 'M-150,0h150v2h-150Z');
+                ).toHaveAttribute('d', 'M-151,0h151v2h-151Z');
             });
         });
 

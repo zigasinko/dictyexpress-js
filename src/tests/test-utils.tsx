@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { render, RenderResult, waitFor } from '@testing-library/react';
 import { ThemeProvider as StyledComponentsThemeProvider } from 'styled-components';
@@ -7,6 +7,7 @@ import { SnackbarProvider } from 'notistack';
 import { MockStoreEnhanced } from 'redux-mock-store';
 import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
 import { MemoryRouter } from 'react-router-dom';
+import { vi } from 'vitest';
 import { BookmarkReduxState, RootState } from '../redux/rootReducer';
 import theme from '../components/app/theme';
 import { GlobalStyle } from '../components/app/globalStyle';
@@ -30,9 +31,9 @@ export type CustomRenderOptions = {
 
 export const customRender = (ui: ReactElement, options?: CustomRenderOptions): RenderResult => {
     const store = getStore(options?.initialState);
-    store.dispatch = jest.fn(store.dispatch);
+    store.dispatch = vi.fn().mockImplementation(store.dispatch);
 
-    const AllTheProviders = ({ children }: { children: ReactElement }): ReactElement => {
+    const AllTheProviders = ({ children }: { children: ReactNode }): ReactElement => {
         return (
             <RendererContext.Provider value="svg">
                 <StyledEngineProvider injectFirst>
@@ -76,9 +77,7 @@ export const validateExportFile = async (
 /**
  * Be sure to call "fetchMock.mockClear();" before test using this function.
  */
-export const getFetchMockCallsWithUrl = (
-    expectedUrl: string,
-): jest.MockContext<Promise<Response>, unknown[]>['calls'] => {
+export const getFetchMockCallsWithUrl = (expectedUrl: string) => {
     return fetchMock.mock.calls.filter(
         ([requestUrl]) => requestUrl != null && (requestUrl as string).includes(expectedUrl),
     );

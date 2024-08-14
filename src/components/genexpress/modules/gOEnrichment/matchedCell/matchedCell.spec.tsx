@@ -1,5 +1,6 @@
 import React from 'react';
 import { fireEvent, screen } from '@testing-library/react';
+import { Mock, vi } from 'vitest';
 import GOEnrichmentMatchedCell from './matchedCell';
 import { customRender } from 'tests/test-utils';
 import { generateGOEnrichmentRow } from 'tests/mock';
@@ -8,12 +9,11 @@ import { GOEnrichmentRow } from 'redux/models/internal';
 describe('gOEnrichmentMatchedCell', () => {
     let goEnrichmentRow: GOEnrichmentRow;
     let asFragment: () => DocumentFragment;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let mockedOnMatchedGenesClick: jest.Mock<any, any>;
+    let mockedOnMatchedGenesClick: Mock;
     const value = 12;
 
     beforeEach(() => {
-        mockedOnMatchedGenesClick = jest.fn();
+        mockedOnMatchedGenesClick = vi.fn();
         goEnrichmentRow = generateGOEnrichmentRow(1);
 
         ({ asFragment } = customRender(

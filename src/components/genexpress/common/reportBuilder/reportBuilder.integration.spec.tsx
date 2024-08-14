@@ -1,16 +1,15 @@
-import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
 import { customRender, waitForButtonEnabled } from 'tests/test-utils';
 import { testState } from 'tests/mock';
 import * as documentHelpers from 'utils/documentHelpers';
 
-jest.setTimeout(10000);
 describe('reportBuilder integration', () => {
     beforeEach(() => {
-        window.URL.createObjectURL = jest.fn();
+        window.URL.createObjectURL = vi.fn();
 
-        window.URL.revokeObjectURL = jest.fn();
+        window.URL.revokeObjectURL = vi.fn();
     });
 
     it('should download zip after export is clicked', async () => {
@@ -21,7 +20,7 @@ describe('reportBuilder integration', () => {
 
         // There is no clean way to unit test file download, so all we can do is spy on saveAs
         // (documentHelpers) method.
-        const saveAsSpy = jest.spyOn(documentHelpers, 'saveAs').mockImplementation(() => {});
+        const saveAsSpy = vi.spyOn(documentHelpers, 'saveAs').mockImplementation(() => {});
 
         await waitForButtonEnabled(() => screen.getByLabelText('Export'));
 

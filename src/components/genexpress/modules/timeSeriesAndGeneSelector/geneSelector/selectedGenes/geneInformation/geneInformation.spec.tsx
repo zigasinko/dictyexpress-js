@@ -1,5 +1,6 @@
 import React from 'react';
 import { screen, fireEvent } from '@testing-library/react';
+import { vi } from 'vitest';
 import { GeneInformation } from './geneInformation';
 import { customRender } from 'tests/test-utils';
 import { generateGene } from 'tests/mock';
@@ -47,7 +48,7 @@ describe('geneInformation', () => {
     });
 
     it('should call onHighlight when user clicks Highlight', () => {
-        const mockedOnHighlight = jest.fn();
+        const mockedOnHighlight = vi.fn();
         customRender(
             <GeneInformation
                 gene={gene}
@@ -63,7 +64,7 @@ describe('geneInformation', () => {
     });
 
     it('should call onUnhighlight when user clicks Unhighlight', () => {
-        const mockedOnUnhighlight = jest.fn();
+        const mockedOnUnhighlight = vi.fn();
         customRender(
             <GeneInformation
                 gene={gene}

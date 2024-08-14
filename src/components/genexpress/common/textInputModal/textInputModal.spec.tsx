@@ -1,5 +1,6 @@
 import React from 'react';
 import { screen, fireEvent } from '@testing-library/react';
+import { Mock, vi } from 'vitest';
 import TextInputModal from './textInputModal';
 import { customRender } from 'tests/test-utils';
 
@@ -8,14 +9,12 @@ const buttonLabel = 'Confirm';
 const placeholder = 'Test input label';
 
 describe('textInputModal', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let mockedOnConfirm: jest.Mock<any, any>;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let mockedOnClose: jest.Mock<any, any>;
+    let mockedOnConfirm: Mock;
+    let mockedOnClose: Mock;
 
     beforeEach(() => {
-        mockedOnConfirm = jest.fn();
-        mockedOnClose = jest.fn();
+        mockedOnConfirm = vi.fn();
+        mockedOnClose = vi.fn();
 
         customRender(
             <TextInputModal

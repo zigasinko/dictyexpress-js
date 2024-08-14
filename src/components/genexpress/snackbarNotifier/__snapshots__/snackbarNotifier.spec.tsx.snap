@@ -1,4 +1,128 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`snackbarNotifier > should render as snapshot with notifications in all different variants 1`] = `
+<DocumentFragment>
+  <div
+    class="sc-fQpRED cUxszj SnackbarContainer-bottom SnackbarContainer-left SnackbarContainer-root"
+  >
+    <div
+      class="MuiCollapse-root-fkUGYz kfLPMd MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered"
+      style="min-height: 0px;"
+    >
+      <div
+        class="MuiCollapse-wrapper-hfmmpO iebvqf MuiCollapse-wrapper MuiCollapse-vertical"
+      >
+        <div
+          class="MuiCollapse-wrapperInner-izSA-Dg iouPRT MuiCollapse-wrapperInner MuiCollapse-vertical"
+        >
+          <div
+            class="sc-elDIKY lhxMsd SnackbarItem-wrappedRoot"
+          >
+            <div
+              aria-describedby="notistack-snackbar"
+              class="sc-gJhJTp iBvyMd SnackbarContent-root SnackbarItem-contentRoot"
+              role="alert"
+              style="webkit-transform: none; transform: none; webkit-transition: -webkit-transform 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms; transition: transform 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;"
+            >
+              <div
+                class="SnackbarItem-message"
+                id="notistack-snackbar"
+              >
+                Test message
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="MuiCollapse-root-fkUGYz kfLPMd MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered"
+      style="min-height: 0px;"
+    >
+      <div
+        class="MuiCollapse-wrapper-hfmmpO iebvqf MuiCollapse-wrapper MuiCollapse-vertical"
+      >
+        <div
+          class="MuiCollapse-wrapperInner-izSA-Dg iouPRT MuiCollapse-wrapperInner MuiCollapse-vertical"
+        >
+          <div
+            class="sc-elDIKY lhxMsd SnackbarItem-wrappedRoot"
+          >
+            <div
+              aria-describedby="notistack-snackbar"
+              class="sc-gJhJTp iBvyMd SnackbarContent-root SnackbarItem-contentRoot SnackbarItem-variantError SnackbarItem-lessPadding"
+              role="alert"
+              style="webkit-transform: none; transform: none; webkit-transition: -webkit-transform 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms; transition: transform 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;"
+            >
+              <div
+                class="SnackbarItem-message"
+                id="notistack-snackbar"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="MuiSvgIcon-root-kxJCyd dhFBup MuiSvgIcon-root MuiSvgIcon-fontSizeMedium"
+                  focusable="false"
+                  style="font-size: 20px; margin-inline-end: 8px;"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M12,2C17.53,2 22,6.47 22,12C22,17.53 17.53,22 12,22C6.47,22 2,17.53 2,12C2,
+        6.47 6.47,2 12,2M15.59,7L12,10.59L8.41,7L7,8.41L10.59,12L7,15.59L8.41,17L12,
+        13.41L15.59,17L17,15.59L13.41,12L17,8.41L15.59,7Z"
+                  />
+                </svg>
+                Test message 2
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="MuiCollapse-root-fkUGYz kfLPMd MuiCollapse-root MuiCollapse-vertical MuiCollapse-entered"
+      style="min-height: 0px;"
+    >
+      <div
+        class="MuiCollapse-wrapper-hfmmpO iebvqf MuiCollapse-wrapper MuiCollapse-vertical"
+      >
+        <div
+          class="MuiCollapse-wrapperInner-izSA-Dg iouPRT MuiCollapse-wrapperInner MuiCollapse-vertical"
+        >
+          <div
+            class="sc-elDIKY lhxMsd SnackbarItem-wrappedRoot"
+          >
+            <div
+              aria-describedby="notistack-snackbar"
+              class="sc-gJhJTp iBvyMd SnackbarContent-root SnackbarItem-contentRoot SnackbarItem-variantSuccess SnackbarItem-lessPadding"
+              role="alert"
+              style="webkit-transform: none; transform: none; webkit-transition: -webkit-transform 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms; transition: transform 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;"
+            >
+              <div
+                class="SnackbarItem-message"
+                id="notistack-snackbar"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="MuiSvgIcon-root-kxJCyd dhFBup MuiSvgIcon-root MuiSvgIcon-fontSizeMedium"
+                  focusable="false"
+                  style="font-size: 20px; margin-inline-end: 8px;"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41
+        10.59L10 14.17L17.59 6.58L19 8L10 17Z"
+                  />
+                </svg>
+                Test message 3
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
 
 exports[`snackbarNotifier should render as snapshot with notifications in all different variants 1`] = `
 <DocumentFragment>

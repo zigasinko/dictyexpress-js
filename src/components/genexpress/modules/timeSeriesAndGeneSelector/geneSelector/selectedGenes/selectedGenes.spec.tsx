@@ -1,6 +1,7 @@
 import React from 'react';
 import { screen, fireEvent } from '@testing-library/react';
 import { MockStoreEnhanced } from 'redux-mock-store';
+import { vi } from 'vitest';
 import SelectedGenes from './selectedGenes';
 import { customRender } from 'tests/test-utils';
 import { generateBasketInfo, generateGene, mockStore, testState } from 'tests/mock';
@@ -44,7 +45,7 @@ describe('selectedGenes', () => {
             mockedStore,
         });
 
-        const clipboardSpy = jest.spyOn(navigator.clipboard, 'writeText');
+        const clipboardSpy = vi.spyOn(navigator.clipboard, 'writeText');
 
         fireEvent.click(screen.getByLabelText(`Copy ${genes.length} genes to clipboard`));
 

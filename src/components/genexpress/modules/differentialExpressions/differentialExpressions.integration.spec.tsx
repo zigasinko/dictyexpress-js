@@ -36,7 +36,6 @@ const backendBookmark = generateBackendBookmark(1, [
 ]);
 backendBookmark.state.differentialExpressions.selectedId = differentialExpressions[0].id;
 
-jest.setTimeout(10000);
 describe('differentialExpressions integration', () => {
     let initialState: RootState;
     let container: HTMLElement;

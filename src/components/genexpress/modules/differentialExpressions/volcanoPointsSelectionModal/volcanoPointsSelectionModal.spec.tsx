@@ -2,6 +2,7 @@ import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { MockStoreEnhanced } from 'redux-mock-store';
 import _ from 'lodash';
+import { vi } from 'vitest';
 import VolcanoPointsSelectionModal from './volcanoPointsSelectionModal';
 import { customRender } from 'tests/test-utils';
 import { testState, mockStore, generateGenesById, generateVolcanoPoints } from 'tests/mock';
@@ -26,7 +27,7 @@ const selectRow = (geneId: string) => {
 describe('volcanoPointsSelectionModal', () => {
     let initialState: RootState;
     let mockedStore: MockStoreEnhanced<RootState, AppDispatch>;
-    const mockedOnClose = jest.fn();
+    const mockedOnClose = vi.fn();
 
     describe('genes selected', () => {
         beforeEach(() => {

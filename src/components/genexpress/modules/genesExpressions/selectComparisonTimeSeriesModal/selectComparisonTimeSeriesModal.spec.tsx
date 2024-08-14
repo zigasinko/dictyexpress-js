@@ -2,6 +2,7 @@ import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { MockStoreEnhanced } from 'redux-mock-store';
 import _ from 'lodash';
+import { vi } from 'vitest';
 import SelectComparisonTimeSeriesModal from './selectComparisonTimeSeriesModal';
 import { generateTimeSeriesById, mockStore, testState } from 'tests/mock';
 import { customRender } from 'tests/test-utils';
@@ -16,7 +17,7 @@ const selectedTimeSeries = timeSeries[0];
 describe('selectComparisonTimeSeriesModal', () => {
     let initialState: RootState;
     let mockedStore: MockStoreEnhanced<RootState, AppDispatch>;
-    const mockedOnClose = jest.fn();
+    const mockedOnClose = vi.fn();
 
     beforeEach(() => {
         mockedOnClose.mockClear();

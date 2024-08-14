@@ -24,6 +24,7 @@
         "public/config.js",
         "playwright.config.ts",
         "eslint.config.mjs",
-        "vite.config.mts"
+        "vite.config.mts",
+        "vitest.config.mts"
     ]
 }

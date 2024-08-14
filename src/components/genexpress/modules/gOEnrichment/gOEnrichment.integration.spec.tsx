@@ -229,6 +229,9 @@ describe('goEnrichment integration', () => {
             });
 
             it('should save selected time series, genes, highlighted genes and all component bookmarkable state to app-state api', async () => {
+                await waitFor(() => {
+                    expect(screen.getByLabelText('Bookmark')).toBeEnabled();
+                });
                 fireEvent.click(screen.getByLabelText('Bookmark'));
 
                 await validateCreateStateRequest((bookmarkState) => {

@@ -1,5 +1,6 @@
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import _ from 'lodash';
+import { vi } from 'vitest';
 import {
     colorScaleLimit,
     highlightedLineStrokeWidth,
@@ -60,7 +61,6 @@ const genesMappings: GeneMapping[] = comparisonGenes.map(
         ({ source_id: genes[index].feature_id, target_id: gene.feature_id }) as GeneMapping,
 );
 
-jest.setTimeout(10_000);
 describe('genesExpressions integration', () => {
     let initialState: RootState;
     let container: HTMLElement;
@@ -215,7 +215,7 @@ describe('genesExpressions integration', () => {
 
             // Enter a gene and check if it's displayed in graph.
             fireEvent.paste(screen.getByPlaceholderText('Search for a gene'), {
-                clipboardData: { getData: jest.fn().mockReturnValueOnce(genes[0].name) },
+                clipboardData: { getData: vi.fn().mockReturnValueOnce(genes[0].name) },
             });
 
             await validateChart(1);

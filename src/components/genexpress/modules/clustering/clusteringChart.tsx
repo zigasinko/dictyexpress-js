@@ -21,7 +21,7 @@ export const color = GEN_GREY['700'];
 export const highlightedColor = GEN_CYAN['500'];
 const heatmapRectWidth = 10;
 const heatmapRectHeight = 20;
-const genesNamesWidth = 100;
+const genesNamesWidth = 101;
 
 const getVegaSpecification = (
     clusterNodes: ClusteringChartProps['clusterNodes'],

@@ -5,6 +5,7 @@ import { DONE_DATA_STATUS, WAITING_DATA_STATUS } from '@genialis/resolwe/dist/ap
 import { v4 as uuidv4 } from 'uuid';
 import { Client, Server } from 'mock-socket';
 import { MockStoreEnhanced } from 'redux-mock-store';
+import { vi } from 'vitest';
 import FindSimilarGenesModal, { distanceMeasureOptions } from './findSimilarGenesModal';
 import {
     customRender,
@@ -65,7 +66,7 @@ const validateSimilarGenesGrid = async (
 
 describe('findSimilarGenesModal', () => {
     let initialState: RootState;
-    const mockedOnClose = jest.fn();
+    const mockedOnClose = vi.fn();
 
     beforeEach(() => {
         initialState = testState();

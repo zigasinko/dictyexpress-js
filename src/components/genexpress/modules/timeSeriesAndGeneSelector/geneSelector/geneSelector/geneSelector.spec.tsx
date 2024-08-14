@@ -2,6 +2,7 @@ import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { MockStoreEnhanced } from 'redux-mock-store';
 import _ from 'lodash';
+import { vi } from 'vitest';
 import GeneSelector from './geneSelector';
 import {
     customRender,
@@ -74,7 +75,7 @@ describe('geneSelector', () => {
         it('should dispatch genesSelected action after user pastes genes names to "Search for a gene" input', async () => {
             // Paste genes names to "Search for a gene" input.
             fireEvent.paste(screen.getByPlaceholderText('Search for a gene'), {
-                clipboardData: { getData: jest.fn().mockReturnValueOnce(testGenesNames.join(',')) },
+                clipboardData: { getData: vi.fn().mockReturnValueOnce(testGenesNames.join(',')) },
             });
 
             await waitFor(() => {

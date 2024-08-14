@@ -2,6 +2,7 @@ import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { MockStoreEnhanced } from 'redux-mock-store';
 import _ from 'lodash';
+import { vi } from 'vitest';
 import GOEnrichmentAssociationsModal from './associationsModal';
 import {
     customRender,
@@ -32,7 +33,7 @@ const genesMappings: GeneMapping[] = [
 
 describe('associationsModal', () => {
     let initialState: RootState;
-    const mockedOnClose = jest.fn();
+    const mockedOnClose = vi.fn();
     let gOEnrichmentRow: GOEnrichmentRow;
 
     beforeAll(() => {

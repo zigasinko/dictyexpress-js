@@ -1,5 +1,6 @@
 import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { Mock, vi } from 'vitest';
 import ManageGeneSetsModal from './manageGeneSetsModal';
 import { generateGeneSets } from 'tests/mock';
 import { customRender, waitForButtonEnabled } from 'tests/test-utils';
@@ -11,17 +12,14 @@ const testGeneSets = generateGeneSets(5).sort(
 );
 
 describe('manageGeneSets', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let mockedOnDelete: jest.Mock<any, any>;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let mockedOnClick: jest.Mock<any, any>;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let mockedOnClose: jest.Mock<any, any>;
+    let mockedOnDelete: Mock;
+    let mockedOnClick: Mock;
+    let mockedOnClose: Mock;
 
     beforeEach(() => {
-        mockedOnDelete = jest.fn();
-        mockedOnClick = jest.fn();
-        mockedOnClose = jest.fn();
+        mockedOnDelete = vi.fn();
+        mockedOnClick = vi.fn();
+        mockedOnClose = vi.fn();
 
         customRender(
             <ManageGeneSetsModal
@@ -34,8 +32,8 @@ describe('manageGeneSets', () => {
     });
 
     it('should render all gene sets in a grid', () => {
-        testGeneSets.forEach((testGeneSet) => {
-            expect(screen.getByText(testGeneSet.genesNames[0], { exact: false }));
+        testGeneSets.forEach(async (testGeneSet) => {
+            expect(await screen.findByText(testGeneSet.genesNames[0], { exact: false }));
         });
     });
 
