@@ -1,13 +1,11 @@
-import { SeverityLevel } from '@sentry/browser';
-import * as Sentry from '@sentry/browser';
+import { captureException, captureMessage, init, setUser, SeverityLevel } from '@sentry/browser';
 import { User } from '@genialis/resolwe/dist/api/types/rest';
 import _ from 'lodash';
-import { v4 as uuidv4 } from 'uuid';
 import { getUsername } from './user';
 import { ResponseError } from 'redux/models/internal';
 
 export const initializeSentry = (sentryUrl: string): void => {
-    Sentry.init({
+    init({
         dsn: sentryUrl,
         // Send stack trace for non-error messages too.
         attachStacktrace: true,
@@ -16,13 +14,13 @@ export const initializeSentry = (sentryUrl: string): void => {
 
 export const setSentryUser = (user: User | undefined): void => {
     if (user != null) {
-        Sentry.setUser({
+        setUser({
             id: `${user.id}`,
             username: user.username,
             name: getUsername(user),
         });
     } else {
-        Sentry.setUser(null);
+        setUser(null);
     }
 };
 
@@ -30,28 +28,25 @@ export const sentryCapture = (
     message: string,
     associatedObject: Record<string, unknown> | Error | ResponseError = {},
     severity: SeverityLevel = 'error',
-): string => {
-    // If an error is attached, log the same error twice.
-    // Once with a stack trace to errorLog and once with the stack trace of the appended error.
-    if (_.isError(associatedObject)) {
-        const linkedEventsUuid = uuidv4();
+) => {
+    if (severity === 'error' || _.isError(associatedObject)) {
+        if (_.isError(associatedObject)) {
+            associatedObject.message = `${message} ${associatedObject.message}`;
+        }
 
-        Sentry.captureException(associatedObject, {
-            tags: { linkedEventsUuid },
+        captureException(associatedObject, {
             level: severity,
+            extra: {
+                message,
+                responseData: associatedObject,
+            },
         });
-        return Sentry.captureMessage(message, {
+    } else {
+        captureMessage(message, {
             extra: {
                 associatedObject,
             },
             level: severity,
         });
     }
-
-    return Sentry.captureMessage(message, {
-        extra: {
-            associatedObject,
-        },
-        level: severity,
-    });
 };

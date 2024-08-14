@@ -6,8 +6,8 @@ export const handleError = (
     message: string,
     associatedObject: Record<string, unknown> | Error | ResponseError = {},
 ): ReturnType<typeof addErrorSnackbar> => {
-    const sentryId = sentryCapture(message, associatedObject, 'error');
-    return addErrorSnackbar(`${message} SentryID: ${sentryId}`);
+    sentryCapture(message, associatedObject, 'error');
+    return addErrorSnackbar(message);
 };
 
 export const logError = (
