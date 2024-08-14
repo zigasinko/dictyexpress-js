@@ -7,6 +7,7 @@ import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
 import {
     customRender,
     handleCommonRequests,
+    hoverOverVegaSymbol,
     resolveStringifiedObjectPromise,
     validateCreateStateRequest,
     validateExportFile,
@@ -254,14 +255,10 @@ describe('clustering integration', () => {
         });
 
         it('should display tooltip on gene expressions heatmap hover', async () => {
-            fireEvent.mouseMove(
-                container.querySelector(
-                    "g[role='graphics-symbol'].genesExpressionsHeatmap > path",
-                ) as Element,
-            );
+            await hoverOverVegaSymbol(container, 'genesExpressionsHeatmap');
 
-            await screen.findByText('Time:');
-            await screen.findByText('Level:');
+            await screen.findByText('Time');
+            await screen.findByText('Level');
         });
 
         it('should change line color on gene expressions heatmap hover', async () => {

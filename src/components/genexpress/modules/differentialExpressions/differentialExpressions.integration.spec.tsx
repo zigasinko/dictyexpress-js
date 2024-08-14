@@ -1,10 +1,10 @@
-import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import _ from 'lodash';
 import GeneExpressGrid from 'components/genexpress/geneExpressGrid';
 import {
     customRender,
     handleCommonRequests,
+    hoverOverVegaSymbol,
     resolveStringifiedObjectPromise,
     validateCreateStateRequest,
     validateExportFile,
@@ -233,15 +233,9 @@ describe('differentialExpressions integration', () => {
         });
 
         it('should display tooltip on point hover', async () => {
-            fireEvent.mouseMove(
-                container.querySelector(
-                    "g[role='graphics-symbol'].volcanoPointRemaining > path",
-                ) as Element,
-            );
+            await hoverOverVegaSymbol(container, 'volcanoPointRemaining');
 
-            await waitFor(() => {
-                expect(screen.queryByText('Gene:')).toBeInTheDocument();
-            });
+            await screen.findByText('Gene');
         });
 
         it('should display selected gene as a bigger dot', async () => {

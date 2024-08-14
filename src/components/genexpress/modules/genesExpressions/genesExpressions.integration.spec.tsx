@@ -11,6 +11,7 @@ import {
     customRender,
     getFetchMockCallsWithUrl,
     handleCommonRequests,
+    hoverOverVegaSymbol,
     resolveStringifiedObjectPromise,
     validateCreateStateRequest,
     validateExportFile,
@@ -302,13 +303,9 @@ describe('genesExpressions integration', () => {
         });
 
         it('should display tooltip on point hover', async () => {
-            fireEvent.mouseMove(
-                container.querySelector(
-                    "g[role='graphics-symbol'].genesExpressionsPoints > path",
-                ) as Element,
-            );
+            await hoverOverVegaSymbol(container, 'genesExpressionsPoints');
 
-            await screen.findByText('Gene:');
+            await screen.findByText('Gene');
         });
 
         it('should display the legend after user clicks on "Legend" button', async () => {

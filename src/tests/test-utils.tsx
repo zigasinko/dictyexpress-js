@@ -8,6 +8,7 @@ import { MockStoreEnhanced } from 'redux-mock-store';
 import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
 import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
+import userEvent from '@testing-library/user-event';
 import { BookmarkReduxState, RootState } from '../redux/rootReducer';
 import theme from '../components/app/theme';
 import { GlobalStyle } from '../components/app/globalStyle';
@@ -153,4 +154,14 @@ export const validateCreateStateRequest = async (
 
 export const waitForButtonEnabled = (getHtmlElement: () => HTMLElement): Promise<void> => {
     return waitFor(() => expect(getHtmlElement()).toBeEnabled());
+};
+
+export const hoverOverVegaSymbol = async (container: HTMLElement, pathName: string) => {
+    vi.useFakeTimers();
+    const ue = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    await ue.hover(
+        container.querySelector(`g[role='graphics-symbol'].${pathName} > path`) as Element,
+    );
+
+    vi.useRealTimers();
 };
