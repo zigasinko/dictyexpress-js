@@ -133,6 +133,8 @@ describe('associationsModal', () => {
         });
 
         it('should call genesSelected with only selected gene when user clicks Select', async () => {
+            await screen.findByText(genes[0].name);
+
             fireEvent.click(
                 (
                     await screen.findAllByLabelText(
@@ -156,10 +158,12 @@ describe('associationsModal', () => {
         });
 
         it('should call genesSelected with all genes when user clicks Select all', async () => {
+            await screen.findByText(genes[0].name);
+
             fireEvent.click(
                 (
                     await screen.findAllByLabelText(
-                        'Press Space to toggle row selection (unchecked)',
+                        'Press Space to toggle all rows selection (unchecked)',
                     )
                 )[0],
             );

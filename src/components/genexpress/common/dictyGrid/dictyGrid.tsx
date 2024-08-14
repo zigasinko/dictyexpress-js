@@ -4,7 +4,6 @@ import {
     GridApi,
     RowSelectedEvent,
     GridReadyEvent,
-    ColumnApi,
     ColDef,
     SelectionChangedEvent,
     RowClickedEvent,
@@ -63,16 +62,13 @@ const DictyGrid = <T,>({
 }: DictyGridProps<T>): ReactElement => {
     const [filter, setFilter] = useState<string>('');
     const gridApi = useRef<GridApi | null>(null);
-    const columnApi = useRef<ColumnApi | null>(null);
     const [gridKey, setGridKey] = useState(uuidv4());
 
     const setOverlay = useCallback(() => {
-        if (isFetching) {
-            gridApi.current?.showLoadingOverlay();
-        } else if (data.length === 0) {
+        gridApi.current?.setGridOption('loading', isFetching);
+
+        if (data.length === 0) {
             gridApi.current?.showNoRowsOverlay();
-        } else {
-            gridApi.current?.hideOverlay();
         }
     }, [data, isFetching]);
 
@@ -87,12 +83,13 @@ const DictyGrid = <T,>({
     useEffect(() => {
         return (): void => {
             gridApi.current?.destroy();
+            gridApi.current = null;
         };
     }, []);
 
     const sizeColumns = useCallback((): void => {
         if (!disableAutoSizeAllColumns) {
-            columnApi.current?.autoSizeAllColumns();
+            gridApi.current?.autoSizeAllColumns();
         }
 
         if (!disableSizeColumnsToFit) {
@@ -140,7 +137,6 @@ const DictyGrid = <T,>({
 
     const handleOnGridReady = (params: GridReadyEvent): void => {
         gridApi.current = params.api;
-        columnApi.current = params.columnApi;
 
         setOverlay();
 

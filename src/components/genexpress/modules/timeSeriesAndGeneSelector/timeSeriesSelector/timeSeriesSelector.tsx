@@ -97,6 +97,7 @@ const TimeSeriesSelector = ({
                         headerName: fieldSchema.label,
                         cellStyle: { padding: 0 },
                         cellRenderer: CitationCell,
+                        valueFormatter: ({ data }) => data.descriptor?.citation?.name,
                         getQuickFilterText: (params) => {
                             return params.data.descriptor?.citation?.name;
                         },

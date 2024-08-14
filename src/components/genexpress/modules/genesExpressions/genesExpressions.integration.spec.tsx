@@ -184,9 +184,14 @@ describe('genesExpressions integration', () => {
             });
 
             await waitFor(() => {
-                expect(
-                    screen.getAllByRole('row', { name: 'Press SPACE to deselect this row.' })[0],
-                ).toHaveAttribute('row-id', timeSeries[1].id.toString());
+                const selectedTimeSeries = screen
+                    .getAllByRole('row')
+                    .filter((node) => node.ariaSelected === 'true');
+                expect(selectedTimeSeries).toHaveLength(1);
+                expect(selectedTimeSeries[0]).toHaveAttribute(
+                    'row-id',
+                    timeSeries[1].id.toString(),
+                );
             });
         });
 
@@ -198,9 +203,14 @@ describe('genesExpressions integration', () => {
             });
 
             await waitFor(() => {
-                expect(
-                    screen.getAllByRole('row', { name: 'Press SPACE to deselect this row.' })[0],
-                ).toHaveAttribute('row-id', timeSeries[0].id.toString());
+                const selectedTimeSeries = screen
+                    .getAllByRole('row')
+                    .filter((node) => node.ariaSelected === 'true');
+                expect(selectedTimeSeries).toHaveLength(1);
+                expect(selectedTimeSeries[0]).toHaveAttribute(
+                    'row-id',
+                    timeSeries[0].id.toString(),
+                );
             });
         });
 

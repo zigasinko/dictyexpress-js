@@ -184,7 +184,7 @@ A list of all gene associations for each term is available in a separate file - 
         if (!treeView) {
             return;
         }
-        const columnsState = event.columnApi.getColumnState();
+        const columnsState = event.api.getColumnState();
         const sortedColumn = columnsState.find((columnState) => columnState.sort != null);
         if (sortedColumn != null && sortedColumn.colId != null && sortedColumn.sort != null) {
             setTreeView(false);
