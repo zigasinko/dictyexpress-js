@@ -220,7 +220,9 @@ const GeneSelector = ({
 
                 // Get and display not found genes.
                 const notFoundGenesNames = genesNames.filter(
-                    (geneName) => _.find(pastedGenes, { name: geneName }) == null,
+                    (geneName) =>
+                        (_.find(pastedGenes, { name: geneName }) ||
+                            _.find(pastedGenes, { feature_id: geneName })) == null,
                 );
                 setInputValue(notFoundGenesNames.join());
             } catch (error) {
@@ -326,10 +328,11 @@ const GeneSelector = ({
                 <Autocomplete
                     open={autocompleteOpen}
                     autoHighlight
+                    filterOptions={(x) => x}
                     noOptionsText="No genes were found"
                     renderOption={(props, option) => (
                         // eslint-disable-next-line react/jsx-props-no-spreading
-                        <ListItem {...props}>
+                        <ListItem {...props} key={option.feature_id}>
                             <Box
                                 sx={{
                                     display: 'grid',
