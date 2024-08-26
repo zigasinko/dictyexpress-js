@@ -284,7 +284,7 @@ Clustering was done on ${selectedGenes.length === 0 ? 'all genes' : `selected ge
                     )}
                 {selectedGenes.length === 0 && `Select two or more genes.`}
                 {selectedGenes.length === 1 &&
-                    `The {Pearson/Spearman} correlation between samples can not be computed on a single gene.
+                    `Correlation between samples cannot be computed on a single gene.
                     Select more genes.`}
                 {clusterByGenesResult?.withoutValues != null &&
                     clusterByGenesResult.withoutValues.length > 0 && (

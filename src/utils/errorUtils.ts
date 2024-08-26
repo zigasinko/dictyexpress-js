@@ -5,8 +5,11 @@ import { addErrorSnackbar } from 'redux/stores/notifications';
 export const handleError = (
     message: string,
     associatedObject: Record<string, unknown> | Error | ResponseError = {},
+    suppressSentryCapture = false,
 ): ReturnType<typeof addErrorSnackbar> => {
-    sentryCapture(message, associatedObject, 'error');
+    if (!suppressSentryCapture) {
+        sentryCapture(message, associatedObject, 'error');
+    }
     return addErrorSnackbar(message);
 };
 

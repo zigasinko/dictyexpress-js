@@ -72,8 +72,15 @@ const getProcessDataEpicsFactory = <DataType extends Data>({
     actionFromStorageResponse,
     actionFromStatusUpdate,
 }: ProcessDataEpicsFactoryProps<DataType>): Epic<Action, Action, RootState> => {
-    const handleProcessEndedWithError = (message: string, error?: Error): Observable<Action> => {
-        return merge(of(handleError(message, error)), of(processEndedActionCreator()));
+    const handleProcessEndedWithError = (
+        message: string,
+        error?: Error,
+        suppressSentryCapture?: boolean,
+    ): Observable<Action> => {
+        return merge(
+            of(handleError(message, error, suppressSentryCapture)),
+            of(processEndedActionCreator()),
+        );
     };
 
     const handleAnalysisDataResponse = (response: DataType): Observable<Action> => {
@@ -83,6 +90,8 @@ const getProcessDataEpicsFactory = <DataType extends Data>({
                 `${processInfo.name} analysis ended with an error ${
                     response.process_error.length > 0 ? response.process_error[0] : ''
                 }`,
+                undefined,
+                true,
             );
         }
 

@@ -171,7 +171,7 @@ describe('clustering integration', () => {
 
             fireEvent.click(await screen.findByText(genes[0].name));
             await screen.findByText(
-                'correlation between samples can not be computed on a single gene.',
+                'Correlation between samples cannot be computed on a single gene.',
                 { exact: false },
             );
         });
