@@ -3,6 +3,8 @@ import { vi } from 'vitest';
 import '@testing-library/jest-dom';
 import 'vitest-canvas-mock';
 
+vi.setConfig({ testTimeout: 10_000 });
+
 vi.stubGlobal('API_URL', null);
 vi.stubGlobal('SAML_AUTH_URL', null);
 vi.stubGlobal('WEBSOCKET_URL', null);

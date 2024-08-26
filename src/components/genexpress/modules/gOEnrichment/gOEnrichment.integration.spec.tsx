@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, fireEvent, waitFor, RenderResult } from '@testing-library/react';
+import { screen, fireEvent, waitFor, RenderResult, configure } from '@testing-library/react';
 import _ from 'lodash';
 import {
     DataGafAnnotation,
@@ -31,6 +31,7 @@ import { sessionId, webSocketUrl } from 'api/base';
 import { appendMissingAttributesToJson } from 'utils/gOEnrichmentUtils';
 import { ProcessSlug, BookmarkStatePath } from 'components/genexpress/common/constants';
 import { pValueThresholdsOptions } from 'redux/stores/gOEnrichment';
+import { gOEnrichmentProcessDebounceTime } from 'redux/epics/gOEnrichmentEpics';
 
 const genesById = generateGenesById(2);
 const genes = _.flatMap(genesById);
@@ -50,6 +51,9 @@ backendBookmark.state.GOEnrichment = { selectedAspect: aspectOptions[1] };
 const ontologyObo = generateData(123);
 
 const dataObjectId = 123;
+
+// GO Enrichment process is triggered after 3s debounce time.
+configure({ asyncUtilTimeout: gOEnrichmentProcessDebounceTime + 1000 });
 
 describe('goEnrichment integration', () => {
     let initialState: RootState;
@@ -139,12 +143,9 @@ describe('goEnrichment integration', () => {
 
                 fireEvent.click(await screen.findByText(genes[0].name));
 
-                await waitFor(
-                    () => {
-                        screen.getByText(gOEnrichmentJson.tree.BP[0].term_name);
-                    },
-                    { timeout: 1500 },
-                );
+                await waitFor(() => {
+                    screen.getByText(gOEnrichmentJson.tree.BP[0].term_name);
+                });
             });
 
             it('should should enrichment terms if bookmark is loaded', async () => {
@@ -177,12 +178,9 @@ describe('goEnrichment integration', () => {
 
                 fireEvent.click(await screen.findByText(genes[0].name));
 
-                await waitFor(
-                    () => {
-                        screen.getByText(gOEnrichmentJson.tree.BP[0].term_name);
-                    },
-                    { timeout: 2500 },
-                );
+                await waitFor(() => {
+                    screen.getByText(gOEnrichmentJson.tree.BP[0].term_name);
+                });
             });
         });
 
@@ -329,12 +327,9 @@ describe('goEnrichment integration', () => {
             fireEvent.click(await screen.findByText(genes[0].name));
 
             // Wait for data object with 'waiting' status is returned.
-            await waitFor(
-                () => {
-                    expect(getFetchMockCallsWithUrl(`api/data?id=${dataObjectId}`)).toHaveLength(1);
-                },
-                { timeout: 2500 },
-            );
+            await waitFor(() => {
+                expect(getFetchMockCallsWithUrl(`api/data?id=${dataObjectId}`)).toHaveLength(1);
+            });
 
             await screen.findByTestId('ScheduleIcon');
 
@@ -362,9 +357,7 @@ describe('goEnrichment integration', () => {
                 }),
             );
 
-            await screen.findByText(gOEnrichmentJson.tree.BP[0].term_name, undefined, {
-                timeout: 2000,
-            });
+            await screen.findByText(gOEnrichmentJson.tree.BP[0].term_name);
         });
     });
 });

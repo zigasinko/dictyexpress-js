@@ -1,5 +1,5 @@
 import { combineLatest, of } from 'rxjs';
-import { filter, switchMap } from 'rxjs/operators';
+import { debounceTime, filter, switchMap } from 'rxjs/operators';
 import { DataGOEnrichmentAnalysis, Storage } from '@genialis/resolwe/dist/api/types/rest';
 import { fetchGOEnrichmentData, gOEnrichmentDataFetchSucceeded } from './epicsActions';
 import getProcessDataEpicsFactory, {
@@ -23,6 +23,8 @@ import {
 import { getSelectedGenesSortedById } from 'redux/stores/genes';
 import { RootState } from 'redux/rootReducer';
 
+export const gOEnrichmentProcessDebounceTime = 3000;
+
 const processParametersObservable: ProcessDataEpicsFactoryProps<DataGOEnrichmentAnalysis>['processParametersObservable'] =
     (_action$, state$) => {
         return combineLatest([
@@ -40,6 +42,7 @@ const processParametersObservable: ProcessDataEpicsFactoryProps<DataGOEnrichment
                 mapStateSlice((state) => {
                     return getSelectedGenesSortedById(state.genes);
                 }),
+                debounceTime(gOEnrichmentProcessDebounceTime),
             ),
             state$.pipe(
                 mapStateSlice((state) => {
