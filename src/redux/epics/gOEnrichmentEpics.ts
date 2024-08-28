@@ -1,6 +1,8 @@
-import { combineLatest, of } from 'rxjs';
+import { combineLatest, EMPTY, merge, of } from 'rxjs';
 import { debounceTime, filter, switchMap } from 'rxjs/operators';
 import { DataGOEnrichmentAnalysis, Storage } from '@genialis/resolwe/dist/api/types/rest';
+import { combineEpics, Epic } from 'redux-observable';
+import { Action } from '@reduxjs/toolkit';
 import { fetchGOEnrichmentData, gOEnrichmentDataFetchSucceeded } from './epicsActions';
 import getProcessDataEpicsFactory, {
     ProcessDataEpicsFactoryProps,
@@ -20,10 +22,21 @@ import {
     gOEnrichmentJsonFetchSucceeded,
     gOEnrichmentStatusUpdated,
 } from 'redux/stores/gOEnrichment';
-import { getSelectedGenesSortedById } from 'redux/stores/genes';
+import { getSelectedGenes, getSelectedGenesSortedById } from 'redux/stores/genes';
 import { RootState } from 'redux/rootReducer';
 
 export const gOEnrichmentProcessDebounceTime = 3000;
+
+const setAwaitingGoEnrichmentData: Epic<Action, Action, RootState> = (_action$, state$) => {
+    return state$.pipe(
+        mapStateSlice((state) => getSelectedGenes(state.genes)),
+        filter((selectedGenes) => selectedGenes.length > 0),
+        filter(() => getGOEnrichmentJson(state$.value.gOEnrichment) == null),
+        switchMap(() => {
+            return of(gOEnrichmentJsonFetchStarted());
+        }),
+    );
+};
 
 const processParametersObservable: ProcessDataEpicsFactoryProps<DataGOEnrichmentAnalysis>['processParametersObservable'] =
     (_action$, state$) => {
@@ -38,11 +51,24 @@ const processParametersObservable: ProcessDataEpicsFactoryProps<DataGOEnrichment
                     return getPValueThreshold(state.gOEnrichment);
                 }),
             ),
-            state$.pipe(
-                mapStateSlice((state) => {
-                    return getSelectedGenesSortedById(state.genes);
-                }),
-                debounceTime(gOEnrichmentProcessDebounceTime),
+            // Each time selected genes change, emit null and then debounced selected genes. Without emitting null,
+            // getProcessDataEpicsFactory will treat the empty array as no selected genes.
+            merge(
+                state$.pipe(
+                    mapStateSlice((state) => {
+                        return getSelectedGenesSortedById(state.genes);
+                    }),
+                    switchMap(() => {
+                        return of(null);
+                    }),
+                ),
+                state$
+                    .pipe(
+                        mapStateSlice((state) => {
+                            return getSelectedGenesSortedById(state.genes);
+                        }),
+                    )
+                    .pipe(debounceTime(gOEnrichmentProcessDebounceTime)),
             ),
             state$.pipe(
                 mapStateSlice((state) => {
@@ -53,6 +79,10 @@ const processParametersObservable: ProcessDataEpicsFactoryProps<DataGOEnrichment
         ]).pipe(
             filter(() => getGOEnrichmentJson(state$.value.gOEnrichment) == null),
             switchMap(([gaf, pValueThreshold, selectedGenes, ontologyObo]) => {
+                // This condition is necessary because RxJS filter function doesn't have null type guard in it's type definition.
+                if (selectedGenes == null) {
+                    return EMPTY;
+                }
                 if (gaf == null || selectedGenes.length === 0) {
                     return of({});
                 }
@@ -90,4 +120,4 @@ const getGOEnrichmentProcessDataEpics = getProcessDataEpicsFactory<DataGOEnrichm
     actionFromStatusUpdate: (status) => gOEnrichmentStatusUpdated(status),
 });
 
-export default getGOEnrichmentProcessDataEpics;
+export default combineEpics(setAwaitingGoEnrichmentData, getGOEnrichmentProcessDataEpics);

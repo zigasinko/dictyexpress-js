@@ -29,3 +29,7 @@ export const generateRandomString = (length: number): string => {
 
 export const generateRandomStrings = (arrayLength: number, stringLength = 5): string[] =>
     _.times(arrayLength, () => generateRandomString(stringLength));
+
+export const pluralize = (word: string, count: number): string => {
+    return count === 1 ? word : `${word}s`;
+};

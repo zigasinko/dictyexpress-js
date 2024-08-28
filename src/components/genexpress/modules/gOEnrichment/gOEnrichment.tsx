@@ -37,6 +37,7 @@ import {
 import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
 import { AspectValue, BookmarkStatePath } from 'components/genexpress/common/constants';
 import useBookmarkableState from 'components/genexpress/common/useBookmarkableState';
+import { pluralize } from 'utils/stringUtils';
 
 const mapStateToProps = (state: RootState) => {
     return {
@@ -392,7 +393,7 @@ A list of all gene associations for each term is available in a separate file - 
                         />
                     )}
                     {isFetchingGOEnrichmentJson &&
-                        `Computing Gene Ontology Enrichment for ${selectedGenes.length} genes.`}
+                        `Computing Gene Ontology Enrichment for ${selectedGenes.length} ${pluralize('gene', selectedGenes.length)}.`}
                     {/* Only display info's about enriched terms when fetching data is complete. */}
                     {isFetchingGOEnrichmentJson === false &&
                         allAspectsEmpty &&

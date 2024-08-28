@@ -113,7 +113,7 @@ const getProcessDataEpicsFactory = <DataType extends Data>({
                 }
 
                 if (_.isEmpty(input)) {
-                    return of(processEndedActionCreator());
+                    return merge(of(processEndedActionCreator()), of(actionFromStatusUpdate(null)));
                 }
 
                 if (isObservable(input)) {
