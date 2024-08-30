@@ -63,14 +63,6 @@ It correctly bundles React in production mode and optimizes the build for the be
 The build is minified and the filenames include the hashes.<br />
 Update `/build/config.js` with appropriate endpoint URLs and your app is ready to be deployed.
 
-Recommended CSP header.<br />
-`${WEBSOCKET_URL}` - WebSocket URL, written in config.js.<br />
-`${SENTRY_REPORT_URI}` - security report URL in Sentry project settings.<br />
-
-```
-default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com; script-src 'self' 'unsafe-eval' https://*.googletagmanager.com; connect-src 'self' *.sentry.io wss://${local.websocket_domain_name} https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; report-uri https://${local.sentry_ingest_url}/api/${local.sentry_project_id}/security/?sentry_key=${local.sentry_client_key}
-```
-
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
 ## Learn More
