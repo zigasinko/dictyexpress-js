@@ -3,13 +3,10 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
-
 ## [Unreleased]
 
-### Added
+# 1.0.1
 
 ### Fixed
 
-### Changed
-
-### Removed
+-   Fix connect-src CSP policy to allow connections to _.genialis.io and _.genialis.com.
