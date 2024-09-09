@@ -11,3 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 -   Fix connect-src CSP policy to allow connections to _.genialis.io and _.genialis.com.
 -   Fix hiding Differential Expressions controls when resizing.
+
+### Changed
+
+-   Set a smaller step for FDR input fields.

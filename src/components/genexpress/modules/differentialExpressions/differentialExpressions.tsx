@@ -333,6 +333,12 @@ positives.
                     handleThresholdChange(thresholdField, event.target.value as number)
                 }
                 value={thresholds[thresholdField]}
+                inputProps={{
+                    step:
+                        thresholdField === 'pValue' || thresholdField === 'pValueLog'
+                            ? 0.01
+                            : undefined,
+                }}
             />
         </ThresholdFormControl>
     );
