@@ -8,6 +8,7 @@ type DictySelectProps = {
     value: unknown;
     disabled?: boolean;
     handleOnChange: SelectProps['onChange'];
+    className?: string;
 };
 
 const DictySelect = ({
@@ -16,11 +17,12 @@ const DictySelect = ({
     value,
     handleOnChange,
     disabled,
+    className,
 }: DictySelectProps): ReactElement => {
     const labelId = `${generateRandomString(5)}Label`;
 
     return (
-        <FormControl variant="outlined">
+        <FormControl variant="outlined" className={className}>
             <InputLabel id={labelId}>{label}</InputLabel>
             <Select
                 labelId={labelId}

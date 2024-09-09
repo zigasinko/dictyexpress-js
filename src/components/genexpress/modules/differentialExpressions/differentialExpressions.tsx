@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState, ChangeEvent, useRef, useCallback } from 'react';
+import { ReactElement, useEffect, useState, ChangeEvent, useRef, useCallback } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import _ from 'lodash';
 import {
@@ -6,6 +6,7 @@ import {
     FormControlLabel,
     MenuItem,
     SelectChangeEvent,
+    styled,
     Switch,
     TextField,
     Tooltip,
@@ -16,7 +17,6 @@ import DifferentialExpressionsVolcanoPlot from './differentialExpressionsVolcano
 import {
     DifferentialExpressionsContainer,
     DifferentialExpressionsControls,
-    DifferentialExpressionsSelectWrapper,
     ThresholdFormControl,
     ThresholdFormControlsContainer,
     VolcanoPlotContainer,
@@ -67,6 +67,12 @@ const logFcOutliersLimit = 7;
 const ROUND_PRECISION = 2;
 const P_VALUE_FRACTION_DIGITS = 5;
 
+const minSelectWidth = 200;
+
+const StyledDictySelect = styled(DictySelect)`
+    min-width: ${minSelectWidth}px;
+`;
+
 const DifferentialExpressions = ({
     selectedTimeSeries,
     selectedDifferentialExpression,
@@ -78,7 +84,6 @@ const DifferentialExpressions = ({
     basket,
     connectedDifferentialExpressionSelected,
 }: DifferentialExpressionsProps): ReactElement => {
-    const differentialExpressionsSelectElement = useRef<HTMLDivElement>(null);
     const [volcanoPointSelectionModalOpened, setVolcanoPointSelectionModalOpened] = useState(false);
 
     const chartRef = useRef<ChartHandle>(null);
@@ -182,10 +187,10 @@ const DifferentialExpressions = ({
      * Check if threshold controls can be displayed or not (is there space).
      */
     useEffect(() => {
-        if (differentialExpressionsSelectElement.current == null || width == null) {
+        if (width == null) {
             return;
         }
-        const availableWidth = width - differentialExpressionsSelectElement.current.clientWidth;
+        const availableWidth = width - minSelectWidth;
         setDisplayThresholdControls({
             firstLevel: availableWidth > 348, // 2 * FormControl.offsetWidth(135) + FormControlLabel.offsetWidth(78)
             secondLevel: availableWidth > 666, // 4 * FormControl.offsetWidth(135) + FormControlLabel.offsetWidth(78) + 2 * swap icon width(24)
@@ -322,7 +327,6 @@ positives.
             <TextField
                 id={`${thresholdField}fc_threshold`}
                 color="secondary"
-                size="small"
                 label={label}
                 type="number"
                 onChange={(event: ChangeEvent<{ value: unknown }>): void =>
@@ -351,32 +355,28 @@ positives.
                                   : ''
                         }
                     >
-                        <DifferentialExpressionsSelectWrapper
-                            ref={differentialExpressionsSelectElement}
+                        <StyledDictySelect
+                            label="Differential expression"
+                            value={
+                                selectedDifferentialExpression != null
+                                    ? selectedDifferentialExpression.id
+                                    : ''
+                            }
+                            handleOnChange={handleDifferentialExpressionsOnChange}
+                            disabled={
+                                isFetchingDifferentialExpressions ||
+                                differentialExpressions.length === 0
+                            }
                         >
-                            <DictySelect
-                                label="Differential expression"
-                                value={
-                                    selectedDifferentialExpression != null
-                                        ? selectedDifferentialExpression.id
-                                        : ''
-                                }
-                                handleOnChange={handleDifferentialExpressionsOnChange}
-                                disabled={
-                                    isFetchingDifferentialExpressions ||
-                                    differentialExpressions.length === 0
-                                }
-                            >
-                                {differentialExpressions.map((differentialExpression) => (
-                                    <MenuItem
-                                        value={differentialExpression.id}
-                                        key={differentialExpression.id}
-                                    >
-                                        {differentialExpression.name}
-                                    </MenuItem>
-                                ))}
-                            </DictySelect>
-                        </DifferentialExpressionsSelectWrapper>
+                            {differentialExpressions.map((differentialExpression) => (
+                                <MenuItem
+                                    value={differentialExpression.id}
+                                    key={differentialExpression.id}
+                                >
+                                    {differentialExpression.name}
+                                </MenuItem>
+                            ))}
+                        </StyledDictySelect>
                     </Tooltip>
                     {volcanoPoints.length > 0 && (
                         <ThresholdFormControlsContainer>

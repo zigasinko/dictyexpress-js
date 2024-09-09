@@ -14,10 +14,6 @@ export const DifferentialExpressionsControls = styled.div`
     align-items: center;
 `;
 
-export const DifferentialExpressionsSelectWrapper = styled(FormControl)`
-    min-width: 200px;
-`;
-
 export const ThresholdFormControlsContainer = styled.div`
     display: flex;
     flex-flow: row nowrap;
