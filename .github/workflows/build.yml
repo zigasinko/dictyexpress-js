@@ -6,7 +6,12 @@ on:
       - "[0-9]+.[0-9]+.[0-9]+*"
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+
 env:
+  AWS_IAM_ROLE: ${{ vars.AWS_IAM_ROLE }}
   AWS_REGION: us-east-1
   NODE_VERSION: 20
   S3_BUCKET: genialis-share-ci-artifact-eu-west-1
@@ -21,12 +26,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ env.AWS_IAM_ROLE }}
+          role-session-name: GithubOIDCSession
           aws-region: ${{ env.AWS_REGION }}
+
       - name: Select Node v${{ env.NODE_VERSION }}
         shell: bash -l {0}
         run: |
