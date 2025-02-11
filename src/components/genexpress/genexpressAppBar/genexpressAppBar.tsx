@@ -121,7 +121,7 @@ const GenexpressAppBar = ({
     const desktopSection = (
         <DesktopSectionContainer>
             <TitleContainer>
-                <Link to="/">
+                <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
                     <DictyLogo src={dictyLogo} alt="dictyExpress logo" />
                 </Link>
                 <GenexpressTitle>{import.meta.env.VITE_APP_NAME}</GenexpressTitle>
