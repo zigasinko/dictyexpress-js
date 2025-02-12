@@ -1,6 +1,7 @@
 import React, { ReactElement, useRef, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Button, FormControlLabel, Switch } from '@mui/material';
+import { forEach, groupBy, uniq } from 'lodash';
 import GenesExpressionsLineChart from './genesExpressionsLineChart';
 import {
     GenesExpressionsContainer,
@@ -15,17 +16,41 @@ import {
     RootState,
 } from 'redux/rootReducer';
 import { getHighlightedGenesIds, genesHighlighted, getSelectedGenesIds } from 'redux/stores/genes';
-import { getBasketExpressionsIds, getComparisonTimeSeries } from 'redux/stores/timeSeries';
+import {
+    getBasketExpressionsIds,
+    getComparisonTimeSeries,
+    getSelectedTimeSeriesLabels,
+} from 'redux/stores/timeSeries';
 import { ChartHandle } from 'components/genexpress/common/chart/chart';
 import useReport from 'components/genexpress/common/reportBuilder/useReport';
 import { GeneExpression } from 'redux/models/internal';
 import useStateWithEffect from 'components/genexpress/common/useStateWithEffect';
 import useBookmarkableState from 'components/genexpress/common/useBookmarkableState';
 import { BookmarkStatePath } from 'components/genexpress/common/constants';
+import { objectsArrayToTsv } from 'utils/reportUtils';
+
+const geneExpressionsToExportObjects = (
+    genesExpressions: GeneExpression[],
+    timeSeriesLabels: string[],
+) => {
+    return uniq(genesExpressions.map((expression) => expression.geneName)).map((geneName) => ({
+        geneName,
+        ...timeSeriesLabels.reduce(
+            (acc, label) => {
+                acc[label] = genesExpressions.find(
+                    (expression) => expression.geneName === geneName && expression.label === label,
+                )?.value;
+                return acc;
+            },
+            {} as Record<string, number | undefined>,
+        ),
+    }));
+};
 
 const mapStateToProps = (state: RootState) => {
     return {
         genesExpressions: getSelectedGenesExpressions(state),
+        timeSeriesLabels: getSelectedTimeSeriesLabels(state.timeSeries),
         basketExpressionsIds: getBasketExpressionsIds(state.timeSeries),
         comparisonGenesExpressions: getSelectedGenesComparisonExpressions(state),
         selectedGenesIds: getSelectedGenesIds(state.genes),
@@ -43,6 +68,7 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 const GenesExpressionsWidget = ({
     selectedGenesIds,
     genesExpressions,
+    timeSeriesLabels,
     basketExpressionsIds,
     comparisonGenesExpressions,
     connectedGenesHighlighted,
@@ -64,24 +90,54 @@ const GenesExpressionsWidget = ({
         connectedGenesHighlighted(genesNames);
     };
 
-    useReport(async (processFile) => {
-        if (chartRef.current != null) {
-            processFile(
-                'Expression Time Courses/expression_time_courses.png',
-                await chartRef.current.getPngImage(),
-                true,
-            );
-            processFile(
-                'Expression Time Courses/expression_time_courses.svg',
-                await chartRef.current.getSvgImage(),
-                true,
-            );
-        }
-    }, []);
-
     const allGenesExpressions: GeneExpression[] = useStateWithEffect(
         () => [...genesExpressions, ...comparisonGenesExpressions],
         [comparisonGenesExpressions, genesExpressions],
+    );
+
+    useReport(
+        async (processFile) => {
+            if (genesExpressions.length === 0) {
+                return;
+            }
+
+            processFile(
+                'Expression Time Courses/expression_time_courses.tsv',
+                objectsArrayToTsv(
+                    geneExpressionsToExportObjects(genesExpressions, timeSeriesLabels),
+                ),
+                false,
+            );
+
+            if (comparisonGenesExpressions.length > 0) {
+                forEach(
+                    groupBy(comparisonGenesExpressions, (expression) => expression.timeSeriesName),
+                    (expressions, timeSeriesName) => {
+                        processFile(
+                            `Expression Time Courses/expression_time_courses_${timeSeriesName}.tsv`,
+                            objectsArrayToTsv(
+                                geneExpressionsToExportObjects(expressions, timeSeriesLabels),
+                            ),
+                            false,
+                        );
+                    },
+                );
+            }
+
+            if (chartRef.current != null) {
+                processFile(
+                    'Expression Time Courses/expression_time_courses.png',
+                    await chartRef.current.getPngImage(),
+                    true,
+                );
+                processFile(
+                    'Expression Time Courses/expression_time_courses.svg',
+                    await chartRef.current.getSvgImage(),
+                    true,
+                );
+            }
+        },
+        [comparisonGenesExpressions, genesExpressions, timeSeriesLabels],
     );
 
     const disabledControls = selectedGenesIds.length === 0;

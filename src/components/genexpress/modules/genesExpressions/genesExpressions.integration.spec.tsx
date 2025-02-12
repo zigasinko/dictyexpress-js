@@ -351,6 +351,24 @@ describe('genesExpressions integration', () => {
             );
         });
 
+        it('should export visualization Expression Time Courses/expression_time_courses.tsv file', async () => {
+            await validateExportFile(
+                'Expression Time Courses/expression_time_courses.tsv',
+                (exportFile) => {
+                    expect(exportFile).toBeDefined();
+                },
+            );
+        });
+
+        it('should not export visualization Expression Time Courses/expression_time_courses_comparisons.tsv file', async () => {
+            await validateExportFile(
+                'Expression Time Courses/expression_time_courses_comparisons.tsv',
+                (exportFile) => {
+                    expect(exportFile).toBeUndefined();
+                },
+            );
+        });
+
         it('should save selected time series, genes, highlighted genes and all component bookmarkable state to app-state api', async () => {
             fireEvent.click(screen.getByLabelText('Bookmark'));
 
@@ -451,6 +469,21 @@ describe('genesExpressions integration', () => {
             const linesStrokeDashArrays = getLinesDashArrays();
             expect(linesStrokeDashArrays[0]).toBe('1,0');
             expect(linesStrokeDashArrays[1]).toBe('8,8');
+        });
+
+        it('should export expressions data in a .tsv file', async () => {
+            await validateExportFile(
+                'Expression Time Courses/expression_time_courses.tsv',
+                (exportFile) => {
+                    expect(exportFile).toBeDefined();
+                },
+            );
+            await validateExportFile(
+                `Expression Time Courses/expression_time_courses_${comparisonTimeSeries.collection.name}.tsv`,
+                (exportFile) => {
+                    expect(exportFile).toBeDefined();
+                },
+            );
         });
     });
 });
